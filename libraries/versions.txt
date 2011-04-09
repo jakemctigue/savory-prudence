@@ -1,1 +1,8 @@
+asm					3.3.1
+batik				1.7 (includes org.w3c.dom, org.w3c.dom.svg and org.apache.fop.svg)
 ext-js				3.3.1
+jsoup				1.5.2
+javamail			1.4.4
+mylyln				1.4.0.I20101215-2000-e3x
+parboiled			0.11.1
+pegdown				0.9.2
