@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <project name="Savory" default="build">
 	
-	<property name="src" value="../modules/savory/src" />
+	<property name="framework-src" value="../modules/framework/src" />
+	<property name="framework-deploy" value="../modules/framework/deploy" />
+	<property name="application-src" value="../modules/application/src" />
 	<property name="lib" value="../libraries" />
-	<property name="deploy" value="../modules/savory/deploy" />
 	<property name="dist" value="./distribution" />
 	<property name="content" value="${dist}/content" />
 
@@ -66,16 +67,22 @@
 		</copy>
 	</target>
 	
-	<target name="application" description="Fetch Savory application">
-		<!--<copy todir="${content}/applications/savory">
-			<fileset dir="${src}" />
-		</copy>-->
+	<target name="framework" description="Fetch Savory Framework">
+		<copy todir="${content}/libraries/javascript">
+			<fileset dir="${framework-src}" />
+		</copy>
 	</target>
 
-	<target name="deploy" depends="application, libraries" description="Fetch deployment">
-		<!--<copy todir="${content}">
-			<fileset dir="${deploy}" />
-		</copy>-->
+	<target name="application" description="Fetch Savory application">
+		<copy todir="${content}/applications/savory">
+			<fileset dir="${application-src}" />
+		</copy>
+	</target>
+
+	<target name="deploy" depends="framework, application, libraries" description="Fetch deployment">
+		<copy todir="${content}">
+			<fileset dir="${framework-deploy}" />
+		</copy>
 	</target>
 	
 	<target name="package" depends="licenses, deploy" description="Create Savory zip">
