@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<project name="Savory" default="build">
+	
+	<property name="src" value="../modules/savory/src" />
+	<property name="lib" value="../libraries" />
+	<property name="deploy" value="../modules/savory/deploy" />
+	<property name="dist" value="./distribution" />
+	<property name="content" value="${dist}/content" />
+
+	<target name="licenses" description="Fetch licences">
+		<copy todir="${content}/licenses/asm">
+			<fileset dir="${lib}/asm/license" />
+		</copy>
+		<copy todir="${content}/licenses/batik">
+			<fileset dir="${lib}/batik/license" />
+		</copy>
+		<copy todir="${content}/licenses/codemirror">
+			<fileset dir="${lib}/codemirror/license" />
+		</copy>
+		<copy todir="${content}/licenses/ext-js">
+			<fileset dir="${lib}/ext-js/license" />
+		</copy>
+		<copy todir="${content}/licenses/javamail">
+			<fileset dir="${lib}/javamail/license" />
+		</copy>
+		<copy todir="${content}/licenses/jsoup">
+			<fileset dir="${lib}/jsoup/license" />
+		</copy>
+		<copy todir="${content}/licenses/mylyn-wikitext">
+			<fileset dir="${lib}/mylyn-wikitext/license" />
+		</copy>
+		<copy todir="${content}/licenses/parboiled">
+			<fileset dir="${lib}/parboiled/license" />
+		</copy>
+		<copy todir="${content}/licenses/pegdown">
+			<fileset dir="${lib}/pegdown/license" />
+		</copy>
+	</target>
+
+	<target name="libraries" description="Fetch libraries">
+		<copy todir="${content}/libraries">
+			<fileset dir="${lib}" includes="*.txt" />
+		</copy>
+		<copy todir="${content}/libraries">
+			<file file="${lib}/versions-savory.txt" />
+			<fileset dir="${lib}/asm/lib" />
+			<fileset dir="${lib}/batik/lib" />
+			<fileset dir="${lib}/javamail/lib" />
+			<fileset dir="${lib}/jsoup/lib" />
+			<fileset dir="${lib}/mylyn-wikitext/lib" />
+			<fileset dir="${lib}/parboiled/lib" />
+			<fileset dir="${lib}/pegdown/lib" />
+		</copy>
+		<copy todir="${content}/applications/savory/web/static/script/ext">
+			<fileset dir="${lib}/ext-js/lib" includes="*.js" />
+			<fileset dir="${lib}/ext-js/lib/adapter/ext" />
+		</copy>
+		<copy todir="${content}/applications/savory/web/static/style/ext">
+			<fileset dir="${lib}/ext-js/lib/resources" />
+		</copy>
+		<copy todir="${content}/applications/savory/web/static/script/codemirror">
+			<fileset dir="${lib}/codemirror/lib" includes="*.js" />
+		</copy>
+		<copy todir="${content}/applications/savory/web/static/style/codemirror">
+			<fileset dir="${lib}/codemirror/lib" includes="*.css" />
+		</copy>
+	</target>
+	
+	<target name="application" description="Fetch Savory application">
+		<!--<copy todir="${content}/applications/savory">
+			<fileset dir="${src}" />
+		</copy>-->
+	</target>
+
+	<target name="deploy" depends="application, libraries" description="Fetch deployment">
+		<!--<copy todir="${content}">
+			<fileset dir="${deploy}" />
+		</copy>-->
+	</target>
+	
+	<target name="package" depends="licenses, deploy" description="Create Savory zip">
+		<zip destfile="${content}/savory.prudence.zip" basedir="${content}/applications" includes="**/*" />
+		<zip destfile="savory.zip" basedir="${content}" includes="**/*" />
+	</target>
+	
+	<target name="build" depends="package" description="Build distribution" />
+	
+	<target name="clean" description="Clean">
+		<delete dir="${dist}" />
+	</target>
+	
+	<target name="rebuild" depends="clean, build" description="Clean and build distribution" />
+
+</project>
