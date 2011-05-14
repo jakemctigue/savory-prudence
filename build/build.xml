@@ -10,31 +10,31 @@
 
 	<target name="licenses" description="Fetch licences">
 		<copy todir="${content}/licenses/asm">
-			<fileset dir="${lib}/asm/license" />
+			<fileset dir="${lib}/asm/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/batik">
-			<fileset dir="${lib}/batik/license" />
+			<fileset dir="${lib}/batik/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/codemirror">
-			<fileset dir="${lib}/codemirror/license" />
+			<fileset dir="${lib}/codemirror/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/ext-js">
-			<fileset dir="${lib}/ext-js/license" />
+			<fileset dir="${lib}/ext-js/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/javamail">
-			<fileset dir="${lib}/javamail/license" />
+			<fileset dir="${lib}/javamail/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/jsoup">
-			<fileset dir="${lib}/jsoup/license" />
+			<fileset dir="${lib}/jsoup/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/mylyn-wikitext">
-			<fileset dir="${lib}/mylyn-wikitext/license" />
+			<fileset dir="${lib}/mylyn-wikitext/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/parboiled">
-			<fileset dir="${lib}/parboiled/license" />
+			<fileset dir="${lib}/parboiled/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/pegdown">
-			<fileset dir="${lib}/pegdown/license" />
+			<fileset dir="${lib}/pegdown/license" excludes="**/.svn/" />
 		</copy>
 	</target>
 
@@ -44,20 +44,20 @@
 		</copy>
 		<copy todir="${content}/libraries">
 			<file file="${lib}/versions-savory.txt" />
-			<fileset dir="${lib}/asm/lib" />
-			<fileset dir="${lib}/batik/lib" />
-			<fileset dir="${lib}/javamail/lib" />
-			<fileset dir="${lib}/jsoup/lib" />
-			<fileset dir="${lib}/mylyn-wikitext/lib" />
-			<fileset dir="${lib}/parboiled/lib" />
-			<fileset dir="${lib}/pegdown/lib" />
+			<fileset dir="${lib}/asm/lib" excludes="**/.svn/" />
+			<fileset dir="${lib}/batik/lib" excludes="**/.svn/" />
+			<fileset dir="${lib}/javamail/lib" excludes="**/.svn/" />
+			<fileset dir="${lib}/jsoup/lib" excludes="**/.svn/" />
+			<fileset dir="${lib}/mylyn-wikitext/lib" excludes="**/.svn/" />
+			<fileset dir="${lib}/parboiled/lib" excludes="**/.svn/" />
+			<fileset dir="${lib}/pegdown/lib" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/applications/savory/web/static/script/ext">
 			<fileset dir="${lib}/ext-js/lib" includes="*.js" />
-			<fileset dir="${lib}/ext-js/lib/adapter/ext" />
+			<fileset dir="${lib}/ext-js/lib/adapter/ext" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/applications/savory/web/static/style/ext">
-			<fileset dir="${lib}/ext-js/lib/resources" />
+			<fileset dir="${lib}/ext-js/lib/resources" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/applications/savory/web/static/script/codemirror">
 			<fileset dir="${lib}/codemirror/lib" includes="*.js" />
@@ -69,19 +69,19 @@
 	
 	<target name="framework" description="Fetch Savory Framework">
 		<copy todir="${content}/libraries/javascript">
-			<fileset dir="${framework-src}" />
+			<fileset dir="${framework-src}" excludes="**/.svn/" />
 		</copy>
 	</target>
 
 	<target name="application" description="Fetch Savory application">
 		<copy todir="${content}/applications/savory">
-			<fileset dir="${application-src}" />
+			<fileset dir="${application-src}" excludes="**/.svn/" />
 		</copy>
 	</target>
 
 	<target name="deploy" depends="framework, application, libraries" description="Fetch deployment">
 		<copy todir="${content}">
-			<fileset dir="${framework-deploy}" />
+			<fileset dir="${framework-deploy}" excludes="**/.svn/" />
 		</copy>
 	</target>
 	
