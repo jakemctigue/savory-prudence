@@ -7,6 +7,21 @@
 	<property name="lib" value="../libraries" />
 	<property name="dist" value="./distribution" />
 	<property name="content" value="${dist}/content" />
+	
+	<!-- Get Revision -->
+
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml">
+		<classpath>
+			<fileset dir="${lib}/svnant/lib" includes="*.jar" />
+		</classpath>
+	</typedef>
+
+	<target name="revision" unless="revision.max">
+		<svn svnkit="true" javahl="false">
+			<wcVersion path=".." />
+		</svn>
+		<echo>Revision ${revision.max}.</echo>
+	</target>
 
 	<target name="licenses" description="Fetch licences">
 		<copy todir="${content}/licenses/asm">
@@ -26,6 +41,9 @@
 		</copy>
 		<copy todir="${content}/licenses/jsoup">
 			<fileset dir="${lib}/jsoup/license" excludes="**/.svn/" />
+		</copy>
+		<copy todir="${content}/licenses/lucene">
+			<fileset dir="${lib}/lucene/license" excludes="**/.svn/" />
 		</copy>
 		<copy todir="${content}/licenses/mylyn-wikitext">
 			<fileset dir="${lib}/mylyn-wikitext/license" excludes="**/.svn/" />
@@ -48,27 +66,30 @@
 			<fileset dir="${lib}/batik/lib" excludes="**/.svn/" />
 			<fileset dir="${lib}/javamail/lib" excludes="**/.svn/" />
 			<fileset dir="${lib}/jsoup/lib" excludes="**/.svn/" />
+			<fileset dir="${lib}/lucene/lib" excludes="**/.svn/" />
 			<fileset dir="${lib}/mylyn-wikitext/lib" excludes="**/.svn/" />
 			<fileset dir="${lib}/parboiled/lib" excludes="**/.svn/" />
 			<fileset dir="${lib}/pegdown/lib" excludes="**/.svn/" />
 		</copy>
-		<copy todir="${content}/applications/savory/web/static/script/ext">
-			<fileset dir="${lib}/ext-js/lib" includes="*.js" />
-			<fileset dir="${lib}/ext-js/lib/adapter/ext" excludes="**/.svn/" />
+		<copy todir="${content}/common/web/static/script/ext">
+			<fileset dir="${lib}/ext-js/lib/script" includes="**/*.js" />
 		</copy>
-		<copy todir="${content}/applications/savory/web/static/style/ext">
+		<copy todir="${content}/common/web/static/style/ext/style">
+			<fileset dir="${lib}/ext-js/lib/style" excludes="**/.svn/" />
+		</copy>
+		<copy todir="${content}/common/web/static/style/ext/resources">
 			<fileset dir="${lib}/ext-js/lib/resources" excludes="**/.svn/" />
 		</copy>
-		<copy todir="${content}/applications/savory/web/static/script/codemirror">
+		<copy todir="${content}/common/web/static/script/codemirror">
 			<fileset dir="${lib}/codemirror/lib" includes="*.js" />
 		</copy>
-		<copy todir="${content}/applications/savory/web/static/style/codemirror">
+		<copy todir="${content}/common/web/static/style/codemirror">
 			<fileset dir="${lib}/codemirror/lib" includes="*.css" />
 		</copy>
 	</target>
 	
 	<target name="framework" description="Fetch Savory Framework">
-		<copy todir="${content}/libraries/javascript">
+		<copy todir="${content}/common/libraries">
 			<fileset dir="${framework-src}" excludes="**/.svn/" />
 		</copy>
 	</target>
@@ -85,9 +106,9 @@
 		</copy>
 	</target>
 	
-	<target name="package" depends="licenses, deploy" description="Create Savory zip">
+	<target name="package" depends="licenses, deploy, revision" description="Create Savory zip">
 		<zip destfile="${content}/savory.prudence.zip" basedir="${content}/applications" includes="**/*" />
-		<zip destfile="savory.zip" basedir="${content}" includes="**/*" />
+		<zip destfile="savory-framework-R${revision.max}.zip" basedir="${content}" includes="**/*" />
 	</target>
 	
 	<target name="build" depends="package" description="Build distribution" />
