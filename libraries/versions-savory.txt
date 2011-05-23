@@ -1,7 +1,7 @@
 asm					3.3.1
 batik				1.7 (includes org.w3c.dom, org.w3c.dom.svg and org.apache.fop.svg)
 codemirror			2.0
-ext-js				4.0
+ext-js				4.0.1
 jsoup				1.5.2
 javamail			1.4.4
 lucene				3.1.0 (including contribs: highlighter, memory, queries)
