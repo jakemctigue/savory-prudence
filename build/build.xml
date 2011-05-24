@@ -17,6 +17,13 @@
 			<fileset dir="${lib}/svnant/lib" includes="*.jar" />
 		</classpath>
 	</typedef>
+	
+	<taskdef name="jsdoctoolkit" classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit">
+		<classpath>
+			<fileset dir="${lib}/jsdoc-toolkit-ant-task/lib" includes="*.jar" />
+			<fileset dir="${lib}/rhino/lib" includes="*.jar" />
+		</classpath>
+	</taskdef>
 
 	<target name="revision" unless="revision.max">
 		<svn svnkit="true" javahl="false">
@@ -70,6 +77,10 @@
 		<fetch-library dist="${dist-debug}" library="parboiled" />
 		<fetch-library dist="${dist-debug}" library="pegdown" />
 	</target>
+
+	<target name="documentation" description="Generate Savory documentation">
+		<jsdoctoolkit jsdochome="${lib}/jsdoc-toolkit/lib/" outputdir="${tmp}/common/web/static/api" inputdir="${lib}/jsdoc-toolkit/lib" template="../../../../modules/framework/src/tools/savory-jsdoc" />
+	</target>
 	
 	<target name="framework" description="Fetch Savory Framework">
 		<copy todir="${tmp}/common">
@@ -78,14 +89,14 @@
 		<zip destfile="${dist-standard}/savory-common.prudence.zip" basedir="${tmp}/common" includes="**/*" />
 	</target>
 
-	<target name="application" description="Fetch Savory application">
+	<target name="application" description="Fetch Savory demo application">
 		<copy todir="${tmp}/applications/savory">
 			<fileset dir="${application-src}" excludes="**/.svn/" />
 		</copy>
 		<zip destfile="${dist-standard}/savory-demo-application.prudence.zip" basedir="${tmp}/applications" includes="**/*" />
 	</target>
 
-	<target name="deploy" depends="framework, application, libraries" description="Fetch deployment">
+	<target name="deploy" depends="documentation, framework, application, libraries" description="Fetch deployment">
 		<copy todir="${tmp}">
 			<fileset dir="${framework-deploy}" excludes="**/.svn/" />
 		</copy>
@@ -94,13 +105,16 @@
 	<target name="package" depends="deploy, revision" description="Create Savory zip">
 		<zip destfile="savory-standard-R${revision.max}.zip" basedir="${dist-standard}" includes="**/*" />
 		<zip destfile="savory-debug-R${revision.max}.zip" basedir="${dist-debug}" includes="**/*" />
-		<zip destfile="savory-minimal-R${revision.max}.zip" basedir="${dist-minimal}" includes="**/*" />
+		<!--<zip destfile="savory-minimal-R${revision.max}.zip" basedir="${dist-minimal}" includes="**/*" />-->
 	</target>
 	
 	<target name="build" depends="package" description="Build distribution" />
 	
 	<target name="clean" description="Clean">
-		<delete dir="${dist}" />
+		<delete dir="${tmp}" />
+		<delete dir="${dist-debug}" />
+		<delete dir="${dist-standard}" />
+		<delete dir="${dist-minimal}" />
 	</target>
 	
 	<target name="rebuild" depends="clean, build" description="Clean and build distribution" />
