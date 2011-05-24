@@ -1,15 +1,17 @@
 <?xml version="1.0"?>
 <project name="Savory" default="build">
+
+	<property file="savory.properties" />
 	
 	<property name="framework-src" value="../modules/framework/src" />
 	<property name="framework-deploy" value="../modules/framework/deploy" />
 	<property name="application-src" value="../modules/application/src" />
 	<property name="lib" value="../libraries" />
-	<property name="dist" value="./distribution" />
-	<property name="content" value="${dist}/content" />
+	<property name="dist-debug" value="./debug" />
+	<property name="dist-standard" value="./standard" />
+	<property name="dist-minimal" value="./minimal" />
+	<property name="tmp" value="./tmp" />
 	
-	<!-- Get Revision -->
-
 	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml">
 		<classpath>
 			<fileset dir="${lib}/svnant/lib" includes="*.jar" />
@@ -23,92 +25,76 @@
 		<echo>Revision ${revision.max}.</echo>
 	</target>
 
-	<target name="licenses" description="Fetch licences">
-		<copy todir="${content}/licenses/asm">
-			<fileset dir="${lib}/asm/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/batik">
-			<fileset dir="${lib}/batik/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/codemirror">
-			<fileset dir="${lib}/codemirror/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/ext-js">
-			<fileset dir="${lib}/ext-js/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/javamail">
-			<fileset dir="${lib}/javamail/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/jsoup">
-			<fileset dir="${lib}/jsoup/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/lucene">
-			<fileset dir="${lib}/lucene/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/mylyn-wikitext">
-			<fileset dir="${lib}/mylyn-wikitext/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/parboiled">
-			<fileset dir="${lib}/parboiled/license" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/licenses/pegdown">
-			<fileset dir="${lib}/pegdown/license" excludes="**/.svn/" />
-		</copy>
-	</target>
+	<macrodef name="fetch-license">
+		<attribute name="dist" />
+		<attribute name="library" />
+		<sequential>
+			<copy todir="@{dist}/licenses/@{library}">
+				<fileset dir="${lib}/@{library}/license" excludes="**/.svn/" />
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="fetch-library">
+		<attribute name="dist" />
+		<attribute name="library" />
+		<sequential>
+			<fetch-license dist="@{dist}" library="@{library}" />
+			<copy todir="@{dist}/libraries/">
+				<fileset dir="${lib}/@{library}/lib" excludes="**/.svn/" />
+				<fileset dir="${lib}" includes="*.txt" />
+			</copy>
+		</sequential>
+	</macrodef>
 
 	<target name="libraries" description="Fetch libraries">
-		<copy todir="${content}/libraries">
-			<fileset dir="${lib}" includes="*.txt" />
-		</copy>
-		<copy todir="${content}/libraries">
-			<file file="${lib}/versions-savory.txt" />
-			<fileset dir="${lib}/asm/lib" excludes="**/.svn/" />
-			<fileset dir="${lib}/batik/lib" excludes="**/.svn/" />
-			<fileset dir="${lib}/javamail/lib" excludes="**/.svn/" />
-			<fileset dir="${lib}/jsoup/lib" excludes="**/.svn/" />
-			<fileset dir="${lib}/lucene/lib" excludes="**/.svn/" />
-			<fileset dir="${lib}/mylyn-wikitext/lib" excludes="**/.svn/" />
-			<fileset dir="${lib}/parboiled/lib" excludes="**/.svn/" />
-			<fileset dir="${lib}/pegdown/lib" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/common/web/static/script/ext">
-			<fileset dir="${lib}/ext-js/lib/script" includes="**/*.js" />
-		</copy>
-		<copy todir="${content}/common/web/static/style/ext/style">
-			<fileset dir="${lib}/ext-js/lib/style" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/common/web/static/style/ext/resources">
-			<fileset dir="${lib}/ext-js/lib/resources" excludes="**/.svn/" />
-		</copy>
-		<copy todir="${content}/common/web/static/script/codemirror">
-			<fileset dir="${lib}/codemirror/lib" includes="*.js" />
-		</copy>
-		<copy todir="${content}/common/web/static/style/codemirror">
-			<fileset dir="${lib}/codemirror/lib" includes="*.css" />
-		</copy>
+		<fetch-license dist="${dist-standard}" library="codemirror" />
+		<fetch-license dist="${dist-standard}" library="ext-js" />
+		<fetch-library dist="${dist-standard}" library="asm" />
+		<fetch-library dist="${dist-standard}" library="batik" />
+		<fetch-library dist="${dist-standard}" library="javamail" />
+		<fetch-library dist="${dist-standard}" library="jsoup" />
+		<fetch-library dist="${dist-standard}" library="lucene" />
+		<fetch-library dist="${dist-standard}" library="mylyn-wikitext" />
+		<fetch-library dist="${dist-standard}" library="parboiled" />
+		<fetch-library dist="${dist-standard}" library="pegdown" />
+
+		<fetch-license dist="${dist-debug}" library="codemirror" />
+		<fetch-license dist="${dist-debug}" library="ext-js" />
+		<fetch-library dist="${dist-debug}" library="asm" />
+		<fetch-library dist="${dist-debug}" library="batik" />
+		<fetch-library dist="${dist-debug}" library="javamail" />
+		<fetch-library dist="${dist-debug}" library="jsoup" />
+		<fetch-library dist="${dist-debug}" library="lucene" />
+		<fetch-library dist="${dist-debug}" library="mylyn-wikitext" />
+		<fetch-library dist="${dist-debug}" library="parboiled" />
+		<fetch-library dist="${dist-debug}" library="pegdown" />
 	</target>
 	
 	<target name="framework" description="Fetch Savory Framework">
-		<copy todir="${content}/common/libraries">
+		<copy todir="${tmp}/common">
 			<fileset dir="${framework-src}" excludes="**/.svn/" />
 		</copy>
+		<zip destfile="${dist-standard}/savory-common.prudence.zip" basedir="${tmp}/common" includes="**/*" />
 	</target>
 
 	<target name="application" description="Fetch Savory application">
-		<copy todir="${content}/applications/savory">
+		<copy todir="${tmp}/applications/savory">
 			<fileset dir="${application-src}" excludes="**/.svn/" />
 		</copy>
+		<zip destfile="${dist-standard}/savory-demo-application.prudence.zip" basedir="${tmp}/applications" includes="**/*" />
 	</target>
 
 	<target name="deploy" depends="framework, application, libraries" description="Fetch deployment">
-		<copy todir="${content}">
+		<copy todir="${tmp}">
 			<fileset dir="${framework-deploy}" excludes="**/.svn/" />
 		</copy>
 	</target>
 	
-	<target name="package" depends="licenses, deploy, revision" description="Create Savory zip">
-		<zip destfile="${content}/savory.prudence.zip" basedir="${content}/applications" includes="**/*" />
-		<zip destfile="savory-framework-R${revision.max}.zip" basedir="${content}" includes="**/*" />
+	<target name="package" depends="deploy, revision" description="Create Savory zip">
+		<zip destfile="savory-standard-R${revision.max}.zip" basedir="${dist-standard}" includes="**/*" />
+		<zip destfile="savory-debug-R${revision.max}.zip" basedir="${dist-debug}" includes="**/*" />
+		<zip destfile="savory-minimal-R${revision.max}.zip" basedir="${dist-minimal}" includes="**/*" />
 	</target>
 	
 	<target name="build" depends="package" description="Build distribution" />
