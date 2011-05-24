@@ -78,8 +78,20 @@
 		<fetch-library dist="${dist-debug}" library="pegdown" />
 	</target>
 
-	<target name="documentation" description="Generate Savory documentation">
-		<jsdoctoolkit jsdochome="${lib}/jsdoc-toolkit/lib/" outputdir="${tmp}/common/web/static/api" inputdir="${lib}/jsdoc-toolkit/lib" template="../../../../modules/framework/src/tools/savory-jsdoc" />
+	<target name="documentation" depends="revision" description="Generate Savory documentation">
+		<jsdoctoolkit jsdochome="${lib}/jsdoc-toolkit/lib/"
+		              outputdir="${tmp}/common/web/static/api"
+					  template="../../../../modules/framework/src/tools/savory-jsdoc"
+					  depth="10">
+			<arg name="title" value="The Savory Framework: API Documentation for Version R${revision.max}" />
+			<arg name="link" value="http://threecrickets.com/savory/" />
+			<arg name="extscript" value="../script/ext/ext-all.js" />
+			<arg name="extstyle" value="../style/ext/style/css/ext-all.css" />
+			<arg name="noGlobal" value="true" />
+			<arg name="link" value="" />
+			<arg name="link" value="" />
+			<fileset dir="${lib}/jsdoc-toolkit/lib" excludes="**/internal/, **/.svn/" />
+		</jsdoctoolkit>
 	</target>
 	
 	<target name="framework" description="Fetch Savory Framework">
