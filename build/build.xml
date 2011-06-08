@@ -62,6 +62,7 @@
 		<fetch-library dist="${dist-standard}" library="javamail" />
 		<fetch-library dist="${dist-standard}" library="jsoup" />
 		<fetch-library dist="${dist-standard}" library="lucene" />
+		<fetch-library dist="${dist-standard}" library="mongodb-rhino-driver" />
 		<fetch-library dist="${dist-standard}" library="mylyn-wikitext" />
 		<fetch-library dist="${dist-standard}" library="parboiled" />
 		<fetch-library dist="${dist-standard}" library="pegdown" />
@@ -73,6 +74,7 @@
 		<fetch-library dist="${dist-debug}" library="javamail" />
 		<fetch-library dist="${dist-debug}" library="jsoup" />
 		<fetch-library dist="${dist-debug}" library="lucene" />
+		<fetch-library dist="${dist-debug}" library="mongodb-rhino-driver" />
 		<fetch-library dist="${dist-debug}" library="mylyn-wikitext" />
 		<fetch-library dist="${dist-debug}" library="parboiled" />
 		<fetch-library dist="${dist-debug}" library="pegdown" />
