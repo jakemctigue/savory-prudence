@@ -7,7 +7,7 @@ jsdoc-toolkit			2.4.0
 jsdoc-toolkit-ant-task	1.1.2
 jsoup					1.5.2
 lucene					3.2.0 (including contribs: highlighter, memory, queries)
-mongodb-rhino-driver	R92
+mongodb-rhino-driver	R94
 mylyln-wikitext			1.4.0.I20101215-2000-e3x
 parboiled				1.0.0
 pegdown					1.0.1
