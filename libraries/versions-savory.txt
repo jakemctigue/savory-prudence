@@ -5,7 +5,7 @@ ext-js					4.0.2
 javamail				1.4.4
 jsdoc-toolkit			2.4.0
 jsdoc-toolkit-ant-task	1.1.2
-jsoup					1.5.2
+jsoup					1.6.0
 lucene					3.2.0 (including contribs: highlighter, memory, queries)
 mongodb-rhino-driver	R94
 mylyln-wikitext			1.4.0.I20101215-2000-e3x
