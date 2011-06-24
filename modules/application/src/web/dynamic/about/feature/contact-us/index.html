@@ -1,0 +1,41 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+conversation.locals.put('reCaptcha', true)
+%>
+<%& '/site/header/' %>
+<h1>Savory's "Contact Us" Feature</h1>
+<p>
+	This simple feature contains a /web/fragment/ that displays
+	an HTML form with a CAPTCHA that allows users to send a message on a specific
+	<a href="../../service/notification/">notification service</a> channel. System administrators
+	or others subscribing to the channel would then receive it. Straightforward!
+</p>
+<p>
+	The originating IP address is included in the email. 
+</p>
+<p>
+	TODO: recognize logged-in users; add a combo-box for "reason"
+</p>
+
+<%
+
+document.executeOnce('/savory/feature/contact-us/')
+
+var form = conversation.locals.get('savory.feature.contactUs.form') || new Savory.ContactUs.Form(document, conversation)
+
+form.render()
+
+%>
+<%& '/site/footer/' %>

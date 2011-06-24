@@ -1,0 +1,47 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+conversation.locals.put('reCaptcha', true)
+%>
+<%& '/site/header/' %>
+<h1>Savory's Registration Feature</h1>
+<p>
+	This complement to the <a href="../../service/authentication/">authentication service</a> uses a two-step
+	process to allow new users to register to your application. As is common, it expects users to
+	have a personal email address, which will be used to both confirm the identity of the user
+	and to communicate with the user when they are not logged in.
+</p>
+<p>
+	The feature contains a /web/fragment/ HTML form with a CAPTCHA, which collects the user's
+	email, username, password and possibly some personal information. The form will be valid
+	only of the username is not already in use.
+</p>
+<p>
+	If the form is valid, the user is created but not yet activated. An email is sent to the
+	user with a unique, impossible-to-guess URL, which can be used only once. If they click on that
+	link, the user is activated. 
+</p>
+<p>
+	The feature allows for not-yet-activated users to be automatically deleted after a certain
+	time. This would release the username for others to use.
+</p>
+
+<%
+
+document.executeOnce('/savory/feature/registration/')
+var form = conversation.locals.get('savory.feature.registration.form') || new Savory.Registration.Form(document, conversation)
+form.render()
+
+%>
+<%& '/site/footer/' %>

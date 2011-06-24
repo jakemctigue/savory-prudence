@@ -1,0 +1,55 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%& '/site/header/' %>
+<h1>Savory's Notification Service</h1>
+<p>
+	This awesome service can handle all the notices coming out of your application, whether by email, stored in
+	a MongoDB "inbox," or via your own pluggable delivery mechanism.  
+</p>
+<p>
+	To handle very large scales, it works by first having you queue new notices (in MongoDB), and then it sends them
+	asynchronously (via /tasks/ configured in crontab) to the adressees. Notifications sent to millions of users
+	can be queued just once, on a "channel," which individual users can "subscribe" to. It's essentially a subscription
+	system, though it also handles individually sent notices, to known users or even to on-the-fly addressees.
+</p>
+
+<h2>Digests</h2>
+<p>
+</p>
+<%
+
+document.executeOnce('/savory/service/notification/')
+
+if (String(conversation.request.method) == 'POST') {
+	var channel = conversation.form.get('channel')
+	var notice = conversation.form.get('notice')
+	if (channel && notice) {
+		Savory.Notification.queueForChannel(channel, {subject: 'A Message from Your Sponsor', text: notice})
+		//Savory.Notification.queueForAddress('email', 'tal.liron@gmail.com', {subject: 'A Message from Your Sponsor', text: notice})
+	}
+}
+
+%>
+
+<form method="post">
+	<div>
+		<input name="channel" value="<%= conversation.form.get('channel') || 'main' %>" />
+	</div>
+	<div>
+		<textarea name="notice"><%= conversation.form.get('notice') || '' %></textarea>
+	</div>
+	<input type="submit" value="Post" />
+</form>
+
+<%& '/site/footer/' %>

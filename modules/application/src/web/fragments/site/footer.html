@@ -1,0 +1,49 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%>
+					</div>
+				</div>
+			</td>
+			<td width="25%" align="right">
+				<a href="http://threecrickets.com/" class="neutral"><img src="<%= conversation.pathToBase %>/../media/three-crickets/three-crickets-small.png" border="0" style="margin-top: 5px; margin-right: 5px;" /></a>
+			</td>
+		</tr>
+	</table>
+<%&& 'page.scripts' %>
+	<script type="text/javascript">
+		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker('UA-12329042-2');
+			pageTracker._trackPageview();
+		} catch(err) {}
+	</script>
+<%
+if(null !== conversation.locals.get('reCaptcha')) {
+	document.executeOnce('/savory/foundation/prudence/blocks/')
+	var reCaptcha = application.globals.get('savory.integration.backend.reCaptcha.publicKey')
+%>
+	<script type="text/javascript">
+		Recaptcha.create('<%= reCaptcha %>', 'recaptcha-js', {
+			theme: 'blackglass',
+			callback: Recaptcha.focus_response_field
+		});
+	</script>
+<%
+}
+%>
+</body>
+</html>
