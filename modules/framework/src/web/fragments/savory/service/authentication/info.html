@@ -1,0 +1,36 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%>
+<div id="login-info">
+<%
+
+document.executeOnce('/savory/foundation/templates/')
+document.executeOnce('/savory/foundation/html/')
+
+var session = conversation.locals.get('savory.service.authentication.session')
+var user = session ? session.getUser() : null
+
+if (user) {
+%>
+	<%= Savory.HTML.span({_key: 'savory.service.authentication.form.info.greeting', _cast: {name: user.getDisplayName()}}) %>
+	<%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.logout', href: conversation.pathToBase + '/authentication/logout/', _query: {from: conversation.reference}}) %>
+<%
+}
+else {
+%>
+	<%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.login', href: conversation.pathToBase + '/authentication/', _query: {from: conversation.reference}}) %>
+<%
+}
+%>
+</div>

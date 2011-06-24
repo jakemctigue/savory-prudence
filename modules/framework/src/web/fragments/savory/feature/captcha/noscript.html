@@ -1,0 +1,20 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%>
+<div id="recaptcha">
+	<%= Savory.HTML.div({_content: captcha.noScriptHeader, 'class': 'top'}) %>
+	<iframe src="http://api.recaptcha.net/noscript?k=<%= encodeURIComponent(application.globals.get('savory.integration.backend.reCaptcha.publicKey')) %>"> </iframe>
+	<div class="bottom"><%= Savory.HTML.textarea({name: 'recaptcha_challenge_field', cols: 100, rows: 5}, {_content: captcha.noScriptLabel}) %></div>
+	<input type="hidden" name="recaptcha_response_field" value="manual_challenge" />
+</div>

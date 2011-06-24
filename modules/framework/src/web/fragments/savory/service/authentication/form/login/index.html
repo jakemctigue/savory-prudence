@@ -1,0 +1,67 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+
+document.executeOnce('/savory/feature/registration/')
+document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/savory/foundation/xml/')
+document.executeOnce('/savory/foundation/objects/')
+
+var siteName = Savory.Registration.getSiteName()
+
+var from = conversation.query.get('from')
+from = from ? '?from=' + escape(from) : ''
+
+var providers = Savory.Authentication.getProviders()
+
+%>
+<div class="centerpiece">
+	<form id="login-form" method="POST">
+		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.login.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
+		<%= Savory.HTML.div({_content: conversation.locals.get('savory.service.authentication.form').getStatusText(), 'class': 'status'}) %>
+		<input name="action" type="hidden" value="savory.service.authentication.login" />
+		<div class="field"><%= Savory.HTML.input({name: 'username'}, {_key: 'savory.service.authentication.form.login.label.username'}) %></div>
+		<div class="field"><%= Savory.HTML.input({name: 'password', type: 'password'}, {_key: 'savory.service.authentication.form.login.label.password'}) %></div>
+		<div class="buttons">
+			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.login.button.login'}) %>
+		</div>
+	</form>
+
+	<form>
+		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.login.alternative.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
+		<div class="status"><%= Savory.HTML.a({_key: 'savory.service.authentication.form.login.alternative.register', href: conversation.pathToBase + '/registration/'}) %></div>
+<%
+if (!Savory.Objects.isEmpty(providers)) {
+%>		
+		<%= Savory.HTML.div({_key: 'savory.service.authentication.form.login.alternative.services', _classes: ['status', 'field']}) %>
+		<div class="icon-matrix field"><div>
+<%
+	var count = 0
+	for (var p in providers) {
+		var provider = providers[p]
+%>
+			<div><a href="<%= provider.getUri(conversation) %>"><img src="<%= provider.getIcon(conversation) %>" /><br /><%= provider.getName().escapeElements() %></a></div>
+<%
+		if (++count % 4 == 0) {
+%>
+			<div style="clear: left;"></div>
+<%
+		}
+	}
+}
+%>
+		</div></div>
+	</form>
+</div>

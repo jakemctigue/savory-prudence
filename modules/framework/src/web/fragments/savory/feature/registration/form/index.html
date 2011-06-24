@@ -1,0 +1,46 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+
+document.executeOnce('/savory/feature/registration/')
+document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/savory/foundation/xml/')
+
+var textPack = conversation.locals.get('savory.service.internationalization.text')
+var siteName = Savory.Registration.getSiteName()
+
+var captcha = {
+	noScriptHeader: textPack.get('savory.feature.registration.form.humanity.noscript'),
+	noScriptLabel: textPack.get('savory.feature.registraiton.form.humanity.label')
+}
+
+%>
+<form id="register-form" method="POST">
+	<div class="centerpiece">
+		<input name="action" type="hidden" value="savory.feature.registration.register" />
+		<%= Savory.HTML.build({_key: 'savory.feature.registration.form.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
+		<%= Savory.HTML.div({_content: conversation.locals.get('savory.feature.registration.form').getStatusText(), 'class': 'status'}) %>
+		<div class="field"><%= Savory.HTML.input({name: 'email'}, {_key: 'savory.feature.registration.form.label.email'}) %></div>
+		<div class="field"><%= Savory.HTML.input({name: 'username'}, {_key: 'savory.feature.registration.form.label.username'}) %></div>
+		<div class="field"><%= Savory.HTML.input({name: 'password', type: 'password'}, {_key: 'savory.feature.registration.form.label.password'}) %></div>
+		<div class="field"><%= Savory.HTML.input({name: 'password2', type: 'password'}, {_key: 'savory.feature.registration.form.label.password2'}) %></div>
+		<div class="field"><%= Savory.HTML.label({_key: 'savory.feature.registration.form.label.humanity'}) %><div id="recaptcha-js"></div>
+ 		<div class="buttons">
+			<%= Savory.HTML.submit({_key: 'savory.feature.registration.form.button.create'}) %>
+		</div>
+	</div>
+	<noscript>
+		<%& '/savory/feature/captcha/noscript/' %>
+	</noscript>
+</form>

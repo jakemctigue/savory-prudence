@@ -1,0 +1,44 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+
+var permissions = conversation.locals.get('savory.service.authorization.permissions')
+var textPack = conversation.locals.get('savory.service.internationalization.text')
+var page = conversation.locals.get('savory.feature.wiki.page') || Savory.Wiki.getPage(pageName, conversation.query.get('revision'))
+
+function renderPart(part) {
+	var rendered = page.render(part)
+	if (rendered !== null) {
+%>
+<div class="page-<%= part %>">
+	<%= rendered %>
+<%
+		if (permissions && permissions.get('savory.feature.pages.edit')) {
+%>
+	<p align="right">
+		<a href="?mode=edit&part=<%= part %>">Edit the <%= part %> part</a>
+	</p>
+<%
+		}
+%>
+</div>
+<%
+	}
+}
+
+renderPart('header')
+renderPart('main')
+renderPart('footer')
+
+%>

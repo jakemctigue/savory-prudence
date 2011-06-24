@@ -1,0 +1,68 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+document.executeOnce('/savory/integration/frontend/sencha/')
+document.executeOnce('/savory/foundation/html/')
+%>
+<html>
+<head>
+	<%= Savory.HTML.build({_content: 'Savory REST Service - ' + data.resource.plural, _tag: 'title'}) %>
+	<%= Savory.Sencha.extJsHead(conversation, {pathToBase: data.pathToBase}) %>
+</head>
+<body>
+<%= Savory.HTML.build({_content: 'Resource: ' + data.resource.plural, _tag: 'h3'}) %>
+<div id="grid"></div>
+</body>
+<script type="text/javascript">
+Ext.onReady(function() {
+	var pageSize = 20;
+
+	var store = Ext.create('Savory.data.Store', {
+		proxy: {
+			url: '.',
+			extraParams: {
+				mode: 'extjs'
+			}
+		},
+		autoSync: true,
+		autoLoad: {
+			params: {
+				start: 0,
+				limit: pageSize,
+				meta: true
+			}
+		}
+	});
+
+	store.getColumns(function(store, columns) {
+		Ext.create('Ext.grid.Panel', {
+			store: store,
+			columns: columns,
+			forceFit: true,
+			selType: 'cellmodel',
+			plugins: [
+				Ext.create('Ext.grid.plugin.CellEditing', {clicksToEdit: 1})
+			],
+			bbar: {
+				xtype: 'pagingtoolbar',
+				pageSize: pageSize,
+				store: store
+			},
+			renderTo: 'grid',
+			height: 500
+		});
+	});
+});
+</script>
+</html>

@@ -1,0 +1,34 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+
+document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/savory/foundation/html/')
+
+var provider = Savory.Authentication.getProviderBySlug(conversation)
+var slug = provider.getSlug()
+var siteName = provider.getName()
+
+%>
+<div class="centerpiece">
+	<form id="login-form" method="POST">
+		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.openId.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
+		<%= Savory.HTML.input({name: 'action', type: 'hidden', value: 'savory.service.authentication.login.openid'}) %>
+		<%= Savory.HTML.input({name: 'provider', type: 'hidden', value: slug}) %>
+		<div class="field"><%= Savory.HTML.input({name: 'username'}, {_key: 'savory.service.authentication.form.openId.label.username', _cast: {siteName: siteName}}) %></div>
+		<div class="buttons">
+			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.openId.button.login'}) %>
+		</div>
+	</form>
+</div>

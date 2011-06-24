@@ -1,0 +1,63 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+
+document.executeOnce('/savory/feature/contact-us/')
+document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/savory/foundation/xml/')
+
+var session = Savory.Authentication.getCurrentSession(conversation)
+var user = session ? session.getUser() : null
+var textPack = conversation.locals.get('savory.service.internationalization.text')
+
+var captcha = {
+	noScriptHeader: textPack.get('savory.feature.contactUs.form.humanity.noscript'),
+	noScriptLabel: textPack.get('savory.feature.contactUs.form.humanity.label')
+}
+
+%>
+<form id="register-form" method="POST">
+	<div class="centerpiece">
+		<%= Savory.HTML.build({_key: 'savory.feature.contactUs.form.title', _tag: 'h2'}) %>
+		<%= Savory.HTML.div({_content: conversation.locals.get('savory.feature.contactUs.form').getStatusText(), 'class': 'status'}) %>
+<%
+if (!user) {
+%>
+		<div class="field"><%= Savory.HTML.input({name: 'email'}, {_key: 'savory.feature.contactUs.form.label.email'}) %></div>
+<%
+}
+%>
+		<div class="field"><%= Savory.HTML.textarea({name: 'message'}, {_key: 'savory.feature.contactUs.form.label.message'}) %></div>
+<%
+if (!user) {
+%>
+		<div class="field"><%= Savory.HTML.label({_key: 'savory.feature.contactUs.form.label.humanity'}) %><div id="recaptcha-js"></div></div>
+<%
+}
+%>
+ 		<div class="buttons">
+			<%= Savory.HTML.submit({_key: 'savory.feature.contactUs.form.button.send'}) %>
+		</div>
+	</div>
+<%
+if (!user) {
+%>
+	<noscript>
+		<%& '/savory/feature/captcha/noscript/' %>
+	</noscript>
+<%
+}
+%>
+</form>

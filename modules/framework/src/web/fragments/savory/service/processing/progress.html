@@ -1,0 +1,55 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/savory/foundation/localization/')
+%>
+<html>
+<head>
+	<%= Savory.HTML.build({_content: process.getDescription(), _tag: 'title'}) %>
+</head>
+<body>
+	<table width="380" height="100%" align="center" valign="center"><tr><td align="center">
+		<%= Savory.HTML.build({_content: process.getDescription(), _tag: 'p', align: 'center'}) %>
+		<div style="position: relative; width: 300px; height: 30px; text-align: left; background-color: #bdbdbd;">
+			<div style="width: 300px; height: 30px; background-color: #0a0; width: <%= Math.floor(process.getProgress() * 100) %>%;">
+				<div style="position: absolute; top: 0; left: 0; padding-top: 5px; text-align: center; width: 100%;">
+					<%= Math.round(process.getProgress() * 100) %>%
+				</div>
+			</div>
+		</div>
+		<p align="center">
+			<%= Savory.Localization.formatDuration(process.getDuration(), true) %> so far
+		</p>
+		<p align="center">
+			<%= lastMilestone.description || lastMilestone.event %>
+		</p>
+		<form id="form" method="post" action="/savory/wait/">
+			<input type="hidden" name="process" value="<%= key %>" />
+			<noscript>
+				<p align="center">
+					<a href=".">Click to check status</a>
+					<!--<input type="submit" value="Click to check status" />-->
+				</p>
+			</noscript>
+		</form>
+	</td></tr></table>
+</body>
+<script>
+setTimeout(function() {
+	location.reload(true);
+	//document.forms['form'].submit();
+}, 5000);	
+</script>
+</html>

@@ -1,0 +1,24 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%& '/site/header/' %>
+<%
+
+document.executeOnce('/savory/service/authentication/')
+
+var form = conversation.locals.get('savory.service.authentication.form') || new Savory.Authentication.Form(document, conversation)
+
+form.render()
+
+%>
+<%& '/site/footer/' %>

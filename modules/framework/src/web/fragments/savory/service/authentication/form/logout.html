@@ -1,0 +1,24 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+document.executeOnce('/savory/foundation/html/')
+%><div class="centerpiece">
+	<form id="logout-form" method="POST">
+		<%= Savory.HTML.div({_content: conversation.locals.get('savory.service.authentication.form').getStatusText(), 'class': 'status'}) %>
+		<%= Savory.HTML.input({name: 'action', type: 'hidden', value: 'savory.service.authentication.logout'}) %>
+		<div class="buttons">
+			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.logout.button.logout'}) %>
+		</div>
+	</form>
+</div>
