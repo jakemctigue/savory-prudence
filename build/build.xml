@@ -166,7 +166,7 @@
 		</copy>
 	</target>
 	
-	<target name="package" depends="deploy, revision" description="Create Savory zips">
+	<target name="package" depends="deploy" description="Create Savory zips">
 		<zip destfile="savory-standard-R${revision.max}.zip" basedir="${dist-standard}" includes="**/*" level="9" />
 		<zip destfile="savory-debug-R${revision.max}.zip" basedir="${dist-debug}" includes="**/*" level="9" />
 		<zip destfile="savory-minimal-R${revision.max}.zip" basedir="${dist-minimal}" includes="**/*" level="9" />
