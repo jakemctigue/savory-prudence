@@ -280,6 +280,15 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 	}
 }), predefinedGlobals)
 
+predefinedGlobals['mongoDb.defaultConnection'] = predefinedSharedGlobals['mongoDb.defaultConnection']
+predefinedGlobals['mongoDb.defaultServers'] = predefinedSharedGlobals['mongoDb.defaultServers']
+predefinedGlobals['mongoDb.defaultSwallow'] = predefinedSharedGlobals['mongoDb.defaultSwallow']
+predefinedGlobals['mongoDb.defaultDb'] = 'savory'
+
+// Force re-initialization of MongoDB API
+MongoDB = null
+document.execute('/mongo-db/')
+
 //
 // RPC service
 //
@@ -313,16 +322,6 @@ document.execute('/applications/savory/rest/')
 try {
 document.execute('/applications/savory/settings-extra/')
 } catch(x) {}
-
-// Force re-initialization of MongoDB API
-predefinedGlobals['mongoDb.defaultConnection'] = predefinedSharedGlobals['mongoDb.defaultConnection']
-predefinedGlobals['mongoDb.defaultServers'] = predefinedSharedGlobals['mongoDb.defaultServers']
-predefinedGlobals['mongoDb.defaultSwallow'] = predefinedSharedGlobals['mongoDb.defaultSwallow']
-predefinedGlobals['mongoDb.defaultDb'] = 'cluck'
-if (MongoDB) {
-	MongoDB = null
-	document.markExecuted('/mongo-db/', false)
-}
 
 document.executeOnce('/savory/feature/console/')
 document.executeOnce('/savory/feature/seo/')

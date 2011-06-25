@@ -194,7 +194,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				meta: 'bool'
 			})
 			
-			Savory.REST.logger.dump(query)
+			//Savory.REST.logger.dump(query)
 			
 			if (query.columns) {
 				// "Get columns" mode

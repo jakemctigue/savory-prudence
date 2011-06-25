@@ -71,7 +71,6 @@ Savory.Discussion = Savory.Discussion || function() {
 			this.collection = Savory.Objects.isString(collection) ? new MongoDB.Collection(collection) : collection
 			this.query = query
 			this.doc = doc || this.collection.findOne(this.query, {forum: 1})
-			initialize.call(this)
 		}
 		
 	    /**
@@ -146,6 +145,7 @@ Savory.Discussion = Savory.Discussion || function() {
 		//
 		
 		function initialize() {
+			this.doc = this.doc || {}
 			this.forum = this.doc.forum || {}
 			this.forum.posts = this.forum.posts || {}
 			this.roots = []
