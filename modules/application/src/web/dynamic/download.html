@@ -12,14 +12,63 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%& '/site/header/' %>
+<% var revision = 123; %>
 
 <h1>Download</h1>
+
+<p>This page has been updated for Early Bird revision <%= revision %>.</p>
+
+<h2>Early Bird?</h2>
+<p class="note">
+	What you will be downloading right now is an "Early Bird" release. "Early," in that it's yet at "1.0" quality -- what's mostly missing is some
+	more documentation and fleshing out a few last-in features. "Bird," in that it's the contemporary evolutionary descendent of dinosaurs, and
+	dinosaurs are very cool. The bulk of the code is here and fully functional, and of immediate use. There's nothing stopping you from creating
+	super-scalable, data-driven web and mobile applications right now.
+</p>
+
+<h2>The Menu</h2>
+
+<h3>Requirements</h3>
 <p>
-	We're working on a sweet distribution for Savory. Until then, get it via <a href="http://code.google.com/p/savory-prudence/source/checkout">Subversion</a>.
-	You'll see daily commits... multiple times per day... for a while.
+	You need <a href="http://threecrickets.com/prudence/download/">Prudence</a> and <a href="http://www.mongodb.org/">MongoDB</a>.
+</p>
+
+<h3>Development Snapshot</h3>
+<p>
+	While in Early Bird status, you'll see multiple daily commits. Seriously, as soon as you download you'll already be out of date.
+	For people wanting to keep in touch with the path to Savory 1.0, we recommend using the development snapshot and updating frequently. 
+	<a href="http://code.google.com/p/savory-prudence/source/checkout">Get it via Subversion</a>.
+	Easy, quick build with <a href="http://ant.apache.org/">Ant</a>.
+</p>
+
+<h3>Standard Edition</h3>	
+<p>
+	You probably want this! It includes everything you need to get Savory up and running.
 </p>
 <p>
-	Want to talk about it? Join the <a href="http://groups.google.com/group/prudence-community">Prudence Community</a>.
+	<a href="http://prudence.googlecode.com/files/savory-standard-R<%= revision %>.zip">The Savory Framework: Standard Edition</a> (9mb)
+</p>
+
+<h3>Debug Edition</h3>	
+<p>
+	This is identical to the standard edition, but also includes the debug versions of Ext JS and Sencha Touch.  
+</p>
+<p>
+	<a href="http://prudence.googlecode.com/files/savory-debug-R<%= revision %>.zip">The Savory Framework: Debug Edition</a> (11mb)
+</p>
+
+<h3>Minimal Edition</h3>	
+<p>
+	This is Savory only, without any of its dependency libraries. This is useful if you just want to upgrade
+	and you already have all the dependencies.  
+</p>
+<p>
+	<a href="http://prudence.googlecode.com/files/savory-minimal-R<%= revision %>.zip">The Savory Framework: Minimal Edition</a> (1mb)
+</p>
+
+<h2>Need Help?</h2>
+<p>
+	Join the <a href="http://groups.google.com/group/prudence-community">Prudence Community</a>, which is where we'll be talking about Savory.
 </p>
 
 <%& '/site/footer/' %>

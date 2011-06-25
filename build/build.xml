@@ -82,12 +82,12 @@
 		<fetch-license dist="${dist-standard}" library="sencha-touch" />
 	</target>
 
-	<target name="documentation" description="Create MongoDB Rhino API docs">
+	<target name="documentation" depends="revision" description="Create MongoDB Rhino API docs">
 		<available file="${tmp}/applications/savory/web/static/api" property="documentation-present" />
 		<antcall target="documentation-unless" />
 	</target>
 
-	<target name="documentation-unless" depends="revision" description="Generate Savory documentation" unless="documentation-present">
+	<target name="documentation-unless" description="Generate Savory documentation" unless="documentation-present">
 		<jsdoctoolkit jsdochome="${lib}/jsdoc-toolkit/lib/"
 		              outputdir="${tmp}/applications/savory/web/static/api"
 					  template="../../../../modules/framework/src/tools/savory-jsdoc"

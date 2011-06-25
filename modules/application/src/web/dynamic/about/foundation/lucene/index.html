@@ -30,7 +30,10 @@ if (null !== query) {
 }
 %>
 <%{{ 'page.main' %>
-<h1>Savory's Search Library</h1>
+<h1>Savory's Lucene Library</h1>
+<p class="note">
+	Still working on documenting this feature, though it's otherwise pretty complete!
+</p>
 
 <form>
 	<p><%= Savory.HTML.input({name: 'query', value: query}, {_content: 'Search:'}) %></p>
