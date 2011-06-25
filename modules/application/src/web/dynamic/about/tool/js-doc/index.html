@@ -16,4 +16,42 @@ at http://threecrickets.com/
 <p class="note">
 	Still working on documenting this feature, though it's otherwise pretty complete!
 </p>
+
+<h2>Command Line Example</h2>
+<pre>
+java -jar /jsdoc/jsrun.jar /jsdoc/app/run.js \
+	--allfunctions \
+	--template="common/tools/savory-jsdoc" \
+	--directory="applications/myapp/web/static/api" \
+	--recurse=10 \
+	--define="title:My Wonderful Application" \
+	--define="link:http://mysite.org/wonderful/" \
+	--define="extscript:../script/ext/ext-all.js" \
+	--define="extstyle:../style/ext/style/css/ext-all-gray.css" \
+	--define="noGlobal:true" \
+	applications/myapp/libraries
+</pre>
+
+<h2>Ant Task Example</h2>
+<pre>
+&lt;taskdef name="jsdoctoolkit" classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit"&gt;
+	&lt;classpath&gt;
+		&lt;fileset dir="jsdoc-toolkit-ant-task/lib" includes="*.jar" /&gt;
+		&lt;fileset dir="rhino/lib" includes="*.jar" /&gt;
+	&lt;/classpath&gt;
+&lt;/taskdef&gt;
+
+&lt;jsdoctoolkit jsdochome="jsdoc-toolkit/lib/"
+              outputdir="applications/myapp/web/static/api"
+			  template="common/tools/savory-jsdoc"
+			  depth="10"&gt;
+	&lt;arg name="title" value="My Wonderful Application" /&gt;
+	&lt;arg name="link" value="http://mysite.org/wonderful/" /&gt;
+	&lt;arg name="extscript" value="../script/ext/ext-all.js" /&gt;
+	&lt;arg name="extstyle" value="../style/ext/style/css/ext-all.css" /&gt;
+	&lt;arg name="noGlobal" value="true" /&gt;
+	&lt;fileset dir="applications/myapp/libraries" excludes="**/.svn/" /&gt;
+&lt;/jsdoctoolkit&gt;
+</pre>
+
 <%& '/site/footer/' %>

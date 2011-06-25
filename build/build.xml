@@ -6,6 +6,7 @@
 	<property name="framework-src" value="../modules/framework/src" />
 	<property name="framework-deploy" value="../modules/framework/deploy" />
 	<property name="application-src" value="../modules/application/src" />
+	<property name="application-data" value="../modules/application/data" />
 	<property name="lib" value="../libraries" />
 	<property name="dist-debug" value="./debug" />
 	<property name="dist-standard" value="./standard" />
@@ -97,7 +98,6 @@
 			<arg name="extscript" value="../script/ext/ext-all.js" />
 			<arg name="extstyle" value="../style/ext/style/css/ext-all.css" />
 			<arg name="noGlobal" value="true" />
-			<arg name="link" value="http://threecrickets.com/savory/" />
 			<fileset dir="${framework-src}" excludes="**/internal/, **/.svn/, web/static/**" />
 		</jsdoctoolkit>
 	</target>
@@ -152,6 +152,15 @@
 		<zip destfile="${dist-debug}/savory-demo-application.prudence.zip" basedir="${tmp}/applications" includes="**/*" level="9" />
 		<copy todir="${dist-standard}" file="${dist-debug}/savory-demo-application.prudence.zip" />
 		<copy todir="${dist-minimal}" file="${dist-debug}/savory-demo-application.prudence.zip" />
+		<copy todir="${dist-standard}/demo-data">
+			<fileset dir="${application-data}" excludes="**/.svn/" />
+		</copy>
+		<copy todir="${dist-minimal}/demo-data">
+			<fileset dir="${application-data}" excludes="**/.svn/" />
+		</copy>
+		<copy todir="${dist-debug}/demo-data">
+			<fileset dir="${application-data}" excludes="**/.svn/" />
+		</copy>
 	</target>
 
 	<target name="deploy" depends="documentation, framework, application, libraries" description="Fetch deployment">

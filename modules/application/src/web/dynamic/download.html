@@ -18,20 +18,60 @@ at http://threecrickets.com/
 
 <p>This page has been updated for Early Bird revision <%= revision %>.</p>
 
-<h2>Early Bird?</h2>
+<h2>Early Bird Alert</h2>
 <p class="note">
-	What you will be downloading right now is an "Early Bird" release. "Early," in that it's yet at "1.0" quality -- what's mostly missing is some
+	What you will be downloading right now is an "Early Bird" release. "Early," in that it's not yet at "1.0" quality: what's missing is some
 	more documentation and fleshing out a few last-in features. "Bird," in that it's the contemporary evolutionary descendent of dinosaurs, and
 	dinosaurs are very cool. The bulk of the code is here and fully functional, and of immediate use. There's nothing stopping you from creating
-	super-scalable, data-driven web and mobile applications right now.
+	super-scalable, data-driven web and mobile applications with Savory right now.
 </p>
 
-<h2>The Menu</h2>
-
-<h3>Requirements</h3>
+<h2>Requirements</h2>
 <p>
 	You need <a href="http://threecrickets.com/prudence/download/">Prudence</a> and <a href="http://www.mongodb.org/">MongoDB</a>.
+	That's it. If you're using them for the first time, it might be a good idea to get some familiarity with them first.
+	Prudence comes with a big, printable Creative-Commons-licensed manual. And there are some decent books about MongoDB out there.
 </p>
+
+<h2>How to Install the Savory Framework</h2>
+<p>
+	Pick a distribution, download it and unzip it.
+</p>
+<p>
+	Copy everything in the /libraries/ directory to your Prudence's /libraries/ directory. (Or, otherwise just make sure that they are
+	in your JVM's classpath.)
+</p>
+<p>
+	Then put "savory-common.prudence.zip" and a "savory-dependencies-common.prudence.zip" (or its debug version if you're
+	using the debug edition) into your Prudence's /common/ subdirectory. Restart Prudence, and it will unpack these automagically.
+</p>
+
+
+<h2>How to Install the Demo Application</h2>
+<p>
+	The distribution comes with some demo data for MongoDB, all in the /demo-data/ directory. You need to put in the "savory"
+	collection on MongoDB. An example command:
+</p>
+<pre>
+	mongorestore --drop --db savory ./demo-data 
+</pre>
+<p>
+	Then put 'savory-demo-application.prudence.zip' into your Prudence's /applications/ subdirectory.
+	Restart Prudence, and it will unpack it automagically. You can then go to <a href="http://localhost:8080/savory/">http://localhost:8080/savory/</a>
+	to see it. Have fun!
+</p>
+<p>
+	All the demo users have the password "savory". There is a user named "savory", too. 
+</p>
+<p class="note">
+	Note: Many of Savory's integration features (Facebook, Twitter, PayPal, etc.) require you to create accounts on those services, which
+	then issue private security keys. You can edit the "/applications/savory/settings.js" with these keys, or otherwise
+	create a "/applications/savory/settings-extra.js" to override the default blank settings for these. Beyond that, these services
+	will likely need to callback to your application over the internet, so you may need to deploy the Savory demo application
+	on a publicly available site to appreciate it fully.
+</p>
+
+<h2>OK, Let's Download!</h2>
 
 <h3>Development Snapshot</h3>
 <p>
@@ -39,6 +79,9 @@ at http://threecrickets.com/
 	For people wanting to keep in touch with the path to Savory 1.0, we recommend using the development snapshot and updating frequently. 
 	<a href="http://code.google.com/p/savory-prudence/source/checkout">Get it via Subversion</a>.
 	Easy, quick build with <a href="http://ant.apache.org/">Ant</a>.
+</p>
+<p>
+	If that sounds like too much for you, go ahead and download one of these:
 </p>
 
 <h3>Standard Edition</h3>	
@@ -68,7 +111,9 @@ at http://threecrickets.com/
 
 <h2>Need Help?</h2>
 <p>
-	Join the <a href="http://groups.google.com/group/prudence-community">Prudence Community</a>, which is where we'll be talking about Savory.
+	Join the <a href="http://groups.google.com/group/prudence-community">Prudence Community</a>, which is where we'll be talking about Savory
+	related issues. And please open a bug on the <a href="http://code.google.com/p/savory-prudence/">community site</a>, or request a feature.
+	We love bug reports!
 </p>
 
 <%& '/site/footer/' %>
