@@ -60,11 +60,11 @@ Savory.PayPal = Savory.PayPal || function() {
 	 */
 	Public.routing = function() {
     	var uri = predefinedGlobals['savory.integration.backend.payPal.expressCheckoutUri']
-    	uri = (uri && uri.length > 1) ? uri[1] : '/pay-pal/express-checkout/'
+    	uri = (Savory.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/pay-pal/express-checkout/'
 		router.captureAndHide(uri, '/savory/integration/backend/pay-pal/express-checkout/')
 
     	var callbackUri = predefinedGlobals['savory.integration.backend.payPal.expressCheckoutCallbackUri']
-    	callbackUri = (callbackUri && callbackUri.length > 1) ? callbackUri[1] : uri + 'callback/'
+    	callbackUri = (Savory.Objects.isArray(callbackUri) && callbackUri.length > 1) ? callbackUri[1] : uri + 'callback/'
 		router.captureAndHide(callbackUri, '/savory/integration/backend/pay-pal/express-checkout/callback/')
 	}
 

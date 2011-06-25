@@ -75,7 +75,7 @@ Savory.Linkback = Savory.Linkback || function() {
 	 */
 	Public.routing = function() {
     	var uri = predefinedGlobals['savory.service.linkback.trackbackUri']
-    	uri = (uri && uri.length > 1) ? uri[1] : '/trackback/{uri}/'
+    	uri = (Savory.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/trackback/{uri}/'
 		router.captureAndHide(uri, '/savory/service/linkback/trackback/')
 	}
 

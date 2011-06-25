@@ -100,16 +100,16 @@ Savory.Authentication = Savory.Authentication || function() {
 	Public.routing = function() {
 		// User
     	var uri = predefinedGlobals['savory.service.authentication.uri']
-    	uri = (uri && uri.length > 1) ? uri[1] : '/authentication/'
+    	uri = (Savory.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/authentication/'
 		router.captureAndHide(uri, '/savory/service/authentication/')
 		
     	var logoutUri = predefinedGlobals['savory.service.authentication.logoutUri']
-    	logoutUri = (logoutUri && logoutUri.length > 1) ? logoutUri[1] : uri + 'logout/'
+    	logoutUri = (Savory.Objects.isArray(logoutUri) && logoutUri.length > 1) ? logoutUri[1] : uri + 'logout/'
 		router.captureAndHide(logoutUri, '/savory/service/authentication/logout/')
 
 		// Provider callbacks (TODO: from providers?)
     	var providerBaseUri = predefinedGlobals['savory.service.authentication.providerBaseUri']
-    	providerBaseUri = (providerBaseUri && providerBaseUri.length > 1) ? providerBaseUri[1] : uri + 'provider/'
+    	providerBaseUri = (Savory.Objects.isArray(providerBaseUri) && providerBaseUri.length > 1) ? providerBaseUri[1] : uri + 'provider/'
 
 		router.captureAndHide(providerBaseUri + 'facebook/', '/savory/service/authentication/provider/facebook/callback/')
 		router.captureAndHide(providerBaseUri + 'twitter/', '/savory/service/authentication/provider/twitter/callback/')

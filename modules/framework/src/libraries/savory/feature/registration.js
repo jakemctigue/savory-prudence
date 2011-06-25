@@ -108,7 +108,7 @@ Savory.Registration = Savory.Registration || function() {
 	 */
     Public.routing = function() {
     	var uri = predefinedGlobals['savory.feature.registration.uri']
-    	uri = (uri && uri.length > 1) ? uri[1] : '/registration/'
+    	uri = (Savory.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/registration/'
 		router.captureAndHide(uri, '/savory/feature/registration/')
 	}
 	
