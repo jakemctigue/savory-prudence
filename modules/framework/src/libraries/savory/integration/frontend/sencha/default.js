@@ -456,7 +456,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			}
 			
 			var found
-			for (var i = this.config.list.iterator(); i.hasNext(); ) {
+			for (var i = this.list.iterator(); i.hasNext(); ) {
 				var potentialRecord = i.next()
 				if (potentialRecord[this.idProperty] == record[this.idProperty]) {
 					found = potentialRecord
