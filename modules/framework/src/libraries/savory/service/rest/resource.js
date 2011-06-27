@@ -57,7 +57,7 @@ function handlePost(conversation) {
 	if (!resource) {
 		return Savory.Resources.Status.ClientError.NotFound
 	}
-	if (!resource.handlePost) {
+	if (!resource.handlePost || !resource.allowPost) {
 		return Savory.Resources.Status.ClientError.MethodNotAllowed
 	}
 	return resource.handlePost(conversation)
@@ -69,7 +69,7 @@ function handlePut(conversation) {
 	if (!resource) {
 		return Savory.Resources.Status.ClientError.NotFound
 	}
-	if (!resource.handlePut) {
+	if (!resource.handlePut || !resource.allowPut) {
 		return Savory.Resources.Status.ClientError.MethodNotAllowed
 	}
 	return resource.handlePut(conversation)
@@ -81,7 +81,7 @@ function handleDelete(conversation) {
 	if (!resource) {
 		return Savory.Resources.Status.ClientError.NotFound
 	}
-	if (!resource.handleDelete) {
+	if (!resource.handleDelete || !resource.allowDelete) {
 		return Savory.Resources.Status.ClientError.MethodNotAllowed
 	}
 	return resource.handleDelete(conversation)

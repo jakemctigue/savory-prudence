@@ -164,16 +164,18 @@ Savory.Sencha = Savory.Sencha || function() {
 		/** @exports Public as Savory.Sencha.Resource */
 		var Public = {}
 
-		///** @ignore */
+		/** @ignore */
 		Public._inherit = Savory.REST.Resource
 		
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty'])
+			Savory.Objects.merge(this, config, ['fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty', 'allowPost', 'allowPut', 'allowDelete'])
 
 			this.rootProperty = this.rootProperty || 'records'
 			this.idProperty = this.idProperty || 'id'
 			this.totalProperty = this.totalProperty || 'total'
+			
+			Savory.Sencha.Resource.prototype.superclass.call(this, this)
 		}
 		
 	    Public.mediaTypes = [
@@ -413,7 +415,7 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty'])
+			Savory.Objects.merge(this, config, ['fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty', 'allowPost', 'allowPut', 'allowDelete'])
 
 			this.idProperty = this.idProperty || 'id'
 			this.list = Savory.JVM.toList(config.data, true)
@@ -504,7 +506,7 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['collection', 'query', 'isObjectId', 'fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty'])
+			Savory.Objects.merge(this, config, ['collection', 'query', 'isObjectId', 'fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty', 'allowPost', 'allowPut', 'allowDelete'])
 			
 			this.idProperty = this.idProperty || '_id'
 			this.isObjectId = Savory.Objects.ensure(this.isObjectId, true)
@@ -615,7 +617,7 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['resource', 'payloadType', 'startAttribute', 'limitAttribute', 'isObjectId', 'fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty'])
+			Savory.Objects.merge(this, config, ['resource', 'payloadType', 'startAttribute', 'limitAttribute', 'isObjectId', 'fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty', 'allowPost', 'allowPut', 'allowDelete'])
 			
 			this.isObjectId = Savory.Objects.ensure(this.isObjectId, true)
 			if (Savory.Objects.isString(this.resource)) {
@@ -683,7 +685,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			}
 			
 			var record = Savory.Resources.request(request)
-			Savory.Logging.getLogger().dump(record, 'obj1')
+			//Savory.Logging.getLogger().dump(record, 'obj1')
 			if (record) {
 				if (record[this.documentsProperty] && record[this.documentsProperty].length) {
 					record = record[this.documentsProperty][0]
@@ -712,10 +714,20 @@ Savory.Sencha = Savory.Sencha || function() {
 	/**
 	 * @class
 	 * @name Savory.Sencha.TreeResource
+	 * @augments Savory.REST.Resource
 	 */
 	Public.TreeResource = Savory.Classes.define(function() {
 		/** @exports Public as Savory.Sencha.TreeResource */
 		var Public = {}
+
+		/** @ignore */
+		Public._inherit = Savory.REST.Resource
+		
+		/** @ignore */
+		Public._construct = function(config) {
+			Savory.Objects.merge(this, config, ['allowPost', 'allowPut', 'allowDelete'])
+			Savory.Sencha.TreeResource.prototype.superclass.call(this, this)
+		}
 
 		Public.getChildren = function() {}
 
@@ -747,7 +759,7 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['rootName', 'nodePrefix'])
+			Savory.Objects.merge(this, config, ['rootName', 'nodePrefix', 'allowPost', 'allowPut', 'allowDelete'])
 
 			this.rootName = this.rootName || 'root'
 			this.nodePrefix = this.nodePrefix || '_n'
@@ -755,6 +767,8 @@ Savory.Sencha = Savory.Sencha || function() {
 			this.lastId = 0
 			
 			addNode.call(this, this.rootName, Savory.Objects.clone(config.root))
+			
+			Savory.Sencha.SelfContainedTreeResource.prototype.superclass.call(this, this)
 		}
 		
 		Public.getChildren = function(name) {
@@ -840,11 +854,13 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['collection', 'separator', 'rootName', 'query', 'field', 'getNodeText'])
+			Savory.Objects.merge(this, config, ['collection', 'separator', 'rootName', 'query', 'field', 'getNodeText', 'allowPost', 'allowPut', 'allowDelete'])
 
 			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 			this.separator = this.separator || '/'
 			this.rootName = this.rootName || this.separator
+			
+			Savory.Sencha.MongoDbTreeResource.prototype.superclass.call(this, this)
 		}
 	
 		Public.getNode = function(id) {

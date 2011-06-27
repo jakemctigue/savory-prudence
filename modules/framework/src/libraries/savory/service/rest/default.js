@@ -198,6 +198,15 @@ Savory.REST = Savory.REST || function() {
 	Public.Resource = Savory.Classes.define(function() {
 		/** @exports Public as Savory.REST.Resource */
 	    var Public = {}
+	    
+	    /** @ignore */
+	    Public._construct = function(config) {
+        	Savory.Objects.merge(this, config, ['allowPost', 'allowPut', 'allowDelete'])
+
+        	this.allowPost = Savory.Objects.ensure(this.allowPost, true)
+			this.allowPut = Savory.Objects.ensure(this.allowPut, true)
+			this.allowDelete = Savory.Objects.ensure(this.allowDelete, true)
+	    }
 
 	    Public.handleInit = function(conversation) {
 	    	if (this.mediaTypes) {
@@ -278,7 +287,7 @@ Savory.REST = Savory.REST || function() {
 				this.name = String(config)
 			}
 	    	else {
-	        	Savory.Objects.merge(this, config, ['name', 'plural', 'collection', 'fields', 'values', 'extract', 'filters', 'handlePost', 'handlePut', 'handleDelete'])
+	        	Savory.Objects.merge(this, config, ['name', 'plural', 'collection', 'fields', 'values', 'extract', 'filters', 'allowPost', 'allowPut', 'allowDelete'])
 	    	}
 			
 			if (this.plural) {
@@ -301,9 +310,7 @@ Savory.REST = Savory.REST || function() {
 				this.extract = Savory.Objects.array(this.extract)
 			}
 			
-			this.handlePost = Savory.Objects.ensure(this.handlePost, true)
-			this.handlePut = Savory.Objects.ensure(this.handlePut, true)
-			this.handleDelete = Savory.Objects.ensure(this.handleDelete, true)
+			Savory.REST.MongoDbResource.prototype.superclass.call(this, this)
 	    }
 	    
 	    Public.mediaTypes = [
@@ -400,10 +407,6 @@ Savory.REST = Savory.REST || function() {
 		}
 		
 	    Public.handlePost = function(conversation) {
-			if (!this.handlePost) {
-				return Savory.Resources.Status.ServerError.NotImplemented
-			}
-			
 			// TODO: must it be JSON?
 			
 			var updates = Savory.Resources.getEntity(conversation, 'extendedJson')
@@ -441,10 +444,6 @@ Savory.REST = Savory.REST || function() {
 		}
 		
 	    Public.handlePut = function(conversation) {
-			if (!this.handlePut) {
-				return Savory.Resources.Status.ServerError.NotImplemented
-			}
-
 			var docs = Savory.Resources.getEntity(conversation, 'extendedJson')
 			if (!docs) {
 				return Savory.Resources.Status.ClientError.BadRequest
@@ -484,10 +483,6 @@ Savory.REST = Savory.REST || function() {
 		}
 		
 	    Public.handleDelete = function(conversation) {
-			if (!this.handleDelete) {
-				return Savory.Resources.Status.ServerError.NotImplemented
-			}
-
 			var q
 			if (this.plural) {
 				q = {}

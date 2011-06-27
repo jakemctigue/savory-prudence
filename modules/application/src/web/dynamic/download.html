@@ -12,7 +12,7 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%& '/site/header/' %>
-<% var revision = 41; %>
+<% var revision = application.globals.get('savory.revision.download') || application.globals.get('savory.revision'); %>
 
 <h1>Download</h1>
 
