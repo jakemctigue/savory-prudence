@@ -22,9 +22,9 @@ var Savory = Savory || {}
 
 /**
  * Flexible, JavaScript-friendly wrapper over Prudence's Restlet-based
- * RESTful API, with support for external and internal resources, parsing and
+ * RESTful client, with support for external and internal resources, parsing and
  * packing of JSON, XML, property sheet and web-form formats, as well as direct
- * passing of JVM objects to internal resources with no serialization.    
+ * passing of JVM objects to internal resources with no serialization.
  * 
  * @namespace
  * 
@@ -251,7 +251,7 @@ Savory.Resources = Savory.Resources || function() {
 	}
 
 	/**
-	 * Requests a resource, with support for various types of result and payload conversions.
+	 * Sends a request to a resource, with support for various types of representation and payload conversions.
 	 * 
 	 * @param params
 	 * @param {String} params.uri

@@ -27,11 +27,11 @@ document.executeOnce('/savory/foundation/prudence/resources/')
 var Savory = Savory || {}
 
 /**
- * HTML parsing.
+ * Parsing of HTML via a powerful <a href="http://jsoup.org/cookbook/extracting-data/selector-syntax">CSS/jQuery-like syntax</a>.
  *  
  * @name Savory.HTML.Parsing
  * @namespace
- * @requires jsoup.jar
+ * @requires org.jsoup.jar
  * @see Visit <a href="http://jsoup.org/">jsoup</a>
  * 
  * @author Tal Liron
@@ -52,7 +52,7 @@ Savory.HTML = Savory.Objects.merge(Savory.HTML, function() {
 	}
 	
 	/**
-	 * Strips all HTML, leaving only plain text.
+	 * Strips all HTML markup, leaving only plain text.
 	 * 
 	 * @param {String} source The HTML source
 	 * @return {String} The source without HTML tags
@@ -91,6 +91,12 @@ Savory.HTML = Savory.Objects.merge(Savory.HTML, function() {
 	    	this.element = element
 	    }
 	    
+	    /**
+	     * Returns the first element matching the query.
+	     * 
+		 * @param {String} query See the <a href="http://jsoup.org/cookbook/extracting-data/selector-syntax">jsoup syntax</a>
+	     * @returns {Savory.HTML.Element}
+	     */
 	    Public.selectFirst = function(query) {
 	    	var element = this.element.select(query).first()
 	    	return Savory.Objects.exists(element) ? new Module.Element(element) : null
@@ -99,14 +105,12 @@ Savory.HTML = Savory.Objects.merge(Savory.HTML, function() {
 	    /**
 		 * Returns text for the first element matching the query.
 		 * 
-		 * @param query
+		 * @param {String} query See the <a href="http://jsoup.org/cookbook/extracting-data/selector-syntax">jsoup syntax</a>
 		 * @returns {String}
 		 */
 		Public.getText = function(query) {
 			return String(this.element.select(query).first().text())
 		}
-		
-		// TODO: more jsoup API!
 	    
 	    return Public
 	}(Public))

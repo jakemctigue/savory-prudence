@@ -18,9 +18,11 @@ document.executeOnce('/savory/foundation/prudence/logging/')
 var Savory = Savory || {}
 
 /**
- * Utilities to start asynchronous tasks, whether in-process or distributed (via a Hazelcast cluster).
+ * Flexible, JavaScript-friendly wrapper over Prudence's task API. Can be used to start asynchronous tasks, whether
+ * in-process or distributed (via a Hazelcast cluster). JavaScript closures can be sent as-is to execute
+ * anywhere!
  * <p>
- * Note: This library modifies the Function prototype.
+ * Note: This library modifies the {@link Function} prototype.
  * 
  * @namespace
  * @see Visit the <a href="http://www.hazelcast.com/">Hazelcast site</a>
@@ -73,7 +75,7 @@ Savory.Tasks = Savory.Tasks || function() {
 	 * @param {String} [params.application] Application's full name (defaults to name of current application)
 	 * @param {Boolean} [params.multi=false] True to distribute task to all members of the cluster
 	 * @param [params.where] Where to distribute the task (leave empty to let Hazelcast decide)
-	 * @returns {Future}
+	 * @returns {java.util.concurrent.Future}
 	 */
 	Public.task = function(params) {
 		if (Savory.Objects.isString(params)) {
@@ -140,9 +142,9 @@ Savory.Tasks = Savory.Tasks || function() {
 	}
 	
 	/**
-	 * Evaluates the code as a task.
+	 * Evaluates the code as a task, which means that it can execute asynchronously or distributed in the cluster.
 	 * 
-	 * @param {String} code JavaScript code
+	 * @param {Function|String} code JavaScript closure or code for a closure
 	 * @param [params]
 	 * @see #task
 	 */
@@ -159,6 +161,8 @@ Savory.Tasks = Savory.Tasks || function() {
 }()
 
 /**
+ * Executes the function as a task, which means that it can execute asynchronously or distributed in the cluster.
+ * 
  * @methodOf Function#
  * @see Savory.Tasks#task
  */

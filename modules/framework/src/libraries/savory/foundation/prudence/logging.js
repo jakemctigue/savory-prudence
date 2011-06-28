@@ -24,7 +24,14 @@ var Savory = Savory || {}
  * Integrates with Savory templates for easy use of string templates in
  * log messages.
  * <p>
- * Note: This library modifies the String prototype.
+ * An important note about performance: If you need to do some complex processing in order to create
+ * the log message, it's better to provide a closure that returns the log message instead of creating
+ * the log message immediately. All logging methods make sure to check that the logger's level support
+ * the message's level before calling the closure, so that unsupported messages will not be processed,
+ * resulting in practically no waste. So, you should never use performance degradation as an excuse
+ * to avoid logging!
+ * <p>
+ * Note: This library modifies the {@link String} prototype.
  *
  * @namespace
  * 
@@ -38,7 +45,7 @@ Savory.Logging = Savory.Logging || function() {
 	/**
 	 * Gets a logger.
 	 * 
-	 * @param {String} [name] The application sub-logger name, or else returns the application's root logger
+	 * @param {String} [name] The application sub-logger name; if not provided returns the application's root logger
 	 * @returns {Savory.Logging.Logger}
 	 */
 	Public.getLogger = function(name) {
@@ -46,6 +53,8 @@ Savory.Logging = Savory.Logging || function() {
 	}
 	
 	/**
+	 * A JavaScript-friendly logger. Provides the same basic API as the JVM logger, plus a few goodies.
+	 * 
 	 * @class
 	 * @see Savory.Logging#getLogger
 	 */
@@ -216,13 +225,16 @@ Savory.Logging = Savory.Logging || function() {
 		 */
 	    Public.dumpShort = function(obj, description, level) {
 			level = level || java.util.logging.Level.INFO
-			var dump = Savory.Objects.isObject(obj) ? Savory.JSON.to(obj) : String(obj)
-			if (description) {
-				return this.log(level, description.capitalize() + ' dump: ' + dump)
+			if (this.logger.isLoggable(level)) {
+				var dump = Savory.Objects.isObject(obj) ? Savory.JSON.to(obj) : String(obj)
+				if (description) {
+					return this.log(level, description.capitalize() + ' dump: ' + dump)
+				}
+				else {
+					return this.log(level, 'Dump: ' + dump)
+				}
 			}
-			else {
-				return this.log(level, 'Dump: ' + dump)
-			}
+			return this
 		}
 		
 		/**
@@ -235,13 +247,16 @@ Savory.Logging = Savory.Logging || function() {
 		 */
 	    Public.dumpLong = function(obj, description, level) {
 			level = level || java.util.logging.Level.INFO
-			var dump = Savory.Objects.isObject(obj) ? Savory.JSON.to(obj, true) : String(obj)
-			if (description) {
-				return this.log(level, description.capitalize() + ' dump:\n' + dump)
+			if (this.logger.isLoggable(level)) {
+				var dump = Savory.Objects.isObject(obj) ? Savory.JSON.to(obj, true) : String(obj)
+				if (description) {
+					return this.log(level, description.capitalize() + ' dump:\n' + dump)
+				}
+				else {
+					return this.log(level, 'Dump:\n' + dump)
+				}
 			}
-			else {
-				return this.log(level, 'Dump:\n' + dump)
-			}
+			return this
 		}
 		
 		/**
@@ -257,6 +272,11 @@ Savory.Logging = Savory.Logging || function() {
 		 */
 	    Public.time = function(description, fn, scope, level) {
 			level = level || java.util.logging.Level.INFO
+			if (!this.logger.isLoggable(level)) {
+				fn.call(scope)
+				return this
+			}
+
 			var start = java.lang.System.currentTimeMillis()
 			this.log(level, 'Starting {0}...', description)
 			

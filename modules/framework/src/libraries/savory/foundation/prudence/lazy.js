@@ -19,7 +19,38 @@ document.executeOnce('/savory/foundation/json/')
 var Savory = Savory || {}
 
 /**
- * Lazy, thread-safe construction of global services via a straightforward DSL.
+ * Lazy, thread-safe injection of resources via a straightforward JSON-based DSL.
+ * <p>
+ * There are three motivations for this library:
+ * <ol>
+ * <li>First is that sometimes you want to signal the creation of a resource in one execution context, but have it actually
+ * instantiated in a different one. The most common use case Prudence is that you configure a resource in your settings.js,
+ * but want it created only when the application is up and running.</li>
+ * <li>A second motivation is to allow for resources to be initialized only on demand, instead of up front. In some applications
+ * this could result in significant savings. With lazy construction, instantiation happens only when the resource is
+ * accessed.</li>
+ * <li>Third is allowing for a straightforward DSL for object creation. This library lets you define your objects using
+ * a simple JSON structure that can be easily stored, edited and marshalled.</li>
+ * </ol>
+ * The core of the library is the {@link Savory.Lazy.LazyEntry} wrapper class, which relies on high-performance JVM read/write
+ * locks to make sure that wrapped values are only instantiated once in concurrent situations. Behind the scenes, lazy
+ * construction works via a regular JavaScript closure -- here called an "instantiator" -- that returns the resource instance.
+ * <p>
+ * Also useful are the {@link Savory.Lazy.List} and {@link Savory.Lazy.Map} classes, which provide two common use cases
+ * for lazy construction. Both allow thread-safe mixing of lazy and non-lazy instances, and abstract away the differences
+ * between the two, making it easy to just use the resources and not have to worry about lazy construction.
+ * <p>
+ * Though you can use these classes directly, the easier way to use this library is to use use {@link Savory.Lazy#buildOne}
+ * or {@link Savory.Lazy#build} to create lazy configurations via the simple DSL, and then store the result in your
+ * application.globals. You can then call {@link Savory.Lazy#getGlobalList}, {@link Savory.Lazy#getGlobalMap} or
+ * {@link Savory.Lazy#getGlobalEntry} to get the result on demand.
+ * <p>
+ * It's important to know that resources might be <i>reinstantiated</i>! This happens if any of the "reset" functions
+ * are called on the entries. Why would you want this to happen? There may be many reasons for this, but a common one
+ * is that during development files may be edited, and the developer would want the changes to be immediately reflected
+ * without having to restart the Prudence instance. This means that you do not simply want to discard the {@link Savory.Lazy#LazyEntry}
+ * instance after you called "get" on it. Instead, you want to always call "get" whenever you want to access the resource,
+ * as it may return a different result upon each call.
  * 
  * @namespace
  * 
@@ -30,14 +61,30 @@ Savory.Lazy = Savory.Lazy || function() {
     var Public = {}
 
 	/**
-	 * @returns {Savory.Lazy.Entry}
+	 * Creates the right kind of entry instance for a value. If the value is an instantiator,
+	 * a {@link Savory.Lazy.LazyEntry} is used, otherwise it's just a {@link Savory.Lazy.Entry}.
+	 * <p>
+	 * Note that a function <i>or a string</i> will both be considered as instantiators!
+	 * Strings will be treated as the source code of the instantiator function.
+	 * 
+	 * @param value The value
+	 * @returns {Savory.Lazy.Entry|Savory.Lazy.LazyEntry}
 	 */
 	Public.createEntry = function(value) {
 		return isConstructor(value) ? new Public.LazyEntry(value) : new Public.Entry(value)
 	}
 	
 	/**
-	 * @returns {Savory.Lazy.Entry|Object}
+	 * Can either return the entry instance or the wrapped value. If you
+	 * want the wrapped value, you must supply the "createFn" param.
+	 * <p>
+	 * An extra application.global will be used to store the {@link Savory.Lazy.Entry} or {@link Savory.Lazy.LazyEntry}
+	 * instance. It will be named as the name param plus ".lazy".
+	 *
+	 * @param {String} name The name of the application.global where the entry's configuration is stored
+	 * @param {Savory.Logging.Logger} logger The logger (used for creation)
+	 * @param {Function} [createFn] The creator function (see {@link Savory.Lazy.LazyEntry#get})
+	 * @returns {Savory.Lazy.Entry|Savory.Lazy.LazyEntry|Object} Null if not found
 	 */
 	Public.getGlobalEntry = function(name, logger, createFn) {
 		var lazyName = name + '.lazy'
@@ -60,6 +107,15 @@ Savory.Lazy = Savory.Lazy || function() {
 	}
 
 	/**
+	 * Can either return the {@link Savory.Lazy.List} instance or a JavaScript array of
+	 * the wrapped values. If you want the array, you must supply the "createFn" param.
+	 * <p>
+	 * An extra application.global will be used to store the {@link Savory.Lazy.List} instance.
+	 * It will be named as the name param plus ".lazy".
+	 * 
+	 * @param {String} name The name of the application.global where the list's configuration is stored
+	 * @param {Savory.Logging.Logger} logger The logger (used for creation)
+	 * @param {Function} [createFn] The creator function (see {@link Savory.Lazy.LazyEntry#get})
 	 * @returns {Savory.Lazy.List|Array}
 	 */
 	Public.getGlobalList = function(name, logger, createFn) {
@@ -79,6 +135,15 @@ Savory.Lazy = Savory.Lazy || function() {
 	}
 		
 	/**
+	 * Can either return the {@link Savory.Lazy.Map} instance or a JavaScript dict of
+	 * the wrapped values. If you want the dict, you must supply the "createFn" param.
+	 * <p>
+	 * An extra application.global will be used to store the {@link Savory.Lazy.Map} instance.
+	 * It will be named as the name param plus ".lazy".
+	 * 
+	 * @param {String} name The name of the application.global where the map's configuration is stored
+	 * @param {Savory.Logging.Logger} logger The logger (used for creation)
+	 * @param {Function} [createFn] The creator function (see {@link Savory.Lazy.LazyEntry#get})
 	 * @returns {Savory.Lazy.Map|Object}
 	 */
 	Public.getGlobalMap = function(name, logger, createFn) {
@@ -98,9 +163,13 @@ Savory.Lazy = Savory.Lazy || function() {
 	}
 	
 	/**
-	 * Builds the source code for a constructor based on a simple DSL.
+	 * Builds the source code for an instantiator function based on a simple DSL.
 	 * 
-	 * @returns {String}
+	 * @param config
+	 * @param {String} name The name of the constructor to instantiate (via keyword "new")
+	 * @param {String[]|String} [config.dependencies] One or more documents to executeOnce before instantiation
+	 * @param [config.config] Optional config to be sent to the constructor
+	 * @returns {String} The JavaScript source code (can be evaled)
 	 */
 	Public.buildOne = function(config) {
 		var fn = 'function(){\n'
@@ -122,7 +191,7 @@ Savory.Lazy = Savory.Lazy || function() {
 	}
 
 	/**
-	 * Builds an array or dict of constructors based on a simple DSL.
+	 * Builds an array or dict of instantiators based on a simple DSL.
 	 * 
 	 * @returns {Array|Object}
 	 */
@@ -146,8 +215,12 @@ Savory.Lazy = Savory.Lazy || function() {
 	}
 		
 	/**
+	 * A trivial wrapper over a value. Exists to allow for a common interface with
+	 * {@link Savory.Lazy.LazyEntry}.
+	 * 
 	 * @class
 	 * @name Savory.Lazy.Entry
+	 * @param instance The value to wrap
 	 */
 	Public.Entry = Savory.Classes.define(function() {
 		/** @exports Public as Savory.Lazy.Entry */
@@ -159,7 +232,12 @@ Savory.Lazy = Savory.Lazy || function() {
 	    }
 
 	    /**
-		 * Retrieves the current instance.
+		 * Retrieves the current instance, plus information about whether
+		 * it was lazily created or already existed.
+		 * 
+		 * @param {Function} createFn A function that receives the source code for am instantiator function, and should
+		 *        return the created instance; it will be called only if the instance has to be instantiated
+		 * @returns A dict in the form {instance: instance, create: true/false}
 		 */
 	    Public.get = function(createFn, logger) {
 			return {
@@ -170,6 +248,8 @@ Savory.Lazy = Savory.Lazy || function() {
 		
 		/**
 		 * Resets the instance, if supported.
+		 * 
+		 * @returns {Boolean} True if was reset, false if was not or could not be reset
 		 */
 		Public.reset = function() {
 			return false
@@ -182,6 +262,7 @@ Savory.Lazy = Savory.Lazy || function() {
 	 * @class
 	 * @name Savory.Lazy.LazyEntry
 	 * @augments Savory.Lazy.Entry
+	 * @param {Function|String} instantiator The function used to create the wrapped value
 	 */
 	Public.LazyEntry = Savory.Classes.define(function(Module) {
 		/** @exports Public as Savory.Lazy.LazyEntry */
@@ -191,10 +272,10 @@ Savory.Lazy = Savory.Lazy || function() {
 	    Public._inherit = Module.Entry
 
 	    /** @ignore */
-	    Public._construct = function(constructor) {
+	    Public._construct = function(instantiator) {
 			// We will need to eval this later so that we don't use Rhino's compiled version,
 			// which contains optimizations that would have the wrong scope for us
-			this.constructor = String(constructor)
+			this.instantiator = String(instantiator)
 
 			this.instance = null
 			this.lock = Savory.JVM.newLock(true)
@@ -222,7 +303,7 @@ Savory.Lazy = Savory.Lazy || function() {
 					}
 
 					try {
-						this.instance = createFn(this.constructor)
+						this.instance = createFn(this.instantiator)
 					}
 					catch (x) {
 						logger.warning(x)
@@ -262,8 +343,13 @@ Savory.Lazy = Savory.Lazy || function() {
 	}(Public))
 	
 	/**
+	 * A thread-safe list of values, some of which may be lazily constructed.
+	 * 
 	 * @class
 	 * @name Savory.Lazy.List
+	 * @param config
+	 * @param {Savory.Logging.Logger} config.logger The logger
+	 * @param {java.util.List} [config.list] You can provide your own (thread-safe) list, or let the class create its own
 	 */
 	Public.List = Savory.Classes.define(function(Module) {
 		/** @exports Public as Savory.Lazy.List */
@@ -275,6 +361,11 @@ Savory.Lazy = Savory.Lazy || function() {
 			this.logger = config.logger || application.logger
 	    }
 
+	    /**
+	     * Resets all entries.
+	     * 
+	     * @see Savory.Lazy.Entry#reset
+	     */
 	    Public.reset = function() {
 			var index = 0
 			for (var i = this.list.iterator(); i.hasNext(); ) {
@@ -286,6 +377,14 @@ Savory.Lazy = Savory.Lazy || function() {
 			}
 		}
 		
+	    /**
+	     * Gets a value, transparently constructing lazy entries if necessary.
+	     * 
+	     * @param {Number} index The list index
+		 * @param {Function} createFn A function that receives the source code for am instantiator function, and should
+		 *        return the created instance; it will be called only if the instance has to be instantiated
+	     * @returns The value or null if not found
+	     */
 	    Public.get = function(index, createFn) {
 			var entry = this.list.get(index)
 			if (entry) {
@@ -298,20 +397,49 @@ Savory.Lazy = Savory.Lazy || function() {
 			return null
 		}
 		
+	    /**
+	     * Sets a value, internally wrapping it with an entry instance.
+	     * 
+	     * @param {Number} index The list index
+	     * @param value The value
+	     * @see Savory.Lazy#createEntry
+	     */
 	    Public.set = function(index, value) {
 	    	this.list.set(index, Module.createEntry(value))
 		}
 		
+	    /**
+	     * Adds an entry to the end of the list, internally wrapping it with an entry instance.
+	     * 
+	     * @param value The value
+	     * @see Savory.Lazy#createEntry
+	     */
 	    Public.add = function(value) {
 	    	this.list.add(Module.createEntry(value))
 		}
-		
+
+	    /**
+	     * Adds all values in the array to the end of the list, internally wrapping them with a entry instances.
+	     * <p>
+	     * Note that this operation is not atomic, and each value is added separately. Concurrent calls may
+	     * result in a different order than is expected.
+	     *
+	     * @param {Array} array The values
+	     * @see Savory.Lazy#createEntry
+	     */
 	    Public.addAll = function(array) {
 			for (var a in array) {
 				this.add(array[a])
 			}
 		}
 		
+	    /**
+	     * Converts the list to a JavaScript array of values, transparently constructing lazy entries if necessary.
+	     * 
+		 * @param {Function} createFn A function that receives the source code for am instantiator function, and should
+		 *        return the created instance; it will be called only if the instance has to be instantiated
+		 * @returns {Array}
+	     */
 	    Public.toArray = function(createFn) {
 			var array = []
 			var index = 0
@@ -335,6 +463,9 @@ Savory.Lazy = Savory.Lazy || function() {
 	/**
 	 * @class
 	 * @name Savory.Lazy.Map
+	 * @param config
+	 * @param {Savory.Logging.Logger} config.logger The logger
+	 * @param {java.util.ConcurrentMap} [config.map] You can provide your own (thread-safe) map, or let the class create its own
 	 */
 	Public.Map = Savory.Classes.define(function(Module) {
 		/** @exports Public as Savory.Lazy.Map */
@@ -346,6 +477,11 @@ Savory.Lazy = Savory.Lazy || function() {
 			this.logger = config.logger || application.logger
 	    }
 
+	    /**
+	     * Resets all entries.
+	     * 
+	     * @see Savory.Lazy.Entry#reset
+	     */
 	    Public.reset = function() {
 			for (var i = this.map.entrySet().iterator(); i.hasNext(); ) {
 				var entry = i.next()
@@ -355,6 +491,14 @@ Savory.Lazy = Savory.Lazy || function() {
 			}
 		}
 		
+	    /**
+	     * Gets a value, transparently constructing lazy entries if necessary.
+	     * 
+	     * @param {Number} name The map key
+		 * @param {Function} createFn A function that receives the source code for am instantiator function, and should
+		 *        return the created instance; it will be called only if the instance has to be instantiated
+	     * @returns The value or null if not found
+	     */
 	    Public.get = function(name, createFn) {
 			var entry = this.map.get(name)
 			if (entry) {
@@ -367,16 +511,38 @@ Savory.Lazy = Savory.Lazy || function() {
 			return null
 		}
 		
+	    /**
+	     * Puts a value in the mae, internally wrapping it with an entry instance.
+	     * 
+	     * @param {Number} name The map key
+	     * @param value The value
+	     * @see Savory.Lazy#createEntry
+	     */
 	    Public.put = function(name, value) {
 	    	this.map.put(name, Module.createEntry(value))
 		}
 		
+	    /**
+	     * Puts all values in the dict into the map, internally wrapping them with a entry instances.
+	     * <p>
+	     * Note that this operation is not atomic, and each value is put separately.
+	     *
+	     * @param {Object} dict The values
+	     * @see Savory.Lazy#createEntry
+	     */
 	    Public.putAll = function(dict) {
 			for (var name in dict) {
 				this.put(name, dict[name])
 			}
 		}
 		
+	    /**
+	     * Converts the list to a JavaScript dict of values, transparently constructing lazy entries if necessary.
+	     * 
+		 * @param {Function} createFn A function that receives the source code for am instantiator function, and should
+		 *        return the created instance; it will be called only if the instance has to be instantiated
+		 * @returns {Object}
+	     */
 	    Public.toDict = function(createFn) {
 			var dict = {}
 			for (var i = this.map.entrySet().iterator(); i.hasNext(); ) {

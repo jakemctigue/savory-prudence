@@ -19,15 +19,20 @@ document.executeOnce('/savory/foundation/jvm/')
 var Savory = Savory || {}
 
 /**
- * Rendering of HTML via Textile, Confluence, MediaWiki, Trac
- * or TWiki markup languages, including support for extending the parsers
- * with JavaScript functions. Uses the Eclipse Foundation's Mylyn WikiText
- * project and pegdown.
+ * Rendering of HTML via Textile, Confluence, MediaWiki, Trac,
+ * TWiki and Markdown markup languages, including support for extending the parsers
+ * via JavaScript closures.
  *  
  * @name Savory.HTML.Markup
  * @namespace
- * @requires org.eclipse.mylyn.wikitext.core.jar (and language jars)
- * @see Visit <a href="http://wiki.eclipse.org/Mylyn/Incubator/WikiText">Mylyn WikiText</a>
+ * @requires For Textile: org.eclipse.mylyn.wikitext.textile.jar, org.eclipse.mylyn.wikitext.core.jar;
+ * @requires For Confluence: org.eclipse.mylyn.wikitext.confluence.jar, org.eclipse.mylyn.wikitext.core.jar;
+ * @requires For Textile: org.eclipse.mylyn.wikitext.textile.jar, org.eclipse.mylyn.wikitext.core.jar;
+ * @requires For MediaWiki: org.eclipse.mylyn.wikitext.mediawiki.jar, org.eclipse.mylyn.wikitext.core.jar;
+ * @requires For Trac: org.eclipse.mylyn.wikitext.tracwiki.jar, org.eclipse.mylyn.wikitext.core.jar;
+ * @requires For TWiki: org.eclipse.mylyn.wikitext.twiki.jar, org.eclipse.mylyn.wikitext.core.jar;
+ * @requires For Markdown: org.pegdown.jar, org.parboiled.jar, org.parboiled.java.jar, org.objectweb.asm.jar, org.objectweb.asm.tree.jar, org.objectweb.asm.tree.analysis.jar, org.objectweb.asm.util.jar
+ * @see Visit <a href="http://wiki.eclipse.org/Mylyn/Incubator/WikiText">Mylyn WikiText</a>;
  * @see Visit <a href="https://github.com/sirthias/pegdown">pegdown</a>
  * 
  * @author Tal Liron
@@ -47,7 +52,7 @@ Savory.HTML = Savory.Objects.merge(Savory.HTML, function() {
 	}
 
     /**
-	 * Gets a renderer.
+	 * Gets a renderer for a markup language
 	 * 
 	 * @param {String} name Supported renderers: 'confluence', 'mediaWiki',
 	 *        'twiki', 'trac', 'textile', 'bugzillaTextile' and 'markdown'
@@ -76,6 +81,8 @@ Savory.HTML = Savory.Objects.merge(Savory.HTML, function() {
 	}
 	
 	/**
+	 * A renderer converts a markup language to HTML.
+	 * 
 	 * @class
 	 * @see Savory.HTML#getRenderer
 	 */

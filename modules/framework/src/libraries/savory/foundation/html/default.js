@@ -19,8 +19,11 @@ document.executeOnce('/savory/foundation/prudence/resources/')
 var Savory = Savory || {}
 
 /**
- * Utilities for secure generation of HTML. Integrates with the Savory
- * Internationalization library.
+ * Utilities for safe generation of HTML. Integrates well with the {@link Savory.Internationalization}
+ * service, including support for right-to-left languages.
+ * <p>
+ * This library works as an extension of {@link Savory.XML}, such that it can use the same simple JSON-based
+ * DSL used there.
  * 
  * @namespace
  * 
@@ -143,7 +146,7 @@ Savory.HTML = Savory.HTML || function() {
 	}
 	
 	/**
-	 * Builds an HTML input element.
+	 * Builds an HTML form input element, optionally prefixing it with a linked label element.
 	 * 
 	 * @param params
 	 * @param [params.name] If present, params.value will be populated from conversation.form

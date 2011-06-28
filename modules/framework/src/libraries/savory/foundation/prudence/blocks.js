@@ -16,7 +16,43 @@ document.executeOnce('/savory/foundation/objects/')
 var Savory = Savory || {}
 
 /**
- * Block utilities.
+ * Simple but very useful extension of <a href="http://threecrickets.com/prudence/manual/generating-html/">Prudence's powerful HTML generation</a>.
+ * <p>
+ * "Blocks" can be defined anywhere in the page or fragment, but are only rendered where (and if) you want them to be rendered.
+ * This lets you organize your page according to your logic, rather than HTML's. For example, JavaScript blocks can
+ * appear in your source code right next to the HTML elements they belong to, but be rendered only after the HTML body element.
+ * <p>
+ * Blocks can also be used to create page templates: you can first define the parts of the page as blocks (things like "header", "footer", "main")
+ * and then simply include the template which will render the parts in their right places.
+ * <p>
+ * Another common use case: a single file can become a "library" of many blocks that you can render as needed. Note that blocks can include
+ * code segments, and that these code segments will not be executed unless the block is actually rendered. To add more flexibility, blocks can be
+ * treated like JavaScript functions: you can accept arguments that are sent at the point of rendering.
+ * <p>
+ * Blocks do not have to be continuous. You can close a named block and open it again elsewhere. The library will concatenate
+ * all parts together upon rendering.
+ * <p>
+ * Another useful feature is that blocks can be nested. If a block definition appears inside another block definition, it will become
+ * instantiated when the outer block is rendered.
+ * 
+ * <h1>Scriptlets</a>
+ * Though you can call the API directly, it's easiest to use blocks via the library's <a href="http://threecrickets.com/prudence/manual/handlers/#toc-Subsection-51">scriptlet plugin</a>:
+ * <pre>
+ * <%{{ 'blockname' %> This is the block content! <%}}%>
+ * </pre>
+ * To render the block:
+ * <%&& 'blockname' %>
+ * You can use any JavaScript expression for the blockname.
+ * <p>
+ * To create a block that receives arguments:
+ * <%{{ 'say-hello' -> name, salutation %> Hello, <%= salutation + ' ' + name %>!  <%}}%>
+ * To render it:
+ * <&& 'say-hello', 'Tal', 'Mr.' %>
+ * Again, any JavaScript expression can be used here.
+ * 
+ * <h1>Installation</h1>
+ * To install the scriptlet plugin, you will need to call {@link Savory.Blocks#routing} in your application's
+ * from your routing.js.
  * 
  * @namespace
  * 

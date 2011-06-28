@@ -14,31 +14,17 @@
 var Savory = Savory || {}
 
 /**
- * SVG rendering.
+ * SVG rendering library. The library also includes a resource that allows for clients (such as AJAX)
+ * to use the server an SVG transcoder: a client can POST and SVG source, and get a raster in return.
  * <p>
- * Note: JPEG transcoding is currenly only supported on Oracle JDK, not on OpenJDK.
+ * Note: JPEG transcoding is currently only supported on Oracle JDK, not on OpenJDK.
  * (As of Batik 1.7).
  * 
  * @namespace
- * @requires
- * <ul>
- * <li>batik-anim.jar</li>
- * <li>batik-awt-util.jar</li>
- * <li>batik-bridge.jar</li>
- * <li>batik-codec.jar</li>
- * <li>batik-css.jar</li>
- * <li>batik-dom.jar</li>
- * <li>batik-ext.jar</li>
- * <li>batik-gvt.jar</li>
- * <li>batik-parser.jar</li>
- * <li>batik-script.jar</li>
- * <li>batik-svg-dom.jar</li>
- * <li>batik-transcoder.jar</li>
- * <li>batik-util.jar</li>
- * <li>batik-xml.jar</li>
- * <li>xml-apis-ext.jar</li>
- * <li>pdf-transcoder.jar</li>
- * </ul>
+ * @requires org.apache.batik.anim.jar, org.apache.batik.css.jar, org.apache.batik.dom.jar, org.apache.batik.dom.svg.jar,
+ * org.apache.batik.ext.awt.jar, org.apache.batik.ext.awt.image.codec.jar, org.apache.batik.parser.jar, org.apache.batik.transcoder.jar,
+ * org.apache.batik.bridge.jar, org.apache.batik.gvt.jar, org.apache.batik.xml.jar,
+ * org.apache.batik.script.jar, org.apache.batik.util.jar, org.apache.fop.svg.jar, org.w3c.dom.jar, org.w3c.dom.svg.jar
  * @see Visit <a href="http://xmlgraphics.apache.org/batik/">Batik</a>
  * 
  * @author Tal Liron
