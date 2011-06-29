@@ -110,6 +110,7 @@ Savory.REST = Savory.REST || function() {
 	Public.lazyConfigsForMongoDbCollections = function(baseUri, collections) {
 		baseUri = baseUri || 'data'
 		var configs = {}
+		
 		if (!collections || !collections.length) {
 			if (MongoDB.defaultDb) {
 				collections = Savory.JVM.fromCollection(MongoDB.defaultDb.collectionNames)
@@ -118,6 +119,7 @@ Savory.REST = Savory.REST || function() {
 				collections = []
 			}
 		}
+
 		for (var c in collections) {
 			var collection = collections[c]
 			if (Savory.Objects.isString(collection)) {
@@ -126,6 +128,7 @@ Savory.REST = Savory.REST || function() {
 			}
 			Savory.Objects.merge(configs, Public.lazyConfigsForMongoDbCollection(baseUri, collection.name, collection.plural))
 		}
+		
 		return configs
 	}
 

@@ -156,6 +156,28 @@ Savory.Files = Savory.Files || function() {
 	}
 	
 	/**
+	 * Opens a file for writing text, optionally with gzip compression.
+	 * 
+	 * @param {String|java.io.File} file The file or its path
+	 * @param {Boolean} [gzip=false] True to gzip the output
+	 * @returns {java.io.PrintWriter}
+	 */
+	Public.openForTextWriting = function(file, gzip) {
+		file = (Savory.Objects.isString(file) ? new java.io.File(file) : file).canonicalFile
+
+		var stream = new java.io.FileOutputStream(file)
+		if (gzip) {
+			stream = new java.util.zip.GZIPOutputStream(stream)
+		}
+
+		var writer = new java.io.OutputStreamWriter(stream)
+		writer = new java.io.BufferedWriter(writer)
+		writer = new java.io.PrintWriter(writer)
+		
+		return writer
+    }
+	
+	/**
 	 * Fast loading of text contents of very large files, using the underlying operating system's
 	 * file-to-memory mapping facilities.
 	 * <p>

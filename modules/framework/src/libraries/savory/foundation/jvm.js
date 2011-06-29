@@ -350,10 +350,57 @@ Savory.JVM = Savory.JVM || function() {
 	/**
 	 * Sweet dreams! Zzzzzzz. 
 	 * 
-	 * @param {Number} duration Duration in millseconds
+	 * @param {Number} duration Duration in milliseconds
 	 */
 	Public.sleep = function(duration) {
 		java.lang.Thread.sleep(duration)
+	}
+	
+	/**
+	 * Executes an OS command, returning its results.
+	 * 
+	 * @param {String} command The command (an alias or its path location)
+	 * @param {String[]} [args] Optional arguments to the command
+	 * @param [environment] An optional dict of environment vars to set for executing the command
+	 * @param {String|java.io.File} [directory] The directory (or its path) in which to execute the command
+	 * @returns {String[]} The command's output, line by line
+	 */
+	Public.exec = function(command, args, environment, directory) {
+		if (Savory.Objects.exists(directory)) {
+			directory = (Savory.Objects.isString(directory) ? new java.io.File(directory) : directory).canonicalFile
+		}
+		
+		if (Savory.Objects.exists(environment)) {
+			var environmentArray = []
+			for (var e in environment) {
+				environmentArray.push(e + '=' + environment[e])
+			}
+			environment = environmentArray
+		}
+		
+		command = [command].concat(args)
+		
+		var runtime = java.lang.Runtime.runtime
+		var process = runtime.exec(command, environment || null, directory || null)
+		
+		var lines = []
+
+		// Get process' output
+		var reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))
+		try {
+			while (true) {
+				var line = reader.readLine()
+				if (!Savory.Objects.exists(line)) {
+					break
+				}
+				lines.push(String(line))
+			}
+		}
+		finally {
+			reader.close()
+		}
+		
+		return lines
 	}
 	
 	//

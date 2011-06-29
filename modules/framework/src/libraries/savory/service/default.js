@@ -13,6 +13,7 @@
 
 document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/service/authorization/')
+document.executeOnce('/savory/service/backup/')
 document.executeOnce('/savory/service/cache/')
 document.executeOnce('/savory/service/documents/')
 document.executeOnce('/savory/service/events/')

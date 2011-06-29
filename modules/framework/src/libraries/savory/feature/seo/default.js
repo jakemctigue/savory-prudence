@@ -547,12 +547,12 @@ Savory.SEO = Savory.SEO || function() {
 
 			Module.logger.time('sitemap generation', function() {
 				if (!Savory.Files.remove(workDir, true)) {
-					Module.logger.severe('Failed to delete work directory "{0}"')
+					Module.logger.severe('Failed to delete work directory "{0}"', workDir)
 					return false
 				}
 
 		    	if (!workDir.mkdirs()) {
-					Module.logger.severe('Failed to create work directory "{0}"')
+					Module.logger.severe('Failed to create work directory "{0}"', workDir)
 					return false
 		    	}
 
@@ -608,7 +608,7 @@ Savory.SEO = Savory.SEO || function() {
 				
 				// Generate site map index
 				var file = new java.io.File(workDir, 'sitemap.xml.gz')
-				var writer = createGzipWriter(file)
+				var writer = Savory.Files.openForTextWriting(file, true)
 				try {
 					Module.logger.info('Generating "{0}"...', file)
 
@@ -701,7 +701,7 @@ Savory.SEO = Savory.SEO || function() {
 			// Google's limits: 50,000 URLs per file and 10MB uncompressed
 
 			var file = new java.io.File(workDir, 'sitemap-' + setName + '.xml.gz')
-			var writer = createGzipWriter(file)
+			var writer = Savory.Files.openForTextWriting(file, true)
 			var pages = 1
 			try {
 				Module.logger.info('Generating "{0}"...', file)
@@ -734,7 +734,7 @@ Savory.SEO = Savory.SEO || function() {
 								writer.close()
 								
 								file = new java.io.File(workDir, 'sitemap-' + setName + '-' + (pages++) + '.xml.gz')
-								writer = createGzipWriter(file)
+								writer = Savory.Files.openForTextWriting(file, true)
 								count = 0
 
 								Module.logger.info('Generating "{0}"...', file)
@@ -757,14 +757,6 @@ Savory.SEO = Savory.SEO || function() {
 		
 		return Public
 	}(Public))
-    
-    //
-    // Private
-    //
-
-	function createGzipWriter(file) {
-    	return new java.io.PrintWriter(new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.util.zip.GZIPOutputStream(new java.io.FileOutputStream(file)))))
-    }
     
     //
     // Initialization
