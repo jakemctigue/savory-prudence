@@ -16,7 +16,7 @@ var Savory = Savory || {}
 /**
  * Date utilities.
  * <p>
- * Note: This library modifies the Date prototype.
+ * Note: This library modifies the {@link Date} prototype.
  * 
  * @namespace
  * 
@@ -30,7 +30,7 @@ Savory.Calendar = Savory.Calendar || function() {
 	/**
 	 * True if the date is today.
 	 * 
-	 * @param {Date} date
+	 * @param {Date} date The date
 	 * @param {Date} [now=new Date()]
 	 * @returns {Boolean}
 	 */ 
@@ -42,7 +42,7 @@ Savory.Calendar = Savory.Calendar || function() {
 	/**
 	 * True if the date is yesterday.
 	 * 
-	 * @param {Date} date
+	 * @param {Date} date The date
 	 * @param {Date} [now=new Date()]
 	 * @returns {Boolean}
 	 */ 
@@ -55,7 +55,7 @@ Savory.Calendar = Savory.Calendar || function() {
 	/**
 	 * True if the date is tomorrow.
 	 * 
-	 * @param {Date} date
+	 * @param {Date} date The date
 	 * @param {Date} [now=new Date()]
 	 * @returns {Boolean}
 	 */ 
@@ -68,7 +68,7 @@ Savory.Calendar = Savory.Calendar || function() {
 	/**
 	 * True if the date is this year.
 	 * 
-	 * @param {Date} date
+	 * @param {Date} date The date
 	 * @param {Date} [now=new Date()]
 	 * @returns {Boolean}
 	 */ 
