@@ -183,9 +183,48 @@ Savory.Backup = Savory.Backup || function() {
     	}
     }
     
-    Public.importMongoDb = function(params) {
+    /**
+     * @param params
+	 * @param {String|java.io.File} params.file The file or its path
+	 * @param {String} [params.name] The collection name (if not provided, will be parsed from the filename)
+	 * @param {Boolean} [gzip] True to gzip-uncompress the file first (if not provided, will be parsed from the filename)
+	 * @param {String|com.mongodb.DB} [params.db=MongoDB.defaultDb] The MongoDB database to use
+	 * @param {Boolean} [params.drop] True to drop the collection before importing
+     */
+    Public.importMongoDbCollection = function(params) {
     	params = Savory.Objects.clone(params)
     	
+    	if (!Savory.Objects.exists(params.name) || !Savory.Objects.exists(params.gzip)) {
+	    	var name = String(new java.io.File(params.file).name)
+	    	if (name.endsWith('.gz')) {
+	    		if (!Savory.Objects.exists(params.gzip)) { 
+	    			params.gzip = true
+	    		}
+	    		name = name.substring(0, name.length - 3)
+	    	}
+	    	if (name.endsWith('.json')) {
+	    		name = name.substring(0, name.length - 5)
+	    		if (!Savory.Objects.exists(params.name)) {
+	    			params.name = name
+	    		}
+	    	}
+    	}
+    	
+    	var collection = new MongoDB.Collection(params.name, {db: params.db})
+    	if (params.drop) {
+    		collection.drop()
+    	}
+
+    	var iterator = new Savory.Iterators.JsonArray({file: params.file, gzip: params.gzip})
+    	try {
+    		while (iterator.hasNext()) {
+    			var doc = iterator.next()
+    			collection.insert(doc)
+    		}
+    	}
+    	finally {
+    		iterator.close()
+    	}
     }
 
 	return Public

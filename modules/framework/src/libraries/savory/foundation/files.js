@@ -176,7 +176,28 @@ Savory.Files = Savory.Files || function() {
 		
 		return writer
     }
-	
+
+	/**
+	 * Opens a file for reading text, optionally with gzip decompression.
+	 * 
+	 * @param {String|java.io.File} file The file or its path
+	 * @param {Boolean} [gzip=false] True to gunzip the input
+	 * @returns {java.io.Reader}
+	 */
+	Public.openForTextReading = function(file, gzip) {
+		file = (Savory.Objects.isString(file) ? new java.io.File(file) : file).canonicalFile
+
+		var stream = new java.io.FileInputStream(file)
+		if (gzip) {
+			stream = new java.util.zip.GZIPInputStream(stream)
+		}
+
+		var reader = new java.io.InputStreamReader(stream)
+		reader = new java.io.BufferedReader(reader)
+		
+		return reader
+    }
+
 	/**
 	 * Fast loading of text contents of very large files, using the underlying operating system's
 	 * file-to-memory mapping facilities.

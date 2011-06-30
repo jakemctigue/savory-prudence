@@ -32,8 +32,98 @@ var Savory = Savory || {}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.JSON = com.mongodb.rhino.JSON
-if (Object.prototype.toString.call(Savory.JSON) != '[object JavaClass]') {
+Savory.JSON = Savory.JSON || com.mongodb.rhino.JSON
+
+if (Object.prototype.toString.call(Savory.JSON) == '[object JavaClass]') {
+	
+	document.executeOnce('/savory/foundation/classes/')
+	document.executeOnce('/savory/foundation/iterators/')
+	document.executeOnce('/savory/foundation/objects/')
+	document.executeOnce('/savory/foundation/files/')
+
+	/**
+	 * Streaming JSON array parser.
+	 * <p>
+	 * The constructor accepts either a ready-to-use reader, or will create
+	 * an efficient one for a file.
+	 * 
+	 * @class
+	 * @name Savory.Iterators.JsonArray
+	 * @param params
+	 * @param {String|java.io.File} [params.file] The file or its path (ignore if params.reader is used)
+	 * @param {java.io.Reader} [params.reader] A reader
+	 */
+	Savory.Iterators.JsonArray = Savory.Classes.define(function() {
+		/** @exports Public as Savory.Iterators.JsonArray */
+		var Public = {}
+		
+	    /** @ignore */
+		Public._inherit = Savory.Iterators.Iterator
+		
+		/** @ignore */
+		Public._construct = function(params) {
+			if (Savory.Objects.exists(params.reader)) {
+				this.reader = reader
+			}
+			else {
+				this.reader = Savory.Files.openForTextReading(params.file, params.gzip)
+			}
+			
+			this.tokener = new com.mongodb.rhino.util.JSONTokener(this.reader)
+
+			// Make sure it's an array
+			var c = nextClean.call(this)
+	    	if (c == '[') {
+		    	// We're good!
+	    		this.hasNextFlag = true
+	    		this.next()
+	    		//this.tokener.back()
+	    	}
+	    	else {
+	    		// Not an array
+	    		this.hasNextFlag = false
+	    	}
+		}
+		
+		Public.hasNext = function() {
+			return this.hasNextFlag
+		}
+		
+		Public.next = function() {
+			var value = this.nextValue
+    		
+			var c = nextClean.call(this)
+	    	if (c == ']') {
+		    	// We're done!
+	    		this.hasNextFlag = false
+	    	}
+	    	else if (c == ',') {
+	    		this.nextValue = this.tokener.nextValue()
+	    	}
+	    	else {
+	    		this.tokener.back()
+	    		this.nextValue = this.tokener.nextValue()
+	    	}
+			
+    		return value
+		}
+		
+		Public.close = function() {
+			this.reader.close()
+		}
+		
+		//
+		// Private
+		//
+		
+		function nextClean() {
+			return java.lang.Character.toString(this.tokener.nextClean())
+		}
+		
+		return Public
+	}())
+}
+else {
 	// Fallback to JavaScript JSON library if the MongoDB Rhino driver isn't found
 	
 	document.executeOnce('/savory/foundation/internal/json2/')

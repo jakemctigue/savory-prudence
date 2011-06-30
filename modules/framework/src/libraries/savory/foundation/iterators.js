@@ -267,24 +267,24 @@ Savory.Iterators = Savory.Iterators || function() {
 	    /** @ignore */
 	    Public._construct = function(generator) {
 	    	this.generator = generator
-	    	this.next = null
-			this.hasNext = generator ? true : false
+	    	this.nextValue = null
+			this.hasNextFlag = generator ? true : false
 			if (generator) {
 				this.next()
 			}
 	    }
 	    
 	    Public.hasNext = function() {
-			return this.hasNext
+			return this.hasNextFlag
 		}
 		
 	    Public.next = function() {
-			var value = this.next
+			var value = this.nextValue
 			try {
-				this.next = this.generator.next()
+				this.nextValue = this.generator.next()
 			}
 			catch (x if x instanceof StopIteration) {
-				this.hasNext = false
+				this.hasNextFlag = false
 			}
 			return value
 		}
@@ -330,7 +330,7 @@ Savory.Iterators = Savory.Iterators || function() {
 	    	this.closeFn = closeFn
 			this.index = 0
 			this.options = {hasNext: true}
-			this.next = fetchFn.call(scope, options, 0)
+			this.nextValue = fetchFn.call(scope, options, 0)
 	    }
 	    
 	    Public.hasNext = function() {
@@ -338,8 +338,8 @@ Savory.Iterators = Savory.Iterators || function() {
 		}
 		
 	    Public.next = function() {
-			var value = this.next
-			this.next = this.fetchFn.call(this.scope, this.options, ++this.index)
+			var value = this.nextValue
+			this.nextValue = this.fetchFn.call(this.scope, this.options, ++this.index)
 			return value
 		}
 		
@@ -438,28 +438,28 @@ Savory.Iterators = Savory.Iterators || function() {
 	    	this.iterator = iterator
 	    	this.testFn = testFn
 	    	this.scope = scope
-			this.next = null
-			this.hasNext = testFn ? true : false
+			this.nextValue = null
+			this.hasNextFlag = testFn ? true : false
 			if (testFn) {
 				this.next()
 			}
 	    }
 	    
 	    Public.hasNext = function() {
-			return this.hasNext
+			return this.hasNextFlag
 		}
 		
 	    Public.next = function() {
-			var value = this.next
+			var value = this.nextValue
 			while (true) {
 				if (this.iterator.hasNext()) {
 					next = this.iterator.next()
-					if (this.testFn.call(this.scope, this.next) != false) {
+					if (this.testFn.call(this.scope, this.nextValue) != false) {
 						break
 					}
 				}
 				else {
-					this.hasNext = false
+					this.hasNextFlag = false
 					break
 				}
 			}
