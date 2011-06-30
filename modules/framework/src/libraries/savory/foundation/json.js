@@ -77,7 +77,6 @@ if (Object.prototype.toString.call(Savory.JSON) == '[object JavaClass]') {
 		    	// We're good!
 	    		this.hasNextFlag = true
 	    		this.next()
-	    		//this.tokener.back()
 	    	}
 	    	else {
 	    		// Not an array
