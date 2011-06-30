@@ -31,8 +31,8 @@ var publicBaseUri = 'https://threecrickets.com/savory'
 
 predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 	savory: {
-		revision: '42',
-		version: 'Early Bird R42',
+		revision: '%REVISION%',
+		version: 'Early Bird R%REVISION%',
 		
 		feature: {
 			console: {
@@ -284,7 +284,7 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 }), predefinedGlobals)
 
 predefinedGlobals['mongoDb.defaultConnection'] = predefinedSharedGlobals['mongoDb.defaultConnection']
-predefinedGlobals['mongoDb.defaultServers'] = predefinedSharedGlobals['mongoDb.defaultServers']
+predefinedGlobals['mongoDb.defaultServers'] = predefinedSharedGlobals['mongoDb.defaultServers'] || '127.0.0.1'
 predefinedGlobals['mongoDb.defaultSwallow'] = predefinedSharedGlobals['mongoDb.defaultSwallow']
 predefinedGlobals['mongoDb.defaultDb'] = 'savory'
 

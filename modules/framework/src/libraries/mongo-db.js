@@ -28,7 +28,7 @@
  * @see Visit the <a href="https://github.com/geir/mongo-java-driver">MongoDB Java driver</a> 
  * 
  * @author Tal Liron
- * @version 1.63
+ * @version 1.64
  */
 var MongoDB = MongoDB || function() {
 	/** @exports Public as MongoDB */
@@ -1648,7 +1648,7 @@ var MongoDB = MongoDB || function() {
 			}
 			catch (x) {}
 		}
-		if (!exists(value) && application.sharedGlobals) {
+		if (!exists(value) && exists(application.sharedGlobals)) {
 			value = application.sharedGlobals.get(name)
 		}
 		return value
@@ -1664,6 +1664,9 @@ var MongoDB = MongoDB || function() {
 		var defaultServers = getGlobal('mongoDb.defaultServers')
 		if (exists(defaultServers)) {
 			Public.defaultConnection = application.getGlobal('mongoDb.defaultConnection', Public.connect(defaultServers, {slaveOk: true, autoConnectRetry: true}))
+			try {
+				predefinedGlobals['mongoDb.defaultConnection'] = Public.defaultConnection
+			} catch(x) {}
 		}
 	}
 	
@@ -1682,6 +1685,9 @@ var MongoDB = MongoDB || function() {
 			if (exists(existing) && !isString(existing)) {
 				Public.defaultDb = existing
 			}
+			try {
+				predefinedGlobals['mongoDb.defaultDb'] = Public.defaultDb
+			} catch(x) {}
 		}
 	}
 	
@@ -1689,6 +1695,9 @@ var MongoDB = MongoDB || function() {
 	Public.defaultSwallow = getGlobal('mongoDb.defaultSwallow')
 	if (exists(Public.defaultSwallow) && Public.defaultSwallow.booleanValue) {
 		Public.defaultSwallow = Public.defaultSwallow.booleanValue()
+		try {
+			predefinedGlobals['mongoDb.defaultSwallow'] = Public.defaultSwallow
+		} catch(x) {}
 	}
 	else {
 		Public.defaultSwallow = false
