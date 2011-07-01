@@ -71,6 +71,7 @@ Savory.Discussion = Savory.Discussion || function() {
 			this.collection = Savory.Objects.isString(collection) ? new MongoDB.Collection(collection) : collection
 			this.query = query
 			this.doc = doc || this.collection.findOne(this.query, {forum: 1})
+			initialize.call(this)
 		}
 		
 	    /**
@@ -184,7 +185,7 @@ Savory.Discussion = Savory.Discussion || function() {
 				for (var p in this.posts) {
 					var post = this.posts[p]
 					if (post.parent && (post.parent.path == thePost.path)) {
-						thePost.responses.push(ensureResponses(post))
+						thePost.responses.push(ensureResponses.call(this, post))
 					}
 				}
 				
