@@ -56,8 +56,8 @@ Savory.Lucene = Savory.Lucene || function() {
 	/**
 	 * Converts a JavaScript dict into a Lucene document.
 	 * <p>
-	 * Note that Lucene documents are flat, with no hierarchical depth.
-	 * You may want to call {@link Savory.Objects#flatten} first for more complex
+	 * Note that Lucene documents are flat, with no hierarchical depth,
+	 * so you may want to call {@link Savory.Objects#flatten} first for more complex
 	 * data structures.
 	 * 
 	 * @param o A flat dict
@@ -88,9 +88,21 @@ Savory.Lucene = Savory.Lucene || function() {
 		}
 		return o
 	}
-	
+
 	/**
+	 * Represents a Lucene document store (JavaScript wrapper over org.apache.lucene.store.Directory).
+	 * <p>
+	 * Note that you must always call {@link #close} when done using a file directory. Though it's possible
+	 * to store a global instance that is never closed, the recommended strategy is to create an instance
+	 * on-the-fly when necessary, and then to close the instance when done using it. Instance creation is
+	 * very lightweight and should not affect performance. Lucene automatically and efficiently handles concurrent
+	 * access to the same file directory, even if different instances are used. 
+	 * <p>
+	 * Of course, in-process memory directories must be stored globally.
+	 * 
 	 * @class
+	 * @name Savory.Lucene.Directory
+	 * 
 	 * @param {String|java.io.File} file The file or path for the directory; will be created if it doesn't
 	 *        exist; leave empty to use an in-process memory directory
 	 */
@@ -104,10 +116,21 @@ Savory.Lucene = Savory.Lucene || function() {
 			this.directory = Savory.Objects.exists(this.file) ? org.apache.lucene.store.FSDirectory.open(this.file) : new org.apache.lucene.store.RAMDirectory()
 	    }
 
+	    /**
+	     * Closes the directory.
+	     */
 	    Public.close = function() {
 	    	this.directory.close()
 		}
 
+	    /**
+	     * Allows writing documents to the directory. The writer must be closed when done.
+	     * 
+	     * @param config See the <a href="http://lucene.apache.org/java/3_3_0/api/all/org/apache/lucene/index/IndexWriterConfig.html">Lucene API documentation</a>
+	     * @param {String} config.openMode Can be 'create', 'append' or 'createOrAppend'
+	     * @returns {org.apache.lucene.index.IndexWriter}
+	     * @see Visit the <a href="http://lucene.apache.org/java/3_3_0/api/all/org/apache/lucene/index/IndexWriter.html">Lucene API documentation</a>
+	     */
 	    Public.createWriter = function(config) {
 			var indexWriterConfig = new org.apache.lucene.index.IndexWriterConfig(version, analyzer)
 			for (var k in config) {
@@ -120,90 +143,137 @@ Savory.Lucene = Savory.Lucene || function() {
 			return new org.apache.lucene.index.IndexWriter(this.directory, indexWriterConfig)
 		}
 		
+	    /**
+	     * Allows searching for documents in a directory.
+	     * 
+	     * @returns {org.apache.lucene.search.IndexSearcher}
+	     * @see Visit the <a href="http://lucene.apache.org/java/3_3_0/api/all/org/apache/lucene/search/IndexSearcher.html">Lucene API documentation</a>
+	     */
 	    Public.createSearcher = function() {
 			var searcher = new org.apache.lucene.search.IndexSearcher(this.directory, true)
 			return searcher
 		}
 		
+	    /**
+	     * Writes documents to the directory.
+	     * 
+	     * @param {Array|Savory.Iterators.Iterator} iterator All entries will be passed through {@link Savory.Lucene#createDocument}
+	     * @param [writerConfig] See {@link #createWriter}
+	     */
 	    Public.index = function(iterator, writerConfig) {
-			if (Savory.Objects.isArray(iterator)) {
-				iterator = new Savory.Iterators.Array(iterator)
-			}
+	    	iterator = Savory.Iterators.iterator(iterator)
+			iterator = new Savory.Iterators.Transformer(iterator, Savory.Lucene.createDocument)
 			var writer = this.createWriter(writerConfig)
 			try {
-				try {
-					while (iterator.hasNext()) {
-						var doc = Savory.Lucene.createDocument(iterator.next())
-						writer.addDocument(doc)
-					}
-				}
-				finally {
-					iterator.close()
-				}
+				Savory.Iterators.consume(iterator, writer.addDocument, writer)
 			}
 			finally {
 				writer.close()
 			}
 		}
-		
+	    
 		/**
-		 * @param {String} query The Lucene query
-		 * @param [params]
-		 * @param {Number} [params.count=100] The maximum number of top documents to return
-		 * @param {String} [params.defaultField] The default query field
-		 * @param {String} [params.previewField] If present generates a short HTML preview of this field with
-		 *        search terms highlighted in the fragments in which they appear
-		 * @param {String} [params.preview='preview'] The new field in which to store the preview
-		 * @param {Number} [params.fragmentLength=100] The maximum length of a preview fragment
-		 * @param {Number} [params.maxFragments=5] The maximum number of fragments to include in the preview
-		 * @param {String} [params.fragmentsSeparator='&amp;hellip;'] The HTML code to appear between preview fragments
-		 * @param {String} [params.termPrefix='&lt;strong&gt'] The HTML code to appear before highlighted terms
-		 * @param {String} [params.termPostfix='&lt;/strong&gt'] The HTML code to appear after highlighted terms
+		 * Performs a search in the directory.
+		 * 
+		 * @param {String|Object} config Either a query or a complete {@link Savory.Lucene.Search} config
+		 * @returns {Savory.Lucene.Search}
 		 */
-	    Public.search = function(query, params) {
-			var parser = new org.apache.lucene.queryParser.QueryParser(version, params.defaultField || null, analyzer)
-			//application.logger.info(query)
-			query = parser.parse(query)
-
-			var scorer, formatter, highlighter
-			if (params.previewField) {
-				scorer = new org.apache.lucene.search.highlight.QueryScorer(query)
-				formatter = new org.apache.lucene.search.highlight.SimpleHTMLFormatter(params.termPrefix || '<strong>', params.termPostfix || '</strong>')
-				highlighter = new org.apache.lucene.search.highlight.Highlighter(formatter, scorer)
-				highlighter.textFragmenter.fragmentSize = params.fragmentLength || 100
-			}
-
-			var searcher = this.createSearcher()
-			try {
-				var hits = searcher.search(query, null, params.count || 100).scoreDocs
-				var docs = []
-				for (var h in hits) {
-					var id = hits[h].doc
-					var doc = searcher.doc(id)
-					var o = Module.fromDocument(doc)
-					
-					if (params.previewField) {
-						try {
-							var tokens = org.apache.lucene.search.highlight.TokenSources.getAnyTokenStream(searcher.indexReader, id, params.previewField, analyzer)
-							o[params.preview || 'preview'] = highlighter.getBestFragments(tokens, o[params.previewField], params.maxFragments || 5, params.fragmentsSeparator || '&hellip;')
-						}
-						catch (x if x.javaException instanceof java.lang.IllegalArgumentException) {
-							// Field can't be analyzed; it's probably not stored in the document
-						}
-					}
-
-					docs.push(o)
-				}
-				return docs
-			}
-			finally {
-				searcher.close()
-			}
+	    Public.search = function(config) {
+	    	config = Savory.Objects.isString(config) ? {query: String(config)} : Savory.Objects.clone(config)
+	    	config.directory = this
+	    	return new Savory.Lucene.Search(config)
 		}
 		
 		return Public
 	}(Public))
     
+	/**
+	 * Represents Lucene search results.
+	 * 
+	 * @class
+	 * @name Savory.Lucene.Search
+	 * 
+	 * @param config
+	 * @param {String} config.query The Lucene query
+	 * @param {Savory.Lucene.Directory} config.directory The directory
+	 * @param {Number} [config.count=100] The maximum number of top documents to return
+	 * @param {String} [config.defaultField] The default query field
+	 * @param {String} [config.previewField] If present generates a short HTML preview of this field with
+	 *        search terms highlighted in the fragments in which they appear
+	 * @param {String} [config.preview='preview'] The new field in which to store the preview
+	 * @param {Number} [config.fragmentLength=100] The maximum length of a preview fragment
+	 * @param {Number} [config.maxFragments=5] The maximum number of fragments to include in the preview
+	 * @param {String} [config.fragmentsSeparator='&amp;hellip;'] The HTML code to appear between preview fragments
+	 * @param {String} [config.termPrefix='&lt;strong&gt'] The HTML code to appear before highlighted terms
+	 * @param {String} [config.termPostfix='&lt;/strong&gt'] The HTML code to appear after highlighted terms
+	 * 
+	 * @see Savory.Lucene#fromDocument
+	 */
+    Public.Search = Savory.Classes.define(function(Module) {
+		/** @exports Public as Savory.Lucene.Directory */
+	    var Public = {}
+    	
+	    /** @ignore */
+	    Public._inherit = Savory.Iterators.Array
+
+	    /** @ignore */
+	    Public._construct = function(config) {
+	    	// Parse query
+			var parser = new org.apache.lucene.queryParser.QueryParser(version, config.defaultField, analyzer)
+			this.query = parser.parse(config.query)
+
+			// Setup highlighter
+			if (config.previewField) {
+				this.previewField = config.previewField
+				this.preview = config.preview || 'preview'
+				this.maxFragments = config.maxFragments || 5
+				this.fragmentsSeparator = config.fragmentsSeparator || '&hellip;'
+				var scorer = new org.apache.lucene.search.highlight.QueryScorer(this.query)
+				var formatter = new org.apache.lucene.search.highlight.SimpleHTMLFormatter(config.termPrefix || '<strong>', config.termPostfix || '</strong>')
+				this.highlighter = new org.apache.lucene.search.highlight.Highlighter(formatter, scorer)
+				this.highlighter.textFragmenter.fragmentSize = config.fragmentLength || 100
+			}
+			
+			this.count = config.count || 100
+			this.searcher = config.directory.createSearcher()
+	    }
+	    
+	    Public.hasNext = function() {
+	    	if (!Savory.Objects.exists(this.hits)) {
+				this.hits = this.searcher.search(this.query, null, this.count).scoreDocs
+		    	this.length = Savory.Objects.exists(this.hits) ? this.hits.length : 0
+				this.index = 0
+	    	}
+	    	
+	    	return this.index < this.length
+	    }
+	    
+	    Public.next = function() {
+			var id = this.hits[this.index++].doc
+			var doc = this.searcher.doc(id)
+			var value = Module.fromDocument(doc)
+			
+			if (Savory.Objects.exists(this.highlighter)) {
+				// Add preview to value
+				try {
+					var tokens = org.apache.lucene.search.highlight.TokenSources.getAnyTokenStream(this.searcher.indexReader, id, this.previewField, analyzer)
+					value[this.preview] = this.highlighter.getBestFragments(tokens, value[this.previewField], this.maxFragments, this.fragmentsSeparator)
+				}
+				catch (x if x.javaException instanceof java.lang.IllegalArgumentException) {
+					// Field can't be analyzed; it's probably not stored in the document
+				}
+			}
+			
+			return value
+	    }
+
+	    Public.close = function() {
+	    	this.searcher.close()
+	    }
+
+		return Public
+	}(Public))
+	
     //
     // Private
     //

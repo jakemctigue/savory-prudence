@@ -18,16 +18,16 @@ var Savory = Savory || {}
 /**
  * A whole bunch of useful iterators with a consistent API.
  * <p>
- * Iterators are used to traverse potentially very large series of entries without
- * advance knowledge of how many entries are in the series. These are somewhat similar
- * to JavaScript iterators, but more generic. A wrapper ({@link Savory.Iterators.Generator})
- * exists to let you use JavaScript iterators here. 
+ * Inspired by sequences in functional languages, Savory iterators are used to traverse potentially very large series
+ * of entries without advance knowledge of how many entries are in the series. These are somewhat similar
+ * to JavaScript generator functions, but more generic. A wrapper ({@link Savory.Iterators.Generator})
+ * exists to let you use JavaScript generator functions here. 
  * <p>
- * Generally, any code that expects to traverse arrays can be made more scalable if
+ * Generally, any code that traverses arrays can be made more scalable if
  * iterators are used instead (and {@link Savory.Iterators.Array} lets you easily consume arrays).
  * The problem with arrays is that <i>all</i> entries exist in memory at once: so that
- * 1) it can take too much memory at once, and 2) it can waste valuable resources as we fill
- * in the array entirely up-front, when we might only want to traverse a subset of entries.
+ * 1) it can take too much memory at once, and 2) it can waste resources, because we always fill
+ * in the array entirely up-front, when we might only end up traversing a subset of the entries.
  * <p>
  * The iterator API has been intentionally designed for compatibility with {@link MongoDB.Cursor},
  * so that a MongoDB cursor can be used anywhere an iterator is expected. For
@@ -46,6 +46,8 @@ var Savory = Savory || {}
  *   iterator.close()
  * }
  * </pre>
+ * <p>
+ * All the wrapping/chaining iterator classes make sure to close the underlying, wrapped iterators.
  * 
  * @namespace
  * 
@@ -55,6 +57,25 @@ var Savory = Savory || {}
 Savory.Iterators = Savory.Iterators || function() {
 	/** @exports Public as Savory.Iterators */
     var Public = {}
+    
+    /**
+     * Makes sure to always return an iterator, converting arrays to {@link Savory.Iterators.Array}
+     * if necessary.
+     * 
+     * @param {Array|Savory.Iterators.Iterator} value An iterator or an array or null
+     * @returns {Savory.Iterators.Iterator}
+     */
+    Public.iterator = function(value) {
+    	if (!Savory.Objects.exists(value)) {
+    		return new Savory.Iterators.Iterator()
+    	}
+    	
+    	if (Savory.Objects.isArray(value)) {
+    		return new Savory.Iterators.Array(value)
+    	}
+    	
+    	return value
+    }
 
 	/**
 	 * Consumes an iterator into an array and closes it.
@@ -91,6 +112,27 @@ Savory.Iterators = Savory.Iterators || function() {
 		
 		return array
 	}
+    
+    /**
+     * Calls a function on all entries of the iterator, closing it when finished.
+     * 
+     * @param {Savory.Iterators.Iterato} iterator The iterator
+     * @param {Function} fn A function that receives an entry; if it returns false the
+     *        iteration is stopped (but the iterator will still be closed)
+	 * @param [scope] The scope to use for fn
+     */
+    Public.consume = function(iterator, fn, scope) {
+		try {
+			while (iterator.hasNext()) {
+				if (fn.call(scope, iterator.next()) === false) {
+					break
+				}
+			}
+		}
+		finally {
+			iterator.close()
+		}
+    }
 		
 	/**
 	 * An iterator with no entries.

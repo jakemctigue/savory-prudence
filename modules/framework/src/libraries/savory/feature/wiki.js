@@ -102,6 +102,9 @@ Savory.Wiki = Savory.Wiki || function() {
 		return page
 	}
 	
+	/**
+	 * @returns {Savory.Wiki.Page[]}
+	 */
 	Public.getPages = function() {
 		var array = []
 		var cursor = pagesCollection.find()
@@ -113,7 +116,8 @@ Savory.Wiki = Savory.Wiki || function() {
 	
 	/**
 	 * @class
-	 * @see #getPage
+	 * @name Savory.Wiki.Page
+	 * @see Savory.Wiki#getPage
 	 */
 	Public.Page = Savory.Classes.define(function() {
 		/** @exports Public as Savory.Wiki.Page */

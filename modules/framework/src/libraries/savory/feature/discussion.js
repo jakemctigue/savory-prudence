@@ -57,6 +57,7 @@ Savory.Discussion = Savory.Discussion || function() {
      * 
      * @class
      * @name Savory.Discussion.Forum
+     * 
      * @param {String|MongoDB.Collection} collection The MongoDB collection
      * @param {String} query The MongoDB query uses to find the document in the collection
      * @param {Object} [doc] The MongoDB document if you already have it, otherwise will

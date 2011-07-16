@@ -77,9 +77,11 @@ Savory.HTML = Savory.Objects.merge(Savory.HTML, function() {
 	}
 	
 	/**
-	 * A queryable HTML element.
+	 * A queryable HTML element (JavaScript wrapper over org.jsoup.nodes.Element).
 	 * 
 	 * @class
+	 * @name Savory.HTML.Element
+	 * @param {org.jsoup.nodes.Element} element The wrapped jsoup element
 	 * @see Savory.HTML#parse
 	 */
 	Public.Element = Savory.Classes.define(function(Module) {

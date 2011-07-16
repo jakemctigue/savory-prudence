@@ -18,8 +18,10 @@ document.executeOnce('/savory/foundation/objects/')
 var Savory = Savory || {}
 
 /**
- * JavaScript-friendly wrapper over the JVM's XML DOM parsing and
- * rendering services.
+ * JavaScript-friendly wrapper over the JVM's XML DOM parsing and rendering services.
+ * <p>
+ * Additionally allows for building XML documents based on simple JSON-based DSL.
+ * The JSON structure can be stored in MongoDB.
  * <p>
  * Note: This library modifies the String prototype.
  * 
@@ -84,7 +86,10 @@ Savory.XML = Savory.XML || function() {
 	}
 
 	/**
-	 * Escapes &lt; and &gt; characters by representing them as XML entities. 
+	 * Escapes &lt; and &gt; characters by representing them as XML entities.
+	 * 
+	 * @param string The string
+	 * @returns {String}
 	 */
 	Public.escapeElements = function(string) {
 		return Savory.Objects.exists(string) ? String(string).replace(/</g, '&lt;').replace(/>/g, '&gt;') : ''
@@ -92,6 +97,9 @@ Savory.XML = Savory.XML || function() {
 
 	/**
 	 * Escapes double quotes by representing them as XML entities.
+	 * 
+	 * @param string The string
+	 * @returns {String}
 	 */
 	Public.escapeDoubleQuotes = function(string) {
 		return Savory.Objects.exists(string) ? String(string).replace(/\"/g, '&quot;') : ''
@@ -99,6 +107,9 @@ Savory.XML = Savory.XML || function() {
 
 	/**
 	 * Escapes &lt;, &gt;, ', ", and & characters by representing them as XML entities.
+	 * 
+	 * @param string The string
+	 * @returns {String}
 	 */
 	Public.escapeText = function(string) {
 		return Savory.Objects.exists(string) ? String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&apos;') : ''
@@ -122,7 +133,7 @@ Savory.XML = Savory.XML || function() {
 	 * @param {Object|Array} [params._children] One or more children elements (as params)  
 	 * @param {Boolean} [params._human] True if to build the element as human-readable,
 	 *        multi-line and indented
-	 * @param {Boolean} [params._html] True if to use HTML mode (slight differences)
+	 * @param {Boolean} [params._html] True if to use HTML mode (which is not XHTML)
 	 * @returns {String} The element
 	 */
 	Public.build = function(params) {
@@ -228,9 +239,14 @@ Savory.XML = Savory.XML || function() {
 	}
 
 	/**
-	 * Represents an XML node.
+	 * Represents an XML node (JavaScript wrapper over teh JVM org.w3c.dom.Node).
 	 * 
 	 * @class
+	 * @name Savory.XML.Node
+	 * 
+	 * @param {org.w3c.dom.Node} node The JVM node
+	 * @param {Savory.XML.Node} [parent] The node's parent
+	 * 
 	 * @see Savory.XML#from
 	 */
 	Public.Node = Savory.Classes.define(function() {
@@ -515,9 +531,10 @@ Savory.XML = Savory.XML || function() {
 }()
 
 /**
- * Escapes &lt; and &gt; characters by representing them as XML entities. 
+ * Escapes &lt; and &gt; characters by representing them as XML entities.
  * 
  * @methodOf String#
+ * @returns {String}
  * @see Savory.XML#escapeElements
  */ 
 String.prototype.escapeElements = String.prototype.escapeElements || function() {
@@ -528,6 +545,7 @@ String.prototype.escapeElements = String.prototype.escapeElements || function() 
  * Escapes &lt;, &gt;, ', ", and & characters by representing them as XML entities.
  * 
  * @methodOf String#
+ * @returns {String}
  * @see Savory.XML#escapeText
  */ 
 String.prototype.escapeText = String.prototype.escapeText || function() {

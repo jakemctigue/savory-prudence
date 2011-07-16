@@ -84,6 +84,11 @@ Savory.HTML = Savory.Objects.merge(Savory.HTML, function() {
 	 * A renderer converts a markup language to HTML.
 	 * 
 	 * @class
+	 * @name Savory.HTML.Renderer
+	 * 
+	 * @param {String} name The markup language name
+	 * @param {org.eclipse.mylyn.wikitext.core.parser.markup.MarkupLanguage} [language] The Mylyn language parser implementation
+	 * 
 	 * @see Savory.HTML#getRenderer
 	 */
 	Public.Renderer = Savory.Classes.define(function() {
@@ -98,7 +103,7 @@ Savory.HTML = Savory.Objects.merge(Savory.HTML, function() {
 	    }
 		
 		/**
-		 * Configures the renderer.
+		 * Configures the Mylyn language parser.
 		 * 
 		 * @param configuration
 		 * @param {Boolean} [configuration.escapingHTMLAndXml]

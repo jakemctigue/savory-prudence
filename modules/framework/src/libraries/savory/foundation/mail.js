@@ -19,8 +19,7 @@ document.executeOnce('/savory/foundation/jvm/')
 var Savory = Savory || {}
 
 /**
- * Email utilities.
- * Supports mixed-media HTML/plain-text emails.
+ * Email utilities. Supports mixed-media HTML/plain-text emails.
  * <p>
  * JavaScript-friendly wrapper over JavaMail. 
  *
@@ -46,6 +45,9 @@ Savory.Mail = Savory.Mail || function() {
 	}
 	
 	/**
+	 * A combined template for the subject and content an email message, also supporting mixed-media
+	 * HTML/plain-text emails. 
+	 * <p>
 	 * Arguments can be either:
 	 * a dict of templates: {subject:'', text:'', html:''},
 	 * or (textPack, prefix): where subject, text and html will be taken from the
@@ -78,8 +80,11 @@ Savory.Mail = Savory.Mail || function() {
 	    
 		/**
 		 * Casts the subject, text and html templates with the filling.
+		 * The result can be used as the 'message' param in {@link Savory.Mail.SMTP#send}.
 		 * 
-		 * @see Templates#cast
+		 * @returns A dict in the form {subject: '...', text: '...'} or
+		 *          {subject: '...', text: '...', html: '...'}
+		 * @see Savory.Templates#cast
 		 */
 		Public.cast = function(filling) {
 			var message = {
@@ -96,12 +101,18 @@ Savory.Mail = Savory.Mail || function() {
 	}())
 	
 	/**
-	 * An SMTP host.
+	 * Represents an SMTP host (thread-safe).
+	 * <p>
+	 * It's up to you to install and configure the host for the proper behavior. See <a href="http://www.postfix.org/">Postfix</a>
+	 * for a mature SMTP host implementation running on most Unix environments.
+	 * <p>
+	 * For internet applications, you will probably want to configure your SMTP host to simply relay to the destination host.
+	 * Intranet applications may require more specialized delivery and storage within your organization's infrastructure. 
 	 * 
 	 * @class
 	 * @name Savory.Mail.SMTP
 	 * 
-	 * @param [host='127.0.0.1'] The IP address of the SMTP host
+	 * @param {String} [host='127.0.0.1'] The IP address of the SMTP host
 	 */
 	Public.SMTP = Savory.Classes.define(function() {
 		/** @exports Public as Savory.Mail.SMTP */
@@ -124,9 +135,9 @@ Savory.Mail = Savory.Mail || function() {
 		 * @param {String|String[]} params.to One or more recipient email addresses
 		 * @param [params.replyTo] The email address to use for replying
 		 * @param message The message to send
-		 * @param message.subject
-		 * @param message.text
-		 * @param [message.html]
+		 * @param {String} message.subject
+		 * @param {String} message.text
+		 * @param {String} [message.html] If present, sends as a mixed-media HTML/plain-text message
 		 */
 		Public.send = function(params, message) {
 			var mimeMessage = new javax.mail.internet.MimeMessage(this.session)

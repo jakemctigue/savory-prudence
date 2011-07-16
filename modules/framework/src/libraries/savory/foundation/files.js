@@ -17,7 +17,7 @@ document.executeOnce('/savory/foundation/objects/')
 var Savory = Savory || {}
 
 /**
- * Utilities to work with files.
+ * High-performance, robust utilities to work with files.
  *  
  * @namespace
  * 
@@ -29,7 +29,7 @@ Savory.Files = Savory.Files || function() {
     var Public = {}
 
 	/**
-	 * Deletes a file or directory.
+	 * Deletes a file or a directory.
 	 * 
 	 * @param {String|java.io.File} file The file or directory or its path
 	 * @param {Boolean} [recursive=false] True to recursively delete a directory

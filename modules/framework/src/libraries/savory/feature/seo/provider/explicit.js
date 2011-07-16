@@ -28,6 +28,7 @@ Savory = Savory || {SEO: {Provider: {}}}
  * 
  * @class
  * @name Savory.SEO.Provider.Explicit
+ * 
  * @param config
  * @param {String} config.name The URL set name
  * @param {String[]} config.domains The root URLs of the domains for which we provide locations

@@ -230,6 +230,7 @@ Savory.SEO = Savory.SEO || function() {
 	 * 
 	 * @class
 	 * @name Savory.SEO.Domain
+	 * 
 	 * @param config
 	 * @param {String} config.rootUri The root URI of this domain, for example: 'http://mysite.org/'
 	 * @param {String} [config.userAgent='*'] The user agent string for robots.txt
@@ -244,6 +245,7 @@ Savory.SEO = Savory.SEO || function() {
 	 *        them to their final location
 	 * @param {String} [config.workRelativePath] The directory in which to put the statically generated sitemap files before moving
 	 *        them to their final location, relative to this application's /work/seo/ subdirectory
+	 * 
 	 * @see Savory.SEO#getDomain
 	 * @see Savory.SEO#getDomains
 	 * @see Savory.SEO#getCurrentDomain

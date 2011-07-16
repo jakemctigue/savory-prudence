@@ -20,9 +20,6 @@ var Savory = Savory || {}
 /**
  * Utilities for formatting and parsing dates, currency, etc.
  * <p>
- * Important: The JVM's SimpleDateFormat is not thread-safe, so make sure not to
- * share instances between Prudence requests.
- * <p>
  * Note: This library modifies the Date and String prototypes.
  *
  * @namespace
@@ -176,6 +173,11 @@ Savory.Localization = Savory.Localization || function() {
 	}
 
 	/**
+	 * Represents a date and/or time format based on a string pattern (JavaScript wrapper over java.text.SimpleDateFormat).
+	 * <p> 
+	 * Important: The JVM's SimpleDateFormat is not thread-safe, so make sure not to
+	 * share instances between Prudence requests.
+	 * 
 	 * @class
 	 * @name Savory.Localization.DateTimeFormat
 	 * @param {String} format See <a href="http://download.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html">pattern rules</a>
@@ -227,11 +229,15 @@ Savory.Localization = Savory.Localization || function() {
 	}())
 	
 	/**
+	 * Represents a currency format based on a template.
+	 * 
 	 * @class
 	 * @name Savory.Localization.CurrencyFormat
+	 * 
 	 * @param {Currency} currency
 	 * @param {String} [template='{symbol}{amount}'] Template to cast, filled with 'symbol' and 'amount' 
 	 * @param [locale] Default locale to use (see {@link Savory.JVM#getLocale} for format)
+	 * 
 	 * @see Savory.Localization#getCurrencyFormat
 	 */
 	Public.CurrencyFormat = Savory.Classes.define(function() {

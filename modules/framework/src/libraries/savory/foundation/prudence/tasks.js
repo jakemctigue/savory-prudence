@@ -164,6 +164,7 @@ Savory.Tasks = Savory.Tasks || function() {
  * Executes the function as a task, which means that it can execute asynchronously or distributed in the cluster.
  * 
  * @methodOf Function#
+ * @returns {java.util.concurrent.Future}
  * @see Savory.Tasks#task
  */
 Function.prototype.task = Function.prototype.task || function(params) {

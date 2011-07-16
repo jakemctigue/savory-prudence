@@ -50,9 +50,12 @@ Savory.Templates = Savory.Templates || function() {
     var Public = {}
 
 	/**
-	 * Cast a template, which may contain variables in curly brackets, 
-	 * using arguments (which fill {0}, {1}, {2} and so on),
-	 * a map of filling values, or a filling fetcher/generator function.
+	 * Cast a template, which may contain variables in curly brackets. Three modes for casting are supported:
+	 * <ul>
+	 * <li>Using a series arguments, which each fill numbered variables {0}, {1}, {2} and so on</li>
+	 * <li>Using dict/map of filling values</li>
+	 * <li>Using a filling function</li>
+	 * </ul>
 	 * Variables with no matching filling are left as is.
 	 * <p>
 	 * Examples:

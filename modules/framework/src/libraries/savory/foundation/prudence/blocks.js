@@ -47,7 +47,7 @@ var Savory = Savory || {}
  * To create a block that receives arguments:
  * <%{{ 'say-hello' -> name, salutation %> Hello, <%= salutation + ' ' + name %>!  <%}}%>
  * To render it:
- * <&& 'say-hello', 'Tal', 'Mr.' %>
+ * <&& 'say-hello', 'Tal', 'Dr.' %>
  * Again, any JavaScript expression can be used here.
  * 
  * <h1>Installation</h1>

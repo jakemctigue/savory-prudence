@@ -17,7 +17,7 @@ var Savory = Savory || {}
  * SVG rendering library. The library also includes a resource that allows for clients (such as AJAX)
  * to use the server an SVG transcoder: a client can POST and SVG source, and get a raster in return.
  * <p>
- * Note: JPEG transcoding is currently only supported on Oracle JDK, not on OpenJDK.
+ * Note: JPEG transcoding is currently supported only on Oracle JDK, not on OpenJDK.
  * (As of Batik 1.7).
  * 
  * @namespace
@@ -44,7 +44,7 @@ Savory.SVG = Savory.SVG || function() {
 	}
 		
 	/**
-	 * Converts SVG source into a raster.
+	 * Converts SVG source into a binary raster image.
 	 * 
 	 * @param {String} svg The SVG source
 	 * @param {String} mediaType The MIME type ('image/jpeg', 'image/png' or 'application/pdf')
