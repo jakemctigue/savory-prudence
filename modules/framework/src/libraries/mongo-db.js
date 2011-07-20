@@ -28,7 +28,7 @@
  * @see Visit the <a href="https://github.com/geir/mongo-java-driver">MongoDB Java driver</a> 
  * 
  * @author Tal Liron
- * @version 1.64
+ * @version 1.65
  */
 var MongoDB = MongoDB || function() {
 	/** @exports Public as MongoDB */
@@ -368,6 +368,15 @@ var MongoDB = MongoDB || function() {
 		 */
 		this.drop = function() {
 			try {
+				var cursor = this.result.results()
+				if (exists(cursor)) {
+					try {
+						// Make sure to close the cursor (if it is, indeed, a cursor)
+						cursor.close()
+					}
+					catch (x) {
+					}
+				}
 				this.result.drop()
 				Public.setLastStatus(this.connection, true)
 				return this
@@ -388,9 +397,11 @@ var MongoDB = MongoDB || function() {
 		 */
 		this.getCursor = function() {
 			try {
-				var collection = this.getOutputCollection()
+				// Note that the results might be an inline iterator: we are assuming that the caller
+				// knows that it is actually a cursor
+				var cursor = this.result.results()
 				Public.setLastStatus(this.connection, true)
-				return exists(collection) ? collection.find() : null
+				return exists(cursor) ? new MongoDB.Cursor(cursor, this.swallow) : null
 			}
 			catch (x if x.javaException instanceof com.mongodb.MongoException) {
 				x = MongoDB.exception(x.javaException, this.connection, this.swallow)
