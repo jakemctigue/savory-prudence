@@ -1,10 +1,9 @@
 <%
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/jvm/')
+document.executeOnce('/savory/integration/frontend/sencha/')
 document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/forms/')
+document.executeOnce('/savory/foundation/prudence/resources/')
 
-var form = new Savory.Forms.Form({fields: {
+var form = new Savory.Resources.Form({fields: {
 	first: {type: 'number', label: 'A number'},
 	second: {type: 'integer', label: 'An integer'}
 }})
@@ -20,63 +19,93 @@ form.process = function(results) {
 	}
 }
 
-
-if (!form.handle(conversation)) {
+var results = form.handle(conversation)
+if (!results || (results.mode != 'json')) {
 
 conversation.locals.put('extJs', true)
 %>
 <%{{ 'page.scripts' %>
 <script>
-var fieldsWithValidation = <%= Savory.JSON.to(form.getSenchaFields(), true, true) %>;
+var fieldsWithValues = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, (results && !results.success) ? results : null), true, true) %>;
 
-var fieldsWithoutValidation = <%= Savory.JSON.to(form.getSenchaFields(false), true, true) %>;
+var fieldsWithValuesWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, (results && !results.success) ? results : null, true, false), true, true) %>;
+
+var fieldsWithValuesBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, (results && !results.success) ? results : null, false, false), true, true) %>;
+
+var fields = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form), true, true) %>;
+
+var fieldsWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, null, true, false), true, true) %>;
+
+var fieldsBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, null, false, false), true, true) %>;
 
 var titles = {
+	'standard-form': 'Standard Form Multiplier',
+	'standard-form-half': 'Standard Form Multiplier (with validation, without masking)',
+	'standard-form-bare': 'Standard Form Multiplier (without validation or masking)',
 	'ajax-form': 'AJAX Multiplier',
-	'ajax-form-no-validation': 'AJAX Multiplier (no client-side validation)'
+	'ajax-form-half': 'AJAX Multiplier (with validation, without masking)',
+	'ajax-form-bare': 'AJAX Multiplier (without validation or masking)'
 };
 
 var fields = {
-	'ajax-form': fieldsWithValidation,
-	'ajax-form-no-validation': fieldsWithoutValidation
+	'standard-form': fieldsWithValues,
+	'standard-form-half': fieldsWithValuesWithValidationWithoutMasking,
+	'standard-form-bare': fieldsWithValuesBare,
+	'ajax-form': fields,
+	'ajax-form-half': fieldsWithValidationWithoutMasking,
+	'ajax-form-bare': fieldsBare
 };
 
 function openForm(event, el) {
+	var config = {
+		xtype: 'form',
+		border: false,
+		bodyCls: 'x-border-layout-ct', // Uses the neutral background color
+		bodyPadding: 10,
+		layout: 'anchor',
+		defaults: {
+			anchor: '100%'
+		},
+		defaultType: 'textfield',
+		items: fields[el.id],
+		buttons: [{
+			text: 'Submit',
+			disabled: true,
+			formBind: true,
+			handler: function() {
+				var form = this.up('form').getForm();
+				if (form.isValid()) {
+					form.submit({
+						success: function(form, action) {
+						   Ext.Msg.alert('Success!', action.result.msg);
+						},
+						failure: function(form, action) {
+							Ext.Msg.alert('Failure!', action.result.msg);
+						}
+					});
+				}
+			}
+		}]
+	};
+	
+	if (el.id.substring(0, 8) == 'standard') {
+		config.standardSubmit = true;
+		config.url = '?form=' + el.id;
+	}
+	else if (el.id.substring(0, 4) == 'ajax') {
+		config.url = '?mode=json';
+	}
+	
 	Ext.create('Ext.window.Window', {
 		title: titles[el.id],
 		width: 350,
-		items: {
-			xtype: 'form',
-			border: false,
-			bodyCls: 'x-border-layout-ct', // Uses the neutral background color
-			bodyPadding: 10,
-			layout: 'anchor',
-			defaults: {
-				anchor: '100%'
-			},
-			defaultType: 'textfield',
-			items: fields[el.id],
-			buttons: [{
-				text: 'Submit',
-				disabled: true,
-				formBind: true,
-				handler: function() {
-					var form = this.up('form').getForm();
-					if (form.isValid()) {
-						form.submit({
-							success: function(form, action) {
-							   Ext.Msg.alert('Success!', action.result.msg);
-							},
-							failure: function(form, action) {
-								Ext.Msg.alert('Failed!', action.result.msg);
-							}
-						});
-					}
-				}
-			}]
-		}
+		items: config
 	}).show();
 }
+
+Ext.onReady(function() {
+	Ext.select('.open-form').on('click', openForm);
+});
 </script>
 <%}}%>
 <%{{ 'page.main' %>
@@ -91,6 +120,10 @@ function openForm(event, el) {
 	As far as submitting the form, Ext JS offers three (!) different ways of doing so, and Savory
 	supports them all.
 </p>
+<p>
+	For all these demos, use the third button (without validation or masking) to test the server-side
+	validation.
+</p>
 
 
 <h3>Standard Forms</h3>
@@ -100,10 +133,36 @@ function openForm(event, el) {
 	Because it is a regular browser POST, the whole page is reloaded.
 </p>
 <p>
+	For the purposes of this demo, we will re-open the form on page reload upon failed standard submission,
+	so that the user (you!) can try again. Obviously, the better solution for this particular use case
+	would be to use an AJAX form (see below).
 </p>
 <p>
-	<button id="standard-form">Open standard form</button>
+	<button id="standard-form" class="open-form">Standard form</button>
+	<button id="standard-form-half" class="open-form">Standard with validation, without masking</button>
+	<button id="standard-form-bare" class="open-form">Standard without validation or masking</button>
 </p>
+<% if (results && (results.mode == 'raw')) { %>
+<h3>Results from Last Standard Submission</h3>
+<div class="note">
+	<%= results.msg %>
+<% if (!results.success) { %>
+	<ul>
+<% for (var name in results.errors) { %>
+		<li style="list-style-type: disc; margin-left: 20px;"><%= name %>: <%= results.errors[name] %></li>
+<% } %>
+	</ul>
+<% } %>
+</div>
+<%{{ 'page.scripts' %>
+<script>
+Ext.onReady(function() {
+	openForm(null, Ext.get('<%= conversation.query.get("form") %>'));
+	Ext.Msg.alert('<%= results.success ? "Success!" : "Failure!" %>', '<%= results.msg.escapeSingleQuotes() %>');
+});
+</script>
+<%}}%>
+<% } %>
 
 
 <h3>AJAX Forms</h3>
@@ -115,19 +174,11 @@ function openForm(event, el) {
 	(unless you explicitly do so in your code).  
 </p>
 <p>
-	<button id="ajax-form">Open AJAX form with client-side validation</button>
-	<button id="ajax-form-no-validation">Open AJAX form without client-side validation</button>
+	<button id="ajax-form" class="open-form">AJAX with validation and masking</button>
+	<button id="ajax-form-half" class="open-form">AJAX with validation, without masking</button>
+	<button id="ajax-form-bare" class="open-form">AJAX without validation or masking</button>
 </p>
 
-
-<%{{ 'page.scripts' %>
-<script>
-Ext.onReady(function() {
-	Ext.fly('ajax-form').on('click', openForm);
-	Ext.fly('ajax-form-no-validation').on('click', openForm);
-});
-</script>
-<%}}%>
 
 <h3>Ext Direct Forms</h3>
 <p>

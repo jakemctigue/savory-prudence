@@ -176,12 +176,13 @@ else {
 	 * 
 	 * @param value The extended-JSON-compatible value
 	 * @param {Boolean} [human=false] True to generate human-readable, multi-line, indented JSON
+	 * @param {Boolean} [javaScript=false] True to generate JavaScript source code where applicable (breaks JSON!)
 	 * @returns {String} The JSON representation of value
 	 */
-	Savory.JSON.to = function(value, human) {
+	Savory.JSON.to = function(value, human, javaScript) {
 		return JSON.stringify(value)
 		
-		// TODO: extended JSON?
+		// TODO: extended JSON? JavaScript mode?
 	}
 	
 	/**

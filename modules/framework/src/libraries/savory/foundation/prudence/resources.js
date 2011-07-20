@@ -16,6 +16,7 @@ document.executeOnce('/savory/foundation/objects/')
 document.executeOnce('/savory/foundation/rhino/')
 document.executeOnce('/savory/foundation/json/')
 document.executeOnce('/savory/foundation/jvm/')
+document.executeOnce('/savory/foundation/validation/')
 document.executeOnce('/savory/foundation/prudence/logging/')
 
 var Savory = Savory || {}
@@ -198,6 +199,7 @@ Savory.Resources = Savory.Resources || function() {
 	 * @param conversation The Prudence conversation
 	 * @param [keys] See {@link Savory.Resources#fromAttributeMap}
 	 * @returns A dict of query parameters
+	 * @see Visit <a href="http://threecrickets.com/prudence/manual/api/#toc-Paragraph-108">the Prudence API documentation for conversation.query</a>
 	 */
 	Public.getQuery = function(conversation, keys) {
 		return Public.fromAttributeMap(conversation.query, conversation.queryAll, keys)
@@ -205,10 +207,14 @@ Savory.Resources = Savory.Resources || function() {
 
 	/**
 	 * Extracts form parameters, treating them as specific types.
+	 * The form data is submitted by the client as an "application/x-www-form-urlencoded" entity.
+	 * <p>
+	 * See {@link Savory.Resources.Form} for a more comprehensive solution to handling forms.
 	 * 
 	 * @param conversation The Prudence conversation
 	 * @param [keys] See {@link Savory.Resources#fromAttributeMap}
 	 * @returns A dict of form parameters
+	 * @see Visit <a href="http://threecrickets.com/prudence/manual/api/#toc-Paragraph-107">the Prudence API documentation for conversation.form</a>
 	 */
 	Public.getForm = function(conversation, keys) {
 		return Public.fromAttributeMap(conversation.form, conversation.formAll, keys)
@@ -843,5 +849,185 @@ Savory.Resources = Savory.Resources || function() {
 		return Public.toForm(dict).webRepresentation
 	}
 
-	return Public
+	/**
+	 * Represents a standard HTML form.
+	 * The form data is submitted by the client as an "application/x-www-form-urlencoded" entity.
+	 * <p>
+	 * See {@link Savory.Resources#getForm} for a more rudimentary solution to handling forms.
+	 * 
+	 * @class
+	 * @name Savory.Resources.Form
+	 * 
+	 * @param config
+	 * @param config.fields A dict of field names mapped to this format:
+	 *        {label: '', type: '', validator: '', mask: ''} or a plain string, which will considered as the 'type';
+	 *        'label' will default to the field name; 'type' defaults to 'string' and is used with the {@link Savory.Validation}
+	 *        library; 'validator' and 'mask' will both override options provided by the validation library  
+	 * @param {Boolean} [config.serverValidation=true] True to enable server-side validation for all fields
+	 * @param {Boolean} [config.clientValidation=true] True to enable client-side validation for all fields (this value is not
+	 *        handled directly by this class, but is defined and stored as a convenience for client implementations)
+	 */
+    Public.Form = Savory.Classes.define(function(Module) {
+    	/** @exports Public as Savory.Resources.Form */
+    	var Public = {}
+    	
+        /** @ignore */
+    	Public._construct = function(config) {
+    		this.serverValidation = Savory.Objects.ensure(config.serverValidation, true)
+    		this.clientValidation = Savory.Objects.ensure(config.clientValidation, true)
+    		this.fields = {}
+    		for (var name in config.fields) {
+    			var field = config.fields[name]
+    			
+    			field = Savory.Objects.isString(field) ? {type: String(field)} : Savory.Objects.clone(field)
+    			field.label = field.label || name
+    			
+    			this.fields[name] = field
+    		}
+    	}
+    	
+    	/**
+    	 * Performs server-side validation of values according to the form's defined fields.
+    	 * 
+    	 * @param values A dict of field names mapped to values; all values will be treated as strings;
+    	 *        unrecognized field names will be ignored
+    	 * @returns A structure in the format: {success: true, values: {...}} or {success: false, values: {...}, errors: {...}};
+    	 *          values are copied over from the arg (always as strings), and errors are all texts that can be displayed
+    	 *          to users
+    	 */
+    	Public.validate = function(values) {
+    		var results = {success: true}
+
+    		// Check that all required fields are provided
+    		if (this.serverValidation) {
+	    		for (var name in this.fields) {
+	    			var field = this.fields[name]
+	    			if (field.required) {
+	    				var value = values[name]
+	    				if (!Savory.Objects.exists(value) || (value == '')) {
+	    					results.success = false
+	    					if (results.errors === undefined) {
+	    						results.errors = {}
+	    					}
+	    					results.errors[name] = error
+	    				}
+	    			}
+	    		}
+    		}
+    		
+    		// Check remaining values
+    		for (var name in values) {
+    			if (!results.success && Savory.Objects.exists(results.errors[name])) {
+    				// We've already validated this value
+    				continue
+    			}
+
+    			var value = values[name]
+    			var field = this.fields[name]
+    			
+    			// Only include defined fields
+    			if (Savory.Objects.exists(field) && Savory.Objects.exists(value)) {
+    				var error = null
+    				
+    				if (this.serverValidation) {
+        				var validator = field.validator
+						var validation = Savory.Validation[field.type || 'string']
+        				if (!validator) {
+    						if (validation && validation.fn) {
+    							validator = validation.fn
+    						}
+        				}
+        				
+        				if (validator) {
+	    					var validity = validator.call(this, value, field)
+	    					if (validity !== true) {
+	    						if (validation && validation.errors) {
+	    							error = validation.errors[validity]
+	    						}
+	    						error = error ? error.cast({name: name}) : 'Wrong'
+	    					}
+	    				}
+    				}
+    				
+    				if(Savory.Objects.exists(value)) {
+    					if (results.values === undefined) {
+    						results.values = {}
+    					}
+    					results.values[name] = String(value)
+    				}
+    				
+    				if (error) {
+    					results.success = false
+    					if (results.errors === undefined) {
+    						results.errors = {}
+    					}
+    					results.errors[name] = error
+    				}
+    			}
+    		}
+    		
+    		return results
+    	}
+    	
+    	/**
+    	 * 
+    	 * @param conversation The Prudence conversation
+    	 * @param [params]
+    	 * @param {String} [params.mode='raw'] Set this to override the query param
+    	 * @param {String} [params.successDocumentName=this.successDocumentName] Set this to override the form's value 
+    	 * @param {String} [params.failureDocumentName=this.failureDocumentName] Set this to override the form's value 
+    	 * @param {String} [params.documentName=this.documentName] Set this to override the form's value 
+    	 * @returns False is the form was not handled, otherwise the raw results (see {@link #validate})
+    	 */
+    	Public.handle = function(conversation, params) {
+    		params = params || {}
+    		var mode = params.mode || conversation.query.get('mode') || 'raw'
+    		mode = String(mode)
+    		
+    		if (conversation.request.method == 'POST') {
+	    		var values = Module.getForm(conversation)
+	    		
+	    		var results = this.validate(values)
+	    		this.process(results)
+	    		
+	    		switch (mode) {
+	    			case 'json':
+	    	    		conversation.mediaTypeName = 'application/json'
+	    	    		var printResults = results
+    		    		if (printResults.success) {
+    		    			printResults = Savory.Objects.clone(printResults)
+    		    			delete printResults.values
+    		    		}
+    		    		print(Savory.JSON.to(printResults))
+    		    		break
+    		    		
+	    			case 'include':
+	    				var documentName
+	    				if (results.success) {
+	    					documentName = params.successDocumentName || this.successDocumentName
+	    				}
+	    				else {
+	    					documentName = params.failureDocumentName || this.failureDocumentName
+	    				}
+    					documentName = documentName || this.documentName
+
+    					conversation.locals.put('savory.resources.form', results)
+	    				document.include(documentName)
+	    				break
+	    		}
+	    		
+	    		results.mode = mode
+	    		return results
+    		}
+    		
+    		return false
+    	}
+    	
+    	Public.process = function(results) {
+    	}
+    	
+    	return Public
+    }(Public))
+    
+    return Public
 }()

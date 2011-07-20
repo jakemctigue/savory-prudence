@@ -19,6 +19,7 @@ document.executeOnce('/savory/foundation/jvm/')
 document.executeOnce('/savory/foundation/xml/')
 document.executeOnce('/savory/foundation/iterators/')
 document.executeOnce('/savory/foundation/objects/')
+document.executeOnce('/savory/foundation/validation/')
 document.executeOnce('/savory/foundation/prudence/resources/')
 document.executeOnce('/mongo-db/')
 
@@ -137,6 +138,81 @@ Savory.Sencha = Savory.Sencha || function() {
 		for (var r in records) {
 			records[r][idProperty] = id++
 		}
+	}
+	
+	/**
+	 * Translates form fields into the format expected by Sencha forms.
+	 * <p>
+	 * You can translate the result into client-side code via Savory.JSON.to(result, true, true).
+	 * See {@link Savory.JSON#to}. 
+	 * 
+	 * @param {Savory.Resources.Form} form The form
+	 * @param [results] The results from a call to {@link Savory.Resources.Form#handle}, used it initialize field
+	 *        values
+	 * @param {Boolean} [clientValidation=form.clientValidation] True to include validator
+	 * @param {Boolean} [clientMasking=true] True to include maskRe
+	 * @returns {Array}
+	 */
+	Public.getFormFields = function(form, results, clientValidation, clientMasking) {
+		clientValidation = Savory.Objects.ensure(clientValidation, form.clientValidation)
+		clientMasking = Savory.Objects.ensure(clientMasking, true)
+
+		var sencha = []
+		
+		for (var name in form.fields) {
+			var field = form.fields[name]
+			var senchaField = {name: name, fieldLabel: field.label}
+			
+			if (results) {
+				if (results.values && results.values[name]) {
+					senchaField.value = results.values[name]
+				}
+				if (results.errors && results.errors[name]) {
+					senchaField.activeError = results.errors[name]
+				}
+			}
+
+			var validation
+			if (clientValidation) {
+    			if (field.required) {
+    				senchaField.allowBlank = false
+    			}
+
+				var validator = field.validator
+				validation = Savory.Validation[field.type || 'string']
+				if (!validator) {
+					if (validation && validation.fn) {
+						validator = validation.fn
+					}
+				}
+				
+				if (validator) {
+					if (typeof validator != 'function') {
+						validator = eval(validator)
+					}
+					senchaField.validator = validator
+				}
+			}
+			
+			if (clientMasking) {
+				var mask = field.mask
+				if (!mask) {
+					if (!validation) {
+						validation = Savory.Validation[field.type || 'string']
+					}
+					if (validation && validation.mask) {
+						mask = validation.mask
+					}
+				}
+    			if (mask) {
+    				senchaField.maskRe = mask
+    			}
+			}
+
+			sencha.push(senchaField)
+		}
+		
+		return sencha
 	}
 	
 	/**
