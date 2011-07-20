@@ -724,19 +724,15 @@ Savory.Resources = Savory.Resources || function() {
 					var value = values[v]
 					switch (type) {
 						case 'int':
-							try {
-								value = parseInt(value)
-							} 
-							catch (x) {
+							value = parseInt(value)
+							if (isNaN(value)) {
 								value = null
 							}
 							break
 							
 						case 'float':
-							try {
-								value = parseFloat(value)
-							} 
-							catch (x) {
+							value = parseFloat(value)
+							if (isNaN(value)) {
 								value = null
 							}
 							break
@@ -755,11 +751,12 @@ Savory.Resources = Savory.Resources || function() {
 							break
 							
 						case 'date':
-							try {
-								value = new Date(parseInt(value))
-							} 
-							catch (x) {
+							value = parseFloat(value)
+							if (isNaN(value)) {
 								value = null
+							}
+							else {
+								value = new Date(value)
 							}
 							break
 							

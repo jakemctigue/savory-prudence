@@ -1,0 +1,156 @@
+<%
+document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/savory/foundation/jvm/')
+document.executeOnce('/savory/foundation/json/')
+document.executeOnce('/savory/foundation/forms/')
+
+var form = new Savory.Forms.Form({fields: {
+	first: {type: 'number', label: 'A number'},
+	second: {type: 'integer', label: 'An integer'}
+}})
+
+form.process = function(results) {
+	if (results.success) {
+		results.values.result = Number(results.values.first) * Number(results.values.second)
+		results.msg = '{first} times {second} equals {result}'.cast(results.values)
+		//results.msg = Savory.JSON.to(results.values)
+	}
+	else {
+		results.msg = 'Wrong!'
+	}
+}
+
+
+if (!form.handle(conversation)) {
+
+conversation.locals.put('extJs', true)
+%>
+<%{{ 'page.scripts' %>
+<script>
+var fieldsWithValidation = <%= Savory.JSON.to(form.getSenchaFields(), true, true) %>;
+
+var fieldsWithoutValidation = <%= Savory.JSON.to(form.getSenchaFields(false), true, true) %>;
+
+var titles = {
+	'ajax-form': 'AJAX Multiplier',
+	'ajax-form-no-validation': 'AJAX Multiplier (no client-side validation)'
+};
+
+var fields = {
+	'ajax-form': fieldsWithValidation,
+	'ajax-form-no-validation': fieldsWithoutValidation
+};
+
+function openForm(event, el) {
+	Ext.create('Ext.window.Window', {
+		title: titles[el.id],
+		width: 350,
+		items: {
+			xtype: 'form',
+			border: false,
+			bodyCls: 'x-border-layout-ct', // Uses the neutral background color
+			bodyPadding: 10,
+			layout: 'anchor',
+			defaults: {
+				anchor: '100%'
+			},
+			defaultType: 'textfield',
+			items: fields[el.id],
+			buttons: [{
+				text: 'Submit',
+				disabled: true,
+				formBind: true,
+				handler: function() {
+					var form = this.up('form').getForm();
+					if (form.isValid()) {
+						form.submit({
+							success: function(form, action) {
+							   Ext.Msg.alert('Success!', action.result.msg);
+							},
+							failure: function(form, action) {
+								Ext.Msg.alert('Failed!', action.result.msg);
+							}
+						});
+					}
+				}
+			}]
+		}
+	}).show();
+}
+</script>
+<%}}%>
+<%{{ 'page.main' %>
+<h1>Savory's Sencha Integration Library</h1>
+<h2>Forms</h2>
+
+<p>
+	The Ext JS form widget allows for flexible form layouts, and includes various widgets for
+	representing form fields.
+</p>
+<p>
+	As far as submitting the form, Ext JS offers three (!) different ways of doing so, and Savory
+	supports them all.
+</p>
+
+
+<h3>Standard Forms</h3>
+<p>
+	These work the same way as HTML's &lt;form&gt; tag (and in fact use it behind the scenes): the browser
+	does a regular POST to a URL with data formatted as a "application/x-www-form-urlencoded" MIME type.
+	Because it is a regular browser POST, the whole page is reloaded.
+</p>
+<p>
+</p>
+<p>
+	<button id="standard-form">Open standard form</button>
+</p>
+
+
+<h3>AJAX Forms</h3>
+<p>
+	These are the default, and make most sense for the kind of UI that Ext JS implies: the form does
+	a <i>background</i> (AJAX) POST to a URL, in the same format as standard HTML form. The difference is that
+	the response is not a regular web page seen by the user, but JSON data used by Ext JS to manage
+	errors, and also your own data as is necessary for your application. The whole page is not reloaded
+	(unless you explicitly do so in your code).  
+</p>
+<p>
+	<button id="ajax-form">Open AJAX form with client-side validation</button>
+	<button id="ajax-form-no-validation">Open AJAX form without client-side validation</button>
+</p>
+
+
+<%{{ 'page.scripts' %>
+<script>
+Ext.onReady(function() {
+	Ext.fly('ajax-form').on('click', openForm);
+	Ext.fly('ajax-form-no-validation').on('click', openForm);
+});
+</script>
+<%}}%>
+
+<h3>Ext Direct Forms</h3>
+<p>
+	These work similarly to AJAX forms, but instead of POSTing with MIME type "application/x-www-form-urlencoded",
+	an Ext Direct call is used instead. The advantages of using Ext Direct are that 1) you can simulate
+	a form submit from your code, via an elegant and simple function call, and 2) if you're using Ext Direct a
+	lot already, you can handle all client access, including forms, uniformly.
+</p>
+<p>
+	See Savory's <a href="../direct/">Ext Direct demo</a> for more information!
+</p>
+<p>
+	<button id="direct-form">Open Ext Direct form</button>
+</p>
+
+
+<h3>Loading Forms</h3>
+<p>
+	Ext JS supports dynamic pre-filling of part or all of the form via AJAX.
+</p>
+
+<%}}%>
+<%& '/site/page-template/' %>
+<%
+}
+%>

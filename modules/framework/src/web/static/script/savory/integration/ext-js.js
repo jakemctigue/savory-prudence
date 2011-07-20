@@ -287,3 +287,15 @@ Ext.define('Savory.data.Store', {
 		});
 	}
 });
+
+//See: http://www.sencha.com/forum/showthread.php?136576-extjs-4.0.2
+Ext.form.Basic.override({
+	getBoundItems: function() {
+		var boundItems = this._boundItems;
+		if (!boundItems || boundItems.getCount() == 0) {
+			boundItems = this._boundItems = Ext.create('Ext.util.MixedCollection');
+			boundItems.addAll(this.owner.query('[formBind]'));
+		}
+		return boundItems;
+	}
+});

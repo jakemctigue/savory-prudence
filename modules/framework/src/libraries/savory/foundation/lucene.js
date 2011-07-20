@@ -274,10 +274,10 @@ Savory.Lucene = Savory.Lucene || function() {
 		return Public
 	}(Public))
 	
-    //
-    // Private
-    //
-    
+	//
+	// Initialization
+	//
+
     var version = org.apache.lucene.util.Version.LUCENE_31
 	
     var fieldStore = {
@@ -299,10 +299,6 @@ Savory.Lucene = Savory.Lucene || function() {
     	createOrAppend: org.apache.lucene.index.IndexWriterConfig.OpenMode.CREATE_OR_APPEND
     }
     
-	//
-	// Construction
-	//
-
     var analyzer = new org.apache.lucene.analysis.standard.StandardAnalyzer(version)
 
 	return Public	

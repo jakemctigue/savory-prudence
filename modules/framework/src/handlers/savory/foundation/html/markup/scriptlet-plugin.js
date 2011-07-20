@@ -26,7 +26,7 @@ function handleGetScriptlet(conversation, code, content) {
 
 			var language = content.substring(0, firstWhitespace)
 			content = content.substring(firstWhitespace + 1)
-			return 'print(Savory.HTML.getRenderer(\'' + language.escapeSingleQuotes() + '\').render(\'' + content.escapeSingleQuotes().escapeNewlines() + '\', false));'
+			return 'document.executeOnce(\'/savory/foundation/html/markup/\');print(Savory.HTML.getRenderer(\'' + language.escapeSingleQuotes() + '\').render(\'' + content.escapeSingleQuotes().escapeNewlines() + '\', false));'
 	}
 
 	return ''

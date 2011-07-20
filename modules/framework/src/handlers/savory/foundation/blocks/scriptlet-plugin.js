@@ -17,13 +17,13 @@ function handleGetScriptlet(conversation, code, content) {
 			var content = String(content).split('->', 2)
 			var name = content[0]
 			var args = content.length > 1 ? content[1] : ''
-			return 'Savory.Blocks.append(' + name + ', function(' + args + ') {'
+			return 'document.executeOnce(\'/savory/foundation/prudence/blocks/\');Savory.Blocks.append(' + name + ', function(' + args + ') {'
 
 		case '}}':
 			return '});'
 
 		case '&&':
-			return 'Savory.Blocks.include(' + content + ');'
+			return 'document.executeOnce(\'/savory/foundation/prudence/blocks/\');Savory.Blocks.include(' + content + ');'
 	}
 
 	return ''

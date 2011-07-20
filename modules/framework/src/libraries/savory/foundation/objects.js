@@ -122,6 +122,44 @@ Savory.Objects = Savory.Objects || function() {
 	}
 	
 	//
+	// Numbers
+	//
+	
+	/**
+	 * True if the value is a number or <i>can be converted to</a> a number.
+	 * 
+	 * @param value The value
+	 * @returns {Boolean}
+	 */
+	Public.isNumber = function(value) {
+		if (!Public.exists(value)) {
+			return false
+		}
+		if (typeof value == 'number') {
+			return true
+		}
+		return !isNaN(value - 0)
+	}
+	
+	/**
+	 * True if the value is an integer or <i>can be converted to</a> an integer.
+	 * <p>
+	 * (Note that strings that would normally be converted to floats might be able
+	 * to convert successfully to integers, too, because the decimal point would tell
+	 * the conversion to stop, but in this case we are returning false: we require
+	 * the string to be <i>entirely</i> convertible to an integer.)
+	 * 
+	 * @param value The value
+	 * @returns {Boolean}
+	 */
+	Public.isInteger = function(value) {
+		if (!Public.exists(value)) {
+			return false
+		}
+		return value % 1 == 0
+	}
+	
+	//
 	// Names
 	//
 	
@@ -623,7 +661,7 @@ Savory.Objects = Savory.Objects || function() {
 	//
 
 	var trimRegExp = /^\s+|\s+$/g
-
+		
 	return Public
 }()
 
