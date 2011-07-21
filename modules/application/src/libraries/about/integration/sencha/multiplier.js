@@ -11,15 +11,16 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/savory/service/internationalization/')
 document.executeOnce('/savory/foundation/jvm/')
 document.executeOnce('/savory/foundation/prudence/resources/')
 
-var form = new Savory.Resources.Form({fields: {
+var multiplierForm = new Savory.Resources.Form({fields: {
 	first: {type: 'number', label: 'A number'},
 	second: {type: 'integer', label: 'An integer'}
 }})
 
-form.process = function(results) {
+multiplierForm.process = function(results) {
 	if (results.success) {
 		results.values.result = Number(results.values.first) * Number(results.values.second)
 		results.msg = '{first} times {second} equals {result}'.cast(results.values)
@@ -38,11 +39,12 @@ form.process = function(results) {
 var Multiplier = function() {
 	var Public = {
 		multiply: function(first, second) {
-			return form.handle({
+			return multiplierForm.handle({
 				values: {
 					first: first,
 					second: second
-				}
+				},
+				textPack: Savory.Internationalization.getCurrentPack(this.conversation)
 			})
 		}
 	}

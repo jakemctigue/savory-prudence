@@ -247,7 +247,13 @@ function handlePost(conversation) {
 						var fn = Savory.RPC.getFunction(method)
 						if (fn) {
 							try {
-								value = fn.apply(null, call.params)
+								var context = {
+									conversation: conversation,
+									call: call,
+									module: module,
+									method: method
+								}
+								value = fn.apply(context, call.params)
 							}
 							catch (x) {
 								if (typeof x == 'number') {

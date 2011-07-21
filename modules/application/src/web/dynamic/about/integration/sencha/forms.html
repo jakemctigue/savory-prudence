@@ -3,24 +3,24 @@ document.executeOnce('/about/integration/sencha/multiplier/')
 document.executeOnce('/savory/integration/frontend/sencha/')
 document.executeOnce('/savory/foundation/json/')
 
-var results = form.handle({conversation: conversation})
+var results = multiplierForm.handle({conversation: conversation})
 if (!results || (results.mode != 'json')) {
 
 conversation.locals.put('extJs', true)
 %>
 <%{{ 'page.scripts' %>
 <script>
-var fieldsWithValues = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, (results && !results.success) ? results : null), true, true) %>;
+var fieldsWithValues = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, (results && !results.success) ? results : null), true, true) %>;
 
-var fieldsWithValuesWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, (results && !results.success) ? results : null, true, false), true, true) %>;
+var fieldsWithValuesWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, (results && !results.success) ? results : null, true, false), true, true) %>;
 
-var fieldsWithValuesBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, (results && !results.success) ? results : null, false, false), true, true) %>;
+var fieldsWithValuesBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, (results && !results.success) ? results : null, false, false), true, true) %>;
 
-var fields = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form), true, true) %>;
+var fields = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm), true, true) %>;
 
-var fieldsWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, null, true, false), true, true) %>;
+var fieldsWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, null, true, false), true, true) %>;
 
-var fieldsBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(form, null, false, false), true, true) %>;
+var fieldsBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, null, false, false), true, true) %>;
 
 var titles = {
 	'standard-form': 'Standard Form Multiplier',
@@ -122,9 +122,14 @@ Ext.onReady(function() {
 	As far as submitting the form, Ext JS offers three (!) different ways of doing so, and Savory
 	supports them all.
 </p>
+
+
+<h3>Awesome Demos</h3>
 <p>
 	For all these demos, use the third button (without validation or masking) to test the server-side
-	validation.
+	validation, otherwise client-side validation will make sure that the server always gets valid
+	values. Also, make sure to hover over invalid fields, so you can see the error message! It's being
+	supplied by Savory's Internationalizaion service.
 </p>
 
 
@@ -135,9 +140,9 @@ Ext.onReady(function() {
 	Because it is a regular browser POST, the whole page is reloaded.
 </p>
 <p>
-	For the purposes of this demo, we will re-open the form on page reload upon failed standard submission,
+	For the purposes of this demo, we will re-open the form on page reload upon failed submission,
 	so that the user (you!) can try again. Obviously, the better solution for this particular use case
-	would be to use an AJAX form (see below).
+	would be to use an AJAX form (see below). Still, you'll get to see the standard form in action.
 </p>
 <p>
 	<button id="standard-form" class="open-form">Standard</button>
@@ -184,13 +189,12 @@ Ext.onReady(function() {
 
 <h3>Ext Direct Forms</h3>
 <p>
-	These work similarly to AJAX forms, but instead of POSTing with MIME type "application/x-www-form-urlencoded",
-	an Ext Direct call is used instead. The advantages of using Ext Direct are that 1) you can simulate
-	a form submit from your code, via an elegant and simple function call, and 2) if you're using Ext Direct a
-	lot already, you can handle all client access, including forms, uniformly.
+	These work similarly to AJAX forms, but the Ext Direct protocol is used instead of a generic HTML form post.
+	The advantages of using Ext Direct are that 1) you can simulate the form submit from your code, via an elegant and simple
+	function call, and 2) if you're using Ext Direct lot already, you can handle all client access, including forms, uniformly.
 </p>
 <p>
-	See Savory's <a href="../direct/">Ext Direct demo</a> for more information.
+	See Savory's <a href="../direct/">Ext Direct</a> page for more dicussion.
 </p>
 <p>
 	<button id="direct-form" class="open-form">Ext Direct</button>
@@ -202,6 +206,9 @@ Ext.onReady(function() {
 <h3>Loading Forms</h3>
 <p>
 	Ext JS supports dynamic pre-filling of part or all of the form via AJAX.
+</p>
+<p>
+	TODO
 </p>
 
 <%}}%>

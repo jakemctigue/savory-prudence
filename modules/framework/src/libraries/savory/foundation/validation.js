@@ -39,20 +39,14 @@ Savory.Validation = Savory.Validation || function() {
 				return true
 			}
 			return !isNaN(value - 0) ? true : 'not'
-		}/*,
-		errors: {
-			not: 'Must be a number'
-		}*/
+		}
 	}
 
     Public.integer = {
 		mask: /[\d\-]/,
 		fn: function(value, field) {
 			return value % 1 == 0 ? true : 'not'
-		}/*,
-		errors: {
-			not: 'Must be an integer'
-		}*/
+		}
 	}
 	
 	return Public
