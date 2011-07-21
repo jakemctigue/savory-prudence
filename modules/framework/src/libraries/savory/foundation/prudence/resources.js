@@ -11,6 +11,7 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/savory/service/internationalization/')
 document.executeOnce('/savory/foundation/xml/')
 document.executeOnce('/savory/foundation/objects/')
 document.executeOnce('/savory/foundation/rhino/')
@@ -905,11 +906,12 @@ Savory.Resources = Savory.Resources || function() {
     	 * 
     	 * @param values A dict of field names mapped to values; all values will be treated as strings;
     	 *        unrecognized field names will be ignored
+    	 * @param {Savory.Internationalization.Pack} [textPack] The text pack to use for error messages
     	 * @returns A structure in the format: {success: true, values: {...}} or {success: false, values: {...}, errors: {...}};
     	 *          values are copied over from the arg (always as strings), and errors are all texts that can be displayed
     	 *          to users
     	 */
-    	Public.validate = function(values) {
+    	Public.validate = function(values, textPack) {
     		var results = {success: true}
 
     		// Check that all required fields are provided
@@ -945,7 +947,8 @@ Savory.Resources = Savory.Resources || function() {
     				
     				if (this.serverValidation) {
         				var validator = field.validator
-						var validation = Savory.Validation[field.type || 'string']
+        				var type = field.type || 'string'
+						var validation = Savory.Validation[type]
         				if (!validator) {
     						if (validation && validation.fn) {
     							validator = validation.fn
@@ -955,10 +958,12 @@ Savory.Resources = Savory.Resources || function() {
         				if (validator) {
 	    					var validity = validator.call(this, value, field)
 	    					if (validity !== true) {
-	    						if (validation && validation.errors) {
-	    							error = validation.errors[validity]
+	    						if (Savory.Objects.exists(textPack)) {
+	    							error = textPack.get('savory.foundation.validation.' + type + '.' + validity, {name: name})
 	    						}
-	    						error = error ? error.cast({name: name}) : 'Wrong'
+	    						if (!Savory.Objects.exists(error)) {
+	    							error = 'Invalid'
+	    						}
 	    					}
 	    				}
     				}
@@ -988,6 +993,7 @@ Savory.Resources = Savory.Resources || function() {
     	 * @param [params]
     	 * @param [params.conversation] The Prudence conversation
     	 * @param [params.values] The form values (will be extracted from params.conversation if not provided explicitly) 
+    	 * @param {Savory.Internationalization.Pack} [params.textPack] The text pack to use for messages (will be extracted from params.conversation if not provided explicitly) 
     	 * @param {String} [params.mode=this.mode] Set this to override the query param; can be 'raw', 'json',
     	 *                 'include' or 'redirect'
     	 * @param {String} [params.includeSuccessDocumentName=this.includeSuccessDocumentName] Set this to override the form's value 
@@ -1006,7 +1012,8 @@ Savory.Resources = Savory.Resources || function() {
     		if (!Savory.Objects.exists(params.conversation) || (params.conversation.request.method == 'POST')) {
 	    		var values = params.values || (Savory.Objects.exists(params.conversation) ? Module.getForm(params.conversation) : {})
 	    		
-	    		var results = this.validate(values)
+	    		var textPack = params.textPack || (Savory.Objects.exists(params.conversation) ? Savory.Internationalization.getCurrentPack(params.conversation) : null)
+	    		var results = this.validate(values, textPack)
 	    		this.process(results)
 	    		
 	    		switch (mode) {

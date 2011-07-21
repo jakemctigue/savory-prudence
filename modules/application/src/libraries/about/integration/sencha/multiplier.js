@@ -26,7 +26,12 @@ form.process = function(results) {
 		//results.msg = Savory.JSON.to(results.values)
 	}
 	else {
-		results.msg = 'Wrong!'
+		results.msg = 'Invalid!'
+		/*
+		for (var e in results.errors) {
+			results.msg += '<p><b>' + e + '</b>: ' + results.errors[e] + '</p>'
+		}
+		*/
 	}
 }
 

@@ -7,6 +7,16 @@
 			}
 		},
 		"savory": {
+			"foundation": {
+				"validation": {
+					"number": {
+						"not": "Must be a number"
+					},
+					"integer": {
+						"not": "Must be an integer"
+					}
+				}
+			},
 			"service": {
 				"authentication": {
 					"form": {

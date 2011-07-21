@@ -139,9 +139,7 @@ function handlePost(conversation) {
 						}
 						else {
 							var fn = Savory.RPC.getFunction(method)
-							java.lang.System.out.println(Savory.JSON.to(method))
 							if (fn) {
-								//application.logger.info(fn)
 								try {
 									result = fn.apply(null, call.data)
 									result = {
