@@ -557,6 +557,21 @@ Savory.Objects = Savory.Objects || function() {
 	}
 	
 	/**
+	 * Pushes all items from array2 into array1. Note that, unlike concat, this
+	 * changes array1!
+	 * 
+	 * @param {Array} array1 The array to push into
+	 * @param {Array} array2 The array to push from
+	 * @returns {Array} array1
+	 */
+	Public.pushAll = function(array1, array2) {
+		for (var a in array2) {
+			array1.push(array2[a])
+		}
+		return array1
+	}
+	
+	/**
 	 * Pushes an item only if it does not already exist in the array.
 	 * 
 	 * @param {Array} array The array

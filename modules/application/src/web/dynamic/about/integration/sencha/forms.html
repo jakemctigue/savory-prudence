@@ -8,6 +8,31 @@ if (!results || (results.mode != 'json')) {
 
 conversation.locals.put('extJs', true)
 %>
+<%{{ 'page.main' %>
+<h1>Savory's Sencha Integration Library</h1>
+<h2>Ext JS Forms</h2>
+
+<p>
+	The Ext JS form widget allows for flexible form layouts, and includes various widgets for
+	representing form fields.
+	As far as submitting the form, Ext JS offers three (!) different ways of doing so, and Savory
+	supports them all.
+</p>
+<p>
+	Before delving into Ext JS forms, make sure you understand how <a href="../../../foundation/resources/forms/">Savory handles forms</a> more
+	generally.
+</p>
+
+
+<h3>Awesome Demos</h3>
+<p>
+	For all these demos, use the third button (without validation or masking) to test the server-side
+	validation, otherwise client-side validation will make sure that the server always gets valid
+	values. Also, make sure to hover over invalid fields, so you can see the error message! It's being
+	supplied by Savory's Internationalizaion service.
+</p>
+
+
 <%{{ 'page.scripts' %>
 <script>
 var fieldsWithValues = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, (results && !results.success) ? results : null), true, true) %>;
@@ -110,28 +135,6 @@ Ext.onReady(function() {
 });
 </script>
 <%}}%>
-<%{{ 'page.main' %>
-<h1>Savory's Sencha Integration Library</h1>
-<h2>Forms</h2>
-
-<p>
-	The Ext JS form widget allows for flexible form layouts, and includes various widgets for
-	representing form fields.
-</p>
-<p>
-	As far as submitting the form, Ext JS offers three (!) different ways of doing so, and Savory
-	supports them all.
-</p>
-
-
-<h3>Awesome Demos</h3>
-<p>
-	For all these demos, use the third button (without validation or masking) to test the server-side
-	validation, otherwise client-side validation will make sure that the server always gets valid
-	values. Also, make sure to hover over invalid fields, so you can see the error message! It's being
-	supplied by Savory's Internationalizaion service.
-</p>
-
 
 <h3>Standard Forms</h3>
 <p>

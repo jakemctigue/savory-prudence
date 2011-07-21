@@ -128,11 +128,32 @@ Savory.RPC = Savory.RPC || function() {
 		Savory.Lazy.getGlobalList('savory.service.rpc.modules', Public.logger).reset()
 	}
 	
+	Public.buildLazyModule = function(config) {
+		var fn = 'function(){\n'
+		fn += 'document.executeOnce(\'/savory/service/rpc/\');\n'
+		fn += 'Savory.RPC.exportMethods('
+		fn += Savory.JSON.to(config, true);
+		fn += ');\n'
+		fn += 'return null;\n}'
+		return fn
+	}
+
+	Public.buildLazyModules = function(/* arguments */) {
+		var r = []
+		
+		for (var a = 0, length = arguments.length; a < length; a++) {
+			r.push(Public.buildLazyModule(arguments[a]))
+		}
+		
+		return r
+	}
+
 	/**
 	 * 
 	 * @param params
 	 * @param {String} [params.object] You do not need this if params.methods is a detailed array
 	 * @param {Object|Array|String} [params.methods=params.object]
+	 * @param {Object} [params.methodOverrides]
 	 * @param {String} [params.namespace=params.object]
 	 * @param {String} [params.module] Uses the global module if not provided
 	 * @param {String|String[]} [params.dependencies]
@@ -140,22 +161,25 @@ Savory.RPC = Savory.RPC || function() {
 	 * @param {Savory.RPC.Store} [params.store=Savory.RPC.getStore()]
 	 */
 	Public.exportMethods = function(params) {
+		//java.lang.System.out.println(params.namespace)
 		var module = params.module || '.'
 		var dependencies = Savory.Objects.array(params.dependencies)
 		var namespace = params.namespace || params.object
 		var methods = params.methods || params.object
+		
 		if (Savory.Objects.isString(methods)) {
 			for (var d in dependencies) {
 				document.executeOnce(dependencies[d])
 			}
 			methods = eval(methods)
 		}
+		
 		if (Savory.Objects.isDict(methods, true)) {
 			var theMethods = []
 			for (var m in methods) {
 				var method = methods[m]
 				if (typeof method == 'function') {
-					theMethods.push(					{
+					theMethods.push({
 						name: m,
 						arity: method.length,
 						fn: method,
@@ -164,6 +188,17 @@ Savory.RPC = Savory.RPC || function() {
 				}
 			}
 			methods = theMethods
+		}
+		
+		if (Savory.Objects.exists(params.methodOverrides)) {
+			for (var o in params.methodOverrides) {
+				for (var m in methods) {
+					var method = methods[m]
+					if (method.name == o) {
+						Savory.Objects.merge(method, params.methodOverrides[o])
+					}
+				}
+			}
 		}
 		
 		var store = params.store || Public.getStore()
@@ -613,11 +648,15 @@ Savory.RPC = Savory.RPC || function() {
 					}
 				}
 			}
-			return {
+			var r = {
 				name: module,
 				namespaces: namespaces,
-				dependencies: Savory.JVM.fromCollection(this.dependencies.get(module))
+			} 
+			var dependencies = this.dependencies.get(module)
+			if (Savory.Objects.exists(dependencies)) {
+				r.dependencies = Savory.JVM.fromCollection(dependencies)
 			}
+			return r
 		}
 
 		return Public

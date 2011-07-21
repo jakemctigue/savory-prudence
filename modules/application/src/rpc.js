@@ -11,11 +11,33 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/savory/service/rpc/')
+
 //
 // Modules
 //
 
-modules.push(function() {
+modules = Savory.Objects.pushAll(modules, Savory.RPC.buildLazyModules({
+	module: 'Savory',
+	object: 'ShoppingCart',
+	dependencies: '/about/integration/sencha/shopping-cart/',
+	reset: true
+}, {
+	module: 'Savory',
+	object: 'Multiplier',
+	methodOverrides: {
+		multiply: {
+			extDirect: {
+				formHandler: true
+			}
+		}
+	},
+	dependencies: '/about/integration/sencha/multiplier/'
+}))
+//print(modules[0])
+//print(modules[1])
+
+/*modules.push(function() {
 	document.executeOnce('/savory/service/rpc/')
 	Savory.RPC.exportMethods({
 		module: 'Savory',
@@ -30,19 +52,18 @@ modules.push(function() {
 	document.executeOnce('/savory/service/rpc/')
 	Savory.RPC.exportMethods({
 		module: 'Savory',
-		namespace: 'Multiplier',
-		methods: [{
-			name: 'multiply',
-			object: 'Multiplier',
-			arity: 2,
-			extDirect: {
-				formHandler: true
+		object: 'Multiplier',
+		methodOverrides: {
+			multiply: {
+				extDirect: {
+					formHandler: true
+				}
 			}
-		}],
+		},
 		dependencies: '/about/integration/sencha/multiplier/'
 	})
 	return null
-})
+})*/
 
 //
 // Routes

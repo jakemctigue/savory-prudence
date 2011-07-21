@@ -12,22 +12,28 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%& '/site/header/' %>
-<h1>Savory's Forms Library</h1>
+<h1>Savory's Resources Library</h1>
+<h2>Forms</h2>
 
 <p>
 	Prudence provides easy access to HTML form parameters via the conversation.form API, and the Savory
-	Resources library further adds easy conversation of the textual form to JavaScript types. However, robust
-	HTML form support demands validation, which includes a mechanism to easily send validation error messages to
-	the client.
+	Resources library further adds easy conversion of the textual form to JavaScript types. However, robust
+	HTML form support demands validation, including a mechanism to send validation error messages to the
+	client.
 </p>
 <p>
-	Savory Forms does this very well, supporting both server- and client-side validation via the same exact
-	code, simultaneously! Additionally, it abstracts the form mechanism slightly to allow for transparent
+	Savory's Form class does this very well, supporting both server- and client-side validation via the same
+	exact code, simultaneously! Additionally, it abstracts the form mechanism to allow for transparent
 	support of AJAX forms, including Ext JS's powerful form and field widgets. The uniform API allows you
 	to support various kinds of clients without changing your code. 
 </p>
 
-<h2>Server-Side Validation</h2>
+<h3>Demos</h3>
+<p>
+	This page is informational: go to the <a href="../../../integration/sencha/forms/">Ext JS Forms page</a> to see forms in action.  
+</p>
+
+<h3>Server-Side Validation</h3>
 <p>
 	In the pre-AJAX days, this was all we had: the server could either accept the POSTed HTML form and show
 	the user a success page, or not accept it and show the form again, with an appropriate error message.
@@ -37,7 +43,7 @@ at http://threecrickets.com/
 	the server, and the server has to do the processing.
 </p>
 
-<h2>Client-Side Validation</h2>
+<h3>Client-Side Validation</h3>
 <p>
 	Here, the client makes sure that the form is valid before sending it to the server. Great!
 </p>
@@ -48,7 +54,7 @@ at http://threecrickets.com/
 	entirely. (Though, the client can still validate first that the username entered fits the requirements.)
 </p>
 
-<h2>Client-Side Masking</h2>
+<h3>Client-Side Masking</h3>
 <p>
 	A variation or enchancement of client-side validation is the ability to allow for only certain characters
 	to be types according to a pattern, usually a regular expression. For example, if the input must be an integer,
@@ -56,7 +62,7 @@ at http://threecrickets.com/
 	wasting time by typing out inputs that will surely not be accepted anyway.
 </p>
 
-<h2>Both Client- and Server-Side Validation</h2>
+<h3>Both Client- and Server-Side Validation</h3>
 <p>
 	Why enable both? What's the benefit of wasting processing on server-side validation when you can be sure
 	that the client only sends validated data?
