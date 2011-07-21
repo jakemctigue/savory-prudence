@@ -94,7 +94,17 @@ Savory.ExtendedJSON.pack = function(data) {
 };
 
 /**
+ * Creates a remote provider for an Ext Direct namespace.
  * 
+ * @param params
+ * @param {String} [params.namespace] The Ext Direct namespace to load
+ * @param {String} [params.baseUrl] If this is provided (as a path to the application root),
+ *        the Ext Direct resource will be found at its default location ('/savory/integration/frontend/sencha/direct/')
+ * @param {String} [params.url] Use this to set the direct URL to the Ext Direct resource
+ * @param {Function} [params.success] This function will be called when the provider has been successfully created,
+ *        with arguments: namespace, provider
+ * @param {Function} [params.failure] This function will be called when the provider could not be created,
+ *        with arguments: namespace 
  */
 Savory.addDirectProvider = function(params) {
 	var url = params.url || (params.baseUrl + '/savory/integration/frontend/sencha/direct/');

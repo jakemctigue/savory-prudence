@@ -1,25 +1,9 @@
 <%
+document.executeOnce('/about/integration/sencha/multiplier/')
 document.executeOnce('/savory/integration/frontend/sencha/')
 document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/prudence/resources/')
 
-var form = new Savory.Resources.Form({fields: {
-	first: {type: 'number', label: 'A number'},
-	second: {type: 'integer', label: 'An integer'}
-}})
-
-form.process = function(results) {
-	if (results.success) {
-		results.values.result = Number(results.values.first) * Number(results.values.second)
-		results.msg = '{first} times {second} equals {result}'.cast(results.values)
-		//results.msg = Savory.JSON.to(results.values)
-	}
-	else {
-		results.msg = 'Wrong!'
-	}
-}
-
-var results = form.handle(conversation)
+var results = form.handle({conversation: conversation})
 if (!results || (results.mode != 'json')) {
 
 conversation.locals.put('extJs', true)
@@ -44,7 +28,10 @@ var titles = {
 	'standard-form-bare': 'Standard Form Multiplier (without validation or masking)',
 	'ajax-form': 'AJAX Multiplier',
 	'ajax-form-half': 'AJAX Multiplier (with validation, without masking)',
-	'ajax-form-bare': 'AJAX Multiplier (without validation or masking)'
+	'ajax-form-bare': 'AJAX Multiplier (without validation or masking)',
+	'direct-form': 'Ext Direct Multiplier',
+	'direct-form-half': 'Ext Direct Multiplier (with validation, without masking)',
+	'direct-form-bare': 'Ext Direct Multiplier (without validation or masking)'
 };
 
 var fields = {
@@ -53,7 +40,10 @@ var fields = {
 	'standard-form-bare': fieldsWithValuesBare,
 	'ajax-form': fields,
 	'ajax-form-half': fieldsWithValidationWithoutMasking,
-	'ajax-form-bare': fieldsBare
+	'ajax-form-bare': fieldsBare,
+	'direct-form': fields,
+	'direct-form-half': fieldsWithValidationWithoutMasking,
+	'direct-form-bare': fieldsBare
 };
 
 function openForm(event, el) {
@@ -95,6 +85,12 @@ function openForm(event, el) {
 	else if (el.id.substring(0, 4) == 'ajax') {
 		config.url = '?mode=json';
 	}
+	else if (el.id.substring(0, 6) == 'direct') {
+		config.api = {
+			submit: Savory.Multiplier.multiply
+		};
+		config.paramOrder = ['first', 'second'];
+	}
 	
 	Ext.create('Ext.window.Window', {
 		title: titles[el.id],
@@ -104,7 +100,13 @@ function openForm(event, el) {
 }
 
 Ext.onReady(function() {
-	Ext.select('.open-form').on('click', openForm);
+	Savory.addDirectProvider({
+		namespace: 'Savory',
+		baseUrl: '<%= conversation.pathToBase %>',
+		success: function() {
+			Ext.select('.open-form').on('click', openForm);
+		}
+	});
 });
 </script>
 <%}}%>
@@ -138,7 +140,7 @@ Ext.onReady(function() {
 	would be to use an AJAX form (see below).
 </p>
 <p>
-	<button id="standard-form" class="open-form">Standard form</button>
+	<button id="standard-form" class="open-form">Standard</button>
 	<button id="standard-form-half" class="open-form">Standard with validation, without masking</button>
 	<button id="standard-form-bare" class="open-form">Standard without validation or masking</button>
 </p>
@@ -188,10 +190,12 @@ Ext.onReady(function() {
 	lot already, you can handle all client access, including forms, uniformly.
 </p>
 <p>
-	See Savory's <a href="../direct/">Ext Direct demo</a> for more information!
+	See Savory's <a href="../direct/">Ext Direct demo</a> for more information.
 </p>
 <p>
-	<button id="direct-form">Open Ext Direct form</button>
+	<button id="direct-form" class="open-form">Ext Direct</button>
+	<button id="direct-form-half" class="open-form">Ext Direct with validation, without masking</button>
+	<button id="direct-form-bare" class="open-form">Ext Direct without validation or masking</button>
 </p>
 
 

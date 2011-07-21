@@ -11,10 +11,6 @@
 // at http://threecrickets.com/
 //
 
-//
-// Ext JS Resources
-//
-
 document.executeOnce('/savory/service/rest/')
 
 var data = [{

@@ -22,6 +22,7 @@ Savory.RPC.resetLazyModules()
 /** @ignore */
 function handleInit(conversation) {
     conversation.addMediaTypeByName('application/json')
+    conversation.addMediaTypeByName('application/x-www-form-urlencoded')
     conversation.addMediaTypeByName('text/plain')
 }
 
@@ -48,10 +49,12 @@ function handleGet(conversation) {
 		var action = exports.actions[namespace] = []
 		for (var m in methods) {
 			var method = methods[m]
-			action.push({
+			var directMethod = {
 				name: method.name,
 				len: method.arity
-			})
+			}
+			Savory.Objects.merge(directMethod, method.extDirect)
+			action.push(directMethod)
 		}
 	}
 	
@@ -64,7 +67,33 @@ function handlePost(conversation) {
 		namespace: 'string',
 		human: 'bool'
 	})
-	var calls = Savory.Resources.getEntity(conversation, 'json')
+	
+	var isWebForm = false
+	var calls
+	if (Savory.Objects.exists(conversation.entity) && (conversation.entity.mediaType == 'application/x-www-form-urlencoded')) {
+		isWebForm = true
+		
+		// Unpack web form into the regular structure
+		var web = Savory.Resources.getEntity(conversation, 'web')
+		calls = {}
+		calls.type = web.extType
+		delete web.extType
+		calls.tid = web.extTID
+		delete web.extTID
+		calls.action = web.extAction
+		delete web.extAction
+		calls.method = web.extMethod
+		delete web.extMethod
+		calls.upload = (web.extUpload == 'true')
+		delete web.extUpload
+		calls.data = []
+		for (var w in web) {
+			calls.data.push(web[w])
+		}
+	}
+	else {
+		calls = Savory.Resources.getEntity(conversation, 'json')
+	}
 
 	//application.logger.info(Savory.JSON.to(calls))
 	
@@ -110,6 +139,7 @@ function handlePost(conversation) {
 						}
 						else {
 							var fn = Savory.RPC.getFunction(method)
+							java.lang.System.out.println(Savory.JSON.to(method))
 							if (fn) {
 								//application.logger.info(fn)
 								try {

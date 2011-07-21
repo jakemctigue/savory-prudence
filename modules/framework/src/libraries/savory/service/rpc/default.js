@@ -155,11 +155,11 @@ Savory.RPC = Savory.RPC || function() {
 			for (var m in methods) {
 				var method = methods[m]
 				if (typeof method == 'function') {
-					theMethods.push({
+					theMethods.push(					{
 						name: m,
 						arity: method.length,
-						object: params.object,
-						fn: method
+						fn: method,
+						object: params.object
 					})
 				}
 			}

@@ -297,19 +297,8 @@ document.execute('/mongo-db/')
 //
 
 var modules = predefinedGlobals['savory.service.rpc.modules'] = (predefinedGlobals['savory.service.rpc.modules'] || [])
-modules.push(function() {
-	document.executeOnce('/savory/service/rpc/')
-	Savory.RPC.exportMethods({
-		module: 'Savory',
-		object: 'ShoppingCart',
-		dependencies: '/about/integration/sencha/shopping-cart/',
-		reset: true
-	})
-	return null
-})
-
 var routes = predefinedGlobals['savory.service.rpc.routes'] = (predefinedGlobals['savory.service.rpc.routes'] || {})
-routes['/rpc/'] = 'Savory'
+document.execute('/applications/savory/rpc/')
 
 //
 // Route service
