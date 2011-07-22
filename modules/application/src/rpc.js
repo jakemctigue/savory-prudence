@@ -34,36 +34,6 @@ modules = Savory.Objects.pushAll(modules, Savory.RPC.buildLazyModules({
 	},
 	dependencies: '/about/integration/sencha/multiplier/'
 }))
-//print(modules[0])
-//print(modules[1])
-
-/*modules.push(function() {
-	document.executeOnce('/savory/service/rpc/')
-	Savory.RPC.exportMethods({
-		module: 'Savory',
-		object: 'ShoppingCart',
-		dependencies: '/about/integration/sencha/shopping-cart/',
-		reset: true
-	})
-	return null
-})
-
-modules.push(function() {
-	document.executeOnce('/savory/service/rpc/')
-	Savory.RPC.exportMethods({
-		module: 'Savory',
-		object: 'Multiplier',
-		methodOverrides: {
-			multiply: {
-				extDirect: {
-					formHandler: true
-				}
-			}
-		},
-		dependencies: '/about/integration/sencha/multiplier/'
-	})
-	return null
-})*/
 
 //
 // Routes

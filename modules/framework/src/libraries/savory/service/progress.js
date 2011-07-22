@@ -42,8 +42,8 @@ var Savory = Savory || {}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Processing = Savory.Processing || function() {
-	/** @exports Public as Savory.Processing */
+Savory.Progress = Savory.Progress || function() {
+	/** @exports Public as Savory.Progress */
     var Public = {}
 
 	/**
@@ -52,7 +52,7 @@ Savory.Processing = Savory.Processing || function() {
 	 * @field
 	 * @returns {Savory.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('processing')
+	Public.logger = Savory.Logging.getLogger('progress')
 	
 	/**
 	 * Installs the library's pass-throughs.
@@ -60,7 +60,7 @@ Savory.Processing = Savory.Processing || function() {
 	 * Can only be called from Prudence configuration scripts!
 	 */
 	Public.settings = function() {
-		dynamicWebPassThrough.push('/savory/service/processing/wait/')
+		dynamicWebPassThrough.push('/savory/service/progress/wait/')
 	}
 
 	/**
@@ -69,11 +69,11 @@ Savory.Processing = Savory.Processing || function() {
 	 * Can only be called from Prudence configuration scripts!
 	 */
 	Public.routing = function() {
-		router.captureAndHide('/wait/{process}/', '/savory/service/processing/wait/')
+		router.captureAndHide('/wait/{process}/', '/savory/service/progress/wait/')
 	}
 	
 	/**
-	 * @returns {Savory.Processing.Process}
+	 * @returns {Savory.Progress.Process}
 	 */
 	Public.getProcess = function(key) {
 		var context
@@ -93,7 +93,7 @@ Savory.Processing = Savory.Processing || function() {
 	}
 	
 	/**
-	 * @returns {Savory.Processing.Process}
+	 * @returns {Savory.Progress.Process}
 	 */
 	Public.startProcess = function(params, now) {
 		now = now || new Date()
@@ -154,11 +154,11 @@ Savory.Processing = Savory.Processing || function() {
 	
 	/**
 	 * @class
-	 * @see Savory.Processing#getProcess
-	 * @see Savory.Processing#startProcess
+	 * @see Savory.Progress#getProcess
+	 * @see Savory.Progress#startProcess
 	 */
 	Public.Process = Savory.Classes.define(function() {
-		/** @exports Public as Savory.Processing.Process */
+		/** @exports Public as Savory.Progress.Process */
 	    var Public = {}
 	    
 	    /** @ignore */

@@ -14,12 +14,12 @@ at http://threecrickets.com/
 %><%& '/site/header/' %>
 <%
 
-document.executeOnce('/savory/service/processing/')
+document.executeOnce('/savory/service/progress/')
 
 if (conversation.request.method == 'POST') {
 	switch (String(conversation.form.get('type'))) {
 		case 'trivial':
-			var process = Savory.Processing.startProcess({
+			var process = Savory.Progress.startProcess({
 				description: 'Waiting for this fake process to expire...',
 				maxDuration: 20 * 1000,
 				redirect: conversation.reference
@@ -28,14 +28,14 @@ if (conversation.request.method == 'POST') {
 			break
 
 		case 'milestones':
-			var process = Savory.Processing.startProcess({
+			var process = Savory.Progress.startProcess({
 				description: 'Searching for your flights...',
 				maxDuration: 60 * 1000,
 				redirect: conversation.reference,
 				task: {
 					fn: function() {
 						document.executeOnce('/savory/service/processing/')
-						var process = Savory.Processing.getProcess()
+						var process = Savory.Progress.getProcess()
 						if (process && process.isActive()) {
 							var task = process.getContext()['savory.task']
 							var milestone = process.getLastMilestone()
@@ -77,7 +77,7 @@ if (conversation.request.method == 'POST') {
 
 %>
 
-<h1>Savory's Processing Service</h1>
+<h1>Savory's Progress Service</h1>
 <p>
 	If you've read Prudence's <a href="http://threecrickets.com/prudence/scaling/">Scaling Tips</a> article, you know
 	that for potentially long-running tasks you want to release conversation threads as soon as possible, and notify
@@ -107,6 +107,10 @@ if (conversation.request.method == 'POST') {
 	Additionally, there is a /web/fragments/ drop-in that would allow the user to see the current state of the process on
 	the web, and another one that lets the user access all proccesses associated with them.
 </p>
+<p>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Progress">Savory.Progress API documentation</a>
+	for more details.
+</p>
 
 
 <h2>Trivial Example</h2>
@@ -116,7 +120,7 @@ if (conversation.request.method == 'POST') {
 <pre>
 document.executeOnce('/savory/service/processing/')
 
-var process = Savory.Processing.startProcess({
+var process = Savory.Progress.startProcess({
 	description: 'Waiting for this fake process to expire...',
 	maxDuration: 20 * 1000,
 	redirect: conversation.reference
@@ -143,7 +147,7 @@ process.redirectWait(conversation)
 <pre>
 var searchString = 'flight #1234'
 	
-var process = Savory.Processing.startProcess({
+var process = Savory.Progress.startProcess({
 	description: 'Searching for your flights...',
 	maxDuration: 60 * 1000,
 	redirect: '/flight/results/',
@@ -160,7 +164,7 @@ var process = Savory.Processing.startProcess({
 <pre>
 document.executeOnce('/savory/service/processing/')
 
-var process = Savory.Processing.getProcess()
+var process = Savory.Progress.getProcess()
 if (process && process.isActive()) {
 	var task = process.getContext()['savory.task']
 	var milestone = process.getLastMilestone()
@@ -213,7 +217,7 @@ if (process && process.isActive()) {
 </p>
 <pre>
 var ipAddressOfRemoteLocation = '1.2.3.4' 
-var process = Savory.Processing.startProcess({
+var process = Savory.Progress.startProcess({
 	description: 'Attemping to connect you to remote location {0}...'.cast(ipAddressOfRemoteLocation),
 	maxDuration: 5 * 60 * 1000,
 	redirect: '/remote/connected/',
@@ -231,7 +235,7 @@ var process = Savory.Processing.startProcess({
 <pre>
 document.executeOnce('/savory/service/processing/')
 
-var process = Savory.Processing.getProcess()
+var process = Savory.Progress.getProcess()
 if (process) {
 	process.attempt(function(process, task) {
 		document.executeOnce('/mylibrary/connections/')

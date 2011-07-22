@@ -73,7 +73,8 @@ function handlePost(conversation) {
 	var value = null
 	
 	var type = conversation.query.get('type') || conversation.locals.get('type')
-	var isXml = (conversation.mediaTypeName == 'application/xml') || (conversation.mediaTypeName == 'text/xml') || (type == 'xml')
+	var mediaType = conversation.entity ? conversation.entity.mediaType : conversation.mediaTypeName
+	var isXml = (mediaType == 'application/xml') || (mediaType == 'text/xml') || (type == 'xml')
 	if (isXml) {
 		// Try XML-RPC
 		var doc
