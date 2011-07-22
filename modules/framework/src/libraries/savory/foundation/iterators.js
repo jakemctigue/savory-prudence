@@ -372,7 +372,7 @@ Savory.Iterators = Savory.Iterators || function() {
 	    	this.closeFn = closeFn
 			this.index = 0
 			this.options = {hasNext: true}
-			this.nextValue = fetchFn.call(scope, options, 0)
+			this.nextValue = fetchFn.call(this.scope, this.options, 0)
 	    }
 	    
 	    Public.hasNext = function() {

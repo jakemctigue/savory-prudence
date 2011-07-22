@@ -96,11 +96,6 @@ Savory.SEO = Savory.SEO || function() {
 	Public.logger = Savory.Logging.getLogger('seo')
 
 	/**
-	 * @namespace
-	 */
-	Public.Provider = {}
-	
-	/**
 	 * Fetches the location providers configured in the 'savory.feature.seo.providers' application global.
 	 * 
 	 * @returns {Object} A dict of location providers by name
@@ -760,7 +755,142 @@ Savory.SEO = Savory.SEO || function() {
 		return Public
 	}(Public))
     
-    //
+	/**
+	 * @class
+	 * @name Savory.SEO.Provider
+	 */
+	Public.Provider = Savory.Classes.define(function() {
+		/** @exports Public as Savory.SEO.Provider */
+		var Public = {}
+
+		/** @ignore */
+		Public._construct = function(config) {
+			Savory.Objects.merge(this, config, ['name', 'domains'])
+		}
+
+		/**
+		 * The URL set name.
+		 * 
+		 * @returns {String}
+		 */
+		Public.getName = function() {
+			return this.name
+		}
+
+		/**
+		 * The root URLs of the domains for which we provide locations.
+		 * 
+		 * @returns {String[]}
+		 */
+		Public.getDomains = function() {
+			return this.domains
+		}
+		
+		/**
+		 * The locations in the form of:
+		 * {uri: '...',  lastModified: date, frequency: '', priority: number between 0.0 and 1.0}
+		 * 
+		 * @returns {Savory.Iterators.Iterator}
+		 */
+		Public.getLocations = function() {
+			return new Savory.Iterators.Iterator()
+		}
+		
+		/**
+		 * The URLs to exclude for robots.txt.
+		 * 
+		 * @returns {Savory.Iterators.Iterator}
+		 */
+		Public.getExclusions = function() {
+			return new Savory.Iterators.Iterator()
+		}
+
+		/**
+		 * The URLs to include for robots.txt.
+		 * 
+		 * @returns {Savory.Iterators.Iterator}
+		 */
+		Public.getInclusions = function() {
+			return new Savory.Iterators.Iterator()
+		}
+
+		return Public
+	}())
+	
+	/**
+	 * A location provider for the SEO feature. All URLs are explicitly configured as arrays.
+	 * This is not a very scalable solution, and is provided mostly for smaller sitemaps and
+	 * for testing. It's also good example code on which to design your own location provider
+	 * classes.
+	 * <p>
+	 * Note that every where we mention URLs here they are always relative URLs. During generation
+	 * of robots.txt and sitemap.xml, they are appended to the root URL of the relevant domain.
+	 * 
+	 * @class
+	 * @name Savory.SEO.ExplicitProvider
+	 * @augments Savory.SEO.Provider
+	 * 
+	 * @param config
+	 * @param {String} config.name The URL set name
+	 * @param {String[]} config.domains The root URLs of the domains for which we provide locations
+	 * @param {Array} config.locations The locations, where each location can be a simple URL, or
+	 *        a full dict in the form {uri: '',  lastModified: date, frequency: '', priority: number between 0.0 and 1.0}
+	 * @param {String[]} config.exclusions The URLs to exclude for robots.txt
+	 * @param {String[]} config.inclusions The URLs to include for robots.txt
+	 * @param {String} [config.defaultFrequency='weekly'] Default frequency to use for locations which do not explicitly provide it
+	 * @param {Number} [config.defaultPriority=0.5] Default priority to use for locations which do not explicitly provide it
+	 * 
+	 * @author Tal Liron
+	 * @version 1.0
+	 */
+	Public.ExplicitProvider = Savory.Classes.define(function(Module) {
+		/** @exports Public as Savory.SEO.ExplicitProvider */
+		var Public = {}
+		
+		/** @ignore */
+		Public._construct = function(config) {
+			Savory.Objects.merge(this, config, ['name', 'domains', 'locations', 'exclusions', 'inclusions', 'defaultFrequency', 'defaultPriority'])
+		    this.defaultFrequency = this.defaultFrequency || 'weekly'
+		    this.defaultPriority = this.defaultPriority || 0.5
+		    Savory.SEO.ExplicitProvider.prototype.superclass.call(this, this)
+		}
+		
+		/** @ignore */
+		Public._inherit = Module.Provider
+		
+		Public.getLocations = function() {
+			return new Savory.Iterators.Transformer(new Savory.Iterators.Array(this.locations), massage, this)
+		}
+		
+		Public.getExclusions = function() {
+			return new Savory.Iterators.Array(this.inclusions)
+		}
+	
+		Public.getInclusions = function() {
+			return new Savory.Iterators.Array(this.inclusions)
+		}
+		
+		//
+		// Private
+		//
+	
+		function massage(location) {
+			if (Savory.Objects.isString(location)) {
+				return {
+					uri: String(location),
+					lastModified: new Date(),
+					frequency: defaultFrequency,
+					priority: defaultPriority
+				}
+			}
+			
+			else return location
+	    }
+		
+		return Public
+	}(Public))
+
+	//
     // Initialization
     //
 
