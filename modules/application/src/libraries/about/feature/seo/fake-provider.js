@@ -13,7 +13,7 @@
 
 document.executeOnce('/savory/foundation/iterators/')
 
-Savory.SEO.Provider.Fake = Savory.SEO.Provider.Fake || function(config) {
+var FakeProvider = FakeProvider || function(config) {
 	this.getName = function() {
 		return config.name
 	}

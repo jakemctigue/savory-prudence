@@ -31,8 +31,8 @@ var publicBaseUri = 'https://threecrickets.com/savory'
 
 predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 	savory: {
-		revision: '49',
-		version: 'Early Bird R49',
+		revision: '%REVISION%',
+		version: 'Early Bird R%REVISION%',
 		
 		feature: {
 			console: {
@@ -67,8 +67,8 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 				providers: {
 					'.': Savory.Lazy.build({
 						'the-real-thing': {
-							dependencies: '/savory/feature/seo/provider/explicit/',
-							name: 'Savory.SEO.Provider.Explicit',
+							dependencies: '/savory/feature/seo/',
+							name: 'Savory.SEO.ExplicitProvider',
 							config: {
 								domains: ['http://localhost:8080', 'http://threecrickets.com'],
 								locations: ['/happy/', '/this/', '/is/', '/working/'],
@@ -77,8 +77,8 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 							}
 						},
 						'test': {
-							dependencies: '/about/feature/seo/fake-locations/',
-							name: 'Savory.SEO.Provider.Fake',
+							dependencies: '/about/feature/seo/fake-provider/',
+							name: 'FakeProvider',
 							config: {
 								domains: ['http://localhost:8080', 'http://threecrickets.com']
 							}
