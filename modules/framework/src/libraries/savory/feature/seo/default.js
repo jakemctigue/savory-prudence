@@ -107,6 +107,10 @@ Savory.SEO = Savory.SEO || function() {
 		})
 	}
 
+	Public.resetProviders = function() {
+		Savory.Lazy.getGlobalMap('savory.feature.seo.providers', Public.logger).reset()
+	}
+
 	/**
 	 * Registers the '.gz' extension (not available by default in Restlet).
 	 * <p>
@@ -282,7 +286,7 @@ Savory.SEO = Savory.SEO || function() {
 				for (var p in providers) {
 					var provider = providers[p]
 					if (provider.getExclusions) {
-						iterators.push(provider.getExclusions())
+						iterators.push(Savory.Iterators.iterator(provider.getExclusions()))
 					}
 				}
 			}
@@ -304,7 +308,7 @@ Savory.SEO = Savory.SEO || function() {
 				for (var p in providers) {
 					var provider = providers[p]
 					if (provider.getInclusions) {
-						iterators.push(provider.getInclusions())
+						iterators.push(Savory.Iterators.iterator(provider.getInclusions()))
 					}
 				}
 			}
@@ -376,7 +380,7 @@ Savory.SEO = Savory.SEO || function() {
 				for (var p in providers) {
 					var provider = providers[p]
 					if (provider.getName() == setName) {
-						return provider.getLocations()
+						return Savory.Iterators.iterator(provider.getLocations())
 					}
 				}
 			}
@@ -403,8 +407,8 @@ Savory.SEO = Savory.SEO || function() {
 		 */
 		Public.getAllRobots = function() {
 			// Our data
-			var exclusions = Savory.Iterators.toArray(this.getExclusions())
-			var inclusions = Savory.Iterators.toArray(this.getInclusions())
+			var exclusions = Savory.Iterators.toArray(Savory.Iterators.iterator(this.getExclusions()))
+			var inclusions = Savory.Iterators.toArray(Savory.Iterators.iterator(this.getInclusions()))
 
 			// Gather robots from all applications
 			var applications = this.getApplications()
@@ -722,7 +726,7 @@ Savory.SEO = Savory.SEO || function() {
 							writer.print('</lastmod><changefreq>')
 							writer.print(location.frequency)
 							writer.print('</changefreq><priority>')
-							writer.print(location.priority)
+							writer.print(location.priority.toFixed(1))
 							writer.println('</priority></url>')
 							
 							if (++count == urlSetPageSize) {
@@ -793,7 +797,7 @@ Savory.SEO = Savory.SEO || function() {
 		 * @returns {Savory.Iterators.Iterator}
 		 */
 		Public.getLocations = function() {
-			return new Savory.Iterators.Iterator()
+			return null
 		}
 		
 		/**
@@ -802,7 +806,7 @@ Savory.SEO = Savory.SEO || function() {
 		 * @returns {Savory.Iterators.Iterator}
 		 */
 		Public.getExclusions = function() {
-			return new Savory.Iterators.Iterator()
+			return null
 		}
 
 		/**
@@ -811,7 +815,7 @@ Savory.SEO = Savory.SEO || function() {
 		 * @returns {Savory.Iterators.Iterator}
 		 */
 		Public.getInclusions = function() {
-			return new Savory.Iterators.Iterator()
+			return null
 		}
 
 		return Public
@@ -850,6 +854,9 @@ Savory.SEO = Savory.SEO || function() {
 		/** @ignore */
 		Public._construct = function(config) {
 			Savory.Objects.merge(this, config, ['name', 'domains', 'locations', 'exclusions', 'inclusions', 'defaultFrequency', 'defaultPriority'])
+		    this.locations = this.locations || []
+		    this.exclusions = this.exclusions || []
+		    this.inclusions = this.inclusions || []
 		    this.defaultFrequency = this.defaultFrequency || 'weekly'
 		    this.defaultPriority = this.defaultPriority || 0.5
 		    Savory.SEO.ExplicitProvider.prototype.superclass.call(this, this)
@@ -863,7 +870,7 @@ Savory.SEO = Savory.SEO || function() {
 		}
 		
 		Public.getExclusions = function() {
-			return new Savory.Iterators.Array(this.inclusions)
+			return new Savory.Iterators.Array(this.exclusions)
 		}
 	
 		Public.getInclusions = function() {
@@ -879,12 +886,11 @@ Savory.SEO = Savory.SEO || function() {
 				return {
 					uri: String(location),
 					lastModified: new Date(),
-					frequency: defaultFrequency,
-					priority: defaultPriority
+					frequency: this.defaultFrequency,
+					priority: this.defaultPriority
 				}
 			}
-			
-			else return location
+			return location
 	    }
 		
 		return Public

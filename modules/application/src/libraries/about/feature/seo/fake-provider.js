@@ -11,18 +11,23 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/savory/feature/seo/')
+document.executeOnce('/savory/foundation/classes/')
 document.executeOnce('/savory/foundation/iterators/')
 
-var FakeProvider = FakeProvider || function(config) {
-	this.getName = function() {
-		return config.name
-	}
+Savory.SEO.resetProviders()
 
-	this.getDomains = function() {
-		return config.domains
+var FakeProvider = FakeProvider || Savory.Classes.define(function() {
+	var Public = {}
+	
+	Public._construct = function(config) {
+		Savory.Objects.merge(this, config, ['name', 'domains'])
+		FakeProvider.prototype.superclass.call(this, this)
 	}
 	
-	this.getLocations = function() {
+	Public._inherit = Savory.SEO.Provider
+	
+	Public.getLocations = function() {
 		return new Savory.Iterators.Fetcher(function(options, index) {
 			if (index == 300000) {
 				options.hasNext = false
@@ -37,7 +42,7 @@ var FakeProvider = FakeProvider || function(config) {
 		})
 	}
 
-	this.getExclusions = function() {
+	Public.getExclusions = function() {
 		return new Savory.Iterators.Fetcher(function(options, index) {
 			if (index == 100) {
 				options.hasNext = false
@@ -47,7 +52,7 @@ var FakeProvider = FakeProvider || function(config) {
 		})
 	}
 
-	this.getInclusions = function() {
+	Public.getInclusions = function() {
 		return new Savory.Iterators.Fetcher(function(options, index) {
 			if (index == 100) {
 				options.hasNext = false
@@ -56,4 +61,6 @@ var FakeProvider = FakeProvider || function(config) {
 			return '/fake-include' + index + '/'
 		})
 	}
-}
+	
+	return Public
+}())

@@ -17,7 +17,14 @@ function handleBefore(conversation) {
 	var domain = Savory.SEO.getCurrentDomain(conversation)
 	if (domain && !domain.isDynamic()) {
 		// Redirect statically generate sitemaps to /web/static/ URIs
-		return '/sitemap' + conversation.reference.path
+		var uri
+		if (domain.staticRelativePath) {
+			uri = '/' + domain.staticRelativePath + conversation.reference.path
+		}
+		else {
+			uri = '/sitemap' + conversation.reference.path
+		}
+		return uri
 	}
 	
 	return 'continue'
