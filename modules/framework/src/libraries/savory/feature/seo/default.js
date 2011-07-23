@@ -282,10 +282,16 @@ Savory.SEO = Savory.SEO || function() {
 
 			var providers = Savory.SEO.getProviders()
 			if (providers) {
+				var rootUri = this.getRootUri()
 				for (var p in providers) {
 					var provider = providers[p]
-					if (provider.getExclusions) {
-						iterators.push(Savory.Iterators.iterator(provider.getExclusions()))
+					var domains = provider.getDomains()
+					for (var d in domains) {
+						if (domains[d] == rootUri) {
+							if (provider.getExclusions) {
+								iterators.push(Savory.Iterators.iterator(provider.getExclusions()))
+							}
+						}
 					}
 				}
 			}
@@ -304,10 +310,16 @@ Savory.SEO = Savory.SEO || function() {
 			
 			var providers = Savory.SEO.getProviders()
 			if (providers) {
+				var rootUri = this.getRootUri()
 				for (var p in providers) {
 					var provider = providers[p]
-					if (provider.getInclusions) {
-						iterators.push(Savory.Iterators.iterator(provider.getInclusions()))
+					var domains = provider.getDomains()
+					for (var d in domains) {
+						if (domains[d] == rootUri) {
+							if (provider.getInclusions) {
+								iterators.push(Savory.Iterators.iterator(provider.getInclusions()))
+							}
+						}
 					}
 				}
 			}
@@ -721,7 +733,7 @@ Savory.SEO = Savory.SEO || function() {
 							writer.print('<url><loc>')
 							writer.print((rootUri + location.uri).escapeText())
 							writer.print('</loc><lastmod>')
-							writer.print(location.lastModified.format(dateFormat))
+							writer.print(dateFormat.format(location.lastModified))
 							writer.print('</lastmod><changefreq>')
 							writer.print(location.frequency)
 							writer.print('</changefreq><priority>')
