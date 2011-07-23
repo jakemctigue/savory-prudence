@@ -129,7 +129,6 @@ Savory.SEO = Savory.SEO || function() {
 		resourcesPassThrough.push('/savory/feature/seo/robots/')
 		resourcesPassThrough.push('/savory/feature/seo/sets/')
 		resourcesPassThrough.push('/savory/feature/seo/locations/')
-		dynamicWebPassThrough.push('/savory/feature/seo/robots/')
 		dynamicWebPassThrough.push('/savory/feature/seo/sitemap/')
 	}
 
@@ -154,7 +153,7 @@ Savory.SEO = Savory.SEO || function() {
 				
 				// Static site map
 				router.captureOther('/sitemap.xml.gz', app, '/sitemap.xml.gz')
-				router.captureOther('/sitemap-{sitemap}.xml.gz', '/sitemap-{sitemap}.xml.gz')
+				router.captureOther('/sitemap-{sitemap}.xml.gz', app, '/sitemap-{sitemap}.xml.gz')
 			}
 			else {
 				// Robots
@@ -172,8 +171,8 @@ Savory.SEO = Savory.SEO || function() {
 			}
 		}
 		else {
-			router.hide('/savory/feature/seo/sitemap/')
-			router.hide('/savory/feature/seo/robots/')
+			//router.hide('/savory/feature/seo/sitemap/')
+			//router.hide('/savory/feature/seo/robots/')
 		}
 	}
 	

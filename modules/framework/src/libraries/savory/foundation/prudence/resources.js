@@ -864,7 +864,7 @@ Savory.Resources = Savory.Resources || function() {
 	 *        {label: '', type: '', validator: '', mask: ''} or a plain string, which will considered as the 'type';
 	 *        'label' will default to the field name; 'type' defaults to 'string' and is used with the {@link Savory.Validation}
 	 *        library; 'validator' and 'mask' will both override options provided by the validation library
-	 * @param {String} [config.mode='raw'] The default handling mode in case none is provided (see {@link #handle})
+	 * @param {String} [config.mode='none'] The default handling mode in case none is provided (see {@link #handle})
 	 * @param {String} [config.includeSuccessDocumentName=config.includeDocumentName] The default document to include for successful handling
 	 *                 in 'include' mode
 	 * @param {String} [config.includeFailureDocumentName=config.includeDocumentName] The default document to include for failed handling
@@ -886,7 +886,7 @@ Savory.Resources = Savory.Resources || function() {
         /** @ignore */
     	Public._construct = function(config) {
     		Savory.Objects.merge(this, ['mode', 'includeSuccessDocumentName', 'includeFailureDocumentName', 'includeDocumentName', 'redirectSuccessUri', 'redirectFailureUri', 'redirectUri', 'serverValidation', 'clientValidation'])
-    		this.mode = this.mode || 'raw'
+    		this.mode = this.mode || 'none'
     		this.serverValidation = Savory.Objects.ensure(this.serverValidation, true)
     		this.clientValidation = Savory.Objects.ensure(this.clientValidation, true)
     		
@@ -989,12 +989,28 @@ Savory.Resources = Savory.Resources || function() {
     	}
     	
     	/**
+    	 * Handles the form, first validating it (server-side, of course) if necessary.
+    	 * <p>
+		 * A few handling modes are supported, which you can set explicitly when you call the function, via params.mode, set 
+		 * default mode when you create the form, or let Savory pick it up automatically from the "?mode=..." query param.
+		 * <ul>
+		 * <li>none: Savory does nothing with the results of the handling. It's then up to you handle them as appropriate.
+		 * This is the default.</li>
+		 * <li>json: Savory dumps the results as JSON to the page, and sets the MIME type to 'application/json'. This is useful for
+		 * AJAX forms, which will consume this JSON data on the client. Just make sure not to output anything else on the page,
+		 * otherwise the JSON will be unparsable!</li>
+		 * <li>include: Savory does a document.include of specified documents according the success or failure of the handling.
+		 * You can then use /web/fragments/ to implement your own views. The 'savory.resources.form' conversation.local will contain
+		 * the results of the handling.</li>
+		 * <li>redirect: Savory does a conversation.response.redirectSeeOther of specified URIs according the success or failure of
+		 * the handling.</li>
+		 * </ul>
     	 * 
     	 * @param [params]
     	 * @param [params.conversation] The Prudence conversation
     	 * @param [params.values] The form values (will be extracted from params.conversation if not provided explicitly) 
     	 * @param {Savory.Internationalization.Pack} [params.textPack] The text pack to use for messages (will be extracted from params.conversation if not provided explicitly) 
-    	 * @param {String} [params.mode=this.mode] Set this to override the query param; can be 'raw', 'json',
+    	 * @param {String} [params.mode=this.mode] Set this to override the query param; can be 'none', 'json',
     	 *                 'include' or 'redirect'
     	 * @param {String} [params.includeSuccessDocumentName=this.includeSuccessDocumentName] Set this to override the form's value 
     	 * @param {String} [params.includeFailureDocumentName=this.includeFailureDocumentName] Set this to override the form's value 

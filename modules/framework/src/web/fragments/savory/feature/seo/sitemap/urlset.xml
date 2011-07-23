@@ -31,7 +31,7 @@ if (domain && domain.isDynamic()) {
 %>
 	<url>
 		<loc><%= (rootUri + location.uri).escapeText() %></loc>
-		<lastmod><%= location.lastModified.format(dateFormat) %></lastmod>
+		<lastmod><%= dateFormat.format(location.lastModified) %></lastmod>
 		<changefreq><%= location.frequency %></changefreq>
 		<priority><%= location.priority.toFixed(1) %></priority>
 	</url><%

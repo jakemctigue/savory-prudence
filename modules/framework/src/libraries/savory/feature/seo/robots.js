@@ -18,6 +18,7 @@ document.executeOnce('/savory/foundation/prudence/resources/')
 
 /** @ignore */
 function handleInit(conversation) {
+    conversation.addMediaTypeByName('text/plain')
     conversation.addMediaTypeByName('application/json')
     conversation.addMediaTypeByName('application/java')
 }
@@ -26,11 +27,34 @@ function handleInit(conversation) {
 function handleGet(conversation) {
 	var domain = Savory.SEO.getCurrentDomain(conversation)
 	if (domain) {
-		var robots = {
-			exclusions: Savory.Iterators.toArray(domain.getExclusions()),
-			inclusions: Savory.Iterators.toArray(domain.getInclusions())
+		var robots = domain.getAllRobots()
+
+		if (conversation.mediaType == 'application/java') {
+			return robots
 		}
-		return conversation.mediaType == 'application/java' ? robots : Savory.JSON.to(robots)
+		else if (conversation.mediaType == 'application/json') {
+			return Savory.JSON.to(robots, conversation.query.get('human') == true)
+		}
+		else {
+			var text = ''
+				
+			text += 'Sitemap: ' + domain.getRootUri() + (domain.isDynamic() ? '/sitemap.xml' : '/sitemap.xml.gz') + '\n'
+			text += 'User-agent: ' + (domain.getUserAgent() || '*') + '\n'
+			
+			var delaySeconds = domain.getDelaySeconds()
+			if (delaySeconds) {
+				text += 'Crawl-delay: ' + delaySeconds + '\n'
+			}
+
+			for (var i in robots.inclusions) {
+				text += 'Allow: ' + robots.inclusions[i] + '\n'
+			}
+			for (var e in robots.exclusions) {
+				text += 'Disallow: ' + robots.exclusions[e] + '\n'
+			}
+			
+			return text
+		} 
 	}
 	else {
 		return Savory.Resources.Status.ClientError.NotFound
