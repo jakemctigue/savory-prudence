@@ -171,8 +171,8 @@ Savory.SEO = Savory.SEO || function() {
 			}
 		}
 		else {
-			//router.hide('/savory/feature/seo/sitemap/')
-			//router.hide('/savory/feature/seo/robots/')
+			router.hide('/savory/feature/seo/sitemap/')
+			router.hide('/savory/feature/seo/robots/')
 		}
 	}
 	
