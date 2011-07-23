@@ -28,7 +28,7 @@ minimumTimeBetweenValidityChecks = 0
 
 var excludeFromFilter = ['/media/', '/style/', '/script/']
 var publicBaseUri = 'https://threecrickets.com/savory'
-
+	
 predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 	savory: {
 		revision: '%REVISION%',
@@ -66,21 +66,25 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 				}],
 				providers: {
 					'.': Savory.Lazy.build({
-						'the-real-thing': {
+						savory: {
+							dependencies: '/about/feature/seo/providers/',
+							name: 'SavoryProvider'
+						},
+						test: {
 							dependencies: '/savory/feature/seo/',
 							name: 'Savory.SEO.ExplicitProvider',
 							config: {
-								domains: ['http://localhost:8080', 'http://threecrickets.com'],
-								locations: ['/happy/', '/this/', '/is/', '/working/'],
+								domains: ['http://localhost:8080'],
+								locations: ['/this/', '/is/', '/working/'],
 								exclusions: ['/savory/media/', '/savory/style/', '/savory/script/'],
 								inclusions: ['/savory/media/name/']
 							}
 						},
-						'test': {
-							dependencies: '/about/feature/seo/fake-provider/',
+						fake: {
+							dependencies: '/about/feature/seo/providers/',
 							name: 'FakeProvider',
 							config: {
-								domains: ['http://localhost:8080', 'http://threecrickets.com']
+								domains: ['http://localhost:8080']
 							}
 						}
 					})
