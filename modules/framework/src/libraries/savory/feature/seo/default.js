@@ -578,7 +578,7 @@ Savory.SEO = Savory.SEO || function() {
 
 					futures.push(Savory.Tasks.task({
 						fn: function(context) {
-							document.executeOnce('/savory/feature/seo/')
+							document.execute('/savory/feature/seo/')
 							var domain = Savory.SEO.getDomain(context.rootUri)
 							if (domain) {
 								domain.generateUrlSet(context.workDir, context.set)
@@ -600,7 +600,7 @@ Savory.SEO = Savory.SEO || function() {
 					futures.push(Savory.Tasks.task({
 						application: app.name,
 						fn: function(context) {
-							document.executeOnce('/savory/feature/seo/')
+							document.execute('/savory/feature/seo/')
 							var domain = Savory.SEO.getDomain(context.rootUri)
 							if (domain) {
 								domain.generateUrlSets(context.workDir)
@@ -677,7 +677,7 @@ Savory.SEO = Savory.SEO || function() {
 
 				futures.push(Savory.Tasks.task({
 					fn: function(context) {
-						document.executeOnce('/savory/feature/seo/')
+						document.execute('/savory/feature/seo/')
 						var domain = Savory.SEO.getDomain(context.rootUri)
 						if (domain) {
 							domain.generateUrlSet(context.workDir, context.set)

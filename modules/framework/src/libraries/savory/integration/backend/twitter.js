@@ -49,7 +49,7 @@ Savory.Twitter = Savory.Twitter || function() {
         
         /** @ignore */
         Public._construct = function(consumerKey, consumerSecret, oauthToken, oauthTokenSecret, callbackUri) {
-    		this.provider = new Savory.OAuth.Provider(consumerKey || defaultConsumerKey, consumerSecret || defaultConsumerSecret, requestTokenUri, accessTokenUri, callbackUri || defaulCallbackUri)
+    		this.provider = new Savory.OAuth.Provider(consumerKey || defaultConsumerKey, consumerSecret || defaultConsumerSecret, requestTokenUri, accessTokenUri, callbackUri || defaultCallbackUri)
         }
 
         /**
