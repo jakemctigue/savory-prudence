@@ -1048,7 +1048,7 @@ Savory.Resources = Savory.Resources || function() {
 	    		
 	    		var textPack = params.textPack || (Savory.Objects.exists(params.conversation) ? Savory.Internationalization.getCurrentPack(params.conversation) : null)
 	    		var results = this.validate(values, textPack, params.conversation)
-	    		this.process(results)
+	    		this.process(results, params.conversation)
 	    		
 	    		switch (mode) {
 	    			case 'json':
@@ -1107,7 +1107,7 @@ Savory.Resources = Savory.Resources || function() {
     		return false
     	}
     	
-    	Public.process = function(results) {
+    	Public.process = function(results, conversation) {
     	}
     	
     	return Public

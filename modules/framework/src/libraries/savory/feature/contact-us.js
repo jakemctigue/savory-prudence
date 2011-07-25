@@ -86,11 +86,11 @@ Savory.ContactUs = Savory.ContactUs || function() {
 				message: {
 					required: true
 				},
-				'recaptcha_response_field': {
+				recaptcha_response_field: {
 					type: 'reCaptcha',
 					required: true
 				},
-				'recaptcha_challenge_field': {
+				recaptcha_challenge_field: {
 					required: true
 				}
 			}
@@ -105,7 +105,18 @@ Savory.ContactUs = Savory.ContactUs || function() {
 			
 			Savory.ContactUs.Form.prototype.superclass.call(this, this)
 		}
-	    
+
+    	Public.process = function(results, conversation) {
+			var address = Savory.Resources.getClientAddress(conversation)
+			
+			Savory.Notification.queueForChannel(channel, this.messageTemplate.cast({
+				siteName: siteName,
+				address: address.ip,
+				hostName: address.hostName,
+				message: results.values.message
+			}), results.values.email)
+    	}
+
 		/*
 		Public.getStatusText = function() {
 			var status = conversation.locals.get('savory.feature.contactUs.status')

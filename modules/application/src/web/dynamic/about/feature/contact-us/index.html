@@ -35,9 +35,5 @@ document.executeOnce('/savory/feature/contact-us/')
 var form = new Savory.ContactUs.Form()
 form.handle({conversation: conversation, mode: 'include'})
 
-//var form = conversation.locals.get('savory.feature.contactUs.form') || new Savory.ContactUs.Form(document, conversation)
-
-//form.render()
-
 %>
 <%& '/site/footer/' %>

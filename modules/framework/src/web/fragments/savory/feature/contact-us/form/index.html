@@ -33,21 +33,28 @@ var captcha = {
 <form id="register-form" method="POST">
 	<div class="centerpiece">
 		<%= Savory.HTML.build({_key: 'savory.feature.contactUs.form.title', _tag: 'h2'}) %>
-<% if (form && form.errors) { for (var e in form.errors) { %>
-		<%= Savory.HTML.div({_content: e + ': ' + form.errors[e], 'class': 'status'}) %>
-<% }} %>
 <%
 if (!user) {
 %>
-		<div class="field"><%= Savory.HTML.input({name: 'email'}, {_key: 'savory.feature.contactUs.form.label.email'}) %></div>
+		<div class="field">
+			<%= Savory.HTML.input({name: 'email'}, {_key: 'savory.feature.contactUs.form.label.email'}) %>
+			<% if (form && form.errors && form.errors.email) { print(Savory.HTML.div({_content: form.errors.email, 'class': 'error'})) } %>
+		</div>
 <%
 }
 %>
-		<div class="field"><%= Savory.HTML.textarea({name: 'message'}, {_key: 'savory.feature.contactUs.form.label.message'}) %></div>
+		<div class="field">
+			<%= Savory.HTML.textarea({name: 'message'}, {_key: 'savory.feature.contactUs.form.label.message'}) %>
+			<% if (form && form.errors && form.errors.message) { print(Savory.HTML.div({_content: form.errors.message, 'class': 'error'})) } %>
+		</div>
 <%
 if (!user) {
 %>
-		<div class="field"><%= Savory.HTML.label({_key: 'savory.feature.contactUs.form.label.humanity'}) %><div id="recaptcha-js"></div></div>
+		<div class="field">
+			<%= Savory.HTML.label({_key: 'savory.feature.contactUs.form.label.humanity'}) %>
+			<div id="recaptcha-js"></div>
+			<% if (form && form.errors && form.errors.recaptcha_response_field) { print(Savory.HTML.div({_content: form.errors.recaptcha_response_field, 'class': 'error'})) } %>
+		</div>
 <%
 }
 %>

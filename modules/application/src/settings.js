@@ -32,7 +32,7 @@ var publicBaseUri = 'https://threecrickets.com/savory'
 predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 	savory: {
 		revision: '%REVISION%',
-		version: 'Early Bird R%REVISION%',
+		version: 'Early Bird %REVISION%',
 		
 		feature: {
 			console: {

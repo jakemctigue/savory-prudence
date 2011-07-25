@@ -1,5 +1,5 @@
 /***********************
- *  Soft Cricket 1.11  *
+ *  Soft Cricket 1.12  *
  *                     *
  *    By: Tal Liron    *
  **********************/
@@ -215,6 +215,9 @@ div.centerpiece {
     div.centerpiece div.field textarea {
       width: 312px;
       height: 300px; }
+    div.centerpiece div.field div.error {
+      color: red;
+      margin-left: 192px; }
   div.centerpiece div.buttons {
     margin-top: 20px;
     padding-bottom: 20px; }
