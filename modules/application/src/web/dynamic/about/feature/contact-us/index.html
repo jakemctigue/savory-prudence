@@ -23,6 +23,11 @@ conversation.locals.put('reCaptcha', true)
 	or others subscribing to the channel would then receive it. Straightforward!
 </p>
 <p>
+	Note that a different form is displayed depending on whether the user is logged in. Logged-in
+	users will not have to enter their email address or pass the CAPTCHA. We already know they
+	are legit, by virtue of having logged in!
+</p>
+<p>
 	The originating IP address is included in the email. 
 </p>
 <p>
@@ -32,7 +37,11 @@ conversation.locals.put('reCaptcha', true)
 <%
 
 document.executeOnce('/savory/feature/contact-us/')
-var form = new Savory.ContactUs.Form()
+document.executeOnce('/savory/service/authentication/')
+
+var session = Savory.Authentication.getCurrentSession(conversation)
+var user = session ? session.getUser() : null
+var form = user ? Savory.ContactUs.loggedInForm : Savory.ContactUs.notLoggedInForm
 form.handle({conversation: conversation, mode: 'include'})
 
 %>

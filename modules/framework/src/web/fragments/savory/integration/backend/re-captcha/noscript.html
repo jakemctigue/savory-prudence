@@ -11,6 +11,12 @@ Alternatively, you can obtain a royalty free commercial license with less
 limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
+%><%
+var textPack = Savory.Internationalization.getCurrentPack(conversation)
+var captcha = {
+	noScriptHeader: textPack.get('savory.integration.backend.reCaptcha.noscript.header'),
+	noScriptLabel: textPack.get('savory.integration.backend.reCaptcha.noscript.label')
+}
 %>
 <div id="recaptcha">
 	<%= Savory.HTML.div({_content: captcha.noScriptHeader, 'class': 'top'}) %>

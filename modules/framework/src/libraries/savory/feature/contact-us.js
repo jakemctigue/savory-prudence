@@ -69,7 +69,7 @@ Savory.ContactUs = Savory.ContactUs || function() {
      * @name Savory.ContactUs.Form
      * @augments Savory.Resources.Form
      */
-	Public.Form = Savory.Classes.define(function() {
+	Public.Form = Savory.Classes.define(function(Module) {
 		/** @exports Public as Savory.ContactUs.Form */
 	    var Public = {}
 
@@ -77,109 +77,73 @@ Savory.ContactUs = Savory.ContactUs || function() {
 	    Public._inherit = Savory.Resources.Form
 	    
 	    /** @ignore */
+	    Public._configure = ['hasUser']
+	    
+	    /** @ignore */
 		Public._construct = function(config) {
-			this.fields = {
-				email: {
-					type: 'email',
-					required: true
-				}, 
-				message: {
-					required: true
-				},
-				recaptcha_response_field: {
-					type: 'reCaptcha',
-					required: true
-				},
-				recaptcha_challenge_field: {
-					required: true
+	    	if (this.hasUser) {
+				this.fields = {
+					message: {
+						required: true
+					}
 				}
-			}
+	    	}
+	    	else {
+				this.fields = {
+					email: {
+						type: 'email',
+						required: true
+					}, 
+					message: {
+						required: true
+					},
+					recaptcha_response_field: {
+						type: 'reCaptcha',
+						required: true
+					},
+					recaptcha_challenge_field: {
+						required: true
+					}
+				}
+	    	}
 
-			this.reCaptcha = new Savory.ReCAPTCHA()
 			this.includeDocumentName = '/savory/feature/contact-us/form/'
 			this.includeSuccessDocumentName = '/savory/feature/contact-us/form/success/'
 			this.textPack = Savory.Internationalization.getCurrentPack(conversation)
+			this.reCaptcha = new Savory.ReCAPTCHA()
 			this.messageTemplate = new Savory.Mail.MessageTemplate(this.textPack, 'savory.feature.contactUs.message')
-		
-			//conversation.locals.put('savory.feature.contactUs.form', this)
 			
-			Savory.ContactUs.Form.prototype.superclass.call(this, this)
+			Module.Form.prototype.superclass.call(this, this)
 		}
 
     	Public.process = function(results, conversation) {
 			var address = Savory.Resources.getClientAddress(conversation)
+			var session = Savory.Authentication.getCurrentSession(conversation)
+			var user = session ? session.getUser() : null
+			var email = user ? user.getEmail() : results.values.email
 			
 			Savory.Notification.queueForChannel(channel, this.messageTemplate.cast({
 				siteName: siteName,
 				address: address.ip,
 				hostName: address.hostName,
 				message: results.values.message
-			}), results.values.email)
+			}), email)
     	}
-
-		/*
-		Public.getStatusText = function() {
-			var status = conversation.locals.get('savory.feature.contactUs.status')
-			return status || ''
-		}
-
-		Public.validate = function() {
-			var form = Savory.Resources.getForm(conversation, {
-				email: 'string',
-				message: 'string'
-			})
-			
-			var session = Savory.Authentication.getCurrentSession(conversation)
-			var user = session ? session.getUser() : null
-			
-			if (user) {
-				form.email = user.getEmail()
-			}
-			else {
-				if (!form.email || !Savory.Mail.isAddressValid(form.email)) {
-					conversation.locals.put('savory.feature.contactUs.status', this.textPack.get('savory.feature.contactUs.form.invalid.email'))
-					return null
-				}
-			}
-			if (!form.message) {
-				conversation.locals.put('savory.feature.contactUs.status', this.textPack.get('savory.feature.contactUs.form.invalid.message'))
-				return null
-			}
-			if (!user) {
-				if (!reCaptcha.validate(conversation)) {
-					conversation.locals.put('savory.feature.contactUs.status', this.textPack.get('savory.feature.contactUs.form.invalid.humanity'))
-					return null
-				}
-			}
-			
-			return form				
-		}
-		
-		Public.render = function() {
-			switch (String(conversation.request.method)) {
-				case 'POST':
-					var form = this.validate()
-					if (form) {
-						var address = Savory.Resources.getClientAddress(conversation)
-						
-						Savory.Notification.queueForChannel(channel, this.messageTemplate.cast({
-							siteName: siteName,
-							address: address.ip,
-							hostName: address.hostName,
-							message: form.message
-						}), form.email)
-						
-						document.include('/savory/feature/contact-us/form/success/')
-						return
-					}
-					break
-			}
-			
-			document.include('/savory/feature/contact-us/form/')				
-		}*/
 		
 		return Public
-	}())
+	}(Public))
+	
+	/**
+	 * @constant
+	 * @returns {Savory.ContactUs.Form}
+	 */
+	Public.loggedInForm = new Public.Form({hasUser: true})
+
+	/**
+	 * @constant
+	 * @returns {Savory.ContactUs.Form}
+	 */
+    Public.notLoggedInForm = new Public.Form()
     
     //
     // Initialization

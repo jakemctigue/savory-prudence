@@ -903,7 +903,7 @@ Savory.Resources = Savory.Resources || function() {
     			
     			fields[name] = field
     		}
-    		this.filds = fields
+    		this.fields = fields
     	}
     	
     	/**
@@ -1018,8 +1018,8 @@ Savory.Resources = Savory.Resources || function() {
 		 * AJAX forms, which will consume this JSON data on the client. Just make sure not to output anything else on the page,
 		 * otherwise the JSON will be unparsable!</li>
 		 * <li>include: Savory does a document.include of specified documents according the success or failure of the handling.
-		 * You can then use /web/fragments/ to implement your own views. The 'savory.resources.form' conversation.local will contain
-		 * the results of the handling.</li>
+		 * You can then use /web/fragments/ to implement your own views. The 'savory.foundation.resources.form' conversation.local will
+		 * contain the form itself, and 'savory.foundation.resources.form.results' the results of the handling.</li>
 		 * <li>redirect: Savory does a conversation.response.redirectSeeOther of specified URIs according the success or failure of
 		 * the handling.</li>
 		 * </ul>
@@ -1072,7 +1072,8 @@ Savory.Resources = Savory.Resources || function() {
 	    				}
     					includeDocumentName = includeDocumentName || this.includeDocumentName
     					if (Savory.Objects.exists(includeDocumentName)) {
-    						conversation.locals.put('savory.foundation.resources.form', results)
+    						conversation.locals.put('savory.foundation.resources.form', this)
+    						conversation.locals.put('savory.foundation.resources.form.results', results)
     						document.include(includeDocumentName)
     					}
 	    				break
@@ -1099,7 +1100,8 @@ Savory.Resources = Savory.Resources || function() {
     		if (mode == 'include') {
 				includeDocumentName = params.includeDocumentName || this.includeDocumentName
 				if (Savory.Objects.exists(includeDocumentName)) {
-					conversation.locals.remove('savory.foundation.resources.form')
+					conversation.locals.put('savory.foundation.resources.form', this)
+					conversation.locals.remove('savory.foundation.resources.form.results')
 					document.include(includeDocumentName)
 				}
     		}

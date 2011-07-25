@@ -24,6 +24,16 @@
 					}
 				}
 			},
+			"integration": {
+				"backend": {
+					"reCaptcha": {
+						"noscript": {
+							"header": "(This would be easier with JavaScript enabled in your browser!)",
+							"label": "When you succeed in the humanity test gives you, paste the text here:"
+						}
+					}
+				}
+			},
 			"service": {
 				"authentication": {
 					"form": {
@@ -80,12 +90,7 @@
 						"label": {
 							"email": "Your email",
 							"message": "Message",
-							"humanity": "Humanity test"
-						},
-						"invalid": {
-							"email": "Please provide a valid email address.",
-							"message": "Please provide a message.",
-							"humanity": "You did not pass the humanity test."
+							"recaptcha_response_field": "Humanity test"
 						},
 						"humanity": {
 							"noscript": "(This would be easier with JavaScript enabled in your browser!)",
