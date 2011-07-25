@@ -20,12 +20,12 @@ Savory.SEO.resetProviders()
 var FakeProvider = FakeProvider || Savory.Classes.define(function() {
 	var Public = {}
 	
+	Public._inherit = Savory.SEO.Provider
+	
 	Public._construct = function(config) {
 		Savory.Objects.merge(this, config, ['name', 'domains'])
 		FakeProvider.prototype.superclass.call(this, this)
 	}
-	
-	Public._inherit = Savory.SEO.Provider
 	
 	Public.getLocations = function() {
 		return new Savory.Iterators.Fetcher(function(options, index) {
@@ -67,6 +67,8 @@ var FakeProvider = FakeProvider || Savory.Classes.define(function() {
 
 var SavoryProvider = SavoryProvider || Savory.Classes.define(function() {
 	var Public = {}
+	
+	Public._inherit = Savory.SEO.ExplicitProvider
 	
 	Public._construct = function(config) {
 		this.name = 'savory'
@@ -329,8 +331,6 @@ var SavoryProvider = SavoryProvider || Savory.Classes.define(function() {
 		
 		SavoryProvider.prototype.superclass.call(this, this)
 	}
-	
-	Public._inherit = Savory.SEO.ExplicitProvider
 	
 	return Public
 }())

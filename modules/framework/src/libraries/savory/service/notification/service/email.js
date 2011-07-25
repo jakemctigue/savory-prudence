@@ -16,7 +16,7 @@ document.executeOnce('/savory/foundation/mail/')
 document.executeOnce('/savory/foundation/localization/')
 document.executeOnce('/savory/foundation/objects/')
 
-Savory = Savory || {Notification: {Service: {}}}
+Savory = Savory || {Notification: {}}
 
 /**
  * @class
@@ -24,21 +24,19 @@ Savory = Savory || {Notification: {Service: {}}}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Notification.Service.Email = Savory.Notification.Service.Email || Savory.Classes.define(function() {
-	/** @exports Public as Savory.Notification.Service.Email */
+Savory.Notification.EmailService = Savory.Notification.EmailService || Savory.Classes.define(function() {
+	/** @exports Public as Savory.Notification.EmailService */
     var Public = {}
 
     /** @ignore */
+    Public._inherit = Savory.Notification.Service
+
+    /** @ignore */
     Public._construct = function(config) {
-    	Savory.Objects.merge(this, config, ['name', 'form', 'site'])
-    	
     	this.name = this.name || 'Email'
     	this.smtp = new Savory.Mail.SMTP()
+    	Savory.Notification.EmailService.prototype.superclass.call(this, this)
     }
-
-    Public.getName = function() {
-		return this.name
-	}
 
     Public.send = function(from, to, notice) {
 		Savory.Notification.logger.info('Sending email from {0} to {1}', this.from || from, to)

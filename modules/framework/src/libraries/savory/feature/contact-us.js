@@ -67,20 +67,46 @@ Savory.ContactUs = Savory.ContactUs || function() {
      * 
      * @class
      * @name Savory.ContactUs.Form
+     * @augments Savory.Resources.Form
      */
 	Public.Form = Savory.Classes.define(function() {
 		/** @exports Public as Savory.ContactUs.Form */
 	    var Public = {}
 
 	    /** @ignore */
-		Public._construct = function(document, conversation) {
-			var reCaptcha = new Savory.ReCAPTCHA()
+	    Public._inherit = Savory.Resources.Form
+	    
+	    /** @ignore */
+		Public._construct = function(config) {
+			this.fields = {
+				email: {
+					type: 'email',
+					required: true
+				}, 
+				message: {
+					required: true
+				},
+				'recaptcha_response_field': {
+					type: 'reCaptcha',
+					required: true
+				},
+				'recaptcha_challenge_field': {
+					required: true
+				}
+			}
+
+			this.reCaptcha = new Savory.ReCAPTCHA()
+			this.includeDocumentName = '/savory/feature/contact-us/form/'
+			this.includeSuccessDocumentName = '/savory/feature/contact-us/form/success/'
 			this.textPack = Savory.Internationalization.getCurrentPack(conversation)
-			this.messageTemplate = new Savory.Mail.MessageTemplate(textPack, 'savory.feature.contactUs.message')
+			this.messageTemplate = new Savory.Mail.MessageTemplate(this.textPack, 'savory.feature.contactUs.message')
 		
-			conversation.locals.put('savory.feature.contactUs.form', this)
+			//conversation.locals.put('savory.feature.contactUs.form', this)
+			
+			Savory.ContactUs.Form.prototype.superclass.call(this, this)
 		}
-	
+	    
+		/*
 		Public.getStatusText = function() {
 			var status = conversation.locals.get('savory.feature.contactUs.status')
 			return status || ''
@@ -139,7 +165,7 @@ Savory.ContactUs = Savory.ContactUs || function() {
 			}
 			
 			document.include('/savory/feature/contact-us/form/')				
-		}
+		}*/
 		
 		return Public
 	}())

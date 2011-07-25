@@ -162,7 +162,7 @@ Savory.Classes = Savory.Classes || function() {
      * definition remains stored as a "definition" property in the class prototype, so that you can
      * access these annotations at runtime.
      * <p>
-     * Two optional annotations are used here: "_construct" and "_inherit".
+     * A few optional annotations are used here: "_construct", "_inherit", "_configure" and "_configureOnly".
      * 
      * @param definition
      * @param {Function} [definition._construct] Becomes the class constructor (if not provided, a default no-op constructor is used)
@@ -183,6 +183,27 @@ Savory.Classes = Savory.Classes || function() {
     		TheClass = function() {}
     	}
     	
+    	if (definition._configureOnly) {
+    		definition._configure = definition._configureOnly
+    		delete definition._configureOnly
+    	}
+    	else if (definition._inherit) {
+    		// Inherit the parent _configure if it exists
+			var parentConfigure = definition._inherit.prototype.definition._configure
+    		if (parentConfigure) {
+    			definition._configure = Savory.Objects.concatUnique(definition._configure || [], parentConfigure)
+    		}
+    	}
+    	
+    	if (definition._configure) {
+    		// Wrap the constructor with one that merges the configuration
+    		var OriginalClass = TheClass
+    		TheClass = function(config) {
+    			Savory.Objects.merge(this, config, TheClass.prototype.definition._configure)
+    			OriginalClass.call(this, this)
+    		}
+    	}
+
     	if (definition._inherit) {
     		Public.inherit(definition._inherit, TheClass)
     	}
@@ -192,7 +213,7 @@ Savory.Classes = Savory.Classes || function() {
     		// TODO: do we need to hook this up to the external class var somehow?!?!?!
         	TheClass.prototype.constructor = TheClass
     	}
-
+    	
     	// Access to original definition
     	TheClass.prototype.definition = definition
 

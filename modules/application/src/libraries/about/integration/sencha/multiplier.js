@@ -15,7 +15,7 @@ document.executeOnce('/savory/service/internationalization/')
 document.executeOnce('/savory/foundation/jvm/')
 document.executeOnce('/savory/foundation/prudence/resources/')
 
-var multiplierForm = new Savory.Resources.Form({fields: {
+var multiplierForm = multiplierForm || new Savory.Resources.Form({fields: {
 	first: {type: 'number', label: 'A number'},
 	second: {type: 'integer', label: 'An integer'}
 }})
@@ -36,9 +36,10 @@ multiplierForm.process = function(results) {
 	}
 }
 
-var Multiplier = function() {
+var Multiplier = Multiplier || function() {
 	var Public = {
 		multiply: function(first, second) {
+			// We just delegate to the form
 			return multiplierForm.handle({
 				values: {
 					first: first,

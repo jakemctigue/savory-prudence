@@ -11,43 +11,38 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/processing/')
+document.executeOnce('/savory/service/progress/')
 document.executeOnce('/savory/integration/backend/twitter/')
 document.executeOnce('/savory/foundation/classes/')
 document.executeOnce('/savory/foundation/prudence/resources/')
 
-Savory = Savory || {Authentication: {Provider: {}}}
+Savory = Savory || {Authentication: {}}
 
 /**
  * @class
- * @name Savory.Authentication.Provider.Twitter
+ * @name Savory.Authentication.TwitterProvider
  * 
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Authentication.Provider.Twitter = Savory.Authentication.Provider.Twitter || Savory.Classes.define(function() {
-	/** @exports Public as Savory.Authentication.Provider.Twitter */
+Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider || Savory.Classes.define(function() {
+	/** @exports Public as Savory.Authentication.TwitterProvider */
     var Public = {}
 
     /** @ignore */
+    Public._inherit = Savory.Authentication.Provider
+
+    /** @ignore */
     Public._construct = function(config) {
-    	Savory.Objects.merge(this, config, ['name', 'icon'])
-    	
     	this.name = this.name || 'Twitter'
     	this.icon = this.icon || 'media/savory/service/authentication/twitter.png'
 
 		// Icon is from Aquaticus.Social:
 		// http://jwloh.deviantart.com/art/Aquaticus-Social-91014249
+
+    	Savory.Authentication.TwitterProvider.prototype.superclass.call(this, this)
     }
 
-    Public.getName = function() {
-		return this.name
-	}
-
-    Public.getIcon = function(conversation) {
-		return conversation.pathToBase + '/' + this.icon
-	}
-	
     Public.getUri = function(conversation) {
 		return Savory.Resources.buildUri(conversation.pathToBase + '/authentication/provider/twitter/', {from: conversation.query.get('from')})				
 	}
@@ -61,7 +56,7 @@ Savory.Authentication.Provider.Twitter = Savory.Authentication.Provider.Twitter 
 	}
 	
     Public.retry = function() {
-		var process = Savory.Processing.getProcess()
+		var process = Savory.Progress.getProcess()
 		if (process) {
 			process.attempt(function(process, task) {
 				var twitter = new Savory.Twitter.Application()
@@ -100,7 +95,7 @@ Savory.Authentication.Provider.Twitter = Savory.Authentication.Provider.Twitter 
 		
 		var token = conversation.query.get('oauth_token')
 		if (token) {
-			var process = Savory.Processing.startProcess({
+			var process = Savory.Progress.startProcess({
 				description: 'Waiting for Twitter to authenticate you...',
 				maxDuration: 5 * 60 * 1000,
 				redirect: conversation.query.get('from') || Savory.Authentication.getUri(),

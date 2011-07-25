@@ -32,6 +32,7 @@
 
 document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/foundation/objects/')
+document.executeOnce('/savory/foundation/classes/')
 document.executeOnce('/savory/foundation/prudence/lazy/')
 document.executeOnce('/savory/foundation/prudence/logging/')
 document.executeOnce('/mongo-db/')
@@ -56,11 +57,6 @@ Savory.Notification = Savory.Notification || function() {
 	 */
 	Public.logger = Savory.Logging.getLogger('notification')
 
-	/**
-	 * @namespace
-	 */
-	Public.Service = {}
-	
 	/**
 	 */
 	Public.getServices = function() {
@@ -261,6 +257,33 @@ Savory.Notification = Savory.Notification || function() {
 			Public.logger.info('Sent {0} {1} digests', count, mode)
 		}
 	}
+	
+	/**
+	 * @class
+	 * @name Savory.Notification.Service
+	 */
+	Public.Service = Savory.Classes.define(function() {
+		/** @exports Public as Savory.Notification.Service */
+		var Public = {}
+		
+		Public._configure = ['name', 'from', 'site']
+
+	    Public.getName = function() {
+			return this.name
+		}
+
+	    Public.send = function(from, to, notice) {
+		}
+		
+	    Public.sendDigest = function(from, to, entries, mode) {
+		}
+		
+	    Public.getAddress = function(reference, type) {
+	    	return null
+	    }
+		
+		return Public
+	}())
 	
 	//
 	// Private

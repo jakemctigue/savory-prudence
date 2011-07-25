@@ -19,38 +19,36 @@ Savory = Savory || {Authentication: {Provider: {}}}
 
 /**
  * @class
- * @name Savory.Authentication.Provider.OpenID
+ * @name Savory.Authentication.OpenIdProvider
  * 
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Authentication.Provider.OpenID = Savory.Authentication.Provider.OpenID || Savory.Classes.define(function() {
-	/** @exports Public as Savory.Authentication.Provider.OpenID */
+Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProvider || Savory.Classes.define(function() {
+	/** @exports Public as Savory.Authentication.OpenIdProvider */
     var Public = {}
 
     /** @ignore */
+    Public._inherit = Savory.Authentication.Provider
+
+    /** @ignore */
+    Public._configure = ['slug', 'xrdsUri', 'uri', 'username']
+
+    /** @ignore */
     Public._construct = function(config) {
-    	Savory.Objects.merge(this, config, ['name', 'icon', 'slug', 'xrdsUri', 'uri', 'username'])
-    	
     	this.icon = this.icon || 'media/savory/service/authentication/' + this.slug
 
 		// Launchpad icon is the original from the Launchpad site.
 		// Other icons are from Aquaticus.Social:
 		// http://jwloh.deviantart.com/art/Aquaticus-Social-91014249
+    	
+    	Savory.Authentication.OpenIdProvider.prototype.superclass.call(this, this)
     }
-
-	Public.getName = function() {
-		return this.name
-	}
 
     Public.getSlug = function() {
 		return this.slug
 	}
 
-    Public.getIcon = function(conversation) {
-		return conversation.pathToBase + '/' + this.icon
-	}
-	
     Public.getUri = function(conversation) {
 		return Savory.Resources.buildUri(conversation.pathToBase + '/authentication/provider/open-id/' + this.slug + '/', {from: conversation.query.get('from')})
 	}

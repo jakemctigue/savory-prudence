@@ -180,17 +180,28 @@ Savory.Sencha = Savory.Sencha || function() {
 
 				var validator = field.validator
 				validation = Savory.Validation[field.type || 'string']
-				if (!validator) {
-					if (validation && validation.fn) {
-						validator = validation.fn
-					}
+				
+				var allowed = field.clientValidation
+				if (!Savory.Objects.exists(allowed) && validation) {
+					allowed = validation.clientValidation
+				}
+				if (!Savory.Objects.exists(allowed)) {
+					allowed = true
 				}
 				
-				if (validator) {
-					if (typeof validator != 'function') {
-						validator = eval(validator)
+				if (allowed) {
+					if (!validator) {
+						if (validation && validation.fn) {
+							validator = validation.fn
+						}
 					}
-					senchaField.validator = validator
+					
+					if (validator) {
+						if (typeof validator != 'function') {
+							validator = eval(validator)
+						}
+						senchaField.validator = validator
+					}
 				}
 			}
 			
@@ -242,11 +253,12 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		/** @ignore */
 		Public._inherit = Savory.REST.Resource
-		
+
+		/** @ignore */
+		Public._configure = ['fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty']
+
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty', 'allowPost', 'allowPut', 'allowDelete'])
-
 			this.rootProperty = this.rootProperty || 'records'
 			this.idProperty = this.idProperty || 'id'
 			this.totalProperty = this.totalProperty || 'total'
@@ -490,11 +502,12 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Module.Resource
 
 		/** @ignore */
-		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty', 'allowPost', 'allowPut', 'allowDelete'])
+		Public._configure = ['data']
 
+		/** @ignore */
+		Public._construct = function(config) {
 			this.idProperty = this.idProperty || 'id'
-			this.list = Savory.JVM.toList(config.data, true)
+			this.list = Savory.JVM.toList(this.data, true)
 			
 			if (!this.fields) {
 				var record = config.data[0]
@@ -581,9 +594,10 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Module.Resource
 
 		/** @ignore */
+		Public._configure = ['collection', 'query', 'isObjectId']
+
+		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['collection', 'query', 'isObjectId', 'fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty', 'allowPost', 'allowPut', 'allowDelete'])
-			
 			this.idProperty = this.idProperty || '_id'
 			this.isObjectId = Savory.Objects.ensure(this.isObjectId, true)
 			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
@@ -692,9 +706,10 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Module.Resource
 
 		/** @ignore */
+		Public._configure = ['resource', 'payloadType', 'startAttribute', 'limitAttribute', 'isObjectId', 'documentsProperty']
+
+		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['resource', 'payloadType', 'startAttribute', 'limitAttribute', 'isObjectId', 'fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty', 'allowPost', 'allowPut', 'allowDelete'])
-			
 			this.isObjectId = Savory.Objects.ensure(this.isObjectId, true)
 			if (Savory.Objects.isString(this.resource)) {
 				this.resource = {uri: String(this.resource), mediaType: 'application/json'}
@@ -801,7 +816,6 @@ Savory.Sencha = Savory.Sencha || function() {
 		
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['allowPost', 'allowPut', 'allowDelete'])
 			Savory.Sencha.TreeResource.prototype.superclass.call(this, this)
 		}
 
@@ -834,9 +848,10 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Module.TreeResource
 
 		/** @ignore */
-		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['rootName', 'nodePrefix', 'allowPost', 'allowPut', 'allowDelete'])
+		Public._configure = ['rootName', 'nodePrefix']
 
+		/** @ignore */
+		Public._construct = function(config) {
 			this.rootName = this.rootName || 'root'
 			this.nodePrefix = this.nodePrefix || '_n'
 			this.nodes = {}
@@ -929,9 +944,10 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Module.TreeResource
 
 		/** @ignore */
-		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['collection', 'separator', 'rootName', 'query', 'field', 'getNodeText', 'allowPost', 'allowPut', 'allowDelete'])
+		Public._configure = ['collection', 'separator', 'rootName', 'query', 'field', 'getNodeText']
 
+		/** @ignore */
+		Public._construct = function(config) {
 			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 			this.separator = this.separator || '/'
 			this.rootName = this.rootName || this.separator

@@ -14,38 +14,33 @@
 document.executeOnce('/savory/integration/backend/facebook/')
 document.executeOnce('/savory/foundation/classes/')
 
-Savory = Savory || {Authentication: {Provider: {}}}
+Savory = Savory || {Authentication: {}}
 
 /**
  * @class
- * @name Savory.Authentication.Provider.Facebook
+ * @name Savory.Authentication.FacebookProvider
  * 
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Authentication.Provider.Facebook = Savory.Authentication.Provider.Facebook || Savory.Classes.define(function() {
-	/** @exports Public as Savory.Authentication.Provider.Facebook */
+Savory.Authentication.FacebookProvider = Savory.Authentication.FacebookProvider || Savory.Classes.define(function() {
+	/** @exports Public as Savory.Authentication.FacebookProvider */
     var Public = {}
     
     /** @ignore */
+    Public._inherit = Savory.Authentication.Provider
+
+    /** @ignore */
     Public._construct = function(config) {
-    	Savory.Objects.merge(this, config, ['name', 'icon'])
-    	
     	this.name = this.name || 'Facebook'
     	this.icon = this.icon || 'media/savory/service/authentication/facebook.png'
 
 		// Icon is from Aquaticus.Social:
 		// http://jwloh.deviantart.com/art/Aquaticus-Social-91014249
+    	
+    	Savory.Authentication.FacebookProvider.prototype.superclass.call(this, this)
     }
 
-    Public.getName = function() {
-		return this.name
-	}
-
-    Public.getIcon = function(conversation) {
-		return conversation.pathToBase + '/' + this.icon
-	}
-	
     Public.getUri = function(conversation) {
 		return Savory.Resources.buildUri(conversation.pathToBase + '/authentication/provider/facebook/', {from: conversation.query.get('from')})				
 	}

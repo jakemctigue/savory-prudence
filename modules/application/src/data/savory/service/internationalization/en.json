@@ -9,11 +9,18 @@
 		"savory": {
 			"foundation": {
 				"validation": {
+					"required": "This field is required",
 					"number": {
 						"not": "Must be a number"
 					},
 					"integer": {
 						"not": "Must be an integer"
+					},
+					"email": {
+						"not": "Must be a valid email address"
+					},
+					"reCaptcha": {
+						"not": "You must past the humanity test"
 					}
 				}
 			},

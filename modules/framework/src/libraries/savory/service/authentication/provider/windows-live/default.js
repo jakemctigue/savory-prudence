@@ -15,38 +15,33 @@ document.executeOnce('/savory/integration/backend/windows-live/')
 document.executeOnce('/savory/foundation/classes/')
 document.executeOnce('/savory/foundation/prudence/resources/')
 
-Savory = Savory || {Authentication: {Provider: {}}}
+Savory = Savory || {Authentication: {}}
 
 /**
  * @class
- * @name Savory.Authentication.Provider.WindowsLive
+ * @name Savory.Authentication.WindowsLiveProvider
  * 
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Authentication.Provider.WindowsLive = Savory.Authentication.Provider.WindowsLive || Savory.Classes.define(function() {
-	/** @exports Public as Savory.Authentication.Provider.WindowsLive */
+Savory.Authentication.WindowsLiveProvider = Savory.Authentication.WindowsLiveProvider || Savory.Classes.define(function() {
+	/** @exports Public as Savory.Authentication.WindowsLiveProvider */
     var Public = {}
 
     /** @ignore */
+    Public._inherit = Savory.Authentication.Provider
+
+    /** @ignore */
     Public._construct = function(config) {
-    	Savory.Objects.merge(this, config, ['name', 'icon'])
-    	
     	this.name = this.name || 'Windows Live'
     	this.icon = this.icon || 'media/savory/service/authentication/windows-live.png'
 
 		// Icon is from Aquaticus.Social:
 		// http://jwloh.deviantart.com/art/Aquaticus-Social-91014249
+    	
+    	Savory.Authentication.WindowsLiveProvider.prototype.superclass.call(this, this)
     }
 
-    Public.getName = function() {
-		return this.name
-	}
-	
-    Public.getIcon = function(conversation) {
-		return conversation.pathToBase + '/' + this.icon
-	}
-	
     Public.getUri = function(conversation) {
 		return Savory.Resources.buildUri(conversation.pathToBase + '/authentication/provider/windows-live/', {from: conversation.query.get('from')})
 	}

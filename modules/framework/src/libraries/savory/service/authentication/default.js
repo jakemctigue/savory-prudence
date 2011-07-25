@@ -49,11 +49,6 @@ Savory.Authentication = Savory.Authentication || function() {
 	 */
 	Public.logger = Savory.Logging.getLogger('authentication')
 	
-	/**
-	 * @namespace
-	 */
-	Public.Provider = {}
-	
 	Public.getProviderBySlug = function(conversation) {
 		var providerName = conversation.locals.get('provider') || conversation.query.get('provider')
 		var providers = Public.getProviders()
@@ -557,6 +552,36 @@ Savory.Authentication = Savory.Authentication || function() {
 		
 		return Public
 	}(Public))
+	
+	/**
+	 * @class
+	 * @name Savory.Authentication.Provider
+	 */
+	Public.Provider = Savory.Classes.define(function() {
+		/** @exports Public as Savory.Authentication.Provider */
+		var Public = {}
+		
+		/** @ignore */
+		Public._configure = ['name', 'icon']
+
+	    Public.getName = function() {
+			return this.name
+		}
+
+	    Public.getIcon = function(conversation) {
+			return conversation.pathToBase + '/' + this.icon
+		}
+
+	    Public.getUri = function(conversation) {
+	    	return null
+	    }
+
+	    Public.handle = function(conversation) {
+	    	return null
+	    }
+	    
+		return Public
+	}())
 	
 	//
 	// Private

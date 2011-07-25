@@ -42,6 +42,20 @@ function handlePost(conversation) {
 	
 	var logger = Savory.Logging.getLogger('console')
 	var representation = ''
+		
+	function print(/* arguments */) {
+		for (var a = 0, length = arguments.length; a < length; a++) {
+			var arg = arguments[a]
+			if (Savory.Objects.exists(arg)) {
+				representation += String(arg)
+			}
+		}
+	}
+	
+	function println(/* arguments */) {
+		print.apply(this, arguments)
+		representation += '\n'
+	}
 
 	logger.info('Executing')
 	try {

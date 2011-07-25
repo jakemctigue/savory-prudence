@@ -35,16 +35,6 @@ Savory.Mail = Savory.Mail || function() {
     var Public = {}
 
 	/**
-	 * True if the email address is valid.
-	 * 
-	 * @param address The email address to check
-	 * @returns {Boolean}
-	 */
-	Public.isAddressValid = function(address) {
-		return address ? emailRegExp.test(address) : false
-	}
-	
-	/**
 	 * A combined template for the subject and content an email message, also supporting mixed-media
 	 * HTML/plain-text emails. 
 	 * <p>
@@ -183,13 +173,6 @@ Savory.Mail = Savory.Mail || function() {
 
 		return Public
 	}())
-    
-    //
-    // Initialization
-    //
-
-	// See: http://fightingforalostcause.net/misc/2006/compare-email-regex.php
-	var emailRegExp = /^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i
 	
 	return Public
 }()

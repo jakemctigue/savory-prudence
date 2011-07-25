@@ -251,10 +251,12 @@ Savory.SEO = Savory.SEO || function() {
 	Public.Domain = Savory.Classes.define(function(Module) {
 		/** @exports Public as Savory.SEO.Domain */
 		var Public = {}
-		
+
+		/** @ignore */
+		Public._configure = ['rootUri', 'userAgent', 'dynamic', 'delaySeconds', 'applications', 'staticPath', 'staticRelativePath', 'workPath', 'workRelativePath']
+
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['rootUri', 'userAgent', 'dynamic', 'delaySeconds', 'applications', 'staticPath', 'staticRelativePath', 'workPath', 'workRelativePath'])
 			this.rootUri = this.rootUri || null
 			this.userAgent = this.userAgent || '*'
 			this.dynamic = Savory.Objects.ensure(this.dynamic, true)
@@ -777,11 +779,9 @@ Savory.SEO = Savory.SEO || function() {
 	Public.Provider = Savory.Classes.define(function() {
 		/** @exports Public as Savory.SEO.Provider */
 		var Public = {}
-
+		
 		/** @ignore */
-		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['name', 'domains'])
-		}
+		Public._configure = ['name', 'domains']
 
 		/**
 		 * The URL set name.
@@ -863,8 +863,13 @@ Savory.SEO = Savory.SEO || function() {
 		var Public = {}
 		
 		/** @ignore */
+		Public._inherit = Module.Provider
+		
+		/** @ignore */
+		Public._configure = ['locations', 'exclusions', 'inclusions', 'defaultFrequency', 'defaultPriority']
+		
+		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Objects.merge(this, config, ['name', 'domains', 'locations', 'exclusions', 'inclusions', 'defaultFrequency', 'defaultPriority'])
 		    this.locations = this.locations || []
 		    this.exclusions = this.exclusions || []
 		    this.inclusions = this.inclusions || []
@@ -872,9 +877,6 @@ Savory.SEO = Savory.SEO || function() {
 		    this.defaultPriority = this.defaultPriority || 0.5
 		    Savory.SEO.ExplicitProvider.prototype.superclass.call(this, this)
 		}
-		
-		/** @ignore */
-		Public._inherit = Module.Provider
 		
 		Public.getLocations = function() {
 			return new Savory.Iterators.Transformer(new Savory.Iterators.Array(this.locations), massage, this)

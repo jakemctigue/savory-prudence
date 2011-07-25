@@ -817,7 +817,9 @@ Savory.Resources = Savory.Resources || function() {
 		else {
 			for (var i = map.entrySet().iterator(); i.hasNext(); ) {
 				var entry = i.next()
-				attributes[entry.key] = String(entry.value)
+				if (Savory.Objects.exists(entry.value)) {
+					attributes[entry.key] = String(entry.value)
+				}
 			}
 		}
 		
@@ -883,22 +885,25 @@ Savory.Resources = Savory.Resources || function() {
     	/** @exports Public as Savory.Resources.Form */
     	var Public = {}
     	
+    	/** @ignore */
+    	Public._configure = ['fields', 'mode', 'includeSuccessDocumentName', 'includeFailureDocumentName', 'includeDocumentName', 'redirectSuccessUri', 'redirectFailureUri', 'redirectUri', 'serverValidation', 'clientValidation']
+    	
         /** @ignore */
     	Public._construct = function(config) {
-    		Savory.Objects.merge(this, ['mode', 'includeSuccessDocumentName', 'includeFailureDocumentName', 'includeDocumentName', 'redirectSuccessUri', 'redirectFailureUri', 'redirectUri', 'serverValidation', 'clientValidation'])
     		this.mode = this.mode || 'none'
     		this.serverValidation = Savory.Objects.ensure(this.serverValidation, true)
     		this.clientValidation = Savory.Objects.ensure(this.clientValidation, true)
     		
-    		this.fields = {}
-    		for (var name in config.fields) {
-    			var field = config.fields[name]
+    		var fields = {}
+    		for (var name in this.fields) {
+    			var field = this.fields[name]
     			
     			field = Savory.Objects.isString(field) ? {type: String(field)} : Savory.Objects.clone(field)
     			field.label = field.label || name
     			
-    			this.fields[name] = field
+    			fields[name] = field
     		}
+    		this.filds = fields
     	}
     	
     	/**
@@ -907,11 +912,12 @@ Savory.Resources = Savory.Resources || function() {
     	 * @param values A dict of field names mapped to values; all values will be treated as strings;
     	 *        unrecognized field names will be ignored
     	 * @param {Savory.Internationalization.Pack} [textPack] The text pack to use for error messages
+    	 * @param [conversation] The Prudence conversation
     	 * @returns A structure in the format: {success: true, values: {...}} or {success: false, values: {...}, errors: {...}};
     	 *          values are copied over from the arg (always as strings), and errors are all texts that can be displayed
     	 *          to users
     	 */
-    	Public.validate = function(values, textPack) {
+    	Public.validate = function(values, textPack, conversation) {
     		var results = {success: true}
 
     		// Check that all required fields are provided
@@ -922,6 +928,7 @@ Savory.Resources = Savory.Resources || function() {
 	    				var value = values[name]
 	    				if (!Savory.Objects.exists(value) || (value == '')) {
 	    					results.success = false
+	    					error = textPack.get('savory.foundation.validation.required', {name: name})
 	    					if (results.errors === undefined) {
 	    						results.errors = {}
 	    					}
@@ -949,26 +956,37 @@ Savory.Resources = Savory.Resources || function() {
         				var validator = field.validator
         				var type = field.type || 'string'
 						var validation = Savory.Validation[type]
-        				if (!validator) {
-    						if (validation && validation.fn) {
-    							validator = validation.fn
-    						}
+        				
+        				var allowed = field.serverValidation
+        				if (!Savory.Objects.exists(allowed) && validation) {
+        					allowed = validation.serverValidation
+        				}
+        				if (!Savory.Objects.exists(allowed)) {
+        					allowed = true
         				}
         				
-        				if (validator) {
-	    					var validity = validator.call(this, value, field)
-	    					if (validity !== true) {
-	    						if (Savory.Objects.exists(textPack)) {
-	    							error = textPack.get('savory.foundation.validation.' + type + '.' + validity, {name: name})
+        				if (allowed) {
+	        				if (!validator) {
+	    						if (validation && validation.fn) {
+	    							validator = validation.fn
 	    						}
-	    						if (!Savory.Objects.exists(error)) {
-	    							error = 'Invalid'
-	    						}
-	    					}
-	    				}
+	        				}
+	        				
+	        				if (validator) {
+		    					var validity = validator.call(this, value, field, conversation)
+		    					if (validity !== true) {
+		    						if (Savory.Objects.exists(textPack)) {
+		    							error = textPack.get('savory.foundation.validation.' + type + '.' + validity, {name: name})
+		    						}
+		    						if (!Savory.Objects.exists(error)) {
+		    							error = 'Invalid'
+		    						}
+		    					}
+		    				}
+        				}
     				}
     				
-    				if(Savory.Objects.exists(value)) {
+    				if (Savory.Objects.exists(value)) {
     					if (results.values === undefined) {
     						results.values = {}
     					}
@@ -1029,7 +1047,7 @@ Savory.Resources = Savory.Resources || function() {
 	    		var values = params.values || (Savory.Objects.exists(params.conversation) ? Module.getForm(params.conversation) : {})
 	    		
 	    		var textPack = params.textPack || (Savory.Objects.exists(params.conversation) ? Savory.Internationalization.getCurrentPack(params.conversation) : null)
-	    		var results = this.validate(values, textPack)
+	    		var results = this.validate(values, textPack, params.conversation)
 	    		this.process(results)
 	    		
 	    		switch (mode) {
@@ -1040,7 +1058,8 @@ Savory.Resources = Savory.Resources || function() {
     		    			printResults = Savory.Objects.clone(printResults)
     		    			delete printResults.values
     		    		}
-    		    		print(Savory.JSON.to(printResults))
+	    	    		var human = Savory.Objects.exists(params.conversation) ? (params.conversation.query.get('human') == 'true') : false
+    		    		print(Savory.JSON.to(printResults, human))
     		    		break
     		    		
 	    			case 'include':
@@ -1053,7 +1072,7 @@ Savory.Resources = Savory.Resources || function() {
 	    				}
     					includeDocumentName = includeDocumentName || this.includeDocumentName
     					if (Savory.Objects.exists(includeDocumentName)) {
-    						conversation.locals.put('savory.resources.form', results)
+    						conversation.locals.put('savory.foundation.resources.form', results)
     						document.include(includeDocumentName)
     					}
 	    				break
@@ -1075,6 +1094,14 @@ Savory.Resources = Savory.Resources || function() {
 	    		
 	    		results.mode = mode
 	    		return results
+    		}
+    		
+    		if (mode == 'include') {
+				includeDocumentName = params.includeDocumentName || this.includeDocumentName
+				if (Savory.Objects.exists(includeDocumentName)) {
+					conversation.locals.remove('savory.foundation.resources.form')
+					document.include(includeDocumentName)
+				}
     		}
     		
     		return false

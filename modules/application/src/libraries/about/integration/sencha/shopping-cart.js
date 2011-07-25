@@ -13,7 +13,7 @@
 
 document.executeOnce('/savory/foundation/jvm/')
 
-var ShoppingCart = function() {
+var ShoppingCart = ShoppingCart || function() {
 	var Public = {
 		addItem: function(x) {
 			return items.add(x)
@@ -23,7 +23,8 @@ var ShoppingCart = function() {
 			return Savory.JVM.fromCollection(items)
 		}
 	}
-	
+
+	// Our items need to be thread-safe
 	var items = application.getGlobal('shoppingCart', Savory.JVM.newSet(true))
 	
 	return Public

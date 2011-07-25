@@ -29,7 +29,9 @@ Savory.Validation = Savory.Validation || function() {
 	Public.string = {
 		fn: function(value, field) {
 			return true
-		}
+		},
+		serverValidation: false,
+		clientValidation: false
 	}
 
     Public.number = {
@@ -48,6 +50,21 @@ Savory.Validation = Savory.Validation || function() {
 			return value % 1 == 0 ? true : 'not'
 		}
 	}
+    
+    Public.email = {
+		// See: http://fightingforalostcause.net/misc/2006/compare-email-regex.php
+    	fn: function(value, field) {
+    		var emailRegExp = /^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i
+			return emailRegExp.test(value) ? true : 'not'
+    	}
+    }
+    
+    Public.reCaptcha = {
+    	fn: function(value, field, conversation) {
+	    	return this.reCaptcha.validate(conversation) ? true : 'not'
+    	},
+    	clientValidation: false
+    }
 	
 	return Public
 }()

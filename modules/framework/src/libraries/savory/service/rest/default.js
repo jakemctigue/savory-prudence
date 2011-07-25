@@ -203,9 +203,10 @@ Savory.REST = Savory.REST || function() {
 	    var Public = {}
 	    
 	    /** @ignore */
+	    Public._configure = ['allowPost', 'allowPut', 'allowDelete']
+	    
+	    /** @ignore */
 	    Public._construct = function(config) {
-        	Savory.Objects.merge(this, config, ['allowPost', 'allowPut', 'allowDelete'])
-
         	this.allowPost = Savory.Objects.ensure(this.allowPost, true)
 			this.allowPut = Savory.Objects.ensure(this.allowPut, true)
 			this.allowDelete = Savory.Objects.ensure(this.allowDelete, true)

@@ -49,12 +49,18 @@ logger.info('Hello, {0}', name)
 representation = 'Hello, World!\nHello, other world!'
 </pre>
 <p>
+	As a shortcut, use the print() and println() functions to append anything, after stringifying it,
+	to the representation.
+</p>
+<p>
 	Click "Execute and Download" to download this representation via your browser. By default, it is
 	a plain text file named "console.txt", but you can change this using Prudence's standard API.
 	For example, let's download a CSV file to be opened by spreadsheet software:
 </p>
 <pre>
-representation = '1,2,3,4\n5,6,7,8\n9,10,11,12'
+println('1,2,3,4')
+println('5,6,7,8')
+println('9,10,11,12')
 conversation.mediaTypeName = 'text/csv'
 conversation.disposition.filename = 'transactions.csv'	
 </pre>

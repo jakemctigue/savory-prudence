@@ -108,15 +108,15 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 					'.': Savory.Lazy.build({
 						Facebook: {
 							dependencies: '/savory/service/authentication/provider/facebook/',
-							name: 'Savory.Authentication.Provider.Facebook'
+							name: 'Savory.Authentication.FacebookProvider'
 						},
 						Twitter: {
 							dependencies: '/savory/service/authentication/provider/twitter/',
-							name: 'Savory.Authentication.Provider.Twitter'
+							name: 'Savory.Authentication.TwitterProvider'
 						},
 						Myspace: {
 							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.Provider.OpenID',
+							name: 'Savory.Authentication.OpenIdProvider',
 							config: {
 								slug: 'myspace',
 								xrdsUri: 'https://www.myspace.com/'
@@ -124,7 +124,7 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 						},
 						Google: {
 							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.Provider.OpenID',
+							name: 'Savory.Authentication.OpenIdProvider',
 							config: {
 								slug: 'google',
 								xrdsUri: 'https://www.google.com/accounts/o8/id'
@@ -132,7 +132,7 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 						},
 						'Yahoo!': {
 							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.Provider.OpenID',
+							name: 'Savory.Authentication.OpenIdProvider',
 							config: {
 								slug: 'yahoo',
 								uri: 'https://me.yahoo.com',
@@ -141,11 +141,11 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 						},
 						'Windows Live': {
 							dependencies: '/savory/service/authentication/provider/windows-live/',
-							name: 'Savory.Authentication.Provider.WindowsLive'
+							name: 'Savory.Authentication.WindowsLiveProvider'
 						},
 						Launchpad: {
 							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.Provider.OpenID',
+							name: 'Savory.Authentication.OpenIdProvider',
 							config: {
 								slug: 'launchpad',
 								xrdsUri: 'https://launchpad.net/~{username}',
@@ -154,7 +154,7 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 						}/*,
 						LiveJournal: {
 							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.Provider.OpenID',
+							name: 'Savory.Authentication.OpenIdProvider',
 							config: {
 								slug: 'liveJournal',
 								uri: 'http://{username}.livejournal.com', // causes invalid tag format exception
@@ -171,7 +171,7 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 					'.': Savory.Lazy.build({
 						Email: {
 							dependencies: '/savory/service/notification/service/email/',
-							name: 'Savory.Notification.Service.Email',
+							name: 'Savory.Notification.EmailService',
 							config: {
 								from: 'TODO',
 								site: applicationName
