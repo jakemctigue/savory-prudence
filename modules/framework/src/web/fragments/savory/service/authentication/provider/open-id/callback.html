@@ -17,9 +17,22 @@ document.executeOnce('/savory/service/authentication/')
 
 var provider = Savory.Authentication.getProviderBySlug(conversation)
 if (provider) {
-	var handle = provider.handle(conversation)
-	if (handle) {
-		print(handle)
+	switch (provider.handle(conversation)) {
+		case 'usernameForm':
+			provider.form.handle({conversation: conversation, document: document, mode: 'include'})
+			break
+		
+		case 'invalidSession':
+			print('OpenID provider gave us an invalid session')
+			break
+			
+		case 'providerError':
+			print('OpenID provider is not providing')
+			break
+			
+		case 'loggedIn':
+		case 'provider':
+			break
 	}
 }
 %>

@@ -15,18 +15,21 @@ at http://threecrickets.com/
 
 document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/savory/foundation/prudence/resources/')
 
+var form = Savory.Resources.getCurrentForm(conversation)
+var results = Savory.Resources.getCurrentFormResults(conversation)
 var provider = Savory.Authentication.getProviderBySlug(conversation)
-var slug = provider.getSlug()
 var siteName = provider.getName()
 
 %>
 <div class="centerpiece">
 	<form id="login-form" method="POST">
 		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.openId.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
-		<%= Savory.HTML.input({name: 'action', type: 'hidden', value: 'savory.service.authentication.login.openid'}) %>
-		<%= Savory.HTML.input({name: 'provider', type: 'hidden', value: slug}) %>
-		<div class="field"><%= Savory.HTML.input({name: 'username'}, {_key: 'savory.service.authentication.form.openId.label.username', _cast: {siteName: siteName}}) %></div>
+		<div class="field">
+			<%= Savory.HTML.input({name: 'username'}, {_key: 'savory.service.authentication.form.openId.label.username', _cast: {siteName: siteName}}) %>
+			<% if (results && results.errors && results.errors.username) { print(Savory.HTML.div({_content: results.errors.username, 'class': 'error'})) } %>
+		</div>
 		<div class="buttons">
 			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.openId.button.login'}) %>
 		</div>

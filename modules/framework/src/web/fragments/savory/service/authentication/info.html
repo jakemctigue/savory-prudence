@@ -23,13 +23,13 @@ var user = session ? session.getUser() : null
 
 if (user) {
 %>
-	<%= Savory.HTML.span({_key: 'savory.service.authentication.form.info.greeting', _cast: {name: user.getDisplayName()}}) %>
-	<%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.logout', href: Savory.Authentication.getLogoutUri(), _query: {from: conversation.reference}}) %>
+	<div><%= Savory.HTML.span({_key: 'savory.service.authentication.form.info.greeting', _cast: {name: user.getDisplayName()}}) %></div>
+	<div><%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.logout', href: Savory.Authentication.getLogoutUri(), _query: {from: conversation.reference}}) %></div>
 <%
 }
 else {
 %>
-	<%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.login', href: Savory.Authentication.getUri(), _query: {from: conversation.reference}}) %>
+	<div><%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.login', href: Savory.Authentication.getUri(), _query: {from: conversation.reference}}) %></div>
 <%
 }
 %>

@@ -54,11 +54,6 @@
 							},
 							"validation": "Unknown username/password combination"
 						},
-						"logout": {
-							"button": {
-								"logout": "Logout"
-							}
-						},
 						"openId": {
 							"title": "Welcome, {siteName} Users",
 							"button": {

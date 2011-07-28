@@ -13,11 +13,12 @@ at http://threecrickets.com/
 
 %><%
 
-document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/feature/registration/')
+document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/foundation/html/')
 document.executeOnce('/savory/foundation/xml/')
 document.executeOnce('/savory/foundation/objects/')
+document.executeOnce('/savory/foundation/prudence/resources/')
 
 var form = Savory.Resources.getCurrentForm(conversation)
 var results = Savory.Resources.getCurrentFormResults(conversation)

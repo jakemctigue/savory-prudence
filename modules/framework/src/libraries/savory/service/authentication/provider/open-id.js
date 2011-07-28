@@ -15,7 +15,7 @@ document.executeOnce('/savory/integration/backend/open-id/')
 document.executeOnce('/savory/foundation/classes/')
 document.executeOnce('/savory/foundation/prudence/resources/')
 
-Savory = Savory || {Authentication: {Provider: {}}}
+Savory = Savory || {Authentication: {}}
 
 /**
  * @class
@@ -37,6 +37,7 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
     /** @ignore */
     Public._construct = function(config) {
     	this.icon = this.icon || 'media/savory/service/authentication/' + this.slug
+    	this.form = new Savory.Authentication.OpenIdProviderForm({provider: this})
 
 		// Launchpad icon is the original from the Launchpad site.
 		// Other icons are from Aquaticus.Social:
@@ -62,32 +63,32 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 		return null
 	}
 	
-    Public.handle = function(conversation) {
+    Public.handle = function(conversation, username) {
 		var openIdSession = Savory.OpenID.getSession(conversation)
 		if (openIdSession) {
 			// If we got here, it means this a callback from an OpenID provider
 			var session = this.login(openIdSession, conversation)
 			if (session) {
 				conversation.response.redirectSeeOther(conversation.query.get('from') || Savory.Authentication.getUri())
-				return null
+				return 'loggedIn'
 			}
 		}
 		
 		if (conversation.query.get('provider')) {
+			// If we got here, it means this a callback from an OpenID provider, but with an invalid session
 			conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
-			return 'Invalid OpenID session'
+			return 'invalidSession'
 		}
 		
-		// This means we want redirection to an OpenID provider
+		// If we passed the above, it means we want redirection to an OpenID provider
 		
-		var username = conversation.form.get('username')
 		var xrdsUri = this.xrdsUri
 		if (!xrdsUri) {
 			var uri = this.uri
 			if (this.username) {
 				if (!username) {
-					document.include('/savory/service/authentication/form/login/open-id/')
-					return null
+					// OpenID provider requires a username, but we don't have one yet
+					return 'usernameForm'
 				}
 				
 				uri = uri.cast({username: Savory.Resources.encodeUrlComponent(username)})
@@ -99,8 +100,8 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 		if (xrdsUri) {
 			if (this.username) {
 				if (!username) {
-					document.include('/savory/service/authentication/form/login/open-id/')
-					return null
+					// OpenID provider requires a username, but we don't have one yet
+					return 'usernameForm'
 				}
 				
 				xrdsUri = xrdsUri.cast({username: Savory.Resources.encodeUrlComponent(username)})
@@ -110,12 +111,50 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 			var authenticationUri = provider.getAuthenticationUri(conversation.query.get('from'))
 			if (authenticationUri) {
 				conversation.response.redirectSeeOther(authenticationUri)
-				return null
+				// It's the provider's turn now!
+				return 'provider'
 			}
 			else {
-				document.include('/savory/service/authentication/form/login/open-id/')
-				return null
+				// Provider did not provide :(
+				return 'providerError'
 			}
+		}
+	}
+
+	return Public
+}())
+
+/**
+ * @class
+ * @name Savory.Authentication.OpenIdProviderForm
+ * @augments Savory.Resources.Form
+ */
+Savory.Authentication.OpenIdProviderForm = Savory.Authentication.OpenIdProviderForm || Savory.Classes.define(function() {
+	/** @exports Public as Savory.Authentication.OpenIdProviderForm */
+    var Public = {}
+
+    /** @ignore */
+    Public._inherit = Savory.Resources.Form
+
+    /** @ignore */
+    Public._configure = ['provider']
+
+    /** @ignore */
+	Public._construct = function(config) {
+		this.fields = this.fields || {
+			username: {
+				required: true
+			}
+		}
+		
+		this.includeDocumentName = this.includeDocumentName || '/savory/service/authentication/form/open-id/'
+		
+		Savory.Authentication.OpenIdProviderForm.prototype.superclass.call(this, this)
+    }
+
+	Public.process = function(results, conversation) {
+		if (results.success) {
+			this.provider.handle(conversation, results.values.username)
 		}
 	}
 

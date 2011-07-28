@@ -1036,6 +1036,7 @@ Savory.Resources = Savory.Resources || function() {
     	 * 
     	 * @param [params]
     	 * @param [params.conversation] The Prudence conversation
+    	 * @param [params.document=document] The Prudence document service
     	 * @param [params.values] The form values (will be extracted from params.conversation if not provided explicitly) 
     	 * @param {Savory.Internationalization.Pack} [params.textPack] The text pack to use for messages (will be extracted from params.conversation if not provided explicitly) 
     	 * @param {String} [params.mode=this.mode] Set this to override the query param; can be 'none', 'json',
@@ -1082,9 +1083,12 @@ Savory.Resources = Savory.Resources || function() {
 		    				}
 	    					includeDocumentName = includeDocumentName || this.includeDocumentName
 	    					if (Savory.Objects.exists(includeDocumentName)) {
-	    						conversation.locals.put('savory.foundation.resources.form', this)
-	    						conversation.locals.put('savory.foundation.resources.form.results', results)
-	    						document.include(includeDocumentName)
+	    						if (Savory.Objects.exists(params.conversation)) {
+	    							params.conversation.locals.put('savory.foundation.resources.form', this)
+	    							params.conversation.locals.put('savory.foundation.resources.form.results', results)
+	    						}
+	    						var documentService = Savory.Objects.exists(params.document) ? params.document : document
+	    						documentService.include(includeDocumentName)
 	    					}
 		    				break
 		    				
@@ -1110,9 +1114,12 @@ Savory.Resources = Savory.Resources || function() {
     		if (mode == 'include') {
 				includeDocumentName = params.includeDocumentName || this.includeDocumentName
 				if (Savory.Objects.exists(includeDocumentName)) {
-					conversation.locals.put('savory.foundation.resources.form', this)
-					conversation.locals.remove('savory.foundation.resources.form.results')
-					document.include(includeDocumentName)
+					if (Savory.Objects.exists(params.conversation)) {
+						params.conversation.locals.put('savory.foundation.resources.form', this)
+						params.conversation.locals.remove('savory.foundation.resources.form.results')
+					}
+					var documentService = Savory.Objects.exists(params.document) ? params.document : document
+					documentService.include(includeDocumentName)
 				}
     		}
     		

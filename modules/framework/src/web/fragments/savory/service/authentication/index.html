@@ -15,9 +15,14 @@ at http://threecrickets.com/
 <%
 
 document.executeOnce('/savory/service/authentication/')
-//if (!Savory.AUthentication.handleLogout(conversation)) {
+var session = Savory.Authentication.getCurrentSession(conversation)
+var user = session ? session.getUser() : null
+if (user) {
+	document.include('/savory/service/authentication/info/')
+}
+else {
 	Savory.Authentication.form.handle({conversation: conversation, mode: 'include'})
-//}
+}
 
 %>
 <%& '/site/footer/' %>

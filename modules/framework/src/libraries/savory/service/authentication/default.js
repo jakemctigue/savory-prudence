@@ -109,8 +109,8 @@ Savory.Authentication = Savory.Authentication || function() {
 		router.captureAndHide(providerBaseUri + 'facebook/', '/savory/service/authentication/provider/facebook/callback/')
 		router.captureAndHide(providerBaseUri + 'twitter/', '/savory/service/authentication/provider/twitter/callback/')
 		router.captureAndHide(providerBaseUri + 'windows-live/', '/savory/service/authentication/provider/windows-live/callback/')
-		router.capture(providerBaseUri + 'open-id/', '/savory/service/authentication/provider/open-id/callback/')
-		router.captureAndHide(providerBaseUri + 'open-id/{provider}/', '/savory/service/authentication/provider/open-id/callback/')
+		router.capture(providerBaseUri + 'open-id/{provider}/', '/savory/service/authentication/provider/open-id/callback/')
+		router.captureAndHide(providerBaseUri + 'open-id/', '/savory/service/authentication/provider/open-id/callback/')
 
 		// Session filter
 		dynamicWeb = router.filter(dynamicWebBaseURL, '/savory/service/authentication/session-filter/', applicationInstance.context, dynamicWeb).next
