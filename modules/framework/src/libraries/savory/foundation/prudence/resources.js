@@ -946,11 +946,8 @@ Savory.Resources = Savory.Resources || function() {
 	    				var value = values[name]
 	    				if (!Savory.Objects.exists(value) || (value == '')) {
 	    					results.success = false
-	    					error = textPack.get('savory.foundation.validation.required', {name: name})
-	    					if (results.errors === undefined) {
-	    						results.errors = {}
-	    					}
-	    					results.errors[name] = error
+	    					results.errors = results.errors || {} 
+	    					results.errors[name] = textPack.get('savory.foundation.validation.required', {name: name})
 	    				}
 	    			}
 	    		}
@@ -1004,17 +1001,13 @@ Savory.Resources = Savory.Resources || function() {
     				}
     				
     				if (Savory.Objects.exists(value)) {
-    					if (results.values === undefined) {
-    						results.values = {}
-    					}
+    					results.values = results.values || {} 
     					results.values[name] = String(value)
     				}
     				
     				if (error) {
     					results.success = false
-    					if (results.errors === undefined) {
-    						results.errors = {}
-    					}
+    					results.errors = results.errors || {} 
     					results.errors[name] = error
     				}
     			}
@@ -1065,52 +1058,52 @@ Savory.Resources = Savory.Resources || function() {
 	    		
 	    		var textPack = params.textPack || (Savory.Objects.exists(params.conversation) ? Savory.Internationalization.getCurrentPack(params.conversation) : null)
 	    		var results = this.validate(values, textPack, params.conversation)
-	    		this.process(results, params.conversation)
-	    		
-	    		switch (mode) {
-	    			case 'json':
-	    	    		conversation.mediaTypeName = 'application/json'
-	    	    		var printResults = results
-    		    		if (printResults.success) {
-    		    			printResults = Savory.Objects.clone(printResults)
-    		    			delete printResults.values
-    		    		}
-	    	    		var human = Savory.Objects.exists(params.conversation) ? (params.conversation.query.get('human') == 'true') : false
-    		    		print(Savory.JSON.to(printResults, human))
-    		    		break
-    		    		
-	    			case 'include':
-	    				var includeDocumentName
-	    				if (results.success) {
-	    					includeDocumentName = params.includeSuccessDocumentName || this.includeSuccessDocumentName
-	    				}
-	    				else {
-	    					includeDocumentName = params.includeFailureDocumentName || this.includeFailureDocumentName
-	    				}
-    					includeDocumentName = includeDocumentName || this.includeDocumentName
-    					if (Savory.Objects.exists(includeDocumentName)) {
-    						conversation.locals.put('savory.foundation.resources.form', this)
-    						conversation.locals.put('savory.foundation.resources.form.results', results)
-    						document.include(includeDocumentName)
-    					}
-	    				break
-	    				
-	    			case 'redirect':
-	    				var redirectUri
-	    				if (results.success) {
-	    					redirectUri = params.redirectSuccessUri || this.redirectSuccessUri
-	    				}
-	    				else {
-	    					redirectUri = params.redirectFailureUri || this.redirectFailureUri
-	    				}
-    					redirectUri = redirectUri || this.redirectUri
-    					if (Savory.Objects.exists(redirectUri)) {
-    						conversation.response.redirectSeeOther(redirectUri)
-    					}
-	    				break
+	    		results.mode = mode
+	    		if (this.process(results, params.conversation) !== false) {
+		    		switch (mode) {
+		    			case 'json':
+		    	    		conversation.mediaTypeName = 'application/json'
+		    	    		var printResults = results
+	    		    		if (printResults.success) {
+	    		    			printResults = Savory.Objects.clone(printResults)
+	    		    			delete printResults.values
+	    		    		}
+		    	    		var human = Savory.Objects.exists(params.conversation) ? (params.conversation.query.get('human') == 'true') : false
+	    		    		print(Savory.JSON.to(printResults, human))
+	    		    		break
+	    		    		
+		    			case 'include':
+		    				var includeDocumentName
+		    				if (results.success) {
+		    					includeDocumentName = params.includeSuccessDocumentName || this.includeSuccessDocumentName
+		    				}
+		    				else {
+		    					includeDocumentName = params.includeFailureDocumentName || this.includeFailureDocumentName
+		    				}
+	    					includeDocumentName = includeDocumentName || this.includeDocumentName
+	    					if (Savory.Objects.exists(includeDocumentName)) {
+	    						conversation.locals.put('savory.foundation.resources.form', this)
+	    						conversation.locals.put('savory.foundation.resources.form.results', results)
+	    						document.include(includeDocumentName)
+	    					}
+		    				break
+		    				
+		    			case 'redirect':
+		    				var redirectUri
+		    				if (results.success) {
+		    					redirectUri = params.redirectSuccessUri || this.redirectSuccessUri
+		    				}
+		    				else {
+		    					redirectUri = params.redirectFailureUri || this.redirectFailureUri
+		    				}
+	    					redirectUri = redirectUri || this.redirectUri
+	    					if (Savory.Objects.exists(redirectUri)) {
+	    						conversation.response.redirectSeeOther(redirectUri)
+	    					}
+		    				break
+		    		}
 	    		}
 	    		
-	    		results.mode = mode
 	    		return results
     		}
     		

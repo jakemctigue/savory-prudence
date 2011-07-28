@@ -15,10 +15,9 @@ at http://threecrickets.com/
 <%
 
 document.executeOnce('/savory/service/authentication/')
-
-var form = conversation.locals.get('savory.service.authentication.form') || new Savory.Authentication.Form(document, conversation)
-
-form.render()
+//if (!Savory.AUthentication.handleLogout(conversation)) {
+	Savory.Authentication.form.handle({conversation: conversation, mode: 'include'})
+//}
 
 %>
 <%& '/site/footer/' %>

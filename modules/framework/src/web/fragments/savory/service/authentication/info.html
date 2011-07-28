@@ -15,21 +15,21 @@ at http://threecrickets.com/
 <div id="login-info">
 <%
 
-document.executeOnce('/savory/foundation/templates/')
+document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/foundation/html/')
 
-var session = conversation.locals.get('savory.service.authentication.session')
+var session = Savory.Authentication.getCurrentSession(conversation)
 var user = session ? session.getUser() : null
 
 if (user) {
 %>
 	<%= Savory.HTML.span({_key: 'savory.service.authentication.form.info.greeting', _cast: {name: user.getDisplayName()}}) %>
-	<%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.logout', href: conversation.pathToBase + '/authentication/logout/', _query: {from: conversation.reference}}) %>
+	<%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.logout', href: Savory.Authentication.getLogoutUri(), _query: {from: conversation.reference}}) %>
 <%
 }
 else {
 %>
-	<%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.login', href: conversation.pathToBase + '/authentication/', _query: {from: conversation.reference}}) %>
+	<%= Savory.HTML.a({_key: 'savory.service.authentication.form.info.login', href: Savory.Authentication.getUri(), _query: {from: conversation.reference}}) %>
 <%
 }
 %>

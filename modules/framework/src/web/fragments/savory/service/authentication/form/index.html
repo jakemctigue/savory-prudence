@@ -13,27 +13,29 @@ at http://threecrickets.com/
 
 %><%
 
-document.executeOnce('/savory/feature/registration/')
 document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/savory/feature/registration/')
 document.executeOnce('/savory/foundation/html/')
 document.executeOnce('/savory/foundation/xml/')
 document.executeOnce('/savory/foundation/objects/')
 
-var siteName = Savory.Registration.getSiteName()
-
-var from = conversation.query.get('from')
-from = from ? '?from=' + escape(from) : ''
-
+var form = Savory.Resources.getCurrentForm(conversation)
+var results = Savory.Resources.getCurrentFormResults(conversation)
 var providers = Savory.Authentication.getProviders()
+var siteName = Savory.Registration.getSiteName()
 
 %>
 <div class="centerpiece">
 	<form id="login-form" method="POST">
 		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.login.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
-		<%= Savory.HTML.div({_content: conversation.locals.get('savory.service.authentication.form').getStatusText(), 'class': 'status'}) %>
-		<input name="action" type="hidden" value="savory.service.authentication.login" />
-		<div class="field"><%= Savory.HTML.input({name: 'username'}, {_key: 'savory.service.authentication.form.login.label.username'}) %></div>
-		<div class="field"><%= Savory.HTML.input({name: 'password', type: 'password'}, {_key: 'savory.service.authentication.form.login.label.password'}) %></div>
+		<div class="field">
+			<%= Savory.HTML.input({name: 'username'}, {_key: 'savory.service.authentication.form.login.label.username'}) %>
+			<% if (results && results.errors && results.errors.username) { print(Savory.HTML.div({_content: results.errors.username, 'class': 'error'})) } %>
+		</div>
+		<div class="field">
+			<%= Savory.HTML.input({name: 'password', type: 'password'}, {_key: 'savory.service.authentication.form.login.label.password'}) %>
+			<% if (results && results.errors && results.errors.password) { print(Savory.HTML.div({_content: results.errors.password, 'class': 'error'})) } %>
+		</div>
 		<div class="buttons">
 			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.login.button.login'}) %>
 		</div>

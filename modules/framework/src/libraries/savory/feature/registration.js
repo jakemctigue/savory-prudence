@@ -31,7 +31,7 @@ var Savory = Savory || {}
  * <ol>
  * <li>The user fills in a form with some basic information required to create the user, most importantly
  * a username, a password and an email address. The form contains a reCAPTCHA to avoid spam. The user
- * is created in the database in "unconformed" state for now, and the {@link Savory.Authentication} service will
+ * is created in the database in "unconfirmed" state for now, and the {@link Savory.Authentication} service will
  * not let the user login yet. Why store this record? This guarantees that no other new users would be able to
  * take the name, and also provides a convenient placeholder until confirmation happens. A cron task makes sure to
  * delete these entries after a while (one week by default) if they are not confirmed, so that non-validated
@@ -284,9 +284,7 @@ Savory.Registration = Savory.Registration || function() {
 
 				if (!Module.register(results.values.email, results.values.username, results.values.password, conversation)) {
 					results.success = false
-					if (results.errors === undefined) {
-						results.errors = {}
-					}
+					results.errors = results.errors || {} 
 					results.errors.username = textPack.get('savory.feature.registration.form.validation.usernameUsed')
 				}
     		}

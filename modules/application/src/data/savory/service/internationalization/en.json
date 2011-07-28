@@ -52,7 +52,7 @@
 								"register": "Click here to become one",
 								"services": "Or login with your user from one of these services:"
 							},
-							"invalid": "Incorrect login credentials."
+							"validation": "Unknown username/password combination"
 						},
 						"logout": {
 							"button": {

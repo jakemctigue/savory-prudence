@@ -22,7 +22,7 @@ var results = Savory.Resources.getCurrentFormResults(conversation)
 var siteName = Savory.Registration.getSiteName()
 
 %>
-<form id="register-form" method="POST">
+<form id="registration-form" method="POST">
 	<div class="centerpiece">
 		<%= Savory.HTML.build({_key: 'savory.feature.registration.form.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
 		<div class="field">

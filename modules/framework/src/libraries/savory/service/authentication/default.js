@@ -142,6 +142,10 @@ Savory.Authentication = Savory.Authentication || function() {
 		return authenticationUri
 	}
 	
+	Public.getLogoutUri = function() {
+		return logoutUri
+	}
+	
 	Public.redirect = function(conversation) {
 		if (!conversation.internal) {
 			conversation.response.redirectSeeOther(Savory.Resources.buildUri(Public.getUri(), {from: conversation.reference}))
@@ -484,74 +488,56 @@ Savory.Authentication = Savory.Authentication || function() {
 	/**
 	 * @class
 	 * @name Savory.Authentication.Form
+     * @augments Savory.Resources.Form
 	 */
 	Public.Form = Savory.Classes.define(function(Module) {
 		/** @exports Public as Savory.Authentication.Form */
 	    var Public = {}
-	    
+
 	    /** @ignore */
-	    Public._construct = function(document, conversation) {
-			this.session = Module.getCurrentSession(conversation)
-			this.textPack = Savory.Internationalization.getCurrentPack(conversation)
-			this.conversation = conversation
-			conversation.locals.put('savory.service.authentication.form', this)
+	    Public._inherit = Savory.Resources.Form
+
+        /** @ignore */
+    	Public._construct = function(config) {
+			this.fields = this.fields || {
+				username: {
+					required: true
+				},
+				password: {
+					required: true
+				}
+			}
+
+			this.includeDocumentName = this.includeDocumentName || '/savory/service/authentication/form/'
+			
+			Module.Form.prototype.superclass.call(this, this)
 	    }
-		
-	    Public.getSession = function() {
-			return this.session
-		}
-		
-	    Public.getStatusText = function() {
-			var status = this.conversation.locals.get('savory.service.authentication.status')
-			if (!status) {
-				var user = this.session ? this.session.getUser() : null
-				if (user) {
-					status = this.textPack.get('savory.service.authentication.status.loggedIn', {name: user.getDisplayName()})
+
+    	Public.process = function(results, conversation) {
+    		if (results.success) {
+				var session = Module.login(results.values.username, results.values.password, conversation)
+				if (session) {
+					var from = conversation.query.get('from') || authenticationUri
+					conversation.response.redirectSeeOther(from)
+					return false // disables further handling
 				}
 				else {
-					status = this.textPack.get('savory.service.authentication.status.loggedOut')
+					var textPack = Savory.Internationalization.getCurrentPack(conversation)
+					results.success = false
+					results.errors = results.errors || {} 
+					results.errors.password = textPack.get('savory.service.authentication.form.login.validation')
 				}
-			}
-			return status
-		}
-		
-	    Public.render = function() {
-			var user = this.session ? this.session.getUser() : null
+    		}
+    	}
 
-			switch (String(this.conversation.request.method)) {
-				case 'POST':
-					switch (String(this.conversation.form.get('action'))) {
-						case 'savory.service.authentication.logout':
-							if (this.session) {
-								this.session.logout()
-							}
-							var from = this.conversation.query.get('from')
-							this.conversation.response.redirectSeeOther(from || authenticationUri)
-							break
-							
-						case 'savory.service.authentication.login':
-							var form = Savory.Resources.getForm(this.conversation, {
-								username: 'string',
-								password: 'string'
-							})
-							var session = Module.login(form.username, form.password, conversation)
-							if (session) {
-								var from = this.conversation.query.get('from')
-								this.conversation.response.redirectSeeOther(from || authenticationUri)
-							}
-							else {
-								this.conversation.locals.put('savory.service.authentication.status', this.textPack.get('savory.service.authentication.form.login.invalid'))
-							}
-							break
-					}
-					break
-			}
-			
-			document.include(user ? '/savory/service/authentication/form/logout/' : '/savory/service/authentication/form/login/')
-		}
-		
 		return Public
 	}(Public))
+
+	/**
+	 * @constant
+	 * @returns {Savory.Authentication.Form}
+	 */
+	Public.form = new Public.Form()
 	
 	/**
 	 * @class
@@ -611,6 +597,7 @@ Savory.Authentication = Savory.Authentication || function() {
 	var passwordSaltLength = application.globals.get('savory.service.authentication.passwordSaltLength') || 8
 	var cookiePath = application.globals.get('savory.service.authentication.cookiePath') || '/'
 	var authenticationUri = Savory.Objects.string(application.globals.get('savory.service.authentication.uri'))
+	var logoutUri = Savory.Objects.string(application.globals.get('savory.service.authentication.logoutUri'))
 
 	return Public
 }()
