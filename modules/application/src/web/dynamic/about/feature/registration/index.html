@@ -44,8 +44,7 @@ conversation.locals.put('reCaptcha', true)
 <%
 
 document.executeOnce('/savory/feature/registration/')
-var form = conversation.locals.get('savory.feature.registration.form') || new Savory.Registration.Form(document, conversation)
-form.render()
+Savory.Registration.form.handle({conversation: conversation, mode: 'include'})
 
 %>
 <%& '/site/footer/' %>

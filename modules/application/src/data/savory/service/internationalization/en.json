@@ -92,10 +92,6 @@
 							"message": "Message",
 							"recaptcha_response_field": "Humanity test"
 						},
-						"humanity": {
-							"noscript": "(This would be easier with JavaScript enabled in your browser!)",
-							"label": "When you succeed in the humanity test gives you, paste the text here:"
-						},
 						"success": "Thank you for contacting us!"
 					},
 					"message": {
@@ -114,19 +110,11 @@
 							"username": "Username",
 							"password": "Password",
 							"password2": "Password validation",
-							"humanity": "Humanity test"
+							"recaptcha_response_field": "Humanity test"
 						},
-						"invalid": {
-							"email": "Please provide a valid email address.",
-							"username": "Please provide a valid username.",
-							"usernameUsed": "The username you provided is already in use. Please choose a different one.",
-							"password": "Please provide a valid password.",
-							"password2": "Your password verification does not match the password.",
-							"humanity": "You did not pass the humanity test."
-						},
-						"humanity": {
-							"noscript": "(This would be easier with JavaScript enabled in your browser!)",
-							"label": "When you succeed in the humanity test gives you, paste the text here:"
+						"validation": {
+							"usernameUsed": "The username you provided is already in use, please choose a different one",
+							"passwordDifferent": "The password validation is not the same as the password",
 						},
 						"success": "An email with registration instructions has been sent to you."
 					},

@@ -37,12 +37,7 @@ conversation.locals.put('reCaptcha', true)
 <%
 
 document.executeOnce('/savory/feature/contact-us/')
-document.executeOnce('/savory/service/authentication/')
-
-var session = Savory.Authentication.getCurrentSession(conversation)
-var user = session ? session.getUser() : null
-var form = user ? Savory.ContactUs.loggedInForm : Savory.ContactUs.notLoggedInForm
-form.handle({conversation: conversation, mode: 'include'})
+Savory.ContactUs.getForm(conversation).handle({conversation: conversation, mode: 'include'})
 
 %>
 <%& '/site/footer/' %>

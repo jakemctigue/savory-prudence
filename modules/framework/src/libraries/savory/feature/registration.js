@@ -122,13 +122,17 @@ Savory.Registration = Savory.Registration || function() {
 	}
 	
     /**
-     * Creates a new user document in the MongoDB users collection, properly encrypting the password,
+     * Creates a new user document in the MongoDB users collection, properly encrypting and salting the password,
      * and sends a confirmation email to the user, which contains a unique validation link.
-     * 
+     *
+     * @param {String} email The user's email
+     * @param {String} name The user's name (must be unique for registration to succeed)
+     * @param {String} password The user's password
+     * @param conversation The Prudence conversation
      * @see Savory.Authentication#encryptPassword
      * @returns {Boolean} True if the user created, false if the username is already taken
      */
-    Public.register = function(email, name, password) {
+    Public.register = function(email, name, password, conversation) {
 		var salt = Savory.Authentication.createPasswordSalt()
 		
 		var user = {
@@ -143,6 +147,9 @@ Savory.Registration = Savory.Registration || function() {
 		try {
 			usersCollection.insert(user, 1)
 			
+			var textPack = Savory.Internationalization.getCurrentPack(conversation)
+			var registrationMessageTemplate = new Savory.Mail.MessageTemplate(textPack, 'savory.feature.registration.message.registration')
+
 			Savory.Notification.queueForReference('Email', {type: 'user', id: user._id}, registrationMessageTemplate.cast({
 				link: Savory.Resources.buildUri(registrationUri, {'confirm-registration': user._id}),
 				siteName: siteName,
@@ -160,9 +167,10 @@ Savory.Registration = Savory.Registration || function() {
     /**
      * Confirms a user by its ID.
      * 
-     * @param {String} id
+     * @param {String} id The confirmation ID
+     * @param conversation The Prudence conversation
      */
-    Public.confirm = function(id) {
+    Public.confirm = function(id, conversation) {
 		var result = usersCollection.update({
 			_id: id,
 			confirmed: {$exists: false}
@@ -177,6 +185,9 @@ Savory.Registration = Savory.Registration || function() {
 		if (result && (result.n == 1)) {
 			var user = Savory.Authentication.getUserById(id)
 
+			var textPack = Savory.Internationalization.getCurrentPack(conversation)
+			var welcomeMessageTemplate = new Savory.Mail.MessageTemplate(textPack, 'savory.feature.registration.message.welcome')
+
 			Savory.Notification.queueForReference('Email', {type: 'user', id: id}, welcomeMessageTemplate.cast({
 				siteName: siteName,
 				username: user.getName(),
@@ -190,6 +201,30 @@ Savory.Registration = Savory.Registration || function() {
 		return false
 	}
 
+    /**
+     * 
+     * @param conversation The Prudence conversation
+     * @returns {Boolean} True if confirmation was handled
+     */
+    Public.handleConfirmation = function(conversation) {
+		var confirmRegistration = conversation.query.get('confirm-registration')
+		if (confirmRegistration) {
+			var userId = MongoDB.id(confirmRegistration)
+			var textPack = Savory.Internationalization.getCurrentPack(conversation)
+			if (Public.confirm(userId, conversation)) {
+				conversation.locals.put('savory.feature.registration.confirmation', textPack.get('savory.feature.registration.confirmation.success', {loginUri: Savory.Authentication.getUri()}))
+			}
+			else {
+				conversation.locals.put('savory.feature.registration.confirmation', textPack.get('savory.feature.registration.confirmation.invalid'))
+			}
+		
+			document.include('/savory/feature/registration/confirmed/')
+			return true
+		}
+		
+		return false
+    }
+	
 	/**
      * Manages the registration form.
      * <p>
@@ -197,112 +232,79 @@ Savory.Registration = Savory.Registration || function() {
      * 
 	 * @class
 	 * @name Savory.Registration.Form
+     * @augments Savory.Resources.Form
 	 */
     Public.Form = Savory.Classes.define(function(Module) {
     	/** @exports Public as Savory.Registration.Form */
         var Public = {}
 
-        /** @ignore */
-    	Public._construct = function(document, conversation) {
-    		this.reCaptcha = new Savory.ReCAPTCHA()
-    		this.conversation = conversation
-    		conversation.locals.put('savory.feature.registration.form', this)
-        }
-        
-        Public.getStatusText = function() {
-			var status = this.conversation.locals.get('savory.feature.registration.status')
-			return status || ''
-		}
+	    /** @ignore */
+	    Public._inherit = Savory.Resources.Form
 
-		Public.validate = function() {
-			var form = Savory.Resources.getForm(this.conversation, {
-				email: 'string',
-				username: 'string',
-				password: 'string',
-				password2: 'string'
-			})
+        /** @ignore */
+    	Public._construct = function(config) {
+			this.fields = this.fields || {
+				email: {
+					type: 'email',
+					required: true
+				}, 
+				username: {
+					required: true
+				},
+				password: {
+					required: true
+				},
+				password2: {
+					required: true,
+					validator: function(value, field, conversation) {
+						var password = conversation.form.get('password')
+						return value == password ? true : 'savory.feature.registration.form.validation.passwordDifferent'
+					},
+					clientValidation: false
+				},
+				recaptcha_response_field: {
+					type: 'reCaptcha',
+					required: true
+				},
+				recaptcha_challenge_field: {
+					required: true
+				}
+			}
+
+			this.includeDocumentName = this.includeDocumentName || '/savory/feature/registration/form/'
+			this.includeSuccessDocumentName = this.includeSuccessDocumentName || '/savory/feature/registration/form/success/'
+			this.reCaptcha = this.reCaptcha || new Savory.ReCAPTCHA() // required by 'reCaptcha' field type
 			
-			if (!form.email || !Savory.Mail.isAddressValid(form.email)) {
-				conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.form.invalid.email'))
-				return null
-			}
-			if (!form.username) {
-				conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.form.invalid.username'))
-				return null
-			}
-			if (!form.password) {
-				conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.form.invalid.password'))
-				return null
-			}
-			if (form.password != form.password2) {
-				conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.form.invalid.password2'))
-				return null
-			}
-			if (!this.reCaptcha.validate(this.conversation)) {
-				conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.form.invalid.humanity'))
-				return null
-			}
-			
-			return form
-		}
-		
-		Public.render = function() {
-			switch (String(this.conversation.request.method)) {
-				case 'GET':
-					var confirmRegistration = this.conversation.query.get('confirm-registration')
-					if (confirmRegistration) {
-						var userId = MongoDB.id(confirmRegistration)
-						if (Module.confirm(userId)) {
-							this.conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.confirmation.success', {loginUri: Savory.Authentication.getUri()}))
-						}
-						else {
-							this.conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.confirmation.invalid'))
-						}
-					
-						document.include('/savory/feature/registration/form/status/')
-						return
+			Module.Form.prototype.superclass.call(this, this)
+        }
+
+    	Public.process = function(results, conversation) {
+    		if (results.success) {
+				var textPack = Savory.Internationalization.getCurrentPack(conversation)
+
+				if (!Module.register(results.values.email, results.values.username, results.values.password, conversation)) {
+					results.success = false
+					if (results.errors === undefined) {
+						results.errors = {}
 					}
-					break
-			
-				case 'POST':
-					switch (String(this.conversation.form.get('action'))) {
-						case 'savory.feature.registration.register':
-							var form = this.validate()
-							
-							if (form) {
-								if (Module.register(form.email, form.username, form.password)) {
-									this.conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.form.success'))
-									document.include('/savory/feature/registration/form/status/')
-									return
-								}
-								else {
-									this.conversation.locals.put('savory.feature.registration.status', textPack.get('savory.feature.registration.form.invalid.usernameUsed'))
-								}
-							}
-							
-							break
-					}
-					break
-			}
-			
-			document.include('/savory/feature/registration/form/')
-		}
+					results.errors.username = textPack.get('savory.feature.registration.form.validation.usernameUsed')
+				}
+    		}
+    	}
 		
 		return Public
 	}(Public))
+    
+	/**
+	 * @constant
+	 * @returns {Savory.Registration.Form}
+	 */
+	Public.form = new Public.Form()
     
     //
     // Initialization
     //
 	
-	var textPack
-	try {
-		textPack = Savory.Internationalization.getCurrentPack(conversation)
-	}
-	catch (x) {
-		// No conversation
-	}
-
 	var usersCollection
 	try {
 		usersCollection = new MongoDB.Collection('users')
@@ -315,13 +317,6 @@ Savory.Registration = Savory.Registration || function() {
 	var from = application.globals.get('savory.feature.registration.from')
 	var siteName = application.globals.get('savory.feature.registration.site')
 	var registrationUri = Savory.Objects.string(application.globals.get('savory.feature.registration.uri'))
-	
-	var registrationMessageTemplate
-	var welcomeMessageTemplate
-	if (textPack) {
-		registrationMessageTemplate = new Savory.Mail.MessageTemplate(textPack, 'savory.feature.registration.message.registration')
-		welcomeMessageTemplate = new Savory.Mail.MessageTemplate(textPack, 'savory.feature.registration.message.welcome')
-	}
 	
 	return Public
 }()

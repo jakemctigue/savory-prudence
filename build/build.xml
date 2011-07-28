@@ -149,7 +149,7 @@
 		<copy todir="${tmp}/applications/savory">
 			<fileset dir="${application-src}" excludes="**/.svn/, settings-extra.js" />
 		</copy>
-		<replace file="${tmp}/applications/savory/settings.js" token="%REVISION%" value="${revision.max}" />
+		<replace file="${tmp}/applications/savory/version.js" token="%REVISION%" value="${revision.max}" />
 		<zip destfile="${dist-debug}/savory-demo-application.prudence.zip" basedir="${tmp}/applications" includes="**/*" level="9" />
 		<copy todir="${dist-standard}" file="${dist-debug}/savory-demo-application.prudence.zip" />
 		<copy todir="${dist-minimal}" file="${dist-debug}/savory-demo-application.prudence.zip" />

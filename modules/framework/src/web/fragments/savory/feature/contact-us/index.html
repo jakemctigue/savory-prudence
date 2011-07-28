@@ -17,10 +17,8 @@ conversation.locals.put('reCaptcha', true)
 <%& '/site/header/' %>
 <%
 
-document.executeOnce('/savory/feature/registration/')
-if (!Savory.Registration.handleConfirmation(conversation)) {
-	Savory.Registration.form.handle({conversation: conversation, mode: 'include'})
-}
+document.executeOnce('/savory/feature/contact-us/')
+Savory.ContactUs.getForm(conversation).handle({conversation: conversation, mode: 'include'})
 
 %>
 <%& '/site/footer/' %>

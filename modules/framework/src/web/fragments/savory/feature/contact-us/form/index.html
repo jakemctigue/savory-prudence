@@ -13,52 +13,40 @@ at http://threecrickets.com/
 
 %><%
 
-document.executeOnce('/savory/service/internationalization/')
+document.executeOnce('/savory/foundation/prudence/resources/')
 document.executeOnce('/savory/foundation/html/')
-document.executeOnce('/savory/foundation/xml/')
 
-var form = conversation.locals.get('savory.foundation.resources.form')
-var results = conversation.locals.get('savory.foundation.resources.form.results')
+var form = Savory.Resources.getCurrentForm(conversation)
+var results = Savory.Resources.getCurrentFormResults(conversation)
+
 %>
 <form id="register-form" method="POST">
 	<div class="centerpiece">
 		<%= Savory.HTML.build({_key: 'savory.feature.contactUs.form.title', _tag: 'h2'}) %>
-<%
-if (!form.hasUser) {
-%>
+<% if (!form.hasUser) { %>
 		<div class="field">
 			<%= Savory.HTML.input({name: 'email'}, {_key: 'savory.feature.contactUs.form.label.email'}) %>
 			<% if (results && results.errors && results.errors.email) { print(Savory.HTML.div({_content: results.errors.email, 'class': 'error'})) } %>
 		</div>
-<%
-}
-%>
+<% } %>
 		<div class="field">
 			<%= Savory.HTML.textarea({name: 'message'}, {_key: 'savory.feature.contactUs.form.label.message'}) %>
 			<% if (results && results.errors && results.errors.message) { print(Savory.HTML.div({_content: results.errors.message, 'class': 'error'})) } %>
 		</div>
-<%
-if (!form.hasUser) {
-%>
+<% if (!form.hasUser) { %>
 		<div class="field">
 			<%= Savory.HTML.label({_key: 'savory.feature.contactUs.form.label.recaptcha_response_field'}) %>
 			<div id="recaptcha-js"></div>
 			<% if (results && results.errors && results.errors.recaptcha_response_field) { print(Savory.HTML.div({_content: results.errors.recaptcha_response_field, 'class': 'error'})) } %>
 		</div>
-<%
-}
-%>
+<% } %>
  		<div class="buttons">
 			<%= Savory.HTML.submit({_key: 'savory.feature.contactUs.form.button.send'}) %>
 		</div>
 	</div>
-<%
-if (!form.hasUser) {
-%>
+<% if (!form.hasUser) { %>
 	<noscript>
 		<%& '/savory/integration/backend/re-captcha/noscript/' %>
 	</noscript>
-<%
-}
-%>
+<% } %>
 </form>

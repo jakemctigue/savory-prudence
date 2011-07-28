@@ -851,6 +851,24 @@ Savory.Resources = Savory.Resources || function() {
 	Public.toWebPayload = function(dict) {
 		return Public.toForm(dict).webRepresentation
 	}
+	
+	/**
+	 * @param conversation The Prudence conversation
+	 * @returns {Savory.Resources.Form} The current form or null
+	 * @see #getCurrentFormResults
+	 */
+	Public.getCurrentForm = function(conversation) {
+		return conversation.locals.get('savory.foundation.resources.form')
+	}
+
+	/**
+	 * @param conversation The Prudence conversation
+	 * @returns The results of the current form's validation and processing, or null
+	 * @see #getCurrentForm
+	 */
+	Public.getCurrentFormResults = function(conversation) {
+		return conversation.locals.get('savory.foundation.resources.form.results')
+	}
 
 	/**
 	 * This class allows for flexible validation and processing of "application/x-www-form-urlencoded" entities sent from the client.
@@ -954,8 +972,7 @@ Savory.Resources = Savory.Resources || function() {
     				
     				if (this.serverValidation) {
         				var validator = field.validator
-        				var type = field.type || 'string'
-						var validation = Savory.Validation[type]
+						var validation = Savory.Validation[field.type]
         				
         				var allowed = field.serverValidation
         				if (!Savory.Objects.exists(allowed) && validation) {
@@ -976,7 +993,7 @@ Savory.Resources = Savory.Resources || function() {
 		    					var validity = validator.call(this, value, field, conversation)
 		    					if (validity !== true) {
 		    						if (Savory.Objects.exists(textPack)) {
-		    							error = textPack.get('savory.foundation.validation.' + type + '.' + validity, {name: name})
+	    								error = textPack.get(validity, {name: name})
 		    						}
 		    						if (!Savory.Objects.exists(error)) {
 		    							error = 'Invalid'

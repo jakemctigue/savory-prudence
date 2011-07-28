@@ -16,8 +16,8 @@ document.executeOnce('/savory/foundation/jvm/')
 document.executeOnce('/savory/foundation/prudence/resources/')
 
 var multiplierForm = multiplierForm || new Savory.Resources.Form({fields: {
-	first: {type: 'number', label: 'A number'},
-	second: {type: 'integer', label: 'An integer'}
+	first: {type: 'number', label: 'A number', required: true},
+	second: {type: 'integer', label: 'An integer', required: true}
 }})
 
 multiplierForm.process = function(results) {
