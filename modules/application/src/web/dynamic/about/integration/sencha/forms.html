@@ -63,7 +63,7 @@ var fields = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, multip
 
 var fieldsWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, null, true, false), true, true) %>;
 
-var fieldsBare = <%= Savory.JSON.to(Savory.Sencha.getFormFieldsconversation, (multiplierForm, null, false, false), true, true) %>;
+var fieldsBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, null, false, false), true, true) %>;
 
 var titles = {
 	'standard-form': 'Standard Form Multiplier',
