@@ -21,7 +21,8 @@ if (user) {
 	document.include('/savory/service/authentication/info/')
 }
 else {
-	Savory.Authentication.form.handle({conversation: conversation, mode: 'include'})
+	var form = new Savory.Authentication.Form({conversation: conversation})
+	form.handle({conversation: conversation, mode: 'include'})
 }
 
 %>

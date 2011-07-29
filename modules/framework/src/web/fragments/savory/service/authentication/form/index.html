@@ -30,12 +30,10 @@ var siteName = Savory.Registration.getSiteName()
 	<form id="login-form" method="POST">
 		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.login.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
 		<div class="field">
-			<%= Savory.HTML.input({name: 'username'}, {_key: 'savory.service.authentication.form.login.label.username'}) %>
-			<% if (results && results.errors && results.errors.username) { print(Savory.HTML.div({_content: results.errors.username, 'class': 'error'})) } %>
+			<%= form.htmlText('username', results) %>
 		</div>
 		<div class="field">
-			<%= Savory.HTML.input({name: 'password', type: 'password'}, {_key: 'savory.service.authentication.form.login.label.password'}) %>
-			<% if (results && results.errors && results.errors.password) { print(Savory.HTML.div({_content: results.errors.password, 'class': 'error'})) } %>
+			<%= form.htmlPassword('password', results) %>
 		</div>
 		<div class="buttons">
 			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.login.button.login'}) %>

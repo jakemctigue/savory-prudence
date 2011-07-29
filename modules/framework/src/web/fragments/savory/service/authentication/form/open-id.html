@@ -27,8 +27,7 @@ var siteName = provider.getName()
 	<form id="login-form" method="POST">
 		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.openId.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
 		<div class="field">
-			<%= Savory.HTML.input({name: 'username'}, {_key: 'savory.service.authentication.form.openId.label.username', _cast: {siteName: siteName}}) %>
-			<% if (results && results.errors && results.errors.username) { print(Savory.HTML.div({_content: results.errors.username, 'class': 'error'})) } %>
+			<%= form.htmlText('username', results) %>
 		</div>
 		<div class="buttons">
 			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.openId.button.login'}) %>

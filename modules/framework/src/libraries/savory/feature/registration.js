@@ -241,39 +241,59 @@ Savory.Registration = Savory.Registration || function() {
 	    /** @ignore */
 	    Public._inherit = Savory.Resources.Form
 
+	    /** @ignore */
+	    Public._configure = ['conversation']
+
         /** @ignore */
     	Public._construct = function(config) {
-			this.fields = this.fields || {
-				email: {
-					type: 'email',
-					required: true
-				}, 
-				username: {
-					required: true
-				},
-				password: {
-					required: true
-				},
-				password2: {
-					required: true,
-					validator: function(value, field, conversation) {
-						var password = conversation.form.get('password')
-						return value == password ? true : 'savory.feature.registration.form.validation.passwordDifferent'
+			this.reCaptcha = this.reCaptcha || new Savory.ReCAPTCHA() // required by 'reCaptcha' field type
+
+			if (!Savory.Objects.exists(this.fields)) {
+				this.fields = {
+					email: {
+						type: 'email',
+						required: true
+					}, 
+					username: {
+						required: true
 					},
-					clientValidation: false
-				},
-				recaptcha_response_field: {
-					type: 'reCaptcha',
-					required: true
-				},
-				recaptcha_challenge_field: {
-					required: true
+					password: {
+						type: 'password',
+						required: true
+					},
+					password2: {
+						type: 'password',
+						required: true,
+						validator: function(value, field, conversation) {
+							var password = conversation.form.get('password')
+							return value == password ? true : 'savory.feature.registration.form.validation.passwordDifferent'
+						},
+						clientValidation: false
+					},
+					recaptcha_response_field: {
+						type: 'reCaptcha',
+						code: this.reCaptcha.getPublicKey(),
+						required: true
+					},
+					recaptcha_challenge_field: {
+						type: 'reCaptchaChallenge',
+						required: true
+					}
 				}
-			}
+				
+        		if (Savory.Objects.exists(this.conversation)) {
+        			var textPack = Savory.Internationalization.getCurrentPack(this.conversation)
+        			this.fields.email.label = textPack.get('savory.feature.registration.form.label.email')
+        			this.fields.username.label = textPack.get('savory.feature.registration.form.label.username')
+        			this.fields.password.label = textPack.get('savory.feature.registration.form.label.password')
+        			this.fields.password2.label = textPack.get('savory.feature.registration.form.label.password2')
+        			this.fields.recaptcha_response_field.label = textPack.get('savory.feature.registration.form.label.recaptcha_response_field')
+    				delete this.conversation // this really shouldn't be kept beyond construction
+        		}
+        	}
 
 			this.includeDocumentName = this.includeDocumentName || '/savory/feature/registration/form/'
 			this.includeSuccessDocumentName = this.includeSuccessDocumentName || '/savory/feature/registration/form/success/'
-			this.reCaptcha = this.reCaptcha || new Savory.ReCAPTCHA() // required by 'reCaptcha' field type
 			
 			Module.Form.prototype.superclass.call(this, this)
         }

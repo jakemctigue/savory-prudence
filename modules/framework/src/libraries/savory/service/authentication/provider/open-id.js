@@ -37,7 +37,6 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
     /** @ignore */
     Public._construct = function(config) {
     	this.icon = this.icon || 'media/savory/service/authentication/' + this.slug
-    	this.form = new Savory.Authentication.OpenIdProviderForm({provider: this})
 
 		// Launchpad icon is the original from the Launchpad site.
 		// Other icons are from Aquaticus.Social:
@@ -137,15 +136,23 @@ Savory.Authentication.OpenIdProviderForm = Savory.Authentication.OpenIdProviderF
     Public._inherit = Savory.Resources.Form
 
     /** @ignore */
-    Public._configure = ['provider']
+    Public._configure = ['provider', 'conversation']
 
     /** @ignore */
 	Public._construct = function(config) {
-		this.fields = this.fields || {
-			username: {
-				required: true
+    	if (!Savory.Objects.exists(this.fields)) {
+			this.fields = {
+				username: {
+					required: true
+				}
 			}
-		}
+			
+    		if (Savory.Objects.exists(this.conversation)) {
+    			var textPack = Savory.Internationalization.getCurrentPack(this.conversation)
+    			this.fields.username.label = textPack.get('savory.service.authentication.form.openId.label.username', {siteName: this.provider.getName()})
+				delete this.conversation // this really shouldn't be kept beyond construction
+    		}
+    	}
 		
 		this.includeDocumentName = this.includeDocumentName || '/savory/service/authentication/form/open-id/'
 		

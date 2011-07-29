@@ -924,6 +924,25 @@ Savory.Resources = Savory.Resources || function() {
     		this.fields = fields
     	}
     	
+    	Public.htmlText = function(name, results) {
+    		return Savory.HTML.input({name: name}, {_content: this.fields[name].label}) + this.htmlError(name, results)
+    	}
+
+    	Public.htmlTextArea = function(name, results) {
+    		return Savory.HTML.textarea({name: name}, {_content: this.fields[name].label}) + this.htmlError(name, results)
+    	}
+
+    	Public.htmlPassword = function(name, results) {
+    		return Savory.HTML.input({name: name, type: 'password'}, {_content: this.fields[name].label}) + this.htmlError(name, results)
+    	}
+    	
+    	Public.htmlError = function(name, results) {
+			if (results && results.errors && results.errors[name]) {
+				return Savory.HTML.div({_content: results.errors[name], 'class': 'error'})
+			}
+    		return ''
+    	}
+    	
     	/**
     	 * Performs server-side validation of values according to the form's defined fields.
     	 * 
@@ -936,21 +955,26 @@ Savory.Resources = Savory.Resources || function() {
     	 *          to users
     	 */
     	Public.validate = function(values, textPack, conversation) {
+			this.textPack = textPack
     		var results = {success: true}
 
-    		// Check that all required fields are provided
-    		if (this.serverValidation) {
-	    		for (var name in this.fields) {
-	    			var field = this.fields[name]
-	    			if (field.required) {
-	    				var value = values[name]
-	    				if (!Savory.Objects.exists(value) || (value == '')) {
-	    					results.success = false
-	    					results.errors = results.errors || {} 
-	    					results.errors[name] = textPack.get('savory.foundation.validation.required', {name: name})
-	    				}
-	    			}
-	    		}
+    		for (var name in this.fields) {
+    			var field = this.fields[name]
+				var value = values[name]
+    			
+    			// Make sure field has its initial value
+    			if (Savory.Objects.exists(field.value) && !Savory.Objects.exists(value)) {
+    				value = values[name] = field.value
+    			}
+    			
+        		// Check that all required fields are provided
+        		if (this.serverValidation && field.required) {
+    				if (!Savory.Objects.exists(value) || (value == '')) {
+    					results.success = false
+    					results.errors = results.errors || {} 
+    					results.errors[name] = textPack.get('savory.foundation.validation.required', {name: name})
+    				}
+        		}
     		}
     		
     		// Check remaining values
@@ -989,9 +1013,10 @@ Savory.Resources = Savory.Resources || function() {
 	        				if (validator) {
 		    					var validity = validator.call(this, value, field, conversation)
 		    					if (validity !== true) {
-		    						if (Savory.Objects.exists(textPack)) {
+		    						error = validity
+		    						/*if (Savory.Objects.exists(textPack)) {
 	    								error = textPack.get(validity, {name: name})
-		    						}
+		    						}*/
 		    						if (!Savory.Objects.exists(error)) {
 		    							error = 'Invalid'
 		    						}
@@ -1013,6 +1038,7 @@ Savory.Resources = Savory.Resources || function() {
     			}
     		}
     		
+    		delete this.textPack
     		return results
     	}
     	

@@ -12,9 +12,18 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%
+document.executeOnce('/savory/feature/registration/')
+var form = new Savory.Registration.Form({conversation: conversation})
+
+if (conversation.query.get('mode') == 'json') {
+	form.handle({conversation: conversation})
+}
+else {
+
 conversation.locals.put('reCaptcha', true)
+conversation.locals.put('extJs', true)
 %>
-<%& '/site/header/' %>
+<%{{ 'page.main' %>
 <h1>Savory's Registration Feature</h1>
 <p>
 	This complement to the <a href="../../service/authentication/">authentication service</a> uses a two-step
@@ -40,11 +49,13 @@ conversation.locals.put('reCaptcha', true)
 	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Registration">Savory.Registration API documentation</a>
 	for more details.
 </p>
-
 <%
-
-document.executeOnce('/savory/feature/registration/')
-Savory.Registration.form.handle({conversation: conversation, mode: 'include'})
-
+form.handle({conversation: conversation, mode: 'include'})
 %>
-<%& '/site/footer/' %>
+<p>
+	And here is an <a href="../../integration/sencha/forms/">Ext JS</a> version of it:
+</p>
+<%& '/savory/feature/registration/sencha/' %>
+<%}}%>
+<%& '/site/page-template/' %>
+<% } %>

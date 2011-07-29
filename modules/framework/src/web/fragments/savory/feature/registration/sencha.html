@@ -1,0 +1,75 @@
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
+document.executeOnce('/savory/feature/registration/')
+document.executeOnce('/savory/service/internationalization/')
+document.executeOnce('/savory/integration/frontend/sencha/')
+
+var textPack = Savory.Internationalization.getCurrentPack(conversation)
+var siteName = Savory.Registration.getSiteName()
+var form = form || new Savory.Registration.Form({conversation: conversation})
+%>
+<p>
+	<button id="extjs-form">Register</button>
+</p>
+<%{{ 'page.scripts' %>
+<%
+document.executeOnce('/savory/integration/frontend/sencha/')
+%>
+<script>
+var fields = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, form), true, true) %>;
+
+Ext.onReady(function() {
+	Ext.fly('extjs-form').on('click', function() {
+		Ext.create('Ext.window.Window', {
+			title:  '<%= textPack.get("savory.feature.registration.form.title", {siteName: siteName}) %>',
+			items: {
+				xtype: 'form',
+				url: '?mode=json',
+				border: false,
+				bodyCls: 'x-border-layout-ct', // Uses the neutral background color
+				bodyPadding: 10,
+				defaults: {
+					width: 468, // The reCAPTCHA width is 318 (labelWidth + labelPad + 318 = width)
+					labelWidth: 145,
+					labelPad: 5
+				},
+				defaultType: 'textfield',
+				items: fields,
+				buttons: [{
+					text: 'Submit',
+					disabled: true,
+					formBind: true,
+					handler: function() {
+						var form = this.up('form').getForm();
+						if (form.isValid()) {
+							form.submit({
+								success: function(form, action) {
+									this.up('window').destroy();
+									Ext.Msg.alert('Success', '<%= textPack.get("savory.feature.registration.form.success") %>');
+								},
+								failure: function(form, action) {
+									Ext.Msg.alert('Failure', 'Could not complete registration.');
+								},
+								scope: this
+							});
+						}
+					}
+				}]
+			}
+		}).show();
+	});
+});
+</script>
+<%}}%>

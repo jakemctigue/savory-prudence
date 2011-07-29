@@ -26,25 +26,21 @@ var siteName = Savory.Registration.getSiteName()
 	<div class="centerpiece">
 		<%= Savory.HTML.build({_key: 'savory.feature.registration.form.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
 		<div class="field">
-			<%= Savory.HTML.input({name: 'email'}, {_key: 'savory.feature.registration.form.label.email'}) %>
-			<% if (results && results.errors && results.errors.email) { print(Savory.HTML.div({_content: results.errors.email, 'class': 'error'})) } %>
+			<%= form.htmlText('email', results) %>
 		</div>
 		<div class="field">
-			<%= Savory.HTML.input({name: 'username'}, {_key: 'savory.feature.registration.form.label.username'}) %>
-			<% if (results && results.errors && results.errors.username) { print(Savory.HTML.div({_content: results.errors.username, 'class': 'error'})) } %>
+			<%= form.htmlText('username', results) %>
 		</div>
 		<div class="field">
-			<%= Savory.HTML.input({name: 'password', type: 'password'}, {_key: 'savory.feature.registration.form.label.password'}) %>
-			<% if (results && results.errors && results.errors.password) { print(Savory.HTML.div({_content: results.errors.password, 'class': 'error'})) } %>
+			<%= form.htmlPassword('password', results) %>
 		</div>
 		<div class="field">
-			<%= Savory.HTML.input({name: 'password2', type: 'password'}, {_key: 'savory.feature.registration.form.label.password2'}) %>
-			<% if (results && results.errors && results.errors.password2) { print(Savory.HTML.div({_content: results.errors.password2, 'class': 'error'})) } %>
+			<%= form.htmlPassword('password2', results) %>
 		</div>
 		<div class="field">
-			<%= Savory.HTML.label({_key: 'savory.feature.registration.form.label.recaptcha_response_field'}) %>
+			<%= Savory.HTML.label({_content: form.fields.recaptcha_response_field.label}) %>
 			<div id="recaptcha-js"></div>
-			<% if (results && results.errors && results.errors.recaptcha_response_field) { print(Savory.HTML.div({_content: results.errors.recaptcha_response_field, 'class': 'error'})) } %>
+			<%= form.htmlError('recaptcha_response_field', results) %>
 		</div>
  		<div class="buttons">
 			<%= Savory.HTML.submit({_key: 'savory.feature.registration.form.button.create'}) %>

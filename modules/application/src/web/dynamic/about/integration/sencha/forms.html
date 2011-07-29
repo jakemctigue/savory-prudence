@@ -1,4 +1,17 @@
-<%
+<%#
+
+This file is part of the Savory Framework for Prudence
+
+Copyright 2011 Three Crickets LLC.
+
+The contents of this file are subject to the terms of the LGPL version 3.0:
+http:www.opensource.org/licenses/lgpl-3.0.html
+
+Alternatively, you can obtain a royalty free commercial license with less
+limitations, transferable or non-transferable, directly from Three Crickets
+at http://threecrickets.com/
+
+%><%
 document.executeOnce('/about/integration/sencha/multiplier/')
 document.executeOnce('/savory/integration/frontend/sencha/')
 document.executeOnce('/savory/foundation/json/')
@@ -40,17 +53,17 @@ conversation.locals.put('extJs', true)
 
 <%{{ 'page.scripts' %>
 <script>
-var fieldsWithValues = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, (results && !results.success) ? results : null), true, true) %>;
+var fieldsWithValues = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null), true, true) %>;
 
-var fieldsWithValuesWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, (results && !results.success) ? results : null, true, false), true, true) %>;
+var fieldsWithValuesWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null, true, false), true, true) %>;
 
-var fieldsWithValuesBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, (results && !results.success) ? results : null, false, false), true, true) %>;
+var fieldsWithValuesBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null, false, false), true, true) %>;
 
-var fields = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm), true, true) %>;
+var fields = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm), true, true) %>;
 
-var fieldsWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, null, true, false), true, true) %>;
+var fieldsWithValidationWithoutMasking = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, null, true, false), true, true) %>;
 
-var fieldsBare = <%= Savory.JSON.to(Savory.Sencha.getFormFields(multiplierForm, null, false, false), true, true) %>;
+var fieldsBare = <%= Savory.JSON.to(Savory.Sencha.getFormFieldsconversation, (multiplierForm, null, false, false), true, true) %>;
 
 var titles = {
 	'standard-form': 'Standard Form Multiplier',
@@ -97,7 +110,7 @@ function openForm(event, el) {
 				if (form.isValid()) {
 					form.submit({
 						success: function(form, action) {
-						   Ext.Msg.alert('Success!', action.result.msg);
+							Ext.Msg.alert('Success!', action.result.msg);
 						},
 						failure: function(form, action) {
 							Ext.Msg.alert('Failure!', action.result.msg);

@@ -14,12 +14,14 @@ at http://threecrickets.com/
 %><%& '/site/header/' %>
 <%
 document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/savory/service/authentication/provider/open-id/')
 
 var provider = Savory.Authentication.getProviderBySlug(conversation)
 if (provider) {
 	switch (provider.handle(conversation)) {
 		case 'usernameForm':
-			provider.form.handle({conversation: conversation, document: document, mode: 'include'})
+			var form = new Savory.Authentication.OpenIdProviderForm({provider: provider, conversation: conversation})
+			form.handle({conversation: conversation, document: document, mode: 'include'})
 			break
 		
 		case 'invalidSession':

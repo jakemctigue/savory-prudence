@@ -497,16 +497,28 @@ Savory.Authentication = Savory.Authentication || function() {
 	    /** @ignore */
 	    Public._inherit = Savory.Resources.Form
 
+	    /** @ignore */
+	    Public._configure = ['conversation']
+
         /** @ignore */
     	Public._construct = function(config) {
-			this.fields = this.fields || {
-				username: {
-					required: true
-				},
-				password: {
-					required: true
+        	if (!Savory.Objects.exists(this.fields)) {
+				this.fields = {
+					username: {
+						required: true
+					},
+					password: {
+						type: 'password',
+						required: true
+					}
 				}
-			}
+        		if (Savory.Objects.exists(this.conversation)) {
+        			var textPack = Savory.Internationalization.getCurrentPack(this.conversation)
+        			this.fields.username.label = textPack.get('savory.service.authentication.form.login.label.username')
+        			this.fields.password.label = textPack.get('savory.service.authentication.form.login.label.password')
+    				delete this.conversation // this really shouldn't be kept beyond construction
+        		}
+        	}
 
 			this.includeDocumentName = this.includeDocumentName || '/savory/service/authentication/form/'
 			

@@ -92,39 +92,65 @@ Savory.ContactUs = Savory.ContactUs || function() {
 	    Public._inherit = Savory.Resources.Form
 	    
 	    /** @ignore */
-	    Public._configure = ['hasUser']
+	    Public._configure = ['hasUser', 'conversation']
 	    
 	    /** @ignore */
 		Public._construct = function(config) {
-	    	if (this.hasUser) {
-				this.fields = this.fields || {
-					message: {
-						required: true
+			this.reCaptcha = this.reCaptcha || new Savory.ReCAPTCHA() // required by 'reCaptcha' field type
+
+			if (!Savory.Objects.exists(this.fields)) {
+        		if (Savory.Objects.exists(this.conversation)) {
+        	    	var session = Savory.Authentication.getCurrentSession(this.conversation)
+        	    	this.hasUser = session ? session.getUser() : null
+        		}
+	    	
+		    	if (this.hasUser) {
+					this.fields = {
+						message: {
+							required: true,
+							sencha: {
+								xtype: 'textareafield'
+							}
+						}
 					}
-				}
-	    	}
-	    	else {
-				this.fields = this.fields || {
-					email: {
-						type: 'email',
-						required: true
-					}, 
-					message: {
-						required: true
-					},
-					recaptcha_response_field: {
-						type: 'reCaptcha',
-						required: true
-					},
-					recaptcha_challenge_field: {
-						required: true
+		    	}
+		    	else {
+					this.fields = {
+						email: {
+							type: 'email',
+							required: true
+						}, 
+						message: {
+							required: true,
+							sencha: {
+								xtype: 'textareafield'
+							}
+						},
+						recaptcha_response_field: {
+							type: 'reCaptcha',
+							code: this.reCaptcha.getPublicKey(),
+							required: true
+						},
+						recaptcha_challenge_field: {
+							type: 'reCaptchaChallenge',
+							required: true
+						}
 					}
-				}
-	    	}
+		    	}
+		    	
+        		if (Savory.Objects.exists(this.conversation)) {
+        			var textPack = Savory.Internationalization.getCurrentPack(this.conversation)
+        			this.fields.message.label = textPack.get('savory.feature.contactUs.form.label.message')
+        			if (!this.hasUser) {
+	        			this.fields.email.label = textPack.get('savory.feature.contactUs.form.label.email')
+	        			this.fields.recaptcha_response_field.label = textPack.get('savory.feature.registration.form.label.recaptcha_response_field')
+        			}
+    				delete this.conversation // this really shouldn't be kept beyond construction
+        		}
+        	}
 
 			this.includeDocumentName = this.includeDocumentName || '/savory/feature/contact-us/form/'
 			this.includeSuccessDocumentName = this.includeSuccessDocumentName || '/savory/feature/contact-us/form/success/'
-			this.reCaptcha = this.reCaptcha || new Savory.ReCAPTCHA() // required by 'reCaptcha' field type
 			
 			Module.Form.prototype.superclass.call(this, this)
 		}

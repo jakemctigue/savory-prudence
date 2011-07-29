@@ -18,7 +18,8 @@ conversation.locals.put('reCaptcha', true)
 <%
 
 document.executeOnce('/savory/feature/contact-us/')
-Savory.ContactUs.getForm(conversation).handle({conversation: conversation, mode: 'include'})
+var form = new Savory.ContactUs.Form({conversation: conversation})
+form.handle({conversation: conversation, mode: 'include'})
 
 %>
 <%& '/site/footer/' %>

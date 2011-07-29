@@ -12,9 +12,18 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%
+document.executeOnce('/savory/feature/contact-us/')
+var form = new Savory.ContactUs.Form({conversation: conversation})
+
+if (conversation.query.get('mode') == 'json') {
+	form.handle({conversation: conversation})
+}
+else {
+
 conversation.locals.put('reCaptcha', true)
+conversation.locals.put('extJs', true)
 %>
-<%& '/site/header/' %>
+<%{{ 'page.main' %>
 <h1>Savory's "Contact Us" Feature</h1>
 <p>
 	This simple feature contains a /web/fragment/ that displays
@@ -35,9 +44,12 @@ conversation.locals.put('reCaptcha', true)
 	for more details.
 </p>
 <%
-
-document.executeOnce('/savory/feature/contact-us/')
-Savory.ContactUs.getForm(conversation).handle({conversation: conversation, mode: 'include'})
-
+form.handle({conversation: conversation, mode: 'include'})
 %>
-<%& '/site/footer/' %>
+<p>
+	And here is an <a href="../../integration/sencha/forms/">Ext JS</a> version of it:
+</p>
+<%& '/savory/feature/contact-us/sencha/' %>
+<%}}%>
+<%& '/site/page-template/' %>
+<% } %>

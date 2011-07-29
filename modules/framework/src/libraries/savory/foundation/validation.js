@@ -40,29 +40,33 @@ Savory.Validation = Savory.Validation || function() {
 			if (typeof value == 'number') {
 				return true
 			}
-			return !isNaN(value - 0) ? true : 'savory.foundation.validation.number.not'
-		}
+			return !isNaN(value - 0) ? true : this.textPack.get('savory.foundation.validation.number.not')
+		},
+		textKeys: ['savory.foundation.validation.number.not']
 	}
 
     Public.integer = {
 		mask: /[\d\-]/,
 		fn: function(value, field, conversation) {
-			return value % 1 == 0 ? true : 'savory.foundation.validation.integer.not'
-		}
+			return value % 1 == 0 ? true : this.textPack.get('savory.foundation.validation.integer.not')
+		},
+		textKeys: ['savory.foundation.validation.integer.not']
 	}
     
     Public.email = {
 		// See: http://fightingforalostcause.net/misc/2006/compare-email-regex.php
     	fn: function(value, field, conversation) {
     		var emailRegExp = /^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i
-			return emailRegExp.test(value) ? true : 'savory.foundation.validation.email.not'
-    	}
+			return emailRegExp.test(value) ? true : this.textPack.get('savory.foundation.validation.email.not')
+    	},
+		textKeys: ['savory.foundation.validation.email.not']
     }
     
     Public.reCaptcha = {
     	fn: function(value, field, conversation) {
-	    	return this.reCaptcha.validate(conversation) ? true : 'savory.foundation.validation.reCaptcha.not'
+	    	return this.reCaptcha.validate(conversation) ? true : this.textPack.get('savory.foundation.validation.reCaptcha.not')
     	},
+		textKeys: ['savory.foundation.validation.reCaptcha.not'],
     	clientValidation: false
     }
 	

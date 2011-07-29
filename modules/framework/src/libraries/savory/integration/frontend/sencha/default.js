@@ -146,6 +146,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * You can translate the result into client-side code via Savory.JSON.to(result, true, true).
 	 * See {@link Savory.JSON#to}. 
 	 * 
+	 * @param conversation The Savory conversation
 	 * @param {Savory.Resources.Form} form The form
 	 * @param [results] The results from a call to {@link Savory.Resources.Form#handle}, used it initialize field
 	 *        values
@@ -153,9 +154,10 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param {Boolean} [clientMasking=true] True to include maskRe
 	 * @returns {Array}
 	 */
-	Public.getFormFields = function(form, results, clientValidation, clientMasking) {
+	Public.getFormFields = function(conversation, form, results, clientValidation, clientMasking) {
 		clientValidation = Savory.Objects.ensure(clientValidation, form.clientValidation)
 		clientMasking = Savory.Objects.ensure(clientMasking, true)
+		var textPack = Savory.Objects.exists(conversation) ? Savory.Internationalization.getCurrentPack(conversation) : null
 
 		var sencha = []
 		
@@ -170,6 +172,25 @@ Savory.Sencha = Savory.Sencha || function() {
 				if (results.errors && results.errors[name]) {
 					senchaField.activeError = results.errors[name]
 				}
+			}
+			else if (field.value) {
+				senchaField.value = field.value
+			}
+			
+			switch (field.type) {
+				case 'hidden':
+					senchaField.xtype = 'hiddenfield'
+					break
+				case 'password':
+					senchaField.inputType = 'password'
+					break
+				case 'reCaptcha':
+					senchaField.xtype = 'recaptchafield'
+					senchaField.code = field.code
+					break
+				case 'reCaptchaChallenge':
+					senchaField.xtype = 'recaptchachallengefield'
+					break
 			}
 
 			var validation
@@ -190,6 +211,19 @@ Savory.Sencha = Savory.Sencha || function() {
 				}
 				
 				if (allowed) {
+					var textKeys = field.textKeys
+					if (!textKeys && validation && validation.textKeys) {
+						textKeys = validation.textKeys
+					}
+					
+					if (textKeys) {
+						senchaField.textPack = {text: {}, get: function(name) { return this.text[name]; }}
+						for (var t in textKeys) {
+							var textKey = textKeys[t]
+							senchaField.textPack.text[textKey] = textPack ? textPack.get(textKey) : textKey
+						}
+					}
+					
 					if (!validator) {
 						if (validation && validation.fn) {
 							validator = validation.fn
@@ -219,6 +253,8 @@ Savory.Sencha = Savory.Sencha || function() {
     				senchaField.maskRe = mask
     			}
 			}
+			
+			Savory.Objects.merge(senchaField, field.sencha)
 
 			sencha.push(senchaField)
 		}
