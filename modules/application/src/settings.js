@@ -13,6 +13,19 @@
 
 document.execute('/defaults/application/settings/')
 
+predefinedGlobals = Savory.Objects.flatten({
+	mongoDb: {
+		defaultConnection: predefinedSharedGlobals['mongoDb.defaultConnection'],
+		defaultServers: predefinedSharedGlobals['mongoDb.defaultServers'] || '127.0.0.1',
+		defaultSwallow: predefinedSharedGlobals['mongoDb.defaultSwallow'],
+		defaultDb: 'savory'
+	}
+})
+
+// Force re-initialization of MongoDB API
+MongoDB = null
+document.execute('/mongo-db/')
+
 document.executeOnce('/savory/foundation/objects/')
 document.executeOnce('/savory/foundation/prudence/lazy/')
 
@@ -29,7 +42,7 @@ minimumTimeBetweenValidityChecks = 0
 var excludeFromFilter = ['/media/', '/style/', '/script/']
 var publicBaseUri = 'https://threecrickets.com/savory'
 	
-predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
+predefinedGlobals = Savory.Objects.merge(predefinedGlobals, Savory.Objects.flatten({
 	savory: {
 		feature: {
 			console: {
@@ -281,17 +294,8 @@ predefinedGlobals = Savory.Objects.merge(Savory.Objects.flatten({
 				}
 			}
 		}
-	}
-}), predefinedGlobals)
-
-predefinedGlobals['mongoDb.defaultConnection'] = predefinedSharedGlobals['mongoDb.defaultConnection']
-predefinedGlobals['mongoDb.defaultServers'] = predefinedSharedGlobals['mongoDb.defaultServers'] || '127.0.0.1'
-predefinedGlobals['mongoDb.defaultSwallow'] = predefinedSharedGlobals['mongoDb.defaultSwallow']
-predefinedGlobals['mongoDb.defaultDb'] = 'savory'
-
-// Force re-initialization of MongoDB API
-MongoDB = null
-document.execute('/mongo-db/')
+	}	
+}))
 
 //
 // RPC service
