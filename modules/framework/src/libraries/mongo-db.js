@@ -28,7 +28,7 @@
  * @see Visit the <a href="https://github.com/geir/mongo-java-driver">MongoDB Java driver</a> 
  * 
  * @author Tal Liron
- * @version 1.65
+ * @version 1.66
  */
 var MongoDB = MongoDB || function() {
 	/** @exports Public as MongoDB */
@@ -1626,6 +1626,16 @@ var MongoDB = MongoDB || function() {
 		}
 	}
 	
+	/**
+	 * Removes all MongoDB settings from the application globals.
+	 */
+	Public.uninitialize = function() {
+		removeGlobal('mongoDb.defaultConnection')
+		removeGlobal('mongoDb.defaultServers')
+		removeGlobal('mongoDb.defaultSwallow')
+		removeGlobal('mongoDb.defaultDb')
+	}
+	
 	//
 	// Private
     //
@@ -1642,6 +1652,18 @@ var MongoDB = MongoDB || function() {
 		catch (x) {
 			return false
 		}
+	}
+	
+	function removeGlobal(name) {
+		try {
+			delete predefinedGlobals[name]
+		}
+		catch (x) {}
+		try {
+			delete predefinedSharedGlobals[name]
+		}
+		catch (x) {}
+		application.globals.remove(name)
 	}
 	
 	function getGlobal(name) {
