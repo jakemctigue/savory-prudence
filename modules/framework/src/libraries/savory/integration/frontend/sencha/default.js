@@ -884,7 +884,7 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Module.TreeResource
 
 		/** @ignore */
-		Public._configure = ['rootName', 'nodePrefix']
+		Public._configure = ['root', 'rootName', 'nodePrefix']
 
 		/** @ignore */
 		Public._construct = function(config) {
@@ -893,7 +893,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			this.nodes = {}
 			this.lastId = 0
 			
-			addNode.call(this, this.rootName, Savory.Objects.clone(config.root))
+			addNode.call(this, this.rootName, Savory.Objects.clone(this.root))
 			
 			Savory.Sencha.SelfContainedTreeResource.prototype.superclass.call(this, this)
 		}
