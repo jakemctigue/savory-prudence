@@ -1659,10 +1659,6 @@ var MongoDB = MongoDB || function() {
 			delete predefinedGlobals[name]
 		}
 		catch (x) {}
-		try {
-			delete predefinedSharedGlobals[name]
-		}
-		catch (x) {}
 		application.globals.remove(name)
 	}
 	
