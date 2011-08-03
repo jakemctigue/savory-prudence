@@ -28,7 +28,7 @@
  * @see Visit the <a href="https://github.com/geir/mongo-java-driver">MongoDB Java driver</a> 
  * 
  * @author Tal Liron
- * @version 1.66
+ * @version 1.67
  */
 var MongoDB = MongoDB || function() {
 	/** @exports Public as MongoDB */
@@ -192,6 +192,46 @@ var MongoDB = MongoDB || function() {
 		
 		return connection
 	}
+    
+    /**
+     * Closes all MongoDB connections in the pool. Subsequent uses will open new connections and add them
+     * to the pool.
+     * <p>
+     * May be useful to solve memory leak problems with the MongoDB server that are associated with connections.
+     * Closing connections once in a while releases their heap memory on the server.
+     * 
+	 * @param {com.mongodb.Mongo} [connection=MongoDB.defaultConnection] The MongoDB connection
+     */
+    Public.closeConnections = function(connection) {
+    	connection = exists(connection) ? connection : Public.defaultConnection
+    	var connector = connection.connector
+
+    	function close(address) {
+    		var pool = connector.getDBPortPool(address)
+    		for (var i = pool.all; i.hasNext(); ) {
+    			var port = i.next()
+    			pool.remove(port)
+    		}
+    	}
+
+    	var addresses = connector.allAddress
+    	if (exists(addresses)) {
+    		// For replica sets
+    		for (var i = addresses.iterator(); i.hasNext(); ) {
+    			var address = i.next()
+    			close(address)
+    		}
+    		Public.logger.info('Reset MongoDB connections for: ' + connection)
+    	}
+    	else {
+    		// For single node
+    		var address = connector.address
+    		if (exists(address)) {
+    			close(address)
+    			Public.logger.info('Reset MongoDB connection for: ' + connection)
+    		}
+    	}
+    }
 	
 	/**
 	 * Creates a new, universally unique MongoDB object ID.
@@ -328,6 +368,16 @@ var MongoDB = MongoDB || function() {
 			Public.logger.info('Up! ' + connection)
 		}
 		application.globals.put('mongoDb.status.' + connection.hashCode(), status)
+	}
+	
+	/**
+	 * Removes all MongoDB settings from the application globals.
+	 */
+	Public.uninitialize = function() {
+		removeGlobal('mongoDb.defaultConnection')
+		removeGlobal('mongoDb.defaultServers')
+		removeGlobal('mongoDb.defaultSwallow')
+		removeGlobal('mongoDb.defaultDb')
 	}
 	
 	/**
@@ -1624,16 +1674,6 @@ var MongoDB = MongoDB || function() {
 			index[config.uniqueId] = 1
 			this.ensureIndex(index, {unique: true})
 		}
-	}
-	
-	/**
-	 * Removes all MongoDB settings from the application globals.
-	 */
-	Public.uninitialize = function() {
-		removeGlobal('mongoDb.defaultConnection')
-		removeGlobal('mongoDb.defaultServers')
-		removeGlobal('mongoDb.defaultSwallow')
-		removeGlobal('mongoDb.defaultDb')
 	}
 	
 	//
