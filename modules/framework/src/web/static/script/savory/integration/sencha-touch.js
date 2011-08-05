@@ -14,6 +14,41 @@
 Ext.namespace('Savory', 'Savory.ExtendedJSON', 'Savory.data');
 
 /**
+ * Deep cloning.
+ */
+Savory.clone = function(o) {
+	if ((o === null) || Ext.isPrimitive(o) || Ext.isFunction(o)) {
+		return o;
+	}
+	else if (Ext.isDate(o)) {
+		var c = new Date();
+		c.setTime(o.getTime());
+		return c;
+	}
+	else if (Ext.isArray(o)) {
+		var c = [];
+		for (var i = 0, l = o.length; i < l; i++) {
+			c.push(Savory.clone(o[i]));
+		}
+		return c;
+	}
+	else {
+		if (o.hasOwnProperty('asIs')) {
+			return o.asIs;
+		}
+		else {
+			var c = {};
+			for (var k in o) {
+				if (o.hasOwnProperty(k)) {
+					c[k] = Savory.clone(o[k]);
+				}
+			}
+			return c;
+		}
+	}
+}
+
+/**
  * Recursively unpack MongoDB's extended JSON into JavaScript types.
  * 
  * @param json The packed structure
@@ -204,35 +239,66 @@ Savory.data.Store = Ext.extend(Ext.data.Store, {
 });
 
 /**
- * A useful utility that allows sliding in a new component to a card-layout container.
- * When the component is destroyed, the previous component in the container will be slid back in.
- * For extra ease of use, the swipe gesture will destroy the component.
+ * Adds a card to a container using a slide-in animation.
  * 
  * @param {String|Ext.Component} container The container component (must have a card layout)
- * @param {Ext.Component} cmp The component to slide in 
+ * @param {String|Ext.Component} card The component to slide in
+ * @param {Boolean} [slideOutOnSwipe=false] True to slide out the card on right-swipe
+ * @param {Boolean} [destroyOnSlideOut=false] True to destroy the card on right-swipe slide-out
  */
-Savory.slideIn = function(container, cmp) {
-	var container = typeof container == 'string' ? Ext.getCmp(container) : container;
+Savory.slideIn = function(container, card, slideOutOnSwipe, destroyOnSlideOut) {
+	container = typeof container == 'string' ? Ext.getCmp(container) : container;
+	card = typeof card == 'string' ? Ext.getCmp(card) : card;
 	
-	// We will slide out the component out before destroying it
-	cmp.on('beforedestroy', function() {
-		this.container.getLayout().prev({type: 'slide', direction: 'right', scope: this.cmp, after: function() {
-			this.destroy();
-		}});
-		return false;
-	}, {container: container, cmp: cmp}, {single: true});
+	if (slideOutOnSwipe) {
+		var context = {
+			container: container,
+			card: card,
+			destroyOnSlideOut: destroyOnSlideOut
+		};
+		
+		card.on('render', function() {
+			this.card.getEl().on('swipe', function(event) {
+				if (event.direction == 'right') {
+					Savory.slideOut(this.container, this.card, this.destroyOnSlideOut)
+				}
+			}, this, {single: true});
+		}, context, {single: true});
+	}
+
+	container.setActiveItem(card, {type: 'slide', direction: 'left'});
+}
+
+/**
+ * Removes a card from a container using a slide-out animation.
+ * 
+ * @param {String|Ext.Component} container The container component (must have a card layout)
+ * @param {String|Ext.Component} card The component to slide out
+ * @param {Boolean} [destroy=false] True to destroy the card after it's removed
+ */
+Savory.slideOut = function(container, card, destroy) {
+	container = typeof container == 'string' ? Ext.getCmp(container) : container;
+	card = typeof card == 'string' ? Ext.getCmp(card) : card;
 	
-	cmp.on('render', function(event) {
-		this.getEl().on('swipe', function(event) {
-			if (event.direction == 'right') {
-				this.destroy();
-			}
-		}, this);
-	});
+	var context = {
+		container: container,
+		card: card,
+		destroy: destroy
+	};
 	
-	container.add(cmp);
-	container.getLayout().next({type: 'slide', direction: 'left'});
-};
+	container.on('cardswitch', function(container, newCard, oldCard) {
+		// Note: Sencha Touch 1.1.0 documentation claims that this event is fired *after* animation is completed,
+		// but this appears not to be the case, which is why we added a deferment.
+		if (oldCard === this.card) {
+			Ext.defer(function() {
+				this.container.remove(this.card, this.destroy);
+			}, 50, this);
+		}
+	}, context, {single: true});
+
+	container.getLayout().prev({type: 'slide', direction: 'right'});
+}
+
 
 /**
  * A useful {@link Ext.data.Store} paging toolbar. In essence a simpler version of the paging toolbar in Ext JS.
