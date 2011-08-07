@@ -1091,10 +1091,10 @@ var MongoDB = MongoDB || function() {
 		 * @param {Number[]} options.near The 2D coordinates from which to measure distance
 		 * @param {Number} [options.num] The maximum number of entries to return
 		 * @param {Number} [options.maxDistance] The maximum distance
-		 * @param {Number} [options.distanceMultiplier]
+		 * @param {Number} [options.distanceMultiplier=1] Result distances are multiplied by this (but options.maxDistance isn't!) 
 		 * @param {Boolean} [options.spherical=false] True to use spherical model
 		 * @param [options.query] An option query to perform before the distance query
-		 * @returns {Array} Each entry is in the form of {obj: .., dis: number}, and is sorted in ascending dis
+		 * @returns {Array} Each entry is in the form of {obj: ..., dis: number}, and is sorted in ascending dis
 		 */
 		this.geoNear = function(options) {
 			var command = {geoNear: this.collection.name}
