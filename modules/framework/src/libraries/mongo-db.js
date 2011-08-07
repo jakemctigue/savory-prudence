@@ -28,7 +28,7 @@
  * @see Visit the <a href="https://github.com/geir/mongo-java-driver">MongoDB Java driver</a> 
  * 
  * @author Tal Liron
- * @version 1.67
+ * @version 1.68
  */
 var MongoDB = MongoDB || function() {
 	/** @exports Public as MongoDB */
@@ -1074,6 +1074,39 @@ var MongoDB = MongoDB || function() {
 				}
 				Public.setLastStatus(this.connection, true)
 				return Public.BSON.from(doc)
+			}
+			catch (x if x.javaException instanceof com.mongodb.MongoException) {
+				x = MongoDB.exception(x.javaException, this.connection, this.swallow)
+				if (x) {
+					throw x
+				}
+				return null
+			}
+		}
+		
+		/**
+		 * Distance query (requires a 2D index).
+		 * 
+		 * @param options
+		 * @param {Number[]} options.near The 2D coordinates from which to measure distance
+		 * @param {Number} [options.num] The maximum number of entries to return
+		 * @param {Number} [options.maxDistance] The maximum distance
+		 * @param {Number} [options.distanceMultiplier]
+		 * @param {Boolean} [options.spherical=false] True to use spherical model
+		 * @param [options.query] An option query to perform before the distance query
+		 * @returns {Array} Each entry is in the form of {obj: .., dis: number}, and is sorted in ascending dis
+		 */
+		this.geoNear = function(options) {
+			var command = {geoNear: this.collection.name}
+			for (var k in options) {
+				if (options.hasOwnProperty(k)) {
+					command[k] = options[k]
+				}
+			}
+			try {
+				var result = this.collection.getDB().command(Public.BSON.to(command))
+				Public.setLastStatus(this.connection, true)
+				return exists(result) ? Public.BSON.from(result).results : null
 			}
 			catch (x if x.javaException instanceof com.mongodb.MongoException) {
 				x = MongoDB.exception(x.javaException, this.connection, this.swallow)
