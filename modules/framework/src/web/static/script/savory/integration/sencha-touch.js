@@ -251,19 +251,19 @@ Savory.slideIn = function(container, card, slideOutOnSwipe, destroyOnSlideOut) {
 	card = typeof card == 'string' ? Ext.getCmp(card) : card;
 	
 	if (slideOutOnSwipe) {
-		var context = {
-			container: container,
-			card: card,
-			destroyOnSlideOut: destroyOnSlideOut
-		};
-		
 		card.on('render', function() {
 			this.card.getEl().on('swipe', function(event) {
 				if (event.direction == 'right') {
 					Savory.slideOut(this.container, this.card, this.destroyOnSlideOut)
 				}
 			}, this, {single: true});
-		}, context, {single: true});
+		}, {
+			container: container,
+			card: card,
+			destroyOnSlideOut: destroyOnSlideOut
+		}, {
+			single: true
+		});
 	}
 
 	container.setActiveItem(card, {type: 'slide', direction: 'left'});
@@ -280,22 +280,16 @@ Savory.slideOut = function(container, card, destroy) {
 	container = typeof container == 'string' ? Ext.getCmp(container) : container;
 	card = typeof card == 'string' ? Ext.getCmp(card) : card;
 	
-	var context = {
+	card.on('deactivate', function() {
+		this.container.remove(this.card, this.destroy);
+	}, {
 		container: container,
 		card: card,
 		destroy: destroy
-	};
-	
-	container.on('cardswitch', function(container, newCard, oldCard) {
-		// Note: Sencha Touch 1.1.0 documentation claims that this event is fired *after* animation is completed,
-		// but this appears not to be the case, which is why we added a deferment.
-		if (oldCard === this.card) {
-			Ext.defer(function() {
-				this.container.remove(this.card, this.destroy);
-			}, 50, this);
-		}
-	}, context, {single: true});
-
+	}, {
+		single: true,
+		delay: 50
+	});
 	container.getLayout().prev({type: 'slide', direction: 'right'});
 }
 
