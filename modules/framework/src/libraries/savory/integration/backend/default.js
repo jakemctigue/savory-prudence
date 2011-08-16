@@ -13,6 +13,7 @@
 
 document.executeOnce('/savory/integration/backend/facebook/')
 document.executeOnce('/savory/integration/backend/google-checkout/')
+document.executeOnce('/savory/integration/backend/google-client-login/')
 document.executeOnce('/savory/integration/backend/gravatar/')
 document.executeOnce('/savory/integration/backend/messenger-connect/')
 document.executeOnce('/savory/integration/backend/oauth/')

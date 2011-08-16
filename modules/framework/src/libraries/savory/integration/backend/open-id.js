@@ -68,7 +68,9 @@ Savory.OpenID = Savory.OpenID || function() {
 		var result = Savory.Resources.request({
 			uri: uri,
 			mediaType: 'application/xrds+xml',
-			headers: true
+			result: {
+				headers: true
+			}
 		})
 		
 		//Public.logger.info('headers: ' + Savory.JSON.to(headers))

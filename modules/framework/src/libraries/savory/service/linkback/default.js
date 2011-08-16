@@ -258,7 +258,9 @@ Savory.Linkback = Savory.Linkback || function() {
 		var result = Savory.Resources.request({
 			uri: uri,
 			mediaType: 'text/html',
-			headers: true
+			result: {
+				headers: true
+			}
 		})
 		
 		if (result) {

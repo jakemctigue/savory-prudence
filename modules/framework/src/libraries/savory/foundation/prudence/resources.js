@@ -274,6 +274,7 @@ Savory.Resources = Savory.Resources || function() {
 	 *        <li>'xml': see {@link Savory.XML#to}</li>
 	 *        <li>'web': see {@link Savory.Resource#toWebPayload}</li>
 	 *        </ul>
+	 * @param [params.headers] A dict of custom headers to add to the request 
 	 * @param {String|Object} [params.result]
 	 *        Defaults to 'json' for JSON media types, 'xml' for XML media types, 'object' for 'application/java'
 	 *        and 'text' for everything else. Supported types:
@@ -288,11 +289,11 @@ Savory.Resources = Savory.Resources || function() {
 	 *        <li>'web': see {@link Savory.Resources#fromQueryString}</li>
 	 *        <li>'properties': see {@link Savory.Resources#fromPropertySheet} (using params.separator)</li>
 	 *        </ul>
-	 * @param {Boolean} [params.headers] If true, the result will be in the form of {headers:{},representation:...}
-	 *        where 'headers' is a dict of HTTP responses; param.headers defaults to true if params.method is 'head',
+	 * @param {Boolean} [params.result.headers] If true, the result will be in the form of {headers:{}, representation:...}
+	 *        where 'headers' is a dict of HTTP responses; params.results.headers defaults to true if params.method is 'head',
 	 *        otherwise it defaults to false
-	 * @param [params.authorization] A dict in the form of {scheme: 'scheme name', ...}.
-	 *        For example: {scheme: 'oauth', rawValue: 'oauth authorization'}
+	 * @param [params.authorization] A dict in the form of {type: 'scheme name', ...}.
+	 *        For example: {type: 'oauth', rawValue: 'oauth authorization'}
 	 * @param {Number} [params.retry=0] Number of retries in case of failed requests
 	 * @param [params.logLevel='fine'] The log level to use for failed requests
 	 */
@@ -301,23 +302,31 @@ Savory.Resources = Savory.Resources || function() {
 		params.logLevel = params.logLevel || 'fine'
 		params.method = params.method || 'get'
 		params.mediaType = params.mediaType || (params.internal ? 'application/java' : 'text/plain')
-		params.headers = Savory.Objects.exists(params.headers) ? params.headers : (params.method == 'head' ? true : false)
-		
-		if (!params.result) {
+
+		var resultType
+		var resultHeaders
+		if (Savory.Objects.exists(params.result)) {
+			resultType = Savory.Objects.isString(params.result) ? String(params.result) : params.result.type
+			resultHeaders = params.result.headers
+		}
+		if (!Savory.Objects.exists(resultType)) {
 			if (params.mediaType.endsWith('/json') || params.mediaType.endsWith('+json')) {
-				params.result = 'json'
+				resultType = 'json'
 			}
 			else if (params.mediaType.endsWith('/xml') || params.mediaType.endsWith('+xml')) {
-				params.result = 'xml'
+				resultType = 'xml'
 			}
 			else if (params.mediaType == 'application/java') {
-				params.result = 'object'
+				resultType = 'object'
 			}
 			else {
-				params.result = 'text'
+				resultType = 'text'
 			}
 		}
-		
+		if (!Savory.Objects.exists(resultHeaders) && (params.method == 'head')) {
+			resultHeaders = true
+		}
+
 		if (params.payload && params.payload.type) {
 			switch (String(params.payload.type)) {
 				case 'text':
@@ -375,25 +384,23 @@ Savory.Resources = Savory.Resources || function() {
 			}
 			
 			if (params.authorization) {
-				var challengeResponse
-				switch (String(params.authorization.scheme)) {
-					case 'oauth':
-						challengeResponse = new org.restlet.data.ChallengeResponse(org.restlet.data.ChallengeScheme.HTTP_OAUTH)
-						challengeResponse.rawValue = params.authorization.value
-						break
-						
-					default:
-						Public.logger.warning('Unsupported authorization scheme: ' + params.authorization.scheme)
-						break
+				var scheme = params.authorization.type
+				if (Savory.Objects.isString(scheme)) {
+					// Get registered scheme
+					scheme = org.restlet.data.ChallengeScheme.valueOf(scheme)
+					var helper = org.restlet.engine.Engine.instance.findHelper(scheme, true, false)
+					scheme = helper.challengeScheme
 				}
-				if (challengeResponse) {
-					resource.challengeResponse = challengeResponse
-				}
+				Public.logger.info(scheme)
+				Public.logger.info(scheme.technicalName)
+				var challengeResponse = new org.restlet.data.ChallengeResponse(scheme)
+				delete params.authorization.type
+				Savory.Objects.merge(challengeResponse, params.authorization)
+				resource.challengeResponse = challengeResponse
 			}
 
 			try {
 				var representation
-				var resultType = params.result.type || params.result
 				switch (params.method) {
 					case 'head':
 						representation = resource.head()
@@ -436,7 +443,7 @@ Savory.Resources = Savory.Resources || function() {
 					}
 					
 					var result = Public.fromRepresentation(representation, resultType, params.result)
-					if (params.headers) {
+					if (resultHeaders) {
 						result = {
 							representation: result
 						}
@@ -463,7 +470,7 @@ Savory.Resources = Savory.Resources || function() {
 					return new Date(resource.response.date.time)
 				}
 				
-				if (params.headers) {
+				if (resultHeaders) {
 					var headers = resource.response.attributes.get('org.restlet.http.headers')
 					if (Savory.Objects.exists(headers)) {
 						return {

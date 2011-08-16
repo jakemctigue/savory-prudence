@@ -243,10 +243,11 @@ Savory.data.Store = Ext.extend(Ext.data.Store, {
  * 
  * @param {String|Ext.Component} container The container component (must have a card layout)
  * @param {String|Ext.Component} card The component to slide in
+ * @param [anim={type:'slide',direction:'left'}] The animation to use
  * @param {Boolean} [slideOutOnSwipe=false] True to slide out the card on right-swipe
  * @param {Boolean} [destroyOnSlideOut=false] True to destroy the card on right-swipe slide-out
  */
-Savory.slideIn = function(container, card, slideOutOnSwipe, destroyOnSlideOut) {
+Savory.slideIn = function(container, card, anim, slideOutOnSwipe, destroyOnSlideOut) {
 	container = typeof container == 'string' ? Ext.getCmp(container) : container;
 	card = typeof card == 'string' ? Ext.getCmp(card) : card;
 	
@@ -266,7 +267,7 @@ Savory.slideIn = function(container, card, slideOutOnSwipe, destroyOnSlideOut) {
 		});
 	}
 
-	container.setActiveItem(card, {type: 'slide', direction: 'left'});
+	container.setActiveItem(card, anim || {type: 'slide', direction: 'left'});
 }
 
 /**
@@ -274,9 +275,10 @@ Savory.slideIn = function(container, card, slideOutOnSwipe, destroyOnSlideOut) {
  * 
  * @param {String|Ext.Component} container The container component (must have a card layout)
  * @param {String|Ext.Component} card The component to slide out
+ * @param [anim={type:'slide',direction:'right'}] The animation to use
  * @param {Boolean} [destroy=false] True to destroy the card after it's removed
  */
-Savory.slideOut = function(container, card, destroy) {
+Savory.slideOut = function(container, card, anim, destroy) {
 	container = typeof container == 'string' ? Ext.getCmp(container) : container;
 	card = typeof card == 'string' ? Ext.getCmp(card) : card;
 	
@@ -290,7 +292,7 @@ Savory.slideOut = function(container, card, destroy) {
 		single: true,
 		delay: 50
 	});
-	container.getLayout().prev({type: 'slide', direction: 'right'});
+	container.getLayout().prev(anim || {type: 'slide', direction: 'right'});
 }
 
 

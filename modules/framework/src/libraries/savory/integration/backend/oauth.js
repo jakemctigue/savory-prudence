@@ -49,7 +49,7 @@ Savory.OAuth = Savory.OAuth || function() {
 	Public.logger = Savory.Logging.getLogger('oauth')
 	
 	/**
-	 * Installs the OAuth challenge scheme helper (not available by default in Restlet).
+	 * Installs the HTTP_OAUTH challenge scheme helper (not available by default in Restlet).
 	 * <p>
 	 * Can only be called from Prudence configuration scripts!
 	 */
@@ -65,7 +65,7 @@ Savory.OAuth = Savory.OAuth || function() {
 				// enough. We'll just make sure to disable its formatRawResponse implementation. 
 				
 				formatRawResponse: function(cw, challenge, request, httpHeaders) {
-					application.logger.warning('OAuth helper formatRawResponse should never be called!')
+					application.logger.warning('HTTP_OAUTH helper formatRawResponse should never be called!')
 				}
 			})
 			oauthHelper.challengeScheme = oauthScheme
@@ -161,9 +161,10 @@ Savory.OAuth = Savory.OAuth || function() {
 		 * @see Savory.OAuth#createAuthorization
 		 */
 	    Public.request = function(params, attributes, tokenSecret) {
+	    	params = Savory.Objects.clone(params)
 			params.authorization = {
-				scheme: 'oauth',
-				value: Savory.OAuth.createAuthorization(params.method, params.uri, Savory.Objects.merge(getAttributes.call(this), attributes), this.consumerSecret, tokenSecret)
+				type: 'http_oauth',
+				rawValue: Savory.OAuth.createAuthorization(params.method, params.uri, Savory.Objects.merge(getAttributes.call(this), attributes), this.consumerSecret, tokenSecret)
 			}
 			return Savory.Resources.request(params)
 		}
