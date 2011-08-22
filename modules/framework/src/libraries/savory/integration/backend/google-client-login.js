@@ -87,7 +87,7 @@ Savory.GoogleClientLogin = Savory.GoogleClientLogin || function() {
 	}
 	
 	/**
-	 * Represents an GoogleClientLogin access token.
+	 * Represents a GoogleClientLogin auth code.
 	 * 
 	 * @class
 	 * @name Savory.GoogleClientLogin.Session

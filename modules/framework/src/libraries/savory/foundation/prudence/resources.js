@@ -391,8 +391,6 @@ Savory.Resources = Savory.Resources || function() {
 					var helper = org.restlet.engine.Engine.instance.findHelper(scheme, true, false)
 					scheme = helper.challengeScheme
 				}
-				Public.logger.info(scheme)
-				Public.logger.info(scheme.technicalName)
 				var challengeResponse = new org.restlet.data.ChallengeResponse(scheme)
 				delete params.authorization.type
 				Savory.Objects.merge(challengeResponse, params.authorization)
