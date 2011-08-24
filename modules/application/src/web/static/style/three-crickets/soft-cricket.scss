@@ -1,5 +1,5 @@
 /***********************
- *  Soft Cricket 1.12  *
+ *  Soft Cricket 1.13  *
  *                     *
  *    By: Tal Liron    *
  **********************/
@@ -142,9 +142,9 @@ div.hr {
  *********/
 
 a {
+	text-decoration: none;
 	&:link {
 	    color: $link;
-		text-decoration: none;
 	}
 	&:visited {
 	    color: $link;
