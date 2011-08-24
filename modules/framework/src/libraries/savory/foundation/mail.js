@@ -102,19 +102,19 @@ Savory.Mail = Savory.Mail || function() {
 	 * @class
 	 * @name Savory.Mail.SMTP
 	 * 
-	 * @param {String} [host='127.0.0.1'] The IP address of the SMTP host
+	 * @param {Object|String} [params=application.globals.get('savory.foundation.mail.smtp.host') || '127.0.0.1'] Params to be applied
+	 *        to javax.mail.Session.getInstance; if it is a string, will be considered as the 'mail.smtp.host' param
 	 */
 	Public.SMTP = Savory.Classes.define(function() {
 		/** @exports Public as Savory.Mail.SMTP */
 	    var Public = {}
 	    
 	    /** @ignore */
-	    Public._construct = function(host) {
-			host = host || application.globals.get('savory.foundation.mail.smtp.host') || '127.0.0.1'
-			this.session = javax.mail.Session.getInstance(Savory.JVM.toProperties({
-				'mail.transport.protocol': 'smtp',
-				'mail.smtp.host': host
-			}))
+	    Public._construct = function(params) {
+	    	params = Savory.Objects.isString(params) ? {'mail.smtp.host': String(params)} : (Savory.Objects.exists(params) ? Savory.Objects.clone(params) : {})
+	    	params['mail.transport.protocol'] = 'smtp'
+    		params['mail.smtp.host'] = params['mail.smtp.host'] || application.globals.get('savory.foundation.mail.smtp.host') || '127.0.0.1'
+			this.session = javax.mail.Session.getInstance(Savory.JVM.toProperties(params))
 	    }
 
 	    /**
