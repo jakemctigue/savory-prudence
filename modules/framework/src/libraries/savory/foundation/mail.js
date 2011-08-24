@@ -64,7 +64,7 @@ Savory.Mail = Savory.Mail || function() {
 				}
 			}
 			else {
-				this.templates = argmuents[0]
+				this.templates = arguments[0]
 			}
 	    }
 	    
