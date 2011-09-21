@@ -16,8 +16,8 @@ document.executeOnce('/savory/foundation/iterators/')
 
 var directory = new Savory.Lucene.Directory('/tmp/index')
 try {
-	var messages = new MongoDB.Collection('messages')
-	var i = messages.find()
+	var notices = new MongoDB.Collection('notices')
+	var i = notices.find()
 	i = new Savory.Iterators.Transformer(i, function fn(entry) {
 		//entry = Savory.Objects.flatten(entry)
 		//return entry
@@ -38,19 +38,28 @@ try {
 	})
 	directory.index(i, {openMode: 'create'})
 	
+	var programs = new MongoDB.Collection('programs')
+	i = programs.find()
+	i = new Savory.Iterators.Transformer(i, function(entry) {
+		return {
+			text: entry.code
+		}
+	})
+	directory.index(i)
+
 	var documents = new MongoDB.Collection('documents')
 	i = documents.find()
 	i = new Savory.Iterators.Transformer(i, function(entry) {
 		return {
-			text: Savory.HTML.strip(entry.activeDraft.rendered)
+			text: Savory.HTML.strip(entry.activeDraft ? entry.activeDraft.rendered : '')
 		}
 	})
 	directory.index(i)
 	
 	directory.index([{
-		type: 'hello'
+		text: 'hello'
 	}, {
-		type: 'world'
+		text: 'world'
 	}])
 }
 finally {

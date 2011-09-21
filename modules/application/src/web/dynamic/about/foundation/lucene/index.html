@@ -22,7 +22,8 @@ var query = conversation.query.get('query'), results
 if (null !== query) {
 	var directory = new Savory.Lucene.Directory('/tmp/index')
 	try {
-		results = directory.search(query, {defaultField: 'text', previewField: 'text', fragmentLength: 50, maxFragments: 3})
+		results = directory.search({query: query, defaultField: 'text', previewField: 'text', fragmentLength: 50, maxFragments: 3})
+		results = Savory.Iterators.toArray(results)
 	}
 	finally {
 		directory.close()
