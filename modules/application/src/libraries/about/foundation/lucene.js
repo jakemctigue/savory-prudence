@@ -27,11 +27,11 @@ try {
 				index: false
 			},
 			subject: {
-				value: entry.message.subject,
+				value: entry.notice.subject,
 				store: true
 			},
 			text: {
-				value: entry.message.text,
+				value: entry.notice.text,
 				store: true
 			}
 		}
