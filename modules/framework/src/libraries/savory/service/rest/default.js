@@ -213,7 +213,7 @@ Savory.REST = Savory.REST || function() {
 	    }
 
 	    Public.handleInit = function(conversation) {
-	    	if (this.mediaTypes) {
+	    	if (Savory.Objects.exists(this.mediaTypes)) {
 	    		for (var m in this.mediaTypes) {
 	    			var mediaType = this.mediaTypes[m]
 	    			if (Savory.Objects.isString(mediaType)) {
@@ -277,6 +277,9 @@ Savory.REST = Savory.REST || function() {
 	 *        its name
 	 * @param {String|String[]} [config.fields] The document fields to retrieve
 	 *        (see {@link MongoDB#find})
+	 * @param [config.values] TODO
+	 * @param [config.extract] TODO
+	 * @param [config.filters] TODO
 	 */
 	Public.MongoDbResource = Savory.Classes.define(function(Module) {
 		/** @exports Public as Savory.REST.MongoDbResource */
@@ -286,15 +289,15 @@ Savory.REST = Savory.REST || function() {
 	    Public._inherit = Module.Resource
 
 	    /** @ignore */
+	    Public._configure = ['name', 'plural', 'collection', 'fields', 'values', 'extract', 'filters', 'allowPost', 'allowPut', 'allowDelete']
+
+	    /** @ignore */
 	    Public._construct = function(config) {
 	    	if (Savory.Objects.isString(config)) {
 				this.name = String(config)
 			}
-	    	else {
-	        	Savory.Objects.merge(this, config, ['name', 'plural', 'collection', 'fields', 'values', 'extract', 'filters', 'allowPost', 'allowPut', 'allowDelete'])
-	    	}
 			
-			if (this.plural) {
+			if (Savory.Objects.exists(this.plural)) {
 				if (!Savory.Objects.isString(this.plural)) {
 					this.plural = this.name + 's'
 				}
@@ -302,7 +305,7 @@ Savory.REST = Savory.REST || function() {
 			this.collection = this.collection || this.plural || this.name + 's'
 			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 
-			// Convert fields this.config to MongoDB's inclusion notation
+			// Convert fields to MongoDB's inclusion notation
 			this.fields = Savory.Objects.array(this.fields)
 			var fields = {}
 			for (var f in this.fields) {
