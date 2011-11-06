@@ -13,7 +13,7 @@
 
 document.executeOnce('/savory/foundation/objects/')
 
-function handleGetScriptlet(conversation, code, content) {
+function handleGetScriptlet(conversation, code, languageAdapter, content) {
 	switch (String(code)) {
 		case 'markup':
 			// Content includes initial whitespace, so we'll trim it

@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-function handleGetScriptlet(conversation, code, content) {
+function handleGetScriptlet(conversation, code, languageAdapter, content) {
 	switch (String(code)) {
 		case '{{':
 			var content = String(content).split('->', 2)
