@@ -13,25 +13,12 @@
 	<property name="dist-minimal" value="./minimal" />
 	<property name="tmp" value="./tmp" />
 	
-	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml">
-		<classpath>
-			<fileset dir="${lib}/svnant/lib" includes="*.jar" />
-		</classpath>
-	</typedef>
-	
 	<taskdef name="jsdoctoolkit" classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit">
 		<classpath>
 			<fileset dir="${lib}/jsdoc-toolkit-ant-task/lib" includes="*.jar" />
 			<fileset dir="${lib}/rhino/lib" includes="*.jar" />
 		</classpath>
 	</taskdef>
-
-	<target name="revision" unless="revision.max">
-		<svn svnkit="true" javahl="false">
-			<wcVersion path=".." />
-		</svn>
-		<echo>Revision ${revision.max}.</echo>
-	</target>
 
 	<macrodef name="fetch-license">
 		<attribute name="dist" />
@@ -83,7 +70,7 @@
 		<fetch-license dist="${dist-standard}" library="sencha-touch" />
 	</target>
 
-	<target name="documentation" depends="revision" description="Create MongoDB Rhino API docs">
+	<target name="documentation" description="Create MongoDB Rhino API docs">
 		<available file="${tmp}/applications/savory/web/static/api" property="documentation-present" />
 		<antcall target="documentation-unless" />
 	</target>
@@ -93,7 +80,7 @@
 		              outputdir="${tmp}/applications/savory/web/static/api"
 					  template="../../../../modules/framework/src/tools/savory-jsdoc"
 					  depth="10">
-			<arg name="title" value="The Savory Framework: API Documentation for Version R${revision.max}" />
+			<arg name="title" value="The Savory Framework: API Documentation for Version ${version}" />
 			<arg name="link" value="http://threecrickets.com/savory/" />
 			<arg name="extscript" value="../script/ext/ext-all.js" />
 			<arg name="extstyle" value="../style/ext/style/css/ext-all.css" />
@@ -149,7 +136,7 @@
 		<copy todir="${tmp}/applications/savory">
 			<fileset dir="${application-src}" excludes="**/.svn/, settings-extra.js" />
 		</copy>
-		<replace file="${tmp}/applications/savory/version.js" token="%REVISION%" value="${revision.max}" />
+		<replace file="${tmp}/applications/savory/version.js" token="%VERSION%" value="${version}" />
 		<zip destfile="${dist-debug}/savory-demo-application.prudence.zip" basedir="${tmp}/applications" includes="**/*" level="9" />
 		<copy todir="${dist-standard}" file="${dist-debug}/savory-demo-application.prudence.zip" />
 		<copy todir="${dist-minimal}" file="${dist-debug}/savory-demo-application.prudence.zip" />
@@ -177,9 +164,9 @@
 	</target>
 	
 	<target name="package" depends="deploy" description="Create Savory zips">
-		<zip destfile="savory-standard-R${revision.max}.zip" basedir="${dist-standard}" includes="**/*" level="9" />
-		<zip destfile="savory-debug-R${revision.max}.zip" basedir="${dist-debug}" includes="**/*" level="9" />
-		<zip destfile="savory-minimal-R${revision.max}.zip" basedir="${dist-minimal}" includes="**/*" level="9" />
+		<zip destfile="savory-standard-${version}.zip" basedir="${dist-standard}" includes="**/*" level="9" />
+		<zip destfile="savory-debug-${version}.zip" basedir="${dist-debug}" includes="**/*" level="9" />
+		<zip destfile="savory-minimal-${version}.zip" basedir="${dist-minimal}" includes="**/*" level="9" />
 	</target>
 	
 	<target name="build" depends="package" description="Build distribution" />

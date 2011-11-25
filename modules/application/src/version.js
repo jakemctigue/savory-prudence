@@ -11,5 +11,4 @@
 // at http://threecrickets.com/
 //
 
-predefinedGlobals['savory.revision'] = '%REVISION%'
-predefinedGlobals['savory.vision'] = 'Early Bird R%REVISION%'
+predefinedGlobals['savory.version'] = '%VERSION%'

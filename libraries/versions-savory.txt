@@ -11,6 +11,5 @@ mongodb-rhino-driver	R96
 mylyln-wikitext			1.4.0.I20101215-2000-e3x
 parboiled				1.0.0
 pegdown					1.0.1
-rhino					1.7R2
+rhino					1.7R2 (note: jsdoc 2.4.0 does not work with 1.7R3)
 sencha-touch			1.1.0
-svnant					1.3.0
