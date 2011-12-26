@@ -25,7 +25,7 @@
 		<attribute name="library" />
 		<sequential>
 			<copy todir="@{dist}/licenses/@{library}">
-				<fileset dir="${lib}/@{library}/license" excludes="**/.svn/" />
+				<fileset dir="${lib}/@{library}/license" />
 			</copy>
 		</sequential>
 	</macrodef>
@@ -36,7 +36,7 @@
 		<sequential>
 			<fetch-license dist="@{dist}" library="@{library}" />
 			<copy todir="@{dist}/libraries/">
-				<fileset dir="${lib}/@{library}/lib" excludes="**/.svn/" />
+				<fileset dir="${lib}/@{library}/lib" />
 				<fileset dir="${lib}" includes="*.txt" />
 			</copy>
 		</sequential>
@@ -85,33 +85,33 @@
 			<arg name="extscript" value="../script/ext/ext-all.js" />
 			<arg name="extstyle" value="../style/ext/style/css/ext-all.css" />
 			<arg name="noGlobal" value="true" />
-			<fileset dir="${framework-src}" excludes="**/internal/, **/.svn/, web/static/**" />
+			<fileset dir="${framework-src}" excludes="**/internal/, web/static/**" />
 		</jsdoctoolkit>
 	</target>
 	
 	<target name="framework" description="Fetch Savory Framework">
 		<copy todir="${tmp}/common">
-			<fileset dir="${framework-src}" excludes="**/.svn/" />
+			<fileset dir="${framework-src}" />
 		</copy>
 
 		<copy todir="${tmp}/dependencies/common/web/static/script/ext">
 			<fileset dir="${lib}/ext-js/lib/script" includes="**/*.js" />
 		</copy>
 		<copy todir="${tmp}/dependencies/common/web/static/style/ext/style">
-			<fileset dir="${lib}/ext-js/lib/style" excludes="**/.svn/" />
+			<fileset dir="${lib}/ext-js/lib/style" />
 		</copy>
 		<copy todir="${tmp}/dependencies/common/web/static/style/ext/resources">
-			<fileset dir="${lib}/ext-js/lib/resources" excludes="**/.svn/" />
+			<fileset dir="${lib}/ext-js/lib/resources" />
 		</copy>
 
 		<copy todir="${tmp}/dependencies/common/web/static/script/sencha-touch">
 			<fileset dir="${lib}/sencha-touch/lib/script" includes="**/*.js" />
 		</copy>
 		<copy todir="${tmp}/dependencies/common/web/static/style/sencha-touch/style">
-			<fileset dir="${lib}/sencha-touch/lib/style" excludes="**/.svn/" />
+			<fileset dir="${lib}/sencha-touch/lib/style" />
 		</copy>
 		<copy todir="${tmp}/dependencies/common/web/static/style/sencha-touch/resources">
-			<fileset dir="${lib}/sencha-touch/lib/resources" excludes="**/.svn/" />
+			<fileset dir="${lib}/sencha-touch/lib/resources" />
 		</copy>
 
 		<copy todir="${tmp}/dependencies/common/web/static/script/codemirror">
@@ -141,25 +141,25 @@
 		<copy todir="${dist-standard}" file="${dist-debug}/savory-demo-application.prudence.zip" />
 		<copy todir="${dist-minimal}" file="${dist-debug}/savory-demo-application.prudence.zip" />
 		<copy todir="${dist-standard}/demo-data">
-			<fileset dir="${application-data}" excludes="**/.svn/" />
+			<fileset dir="${application-data}" />
 		</copy>
 		<copy todir="${dist-minimal}/demo-data">
-			<fileset dir="${application-data}" excludes="**/.svn/" />
+			<fileset dir="${application-data}" />
 		</copy>
 		<copy todir="${dist-debug}/demo-data">
-			<fileset dir="${application-data}" excludes="**/.svn/" />
+			<fileset dir="${application-data}" />
 		</copy>
 	</target>
 
 	<target name="deploy" depends="documentation, framework, application, libraries" description="Fetch deployment">
 		<copy todir="${dist-debug}">
-			<fileset dir="${framework-deploy}" excludes="**/.svn/" />
+			<fileset dir="${framework-deploy}" />
 		</copy>
 		<copy todir="${dist-standard}">
-			<fileset dir="${framework-deploy}" excludes="**/.svn/" />
+			<fileset dir="${framework-deploy}" />
 		</copy>
 		<copy todir="${dist-minimal}">
-			<fileset dir="${framework-deploy}" excludes="**/.svn/" />
+			<fileset dir="${framework-deploy}" />
 		</copy>
 	</target>
 	
