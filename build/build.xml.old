@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<project name="Savory" default="build">
+
+	<property file="savory.properties" />
+	
+	<property name="framework-src" value="../modules/framework/src" />
+	<property name="framework-deploy" value="../modules/framework/deploy" />
+	<property name="application-src" value="../modules/application/src" />
+	<property name="application-data" value="../modules/application/data" />
+	<property name="lib" value="../libraries" />
+	<property name="dist-debug" value="./debug" />
+	<property name="dist-standard" value="./standard" />
+	<property name="dist-minimal" value="./minimal" />
+	<property name="tmp" value="./tmp" />
+	
+	<taskdef name="jsdoctoolkit" classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit">
+		<classpath>
+			<fileset dir="${lib}/jsdoc-toolkit-ant-task/lib" includes="*.jar" />
+			<fileset dir="${lib}/rhino/lib" includes="*.jar" />
+		</classpath>
+	</taskdef>
+
+	<macrodef name="fetch-license">
+		<attribute name="dist" />
+		<attribute name="library" />
+		<sequential>
+			<copy todir="@{dist}/licenses/@{library}">
+				<fileset dir="${lib}/@{library}/license" />
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="fetch-library">
+		<attribute name="dist" />
+		<attribute name="library" />
+		<sequential>
+			<fetch-license dist="@{dist}" library="@{library}" />
+			<copy todir="@{dist}/libraries/">
+				<fileset dir="${lib}/@{library}/lib" />
+				<fileset dir="${lib}" includes="*.txt" />
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<target name="libraries" description="Fetch libraries">
+		<fetch-license dist="${dist-standard}" library="codemirror" />
+		<fetch-license dist="${dist-standard}" library="ext-js" />
+		<fetch-library dist="${dist-standard}" library="asm" />
+		<fetch-library dist="${dist-standard}" library="batik" />
+		<fetch-library dist="${dist-standard}" library="javamail" />
+		<fetch-library dist="${dist-standard}" library="jsoup" />
+		<fetch-library dist="${dist-standard}" library="lucene" />
+		<fetch-library dist="${dist-standard}" library="mongodb-rhino-driver" />
+		<fetch-library dist="${dist-standard}" library="mylyn-wikitext" />
+		<fetch-library dist="${dist-standard}" library="parboiled" />
+		<fetch-library dist="${dist-standard}" library="pegdown" />
+		<fetch-license dist="${dist-standard}" library="sencha-touch" />
+
+		<fetch-license dist="${dist-debug}" library="codemirror" />
+		<fetch-license dist="${dist-debug}" library="ext-js" />
+		<fetch-library dist="${dist-debug}" library="asm" />
+		<fetch-library dist="${dist-debug}" library="batik" />
+		<fetch-library dist="${dist-debug}" library="javamail" />
+		<fetch-library dist="${dist-debug}" library="jsoup" />
+		<fetch-library dist="${dist-debug}" library="lucene" />
+		<fetch-library dist="${dist-debug}" library="mongodb-rhino-driver" />
+		<fetch-library dist="${dist-debug}" library="mylyn-wikitext" />
+		<fetch-library dist="${dist-debug}" library="parboiled" />
+		<fetch-library dist="${dist-debug}" library="pegdown" />
+		<fetch-license dist="${dist-standard}" library="sencha-touch" />
+	</target>
+
+	<target name="documentation" description="Create MongoDB Rhino API docs">
+		<available file="${tmp}/applications/savory/web/static/api" property="documentation-present" />
+		<antcall target="documentation-unless" />
+	</target>
+
+	<target name="documentation-unless" description="Generate Savory documentation" unless="documentation-present">
+		<jsdoctoolkit jsdochome="${lib}/jsdoc-toolkit/lib/"
+		              outputdir="${tmp}/applications/savory/web/static/api"
+					  template="../../../../modules/framework/src/tools/savory-jsdoc"
+					  depth="10">
+			<arg name="title" value="The Savory Framework: API Documentation for Version ${version}" />
+			<arg name="link" value="http://threecrickets.com/savory/" />
+			<arg name="extscript" value="../script/ext/ext-all.js" />
+			<arg name="extstyle" value="../style/ext/style/css/ext-all.css" />
+			<arg name="noGlobal" value="true" />
+			<fileset dir="${framework-src}" excludes="**/internal/, web/static/**" />
+		</jsdoctoolkit>
+	</target>
+	
+	<target name="framework" description="Fetch Savory Framework">
+		<copy todir="${tmp}/common">
+			<fileset dir="${framework-src}" />
+		</copy>
+
+		<copy todir="${tmp}/dependencies/common/web/static/script/ext">
+			<fileset dir="${lib}/ext-js/lib/script" includes="**/*.js" />
+		</copy>
+		<copy todir="${tmp}/dependencies/common/web/static/style/ext/style">
+			<fileset dir="${lib}/ext-js/lib/style" />
+		</copy>
+		<copy todir="${tmp}/dependencies/common/web/static/style/ext/resources">
+			<fileset dir="${lib}/ext-js/lib/resources" />
+		</copy>
+
+		<copy todir="${tmp}/dependencies/common/web/static/script/sencha-touch">
+			<fileset dir="${lib}/sencha-touch/lib/script" includes="**/*.js" />
+		</copy>
+		<copy todir="${tmp}/dependencies/common/web/static/style/sencha-touch/style">
+			<fileset dir="${lib}/sencha-touch/lib/style" />
+		</copy>
+		<copy todir="${tmp}/dependencies/common/web/static/style/sencha-touch/resources">
+			<fileset dir="${lib}/sencha-touch/lib/resources" />
+		</copy>
+
+		<copy todir="${tmp}/dependencies/common/web/static/script/codemirror">
+			<fileset dir="${lib}/codemirror/lib/" includes="*.js" />
+		</copy>
+		<copy todir="${tmp}/dependencies/common/web/static/style/codemirror">
+			<fileset dir="${lib}/codemirror/lib/" includes="*.css" />
+		</copy>
+
+		<zip destfile="${dist-debug}/savory-common.prudence.zip" basedir="${tmp}/common" includes="**/*" level="9" />
+		<copy todir="${dist-standard}" file="${dist-debug}/savory-common.prudence.zip" />
+		<copy todir="${dist-minimal}" file="${dist-debug}/savory-common.prudence.zip" />
+		<zip destfile="${dist-debug}/savory-debug-dependencies-common.prudence.zip" basedir="${tmp}/dependencies/common" includes="**/*" level="9" />
+		<zip destfile="${dist-standard}/savory-dependencies-common.prudence.zip" basedir="${tmp}/dependencies/common" level="9">
+			<exclude name="web/static/script/ext/src/**" />
+			<exclude name="web/static/script/ext/ext-debug.js" />
+			<exclude name="web/static/script/sencha-touch/sencha-touch-debug-w-comments.js" />
+		</zip>
+	</target>
+
+	<target name="application" description="Fetch Savory demo application">
+		<copy todir="${tmp}/applications/savory">
+			<fileset dir="${application-src}" excludes="**/.svn/, settings-extra.js" />
+		</copy>
+		<replace file="${tmp}/applications/savory/version.js" token="%VERSION%" value="${version}" />
+		<zip destfile="${dist-debug}/savory-demo-application.prudence.zip" basedir="${tmp}/applications" includes="**/*" level="9" />
+		<copy todir="${dist-standard}" file="${dist-debug}/savory-demo-application.prudence.zip" />
+		<copy todir="${dist-minimal}" file="${dist-debug}/savory-demo-application.prudence.zip" />
+		<copy todir="${dist-standard}/demo-data">
+			<fileset dir="${application-data}" />
+		</copy>
+		<copy todir="${dist-minimal}/demo-data">
+			<fileset dir="${application-data}" />
+		</copy>
+		<copy todir="${dist-debug}/demo-data">
+			<fileset dir="${application-data}" />
+		</copy>
+	</target>
+
+	<target name="deploy" depends="documentation, framework, application, libraries" description="Fetch deployment">
+		<copy todir="${dist-debug}">
+			<fileset dir="${framework-deploy}" />
+		</copy>
+		<copy todir="${dist-standard}">
+			<fileset dir="${framework-deploy}" />
+		</copy>
+		<copy todir="${dist-minimal}">
+			<fileset dir="${framework-deploy}" />
+		</copy>
+	</target>
+	
+	<target name="package" depends="deploy" description="Create Savory zips">
+		<zip destfile="savory-standard-${version}.zip" basedir="${dist-standard}" includes="**/*" level="9" />
+		<zip destfile="savory-debug-${version}.zip" basedir="${dist-debug}" includes="**/*" level="9" />
+		<zip destfile="savory-minimal-${version}.zip" basedir="${dist-minimal}" includes="**/*" level="9" />
+	</target>
+	
+	<target name="build" depends="package" description="Build distribution" />
+	
+	<target name="clean" description="Clean">
+		<delete dir="${tmp}" />
+		<delete dir="${dist-debug}" />
+		<delete dir="${dist-standard}" />
+		<delete dir="${dist-minimal}" />
+	</target>
+	
+	<target name="rebuild" depends="clean, build" description="Clean and build distribution" />
+
+</project>
