@@ -12,10 +12,10 @@
 //
 
 document.executeOnce('/savory/service/documents/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -34,9 +34,9 @@ Savory.Wiki = Savory.Wiki || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('wiki')
+	Public.logger = Prudence.Logging.getLogger('wiki')
 
 	/**
 	 * Installs the library's pass-throughs.
@@ -119,7 +119,7 @@ Savory.Wiki = Savory.Wiki || function() {
 	 * @name Savory.Wiki.Page
 	 * @see Savory.Wiki#getPage
 	 */
-	Public.Page = Savory.Classes.define(function() {
+	Public.Page = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Wiki.Page */
 	    var Public = {}
 
@@ -128,7 +128,7 @@ Savory.Wiki = Savory.Wiki || function() {
 	    	this.page = page
 			this.drafts = {}
 			
-			if (Savory.Objects.isString(revision)) {
+			if (Sincerity.Objects.isString(revision)) {
 				try {
 					this.revision = parseInt(revision)
 				}
@@ -153,7 +153,7 @@ Savory.Wiki = Savory.Wiki || function() {
 			if (!draft) {
 				//Public.logger.dump(page)
 				var pagePart = page.parts[part]
-				if (pagePart && Savory.Objects.exists(pagePart.document)) {
+				if (pagePart && Sincerity.Objects.exists(pagePart.document)) {
 					draft = revision ? Savory.Documents.getLatestDraft(pagePart.document, revision) : Savory.Documents.getDraft(pagePart.document)
 				}
 			}
@@ -187,7 +187,7 @@ Savory.Wiki = Savory.Wiki || function() {
 			/*
 			if (document) {
 				var update = {$set: {document: document.getId()}}
-				if (Savory.Objects.exists(page.document)) {
+				if (Sincerity.Objects.exists(page.document)) {
 					update.$push = {history: page.document}
 				}
 				pagesCollection.update({_id: page._id}, update)
@@ -201,7 +201,7 @@ Savory.Wiki = Savory.Wiki || function() {
 	 * @class
 	 * @name Savory.Wiki.Form
 	 */
-	Public.Form = Savory.Classes.define(function(Module) {
+	Public.Form = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Wiki.Form */
 	    var Public = {}
 
@@ -215,7 +215,7 @@ Savory.Wiki = Savory.Wiki || function() {
 			var page = Module.getPage(this.conversation)
 			
 			if (!page) {
-				this.conversation.statusCode = Savory.Resources.Status.ClientError.NotFound
+				this.conversation.statusCode = Prudence.Resources.Status.ClientError.NotFound
 				this.conversation.stop()
 			}
 

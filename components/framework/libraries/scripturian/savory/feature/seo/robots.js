@@ -12,9 +12,9 @@
 //
 
 document.executeOnce('/savory/feature/seo/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/iterators/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/iterators/')
+document.executeOnce('/prudence/resources/')
 
 /** @ignore */
 function handleInit(conversation) {
@@ -33,7 +33,7 @@ function handleGet(conversation) {
 			return robots
 		}
 		else if (conversation.mediaType == 'application/json') {
-			return Savory.JSON.to(robots, conversation.query.get('human') == true)
+			return Sincerity.JSON.to(robots, conversation.query.get('human') == true)
 		}
 		else {
 			var text = ''
@@ -57,6 +57,6 @@ function handleGet(conversation) {
 		} 
 	}
 	else {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 }

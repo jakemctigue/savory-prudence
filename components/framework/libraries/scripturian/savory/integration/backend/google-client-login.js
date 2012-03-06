@@ -11,9 +11,9 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 
 /**
  * Support for the Google's ClientLogin authentication standard.
@@ -32,9 +32,9 @@ Savory.GoogleClientLogin = Savory.GoogleClientLogin || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('google-client-login')
+	Public.logger = Prudence.Logging.getLogger('google-client-login')
 
 	/**
 	 * Installs the HTTP_GOOGLE challenge scheme helper.
@@ -64,7 +64,7 @@ Savory.GoogleClientLogin = Savory.GoogleClientLogin || function() {
 	Public.getSession = function(username, password, service, source) {
 		source = source || 'threeCrickets-savory-1.0'
 		
-		var auth = Savory.Resources.request({
+		var auth = Prudence.Resources.request({
 			uri: 'https://www.google.com/accounts/ClientLogin',
 			method: 'post',
 			result: {
@@ -93,7 +93,7 @@ Savory.GoogleClientLogin = Savory.GoogleClientLogin || function() {
 	 * @name Savory.GoogleClientLogin.Session
 	 * @see Savory.GoogleClientLogin#getSession
 	 */
-	Public.Session = Savory.Classes.define(function() {
+	Public.Session = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.GoogleClientLogin.Session */
 	    var Public = {}
 	    
@@ -103,17 +103,17 @@ Savory.GoogleClientLogin = Savory.GoogleClientLogin || function() {
 	    }
 	    
 	    /**
-		 * Performs a {@link Savory.Resources#request} with the proper authorization header.
+		 * Performs a {@link Prudence.Resources#request} with the proper authorization header.
 		 * 
 		 * @param params
 		 */
 	    Public.request = function(params) {
-	    	params = Savory.Objects.clone(params)
+	    	params = Sincerity.Objects.clone(params)
 			params.authorization = {
 				type: 'http_google',
 				rawValue: 'auth=' + this.auth
 			}
-			return Savory.Resources.request(params)
+			return Prudence.Resources.request(params)
 		}
 	    
 	    return Public

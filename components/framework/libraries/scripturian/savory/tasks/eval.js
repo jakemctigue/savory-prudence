@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/prudence/tasks/')
+document.executeOnce('/prudence/tasks/')
 
 try {
 	eval(String(document.context))

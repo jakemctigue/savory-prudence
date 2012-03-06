@@ -17,10 +17,10 @@
 //
 
 document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/prudence/logging/')
-document.executeOnce('/savory/foundation/jvm/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/prudence/logging/')
+document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -39,9 +39,9 @@ Savory.Authorization = Savory.Authorization || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('authorization')
+	Public.logger = Prudence.Logging.getLogger('authorization')
 	
 	/**
 	 * Installs the library's filters.
@@ -87,7 +87,7 @@ Savory.Authorization = Savory.Authorization || function() {
 	}
 	
 	Public.getEntity = function(entityIdentifier) {
-		if (Savory.Objects.isString(entityIdentifier)) {
+		if (Sincerity.Objects.isString(entityIdentifier)) {
 			return Public.getGroupByName(entityIdentifier)
 		}
 		
@@ -131,7 +131,7 @@ Savory.Authorization = Savory.Authorization || function() {
 			if (authorization) {
 				// Inherit from entities
 				if (authorization.entities) {
-					var entities = Savory.Objects.array(authorization.entities)
+					var entities = Sincerity.Objects.array(authorization.entities)
 					for (var e in entities) {
 						var entityIdentifier = entities[e]
 						var entity = Public.getEntity(entityIdentifier)
@@ -157,7 +157,7 @@ Savory.Authorization = Savory.Authorization || function() {
 	 * @see #getGroupByName
 	 * @see #getGroupById
 	 */
-	Public.Group = Savory.Classes.define(function() {
+	Public.Group = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Authorization.Group */
 	    var Public = {}
 	    
@@ -186,13 +186,13 @@ Savory.Authorization = Savory.Authorization || function() {
 	 * @name Savory.Authorization.Permissions
 	 * @see #getPermissions
 	 */
-	Public.Permissions = Savory.Classes.define(function() {
+	Public.Permissions = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Authorization.Permissions */
 	    var Public = {}
 	    
 	    /** @ignore */
 	    Public._construct = function(permissions) {
-			this.permissions = permissions ? Savory.Objects.flatten(permissions) : {}
+			this.permissions = permissions ? Sincerity.Objects.flatten(permissions) : {}
 	    }
 
 	    Public.getAll = function() {
@@ -268,8 +268,8 @@ Savory.Authorization = Savory.Authorization || function() {
 	groupsCollection.ensureIndex({name: 1}, {unique: true})
 	
 	var cacheDuration = application.globals.get('savory.service.authorization.cacheDuration') || 10000
-	var cacheById = application.getGlobal('savory.service.authorization.cacheById', Savory.JVM.newMap(true))
-	var cacheByName = application.getGlobal('savory.service.authorization.cacheByName', Savory.JVM.newMap(true))
+	var cacheById = application.getGlobal('savory.service.authorization.cacheById', Sincerity.JVM.newMap(true))
+	var cacheByName = application.getGlobal('savory.service.authorization.cacheByName', Sincerity.JVM.newMap(true))
 	
 	return Public
 }()

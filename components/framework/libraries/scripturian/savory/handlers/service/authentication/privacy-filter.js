@@ -12,7 +12,7 @@
 //
 
 document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/prudence/resources/')
 
 function handleBefore(conversation) {
 	var session = Savory.Authentication.getCurrentSession(conversation)

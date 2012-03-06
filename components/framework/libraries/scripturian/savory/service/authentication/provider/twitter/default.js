@@ -13,8 +13,8 @@
 
 document.executeOnce('/savory/service/progress/')
 document.executeOnce('/savory/integration/backend/twitter/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/prudence/resources/')
 
 Savory = Savory || {Authentication: {}}
 
@@ -25,7 +25,7 @@ Savory = Savory || {Authentication: {}}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider || Savory.Classes.define(function() {
+Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.Authentication.TwitterProvider */
     var Public = {}
 
@@ -44,7 +44,7 @@ Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider ||
     }
 
     Public.getUri = function(conversation) {
-		return Savory.Resources.buildUri(conversation.pathToBase + '/authentication/provider/twitter/', {from: conversation.query.get('from')})				
+		return Prudence.Resources.buildUri(conversation.pathToBase + '/authentication/provider/twitter/', {from: conversation.query.get('from')})				
 	}
 
     Public.login = function(twitterSession, conversation) {
@@ -89,7 +89,7 @@ Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider ||
 				return null
 			}
 			
-			conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+			conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 			return 'Invalid Twitter session'
 		}
 		
@@ -104,7 +104,7 @@ Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider ||
 						document.executeOnce('/savory/service/authentication/')
 						Savory.Authentication.Providers.Twitter.retry()								
 					},
-					twitter: Savory.Resources.getQuery(conversation, {
+					twitter: Prudence.Resources.getQuery(conversation, {
 						oauth_token: 'string',
 						oauth_verifier: 'string'
 					}),
@@ -117,7 +117,7 @@ Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider ||
 			return null
 			
 			// If we got here, then we did get a session, but it was bad
-			conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+			conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 			return 'Invalid Twitter token: ' + token
 		}
 		
@@ -127,7 +127,7 @@ Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider ||
 			return null
 		}
 		
-		conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+		conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 		return 'Could not get Twitter authentication'
 	}
 	

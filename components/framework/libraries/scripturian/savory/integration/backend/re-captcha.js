@@ -11,8 +11,8 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/prudence/resources/')
 
 var Savory = Savory || {}
 
@@ -28,7 +28,7 @@ var Savory = Savory || {}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.ReCAPTCHA = Savory.ReCAPTCHA || Savory.Classes.define(function() {
+Savory.ReCAPTCHA = Savory.ReCAPTCHA || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.ReCAPTCHA */
     var Public = {}
     
@@ -58,15 +58,15 @@ Savory.ReCAPTCHA = Savory.ReCAPTCHA || Savory.Classes.define(function() {
 	 * @returns {Boolean}
 	 */
     Public.validate = function(conversation) {
-		var address = Savory.Resources.getClientAddress(conversation)
+		var address = Prudence.Resources.getClientAddress(conversation)
 		
-		var form = Savory.Resources.getForm(conversation, {
+		var form = Prudence.Resources.getForm(conversation, {
 			recaptcha_challenge_field: 'string',
 			recaptcha_response_field: 'string'
 		})
 		
 		if (address && form.recaptcha_challenge_field && form.recaptcha_response_field) {
-			var text = Savory.Resources.request({
+			var text = Prudence.Resources.request({
 				uri: verifyUri,
 				query: {
 					privatekey: this.privateKey,

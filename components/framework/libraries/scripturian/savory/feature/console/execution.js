@@ -24,12 +24,12 @@ function handleInit(conversation) {
 
 /** @ignore */
 function handleGet(conversation) {
-	return Savory.Resources.Status.ClientError.NotFound
+	return Prudence.Resources.Status.ClientError.NotFound
 }
 
 /** @ignore */
 function handlePost(conversation) {
-	var form = Savory.Resources.getForm(conversation, {
+	var form = Prudence.Resources.getForm(conversation, {
 		program: 'string',
 		download: 'bool'
 	})
@@ -40,13 +40,13 @@ function handlePost(conversation) {
 		conversation.disposition.filename = 'console.txt'
 	}
 	
-	var logger = Savory.Logging.getLogger('console')
+	var logger = Prudence.Logging.getLogger('console')
 	var representation = ''
 		
 	function print(/* arguments */) {
 		for (var a = 0, length = arguments.length; a < length; a++) {
 			var arg = arguments[a]
-			if (Savory.Objects.exists(arg)) {
+			if (Sincerity.Objects.exists(arg)) {
 				representation += String(arg)
 			}
 		}

@@ -13,11 +13,11 @@
 
 document.executeOnce('/savory/service/cache/')
 document.executeOnce('/savory/service/nonces/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/cryptography/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/cryptography/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 
 var Savory = Savory || {}
 
@@ -44,9 +44,9 @@ Savory.OAuth = Savory.OAuth || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('oauth')
+	Public.logger = Prudence.Logging.getLogger('oauth')
 	
 	/**
 	 * Installs the HTTP_OAUTH challenge scheme helper (not available by default in Restlet).
@@ -95,13 +95,13 @@ Savory.OAuth = Savory.OAuth || function() {
 		// Assemble
 		var entries = []
 		for (a in attributes) {
-			entries.push([a, Savory.Resources.encodeUrlComponent(attributes[a])])
+			entries.push([a, Prudence.Resources.encodeUrlComponent(attributes[a])])
 		}
 		
 		// Sort
 		entries.sort(function(a, b) {
-			var first = Savory.Objects.compareStrings(a[0], b[0])
-			return first == 0 ? Savory.Objects.compareStrings(a[1], b[1]) : first
+			var first = Sincerity.Objects.compareStrings(a[0], b[0])
+			return first == 0 ? Sincerity.Objects.compareStrings(a[1], b[1]) : first
 		})
 		
 		// Flatten
@@ -113,15 +113,15 @@ Savory.OAuth = Savory.OAuth || function() {
 		flatAttributes = flatAttributes.join('&')
 		
 		// Sign
-		var payload = [method.toUpperCase(), Savory.Resources.encodeUrlComponent(uri), Savory.Resources.encodeUrlComponent(flatAttributes)].join('&')
+		var payload = [method.toUpperCase(), Prudence.Resources.encodeUrlComponent(uri), Prudence.Resources.encodeUrlComponent(flatAttributes)].join('&')
 		var secret = consumerSecret + '&' + (tokenSecret || '')
 		//Public.logger.info('Payload: ' + payload)
-		attributes.oauth_signature = Savory.Cryptography.hmac(Savory.Cryptography.toBytes(payload), Savory.Cryptography.toBytes(secret), 'HmacSHA1')
+		attributes.oauth_signature = Sincerity.Cryptography.hmac(Sincerity.Cryptography.toBytes(payload), Sincerity.Cryptography.toBytes(secret), 'HmacSHA1')
 
 		// List
 		flatAttributes = []
 		for (var a in attributes) {
-			flatAttributes.push(a + '="' + Savory.Resources.encodeUrlComponent(attributes[a]) + '"')
+			flatAttributes.push(a + '="' + Prudence.Resources.encodeUrlComponent(attributes[a]) + '"')
 		}
 		//Public.logger.info('Header: ' + flatAttributes.join(','))
 		return flatAttributes.join(',')
@@ -138,7 +138,7 @@ Savory.OAuth = Savory.OAuth || function() {
 	 * @param {String} accessTokenUri
 	 * @param {String} callbackUri
 	 */
-	Public.Provider = Savory.Classes.define(function(Module) {
+	Public.Provider = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.OAuth.Provider */
 	    var Public = {}
 	    
@@ -152,7 +152,7 @@ Savory.OAuth = Savory.OAuth || function() {
 	    }
 
 	    /**
-		 * Performs a {@link Savory.Resources#request} with the proper authorization header for the provider.
+		 * Performs a {@link Prudence.Resources#request} with the proper authorization header for the provider.
 		 * 
 		 * @param params
 		 * @param {String} secret The secret (usually the consumerSecret + '&' + secret)
@@ -161,12 +161,12 @@ Savory.OAuth = Savory.OAuth || function() {
 		 * @see Savory.OAuth#createAuthorization
 		 */
 	    Public.request = function(params, attributes, tokenSecret) {
-	    	params = Savory.Objects.clone(params)
+	    	params = Sincerity.Objects.clone(params)
 			params.authorization = {
 				type: 'http_oauth',
-				rawValue: Savory.OAuth.createAuthorization(params.method, params.uri, Savory.Objects.merge(getAttributes.call(this), attributes), this.consumerSecret, tokenSecret)
+				rawValue: Savory.OAuth.createAuthorization(params.method, params.uri, Sincerity.Objects.merge(getAttributes.call(this), attributes), this.consumerSecret, tokenSecret)
 			}
-			return Savory.Resources.request(params)
+			return Prudence.Resources.request(params)
 		}
 		
 		/**
@@ -193,7 +193,7 @@ Savory.OAuth = Savory.OAuth || function() {
 					}
 				}
 			}, {
-				oauth_callback: from ? Savory.Resources.buildUri(this.callbackUri, {from: from}) : this.callbackUri
+				oauth_callback: from ? Prudence.Resources.buildUri(this.callbackUri, {from: from}) : this.callbackUri
 			})
 			
 			//Module.logger.dump(result, 'request token result')
@@ -252,7 +252,7 @@ Savory.OAuth = Savory.OAuth || function() {
 		 * @see #getAuthenticationToken
 		 */
 	    Public.getSession = function(conversation) {
-			var query = Savory.Objects.isDict(conversation, true) ? conversation : Savory.Resources.getQuery(conversation, {
+			var query = Sincerity.Objects.isDict(conversation, true) ? conversation : Prudence.Resources.getQuery(conversation, {
 				oauth_token: 'string',
 				oauth_verifier: 'string'
 			})
@@ -278,7 +278,7 @@ Savory.OAuth = Savory.OAuth || function() {
 		function getAttributes(now) {
 			now = now || new Date()
 
-			/*var date = Savory.Resources.request({
+			/*var date = Prudence.Resources.request({
 				uri: requestTokenUri,
 				method: 'head',
 				result: 'date'
@@ -304,7 +304,7 @@ Savory.OAuth = Savory.OAuth || function() {
 	 * @name Savory.OAuth.Session
 	 * @see Savory.OAuth.Provider#getSession
 	 */
-	Public.Session = Savory.Classes.define(function() {
+	Public.Session = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.OAuth.Session */
 	    var Public = {}
 	    

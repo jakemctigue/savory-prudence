@@ -12,8 +12,8 @@
 //
 
 document.executeOnce('/savory/integration/backend/oauth/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/classes/')
 
 var Savory = Savory || {}
 
@@ -43,7 +43,7 @@ Savory.Twitter = Savory.Twitter || function() {
 	 * @param {String} [callbackUri=application.globals.get('savory.integration.backend.twitter.callbackUri')]
 	 * @see Savory.OAuth.Provider
 	 */
-	Public.Application = Savory.Classes.define(function() {
+	Public.Application = Sincerity.Classes.define(function() {
     	/** @exports Public as Savory.Twitter.Application */
         var Public = {}
         
@@ -61,7 +61,7 @@ Savory.Twitter = Savory.Twitter || function() {
 		Public.getAuthenticationUri = function(from) {
 			var authenticationToken = this.provider.getAuthenticationToken(from, true) // Note: it seems Twitter authorizes us even if we don't use the saved secret!
 			if (authenticationToken) {
-				return Savory.Resources.buildUri(authenticateUri, {
+				return Prudence.Resources.buildUri(authenticateUri, {
 					oauth_token: authenticationToken
 				})
 			}
@@ -97,7 +97,7 @@ Savory.Twitter = Savory.Twitter || function() {
 	var defaultConsumerSecret = application.globals.get('savory.integration.backend.twitter.consumerSecret')
 	var defaultOauthToken = application.globals.get('savory.integration.backend.twitter.oauthToken')
 	var defaultOauthTokenSecret = application.globals.get('savory.integration.backend.twitter.oauthTokenSecret')
-	var defaultCallbackUri = Savory.Objects.string(application.globals.get('savory.integration.backend.twitter.callbackUri'))
+	var defaultCallbackUri = Sincerity.Objects.string(application.globals.get('savory.integration.backend.twitter.callbackUri'))
 	
 	return Public
 }()

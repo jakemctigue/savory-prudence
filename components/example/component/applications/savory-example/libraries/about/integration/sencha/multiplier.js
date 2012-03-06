@@ -12,10 +12,10 @@
 //
 
 document.executeOnce('/savory/service/internationalization/')
-document.executeOnce('/savory/foundation/jvm/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/prudence/resources/')
 
-var multiplierForm = multiplierForm || new Savory.Resources.Form({fields: {
+var multiplierForm = multiplierForm || new Prudence.Resources.Form({fields: {
 	first: {type: 'number', label: 'A number', required: true},
 	second: {type: 'integer', label: 'An integer', required: true}
 }})
@@ -24,7 +24,7 @@ multiplierForm.process = function(results) {
 	if (results.success) {
 		results.values.result = Number(results.values.first) * Number(results.values.second)
 		results.msg = '{first} times {second} equals {result}'.cast(results.values)
-		//results.msg = Savory.JSON.to(results.values)
+		//results.msg = Sincerity.JSON.to(results.values)
 	}
 	else {
 		results.msg = 'Invalid!'

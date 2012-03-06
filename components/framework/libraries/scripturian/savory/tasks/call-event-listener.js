@@ -12,11 +12,11 @@
 //
 
 document.executeOnce('/savory/service/events/')
-document.executeOnce('/savory/foundation/json/')
+document.executeOnce('/sincerity/json/')
 
 function call(context) {
 	if (context) {
-		context = Savory.JSON.from(context, true)
+		context = Sincerity.JSON.from(context, true)
 		if (context.event && context.listener) {
 			Savory.Events.callListener(context.event, context.listener, context.context)
 		}

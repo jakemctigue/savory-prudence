@@ -11,9 +11,9 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/lucene/')
-document.executeOnce('/savory/foundation/iterators/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/lucene/')
+document.executeOnce('/sincerity/iterators/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -34,9 +34,9 @@ Savory.Search = Savory.Search || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('search')
+	Public.logger = Prudence.Logging.getLogger('search')
     
     //
     // Private

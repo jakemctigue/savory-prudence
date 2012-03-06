@@ -11,15 +11,15 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/lucene/')
-document.executeOnce('/savory/foundation/iterators/')
+document.executeOnce('/sincerity/lucene/')
+document.executeOnce('/sincerity/iterators/')
 
-var directory = new Savory.Lucene.Directory('/tmp/index')
+var directory = new Sincerity.Lucene.Directory('/tmp/index')
 try {
 	var notices = new MongoDB.Collection('notices')
 	var i = notices.find()
-	i = new Savory.Iterators.Transformer(i, function fn(entry) {
-		//entry = Savory.Objects.flatten(entry)
+	i = new Sincerity.Iterators.Transformer(i, function fn(entry) {
+		//entry = Sincerity.Objects.flatten(entry)
 		//return entry
 		return {
 			_id: {
@@ -40,7 +40,7 @@ try {
 	
 	var programs = new MongoDB.Collection('programs')
 	i = programs.find()
-	i = new Savory.Iterators.Transformer(i, function(entry) {
+	i = new Sincerity.Iterators.Transformer(i, function(entry) {
 		return {
 			text: entry.code
 		}
@@ -49,7 +49,7 @@ try {
 
 	var documents = new MongoDB.Collection('documents')
 	i = documents.find()
-	i = new Savory.Iterators.Transformer(i, function(entry) {
+	i = new Sincerity.Iterators.Transformer(i, function(entry) {
 		return {
 			text: Savory.HTML.strip(entry.activeDraft ? entry.activeDraft.rendered : '')
 		}

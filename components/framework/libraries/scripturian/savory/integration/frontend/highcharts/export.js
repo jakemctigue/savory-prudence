@@ -12,7 +12,7 @@
 //
 
 document.executeOnce('/savory/integration/frontend/highcharts/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/prudence/resources/')
 
 /** @ignore */
 function handleInit(conversation) {
@@ -21,7 +21,7 @@ function handleInit(conversation) {
 
 /** @ignore */
 function handleGet(conversation) {
-	return Savory.Resources.Status.ClientError.NotFound
+	return Prudence.Resources.Status.ClientError.NotFound
 }
 
 /** @ignore */

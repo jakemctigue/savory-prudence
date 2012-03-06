@@ -12,8 +12,8 @@
 //
 
 document.executeOnce('/savory/feature/seo/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/prudence/resources/')
 
 /** @ignore */
 function handleInit(conversation) {
@@ -26,9 +26,9 @@ function handleGet(conversation) {
 	var domain = Savory.SEO.getCurrentDomain(conversation)
 	if (domain) {
 		var setNames = domain.getSetNames()
-		return conversation.mediaType == 'application/java' ? setNames : Savory.JSON.to(setNames)
+		return conversation.mediaType == 'application/java' ? setNames : Sincerity.JSON.to(setNames)
 	}
 	else {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 }

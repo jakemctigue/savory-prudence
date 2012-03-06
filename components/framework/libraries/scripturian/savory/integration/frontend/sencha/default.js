@@ -12,15 +12,15 @@
 //
 
 document.executeOnce('/savory/service/rest/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/templates/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/jvm/')
-document.executeOnce('/savory/foundation/xml/')
-document.executeOnce('/savory/foundation/iterators/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/validation/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/templates/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/sincerity/xml/')
+document.executeOnce('/sincerity/iterators/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/validation/')
+document.executeOnce('/prudence/resources/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -64,12 +64,12 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @returns {String} The head text
 	 */
 	Public.extJsHead = function(conversation, params) {
-		params = params ? Savory.Objects.clone(params) : {}
+		params = params ? Sincerity.Objects.clone(params) : {}
 
 		params.debug = params.debug || (conversation.query.get('debug') == 'true')
 		params.indent = params.indent || '\t'
 		params.theme = params.theme || application.globals.get('savory.integration.frontend.sencha.defaultTheme')
-		params.theme = Savory.Objects.exists(params.theme) ? '-' + params.theme : ''
+		params.theme = Sincerity.Objects.exists(params.theme) ? '-' + params.theme : ''
 		params.pathToBase = params.pathToBase || conversation.pathToBase
 
 		return (params.debug ? extJsDebugHead : extJsHead).cast({
@@ -92,7 +92,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @returns {String} The head text
 	 */
 	Public.senchaTouchHead = function(conversation, params) {
-		params = params ? Savory.Objects.clone(params) : {}
+		params = params ? Sincerity.Objects.clone(params) : {}
 
 		params.debug = params.debug || (conversation.query.get('debug') == 'true')
 		params.indent = params.indent || '\t'
@@ -120,7 +120,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			}
 			
 			var field = record[r]
-			if (Savory.Objects.isDate(field)) {
+			if (Sincerity.Objects.isDate(field)) {
 				fields.push({
 					name: r,
 					type: 'date'
@@ -143,21 +143,21 @@ Savory.Sencha = Savory.Sencha || function() {
 	/**
 	 * Translates form fields into the format expected by Sencha forms.
 	 * <p>
-	 * You can translate the result into client-side code via Savory.JSON.to(result, true, true).
-	 * See {@link Savory.JSON#to}. 
+	 * You can translate the result into client-side code via Sincerity.JSON.to(result, true, true).
+	 * See {@link Sincerity.JSON#to}. 
 	 * 
 	 * @param conversation The Savory conversation
-	 * @param {Savory.Resources.Form} form The form
-	 * @param [results] The results from a call to {@link Savory.Resources.Form#handle}, used it initialize field
+	 * @param {Prudence.Resources.Form} form The form
+	 * @param [results] The results from a call to {@link Prudence.Resources.Form#handle}, used it initialize field
 	 *        values
 	 * @param {Boolean} [clientValidation=form.clientValidation] True to include validator
 	 * @param {Boolean} [clientMasking=true] True to include maskRe
 	 * @returns {Array}
 	 */
 	Public.getFormFields = function(conversation, form, results, clientValidation, clientMasking) {
-		clientValidation = Savory.Objects.ensure(clientValidation, form.clientValidation)
-		clientMasking = Savory.Objects.ensure(clientMasking, true)
-		var textPack = Savory.Objects.exists(conversation) ? Savory.Internationalization.getCurrentPack(conversation) : null
+		clientValidation = Sincerity.Objects.ensure(clientValidation, form.clientValidation)
+		clientMasking = Sincerity.Objects.ensure(clientMasking, true)
+		var textPack = Sincerity.Objects.exists(conversation) ? Savory.Internationalization.getCurrentPack(conversation) : null
 
 		var sencha = []
 		
@@ -200,13 +200,13 @@ Savory.Sencha = Savory.Sencha || function() {
     			}
 
 				var validator = field.validator
-				validation = Savory.Validation[field.type || 'string']
+				validation = Sincerity.Validation[field.type || 'string']
 				
 				var allowed = field.clientValidation
-				if (!Savory.Objects.exists(allowed) && validation) {
+				if (!Sincerity.Objects.exists(allowed) && validation) {
 					allowed = validation.clientValidation
 				}
-				if (!Savory.Objects.exists(allowed)) {
+				if (!Sincerity.Objects.exists(allowed)) {
 					allowed = true
 				}
 				
@@ -243,7 +243,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				var mask = field.mask
 				if (!mask) {
 					if (!validation) {
-						validation = Savory.Validation[field.type || 'string']
+						validation = Sincerity.Validation[field.type || 'string']
 					}
 					if (validation && validation.mask) {
 						mask = validation.mask
@@ -254,7 +254,7 @@ Savory.Sencha = Savory.Sencha || function() {
     			}
 			}
 			
-			Savory.Objects.merge(senchaField, field.sencha)
+			Sincerity.Objects.merge(senchaField, field.sencha)
 
 			sencha.push(senchaField)
 		}
@@ -283,7 +283,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param {String} [config.totalProperty='total']
 	 * @param {String} [config.idProperty='id']
 	 */
-	Public.Resource = Savory.Classes.define(function() {
+	Public.Resource = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Sencha.Resource */
 		var Public = {}
 
@@ -312,7 +312,7 @@ Savory.Sencha = Savory.Sencha || function() {
 		 * @param conversation The Prudence conversation
 		 */
 		Public.handleGet = function(conversation) {
-			var query = Savory.Resources.getQuery(conversation, {
+			var query = Prudence.Resources.getQuery(conversation, {
 				human: 'bool',
 				start: 'int',
 				limit: 'int',
@@ -324,13 +324,13 @@ Savory.Sencha = Savory.Sencha || function() {
 			
 			if (query.columns) {
 				// "Get columns" mode
-				return Savory.JSON.to(this.getColumns(), query.human || false)
+				return Sincerity.JSON.to(this.getColumns(), query.human || false)
 			}
 			
 			var result = {}
 			result.success = true
 			result[this.totalProperty] = this.getTotal()
-			result[this.rootProperty] = Savory.Iterators.toArray(new Savory.Iterators.Transformer(new Savory.Iterators.Buffer(this.getRecords(query.start, query.limit), 100), guaranteeId, this), 0, query.limit)
+			result[this.rootProperty] = Sincerity.Iterators.toArray(new Sincerity.Iterators.Transformer(new Sincerity.Iterators.Buffer(this.getRecords(query.start, query.limit), 100), guaranteeId, this), 0, query.limit)
 	
 			// TODO error messages?
 	
@@ -353,7 +353,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				return result
 			}
 			else {
-				return Savory.JSON.to(result, query.human || false)
+				return Sincerity.JSON.to(result, query.human || false)
 			}
 		}
 		
@@ -366,11 +366,11 @@ Savory.Sencha = Savory.Sencha || function() {
 		}
 		
 		Public.handlePut = function(conversation) {
-			var query = Savory.Resources.getQuery(conversation, {
+			var query = Prudence.Resources.getQuery(conversation, {
 				human: 'bool'
 			})
 			
-			var entity = Savory.Resources.getEntity(conversation, 'extendedJson')
+			var entity = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			entity = this.setRecord(entity, true)
 			
 			var result
@@ -380,7 +380,7 @@ Savory.Sencha = Savory.Sencha || function() {
 					message: 'Woohoo! Added!'
 				}
 				result[this.rootProperty] = [entity]
-				conversation.statusCode = Savory.Resources.Status.Success.Created
+				conversation.statusCode = Prudence.Resources.Status.Success.Created
 			}
 			else {
 				result = {
@@ -398,16 +398,16 @@ Savory.Sencha = Savory.Sencha || function() {
 				return result
 			}
 			else {
-				return Savory.JSON.to(result, query.human || false)
+				return Sincerity.JSON.to(result, query.human || false)
 			}
 		}
 		
 		Public.handlePost = function(conversation) {
-			var query = Savory.Resources.getQuery(conversation, {
+			var query = Prudence.Resources.getQuery(conversation, {
 				human: 'bool'
 			})
 			
-			var entity = Savory.Resources.getEntity(conversation, 'extendedJson')
+			var entity = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			entity = this.setRecord(entity, false)
 	
 			var result
@@ -429,17 +429,17 @@ Savory.Sencha = Savory.Sencha || function() {
 				return result
 			}
 			else {
-				return Savory.JSON.to(result, query.human || false)
+				return Sincerity.JSON.to(result, query.human || false)
 			}
 		}
 		
 		Public.handleDelete = function(conversation) {
 			var id = conversation.locals.get(this.idProperty)
-			if (!Savory.Objects.exists(id)) {
-				return Savory.Resources.Status.ClientError.NotFound
+			if (!Sincerity.Objects.exists(id)) {
+				return Prudence.Resources.Status.ClientError.NotFound
 			}
 			
-			var query = Savory.Resources.getQuery(conversation, {
+			var query = Prudence.Resources.getQuery(conversation, {
 				human: 'bool'
 			})
 			
@@ -461,7 +461,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				return result
 			}
 			else {
-				return Savory.JSON.to(result, query.human || false)
+				return Sincerity.JSON.to(result, query.human || false)
 			}
 		}
 		
@@ -486,7 +486,7 @@ Savory.Sencha = Savory.Sencha || function() {
 					var column = columns[c]
 					var o = this.columns[column.dataIndex]
 					if (o) {
-						Savory.Objects.merge(column, o)
+						Sincerity.Objects.merge(column, o)
 					}
 				}
 			}
@@ -530,7 +530,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param config
 	 * @param config.data
 	 */
-	Public.SelfContainedResource = Savory.Classes.define(function(Module) {
+	Public.SelfContainedResource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Sencha.SelfContainedResource */
 		var Public = {}
 
@@ -543,7 +543,7 @@ Savory.Sencha = Savory.Sencha || function() {
 		/** @ignore */
 		Public._construct = function(config) {
 			this.idProperty = this.idProperty || 'id'
-			this.list = Savory.JVM.toList(this.data, true)
+			this.list = Sincerity.JVM.toList(this.data, true)
 			
 			if (!this.fields) {
 				var record = config.data[0]
@@ -567,7 +567,7 @@ Savory.Sencha = Savory.Sencha || function() {
 		}
 		
 		Public.getRecords = function(start, limit) {
-			var iterator = new Savory.Iterators.JVM(this.list.iterator())
+			var iterator = new Sincerity.Iterators.JVM(this.list.iterator())
 			iterator.skip(start)
 			return iterator
 		}
@@ -593,7 +593,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				return null
 			}
 			
-			Savory.Objects.merge(found, record)
+			Sincerity.Objects.merge(found, record)
 			return record
 		}
 		
@@ -622,7 +622,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param {String} [config.idProperty='_id']
 	 * @param {Boolean} [config.isObjectId=true] Whether the idProperty is a MongoDB ObjectID
 	 */
-	Public.MongoDbResource = Savory.Classes.define(function(Module) {
+	Public.MongoDbResource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Sencha.MongoDbResource */
 		var Public = {}
 
@@ -635,8 +635,8 @@ Savory.Sencha = Savory.Sencha || function() {
 		/** @ignore */
 		Public._construct = function(config) {
 			this.idProperty = this.idProperty || '_id'
-			this.isObjectId = Savory.Objects.ensure(this.isObjectId, true)
-			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+			this.isObjectId = Sincerity.Objects.ensure(this.isObjectId, true)
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 			
 			// Convert fields to MongoDB fields notations
 			this.mongoDbFields = {}
@@ -670,10 +670,10 @@ Savory.Sencha = Savory.Sencha || function() {
 			if (start) {
 				cursor.skip(start)
 			}
-			if (Savory.Objects.exists(limit)) {
+			if (Sincerity.Objects.exists(limit)) {
 				cursor.limit(limit)
 			}
-			return this.isObjectId ? new Savory.Iterators.Transformer(cursor, toExtJs, this) : cursor
+			return this.isObjectId ? new Sincerity.Iterators.Transformer(cursor, toExtJs, this) : cursor
 		}
 		
 		Public.setRecord = function(record, add) {
@@ -725,7 +725,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @augments Savory.Sencha.Resource
 	 * 
 	 * @param config
-	 * @param {String|Object} config.resource Basic config for {@link Savory.Resources#request}
+	 * @param {String|Object} config.resource Basic config for {@link Prudence.Resources#request}
 	 * @param {String} [config.payloadType='json']
 	 * @param {String} [config.idProperty='_id']
 	 * @param {Boolean} [config.isObjectId=true] Whether the idProperty is a MongoDB ObjectID
@@ -734,7 +734,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param {String} [config.startAttribute='start']
 	 * @param {String} [config.limitAttribute='limit']
 	 */
-	Public.ResourceWrapper = Savory.Classes.define(function(Module) {
+	Public.ResourceWrapper = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Sencha.ResourceWrapper */
 		var Public = {}
 
@@ -746,8 +746,8 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		/** @ignore */
 		Public._construct = function(config) {
-			this.isObjectId = Savory.Objects.ensure(this.isObjectId, true)
-			if (Savory.Objects.isString(this.resource)) {
+			this.isObjectId = Sincerity.Objects.ensure(this.isObjectId, true)
+			if (Sincerity.Objects.isString(this.resource)) {
 				this.resource = {uri: String(this.resource), mediaType: 'application/json'}
 			}
 			this.payloadType = this.payloadType || 'json'
@@ -775,10 +775,10 @@ Savory.Sencha = Savory.Sencha || function() {
 		}
 
 		Public.getTotal = function() {
-			var request = Savory.Objects.clone(this.resource)
+			var request = Sincerity.Objects.clone(this.resource)
 			request.query = request.query || {}
 			request.query[this.limitAttribute] = 0
-			var obj = Savory.Resources.request(request)
+			var obj = Prudence.Resources.request(request)
 			return obj[this.totalProperty]
 		}
 			
@@ -787,32 +787,32 @@ Savory.Sencha = Savory.Sencha || function() {
 		}
 				
 		Public.getRecords = function(start, limit) {
-			var request = Savory.Objects.clone(this.resource)
+			var request = Sincerity.Objects.clone(this.resource)
 			request.query = request.query || {}
 			request.query[this.startAttribute] = start
 			request.query[this.limitAttribute] = limit
-			var obj = Savory.Resources.request(request)
-			var iterator = new Savory.Iterators.Array(obj[this.documentsProperty])
+			var obj = Prudence.Resources.request(request)
+			var iterator = new Sincerity.Iterators.Array(obj[this.documentsProperty])
 			iterator.skip(start)
-			return this.isObjectId ? new Savory.Iterators.Transformer(iterator, toExtJs, this) : iterator
+			return this.isObjectId ? new Sincerity.Iterators.Transformer(iterator, toExtJs, this) : iterator
 		}
 		
 		Public.setRecord = function(record, add) {
-			record = Savory.Objects.clone(record)
-			Savory.Objects.prune(record)
+			record = Sincerity.Objects.clone(record)
+			Sincerity.Objects.prune(record)
 			if (this.isObjectId) {
 				record = fromExtJs.call(this, record)
 			}
 	
-			var request = Savory.Objects.clone(this.resource)
+			var request = Sincerity.Objects.clone(this.resource)
 			request.method = add ? 'put' : 'post'
 			request.payload = {
 				value: record,
 				type: this.payloadType
 			}
 			
-			var record = Savory.Resources.request(request)
-			//Savory.Logging.getLogger().dump(record, 'obj1')
+			var record = Prudence.Resources.request(request)
+			//Prudence.Logging.getLogger().dump(record, 'obj1')
 			if (record) {
 				if (record[this.documentsProperty] && record[this.documentsProperty].length) {
 					record = record[this.documentsProperty][0]
@@ -829,9 +829,9 @@ Savory.Sencha = Savory.Sencha || function() {
 		}
 		
 		Public.deleteRecord = function(id) {
-			var request = Savory.Objects.clone(this.resource)
+			var request = Sincerity.Objects.clone(this.resource)
 			request.method = 'delete'
-			Savory.Resources.request(request)
+			Prudence.Resources.request(request)
 			return true
 		}
 		
@@ -843,7 +843,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @name Savory.Sencha.TreeResource
 	 * @augments Savory.REST.Resource
 	 */
-	Public.TreeResource = Savory.Classes.define(function() {
+	Public.TreeResource = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Sencha.TreeResource */
 		var Public = {}
 
@@ -858,14 +858,14 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public.getChildren = function() {}
 
 		Public.handleGet = function(conversation) {
-			var query = Savory.Resources.getQuery(conversation, {
+			var query = Prudence.Resources.getQuery(conversation, {
 				node: 'string',
 				human: 'bool'
 			})
 			
 			var node = this.getChildren(query.node)
 			
-			return Savory.JSON.to(node, query.human || false)
+			return Sincerity.JSON.to(node, query.human || false)
 		}
 		
 		return Public
@@ -876,7 +876,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @name Savory.Sencha.SelfContainedTreeResource
 	 * @augments Savory.Sencha.TreeResource
 	 */
-	Public.SelfContainedTreeResource = Savory.Classes.define(function(Module) {
+	Public.SelfContainedTreeResource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Sencha.SelfContainedTreeResource */
 		var Public = {}
 
@@ -893,7 +893,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			this.nodes = {}
 			this.lastId = 0
 			
-			addNode.call(this, this.rootName, Savory.Objects.clone(this.root))
+			addNode.call(this, this.rootName, Sincerity.Objects.clone(this.root))
 			
 			Savory.Sencha.SelfContainedTreeResource.prototype.superclass.call(this, this)
 		}
@@ -908,7 +908,7 @@ Savory.Sencha = Savory.Sencha || function() {
 					var child = this.nodes[id]
 					nodes.push({
 						id: id,
-						text: Savory.XML.escapeElements(child.text)
+						text: Sincerity.XML.escapeElements(child.text)
 					})
 				}
 			}
@@ -921,18 +921,18 @@ Savory.Sencha = Savory.Sencha || function() {
 		//
 		
 		function addNode(id, node, parentId) {
-			if (Savory.Objects.isString(node)) {
+			if (Sincerity.Objects.isString(node)) {
 				node = {
 					text: String(node)
 				}
 			}
 			else {
 				var array
-				if (Savory.Objects.isArray(node)) {
+				if (Sincerity.Objects.isArray(node)) {
 					array = node
 					node = {}
 				}
-				else if (Savory.Objects.isArray(node.children)) {
+				else if (Sincerity.Objects.isArray(node.children)) {
 					array = node.children
 				}
 				
@@ -972,7 +972,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @name Savory.Sencha.MongoDbTreeResource
 	 * @augments Savory.Sencha.TreeResource
 	 */
-	Public.MongoDbTreeResource = Savory.Classes.define(function(Module) {
+	Public.MongoDbTreeResource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Sencha.MongoDbTreeResource */
 		var Public = {}
 
@@ -984,7 +984,7 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		/** @ignore */
 		Public._construct = function(config) {
-			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 			this.separator = this.separator || '/'
 			this.rootName = this.rootName || this.separator
 			
@@ -1030,22 +1030,22 @@ Savory.Sencha = Savory.Sencha || function() {
 		}
 		
 		function addNode(id, nodeId, node, array) {
-			if (Savory.JVM.instanceOf(node, com.mongodb.DBRef)) {
+			if (Sincerity.JVM.instanceOf(node, com.mongodb.DBRef)) {
 				array.push({
 					id: id + this.separator + String(node.id),
-					text: Savory.XML.escapeElements(this.getNodeText(nodeId, null))
+					text: Sincerity.XML.escapeElements(this.getNodeText(nodeId, null))
 				})
 				return
 			}
 			
 			var n = {
 				id: id,
-				text: Savory.XML.escapeElements(this.getNodeText(nodeId, node)),
+				text: Sincerity.XML.escapeElements(this.getNodeText(nodeId, node)),
 				expanded: true
 			}
 			array.push(n)
 
-			if (Savory.Objects.isObject(node)) {
+			if (Sincerity.Objects.isObject(node)) {
 				n.children = []
 				for (var c in node) {
 					addNode.call(this, id + this.separator + c, c, node[c], n.children)

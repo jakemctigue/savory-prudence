@@ -11,13 +11,13 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/templates/')
-document.executeOnce('/savory/foundation/jvm/')
-document.executeOnce('/savory/foundation/files/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/templates/')
+document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/sincerity/files/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -46,9 +46,9 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('internationalization')
+	Public.logger = Prudence.Logging.getLogger('internationalization')
 	
 	/**
 	 * Installs the library's filters.
@@ -61,11 +61,11 @@ Savory.Internationalization = Savory.Internationalization || function() {
     
     Public.getCurrentPack = function(conversation) {
     	var pack = conversation.locals.get('savory.service.internationalization.text')
-    	if (!Savory.Objects.exists(pack)) {
+    	if (!Sincerity.Objects.exists(pack)) {
     		pack = Public.getPack()
     		conversation.locals.put('savory.service.internationalization.text', pack)
     		//application.logger.info(pack.get)
-    		//application.logger.info(Savory.JSON.to(conversation.locals.get('savory.service.internationalization.text'),true))
+    		//application.logger.info(Sincerity.JSON.to(conversation.locals.get('savory.service.internationalization.text'),true))
     		//application.logger.info(conversation.locals.get('savory.service.internationalization.text').get('hi'))
     	}
     	return pack
@@ -75,15 +75,15 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	 * Gets a text pack from either the MongoDB 'textpacks' collection or a JSON file.
 	 * Support text pack inheritence and caching text packs in memory.
 	 * 
-	 * @param [locale=Savory.JVM.getSystemLocale()] The locale
+	 * @param [locale=Sincerity.JVM.getSystemLocale()] The locale
 	 * @returns {Savory.Internationalization.Pack}
 	 */
 	Public.getPack = function(locale) {
-		if (Savory.Objects.isString(locale)) {
+		if (Sincerity.Objects.isString(locale)) {
 			locale = {language: String(locale)}
 		}
 		
-		locale = locale || defaultLocale || Savory.JVM.getSystemLocale()
+		locale = locale || defaultLocale || Sincerity.JVM.getSystemLocale()
 		
 		var cacheKey, pack
 		
@@ -120,26 +120,26 @@ Savory.Internationalization = Savory.Internationalization || function() {
 
 				// Inherit all text and directions
 				if (textPack.inherit) {
-					var inherit = Savory.Objects.array(textPack.inherit)
+					var inherit = Sincerity.Objects.array(textPack.inherit)
 					for (var i in inherit) {
 						var inheritPack = Public.getPack(inherit[i])
 						if (inheritPack) {
-							Savory.Objects.merge(text, inheritPack.text)
-							Savory.Objects.merge(directions, inheritPack.directions)
+							Sincerity.Objects.merge(text, inheritPack.text)
+							Sincerity.Objects.merge(directions, inheritPack.directions)
 						}
 					}
 				}
 				
 				// Our text and directions
-				var ourText = Savory.Objects.flatten(textPack.text)
+				var ourText = Sincerity.Objects.flatten(textPack.text)
 				var ourDirections = {}
 				for (var t in ourText) {
 					ourDirections[t] = direction
 				}
 				
 				// Merge ours over the inherited
-				Savory.Objects.merge(text, ourText)
-				Savory.Objects.merge(directions, ourDirections)
+				Sincerity.Objects.merge(text, ourText)
+				Sincerity.Objects.merge(directions, ourDirections)
 				
 				pack = new Public.Pack(text, directions, direction)
 				
@@ -159,7 +159,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	 * @class
 	 * @see Savory.Internationalization#getPack
 	 */
-	Public.Pack = Savory.Classes.define(function() {
+	Public.Pack = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Internationalization.Pack */
 	    var Public = {}
 	    
@@ -173,7 +173,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 		
 		/**
 		 * Gets a value from the text pack, optionally casting it
-		 * as a template if more arguments are provided (see {@link Savory.Templates#cast}).
+		 * as a template if more arguments are provided (see {@link Sincerity.Templates#cast}).
 		 * If the key does not exist in the pack, returns the key.
 		 * 
 		 * @param {String} key The key
@@ -182,7 +182,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	    Public.get = function(key/*, arguments */) {
 			var value = this.text[key] || key
 			if (value && (arguments.length > 1)) {
-				var args = Savory.Objects.slice(arguments, 1)
+				var args = Sincerity.Objects.slice(arguments, 1)
 				value = value.cast.apply(value, args)
 			}
 			return value
@@ -197,7 +197,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	    Public.getOrNull = function(key/*, arguments */) {
 			var value = this.text[key] || null
 			if (value && (arguments.length > 1)) {
-				var args = Savory.Objects.slice(arguments, 1)
+				var args = Sincerity.Objects.slice(arguments, 1)
 				value = value.cast.apply(value, args)
 			}
 			return value
@@ -213,9 +213,9 @@ Savory.Internationalization = Savory.Internationalization || function() {
 		 */
 	    Public.getDirection = function(key) {
 			var direction
-			if (Savory.Objects.exists(key)) {
+			if (Sincerity.Objects.exists(key)) {
 				direction = this.directions[key]
-				if (!Savory.Objects.exists(direction)) {
+				if (!Sincerity.Objects.exists(direction)) {
 					// This should never happen if the key exists in the text pack
 					direction = this.defaultDirection
 				}
@@ -256,12 +256,12 @@ Savory.Internationalization = Savory.Internationalization || function() {
 		if (basePath) {
 			// Try from file first
 			try {
-				textPack = Savory.JSON.from(Savory.Files.loadText(basePath + getCacheKey(locale) + '.json'))
+				textPack = Sincerity.JSON.from(Sincerity.Files.loadText(basePath + getCacheKey(locale) + '.json'))
 			}
 			catch (x if x.javaException instanceof java.io.FileNotFoundException) {
 			}
 			
-			/*textPack = Savory.Resources.request({
+			/*textPack = Prudence.Resources.request({
 				file: basePath + getCacheKey(locale) + '.json',
 				result: 'json'
 			})*/
@@ -282,7 +282,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	textPacksCollection.ensureIndex({locale: 1}, {unique: true})
 
 	var defaultLocale = application.globals.get('savory.service.internationalization.locale')
-	if (Savory.Objects.isString(defaultLocale)) {
+	if (Sincerity.Objects.isString(defaultLocale)) {
 		defaultLocale = {language: String(defaultLocale)}
 	}
 	var basePath = application.globals.get('savory.service.internationalization.path')
@@ -292,7 +292,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	if (cacheDuration > 0) {
 		cache = application.globals.get('savory.service.internationalization.cache')
 		if (!cache) {
-			cache = application.getGlobal('savory.service.internationalization.cache', Savory.JVM.newMap(true))
+			cache = application.getGlobal('savory.service.internationalization.cache', Sincerity.JVM.newMap(true))
 		}
 	}
 	

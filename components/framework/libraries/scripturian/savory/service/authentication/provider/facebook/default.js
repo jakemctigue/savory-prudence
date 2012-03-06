@@ -12,7 +12,7 @@
 //
 
 document.executeOnce('/savory/integration/backend/facebook/')
-document.executeOnce('/savory/foundation/classes/')
+document.executeOnce('/sincerity/classes/')
 
 Savory = Savory || {Authentication: {}}
 
@@ -23,7 +23,7 @@ Savory = Savory || {Authentication: {}}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Authentication.FacebookProvider = Savory.Authentication.FacebookProvider || Savory.Classes.define(function() {
+Savory.Authentication.FacebookProvider = Savory.Authentication.FacebookProvider || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.Authentication.FacebookProvider */
     var Public = {}
     
@@ -42,7 +42,7 @@ Savory.Authentication.FacebookProvider = Savory.Authentication.FacebookProvider 
     }
 
     Public.getUri = function(conversation) {
-		return Savory.Resources.buildUri(conversation.pathToBase + '/authentication/provider/facebook/', {from: conversation.query.get('from')})				
+		return Prudence.Resources.buildUri(conversation.pathToBase + '/authentication/provider/facebook/', {from: conversation.query.get('from')})				
 	}
 
     Public.login = function(facebookSession, conversation) {
@@ -67,20 +67,20 @@ Savory.Authentication.FacebookProvider = Savory.Authentication.FacebookProvider 
 				return null
 			}
 			
-			conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+			conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 			return 'Invalid Facebook session'
 		}
 		else {
 			var code = conversation.query.get('code')
 			if (code) {
 				// If we got here, then we did get a session, but it was bad
-				conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+				conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 				return 'Invalid Facebook code: ' + code
 			}
 			
 			var error = conversation.query.get('error')
 			if (error) {
-				conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+				conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 				return 'Facebook error: ' + conversation.query.get('error_reason')
 			}
 			

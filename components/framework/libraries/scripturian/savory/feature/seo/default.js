@@ -11,15 +11,15 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/iterators/')
-document.executeOnce('/savory/foundation/files/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/xml/')
-document.executeOnce('/savory/foundation/prudence/lazy/')
-document.executeOnce('/savory/foundation/prudence/logging/')
-document.executeOnce('/savory/foundation/prudence/tasks/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/iterators/')
+document.executeOnce('/sincerity/files/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/xml/')
+document.executeOnce('/prudence/lazy/')
+document.executeOnce('/prudence/logging/')
+document.executeOnce('/prudence/tasks/')
+document.executeOnce('/prudence/resources/')
 
 var Savory = Savory || {}
 
@@ -91,9 +91,9 @@ Savory.SEO = Savory.SEO || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('seo')
+	Public.logger = Prudence.Logging.getLogger('seo')
 
 	/**
 	 * Fetches the location providers configured in the 'savory.feature.seo.providers' application global.
@@ -248,7 +248,7 @@ Savory.SEO = Savory.SEO || function() {
 	 * @see Savory.SEO#getDomains
 	 * @see Savory.SEO#getCurrentDomain
 	 */
-	Public.Domain = Savory.Classes.define(function(Module) {
+	Public.Domain = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.SEO.Domain */
 		var Public = {}
 
@@ -259,9 +259,9 @@ Savory.SEO = Savory.SEO || function() {
 		Public._construct = function(config) {
 			this.rootUri = this.rootUri || null
 			this.userAgent = this.userAgent || '*'
-			this.dynamic = Savory.Objects.ensure(this.dynamic, true)
+			this.dynamic = Sincerity.Objects.ensure(this.dynamic, true)
 			this.delaySeconds = this.delaySeconds || 100
-			this.applications = Savory.Objects.array(this.applications)
+			this.applications = Sincerity.Objects.array(this.applications)
 		}
 
 		/**
@@ -277,7 +277,7 @@ Savory.SEO = Savory.SEO || function() {
 		 * The exclusion URLs for this domain for this application, used for robots.txt,
 		 * aggregated from all the location providers.
 		 * 
-		 * @returns {Savory.Iterators.Iterator}
+		 * @returns {Sincerity.Iterators.Iterator}
 		 */
 		Public.getExclusions = function() {
 			var iterators = []
@@ -291,21 +291,21 @@ Savory.SEO = Savory.SEO || function() {
 					for (var d in domains) {
 						if (domains[d] == rootUri) {
 							if (provider.getExclusions) {
-								iterators.push(Savory.Iterators.iterator(provider.getExclusions()))
+								iterators.push(Sincerity.Iterators.iterator(provider.getExclusions()))
 							}
 						}
 					}
 				}
 			}
 			
-			return new Savory.Iterators.Chain(iterators)
+			return new Sincerity.Iterators.Chain(iterators)
 		}
 
 		/**
 		 * The inclusion URLs for this domain for this application, used for robots.txt,
 		 * aggregated from all the location providers.
 		 * 
-		 * @returns {Savory.Iterators.Iterator}
+		 * @returns {Sincerity.Iterators.Iterator}
 		 */
 		Public.getInclusions = function() {
 			var iterators = []
@@ -319,14 +319,14 @@ Savory.SEO = Savory.SEO || function() {
 					for (var d in domains) {
 						if (domains[d] == rootUri) {
 							if (provider.getInclusions) {
-								iterators.push(Savory.Iterators.iterator(provider.getInclusions()))
+								iterators.push(Sincerity.Iterators.iterator(provider.getInclusions()))
 							}
 						}
 					}
 				}
 			}
 			
-			return new Savory.Iterators.Chain(iterators)
+			return new Sincerity.Iterators.Chain(iterators)
 		}
 
 		/**
@@ -385,7 +385,7 @@ Savory.SEO = Savory.SEO || function() {
 		/**
 		 * The URLs within a URL set, supplied by a single location provider for this application.
 		 * 
-		 * @returns {Savory.Iterators.Iterator} 
+		 * @returns {Sincerity.Iterators.Iterator} 
 		 */
 		Public.getLocations = function(setName) {
 			var providers = Savory.SEO.getProviders()
@@ -393,7 +393,7 @@ Savory.SEO = Savory.SEO || function() {
 				for (var p in providers) {
 					var provider = providers[p]
 					if (provider.getName() == setName) {
-						return Savory.Iterators.iterator(provider.getLocations())
+						return Sincerity.Iterators.iterator(provider.getLocations())
 					}
 				}
 			}
@@ -420,15 +420,15 @@ Savory.SEO = Savory.SEO || function() {
 		 */
 		Public.getAllRobots = function() {
 			// Our data
-			var exclusions = Savory.Iterators.toArray(Savory.Iterators.iterator(this.getExclusions()))
-			var inclusions = Savory.Iterators.toArray(Savory.Iterators.iterator(this.getInclusions()))
+			var exclusions = Sincerity.Iterators.toArray(Sincerity.Iterators.iterator(this.getExclusions()))
+			var inclusions = Sincerity.Iterators.toArray(Sincerity.Iterators.iterator(this.getInclusions()))
 
 			// Gather robots from all applications
 			var applications = this.getApplications()
 			for (var a in applications) {
 				var app = applications[a]
 
-				var robots = Savory.Resources.request({
+				var robots = Prudence.Resources.request({
 					uri: 'riap://component/' + app.internalName + '/savory/feature/seo/robots/',
 					mediaType: 'application/java',
 					query: {
@@ -458,14 +458,14 @@ Savory.SEO = Savory.SEO || function() {
 		 */
 		Public.getAllSetNames = function() {
 			// Our data
-			var setNames = Savory.Objects.clone(this.getSetNames())
+			var setNames = Sincerity.Objects.clone(this.getSetNames())
 
 			// Gather locations from all applications
 			var applications = this.getApplications()
 			for (var a in applications) {
 				var app = applications[a]
 
-				var sets = Savory.Resources.request({
+				var sets = Prudence.Resources.request({
 					uri: 'riap://component/' + app.internalName + '/savory/feature/seo/sets/',
 					mediaType: 'application/java',
 					query: {
@@ -493,7 +493,7 @@ Savory.SEO = Savory.SEO || function() {
 			var setNames = this.getSetNames()
 			for (var s in setNames) {
 				if (setNames[s] == setName) {
-					return Savory.Iterators.toArray(this.getLocations(setName), 0, 50000)
+					return Sincerity.Iterators.toArray(this.getLocations(setName), 0, 50000)
 				}
 			}
 
@@ -502,7 +502,7 @@ Savory.SEO = Savory.SEO || function() {
 			for (var a in applications) {
 				var app = applications[a]
 
-				var setNames = Savory.Resources.request({
+				var setNames = Prudence.Resources.request({
 					uri: 'riap://component/' + app.internalName + '/savory/feature/seo/sets/',
 					mediaType: 'application/java',
 					query: {
@@ -513,7 +513,7 @@ Savory.SEO = Savory.SEO || function() {
 				if (setNames) {
 					for (var s in setNames) {
 						if (setNames[s] == setName) {
-							return Savory.Resources.request({
+							return Prudence.Resources.request({
 								uri: 'riap://component/' + app.internalName + '/savory/feature/seo/locations/',
 								mediaType: 'application/java',
 								query: {
@@ -556,11 +556,11 @@ Savory.SEO = Savory.SEO || function() {
 			staticDir = staticDir || (this.staticPath ? new java.io.File(this.staticPath) : new java.io.File(document.source.basePath, '../web/static/' + this.staticRelativePath))
 			workDir = workDir || (this.workPath ? new java.io.File(this.workPath) : new java.io.File(document.source.basePath, '../work/seo/' + this.workRelativePath))
 			
-			staticDir = (Savory.Objects.isString(staticDir) ? new java.io.File(staticDir) : staticDir).canonicalFile
-			workDir = (Savory.Objects.isString(workDir) ? new java.io.File(workDir) : workDir).canonicalFile
+			staticDir = (Sincerity.Objects.isString(staticDir) ? new java.io.File(staticDir) : staticDir).canonicalFile
+			workDir = (Sincerity.Objects.isString(workDir) ? new java.io.File(workDir) : workDir).canonicalFile
 
 			Module.logger.time('sitemap generation', function() {
-				if (!Savory.Files.remove(workDir, true)) {
+				if (!Sincerity.Files.remove(workDir, true)) {
 					Module.logger.severe('Failed to delete work directory "{0}"', workDir)
 					return false
 				}
@@ -622,7 +622,7 @@ Savory.SEO = Savory.SEO || function() {
 				
 				// Generate site map index
 				var file = new java.io.File(workDir, 'sitemap.xml.gz')
-				var writer = Savory.Files.openForTextWriting(file, true)
+				var writer = Sincerity.Files.openForTextWriting(file, true)
 				try {
 					Module.logger.info('Generating "{0}"...', file)
 
@@ -645,8 +645,8 @@ Savory.SEO = Savory.SEO || function() {
 				}
 				
 				// Move working directory to static directory
-				if (Savory.Files.remove(staticDir, true)) {
-					if (Savory.Files.move(workDir, staticDir, true)) {
+				if (Sincerity.Files.remove(staticDir, true)) {
+					if (Sincerity.Files.move(workDir, staticDir, true)) {
 						Module.logger.info('Moved generated site map from "{0}" to "{1}"', workDir, staticDir)
 					}
 					else {
@@ -667,7 +667,7 @@ Savory.SEO = Savory.SEO || function() {
 		 * @see Savory.SEO.Domain#getSetNames
 		 */
 		Public.generateUrlSets = function(workDir) {
-			workDir = Savory.Objects.isString(workDir) ? new java.io.File(workDir) : workDir
+			workDir = Sincerity.Objects.isString(workDir) ? new java.io.File(workDir) : workDir
 
 			var rootUri = this.getRootUri()
 			var futures = []
@@ -710,12 +710,12 @@ Savory.SEO = Savory.SEO || function() {
 		 * @see Savory.SEO.Domain#getLocations
 		 */
 		Public.generateUrlSet = function(workDir, setName) {
-			workDir = Savory.Objects.isString(workDir) ? new java.io.File(workDir) : workDir
+			workDir = Sincerity.Objects.isString(workDir) ? new java.io.File(workDir) : workDir
 
 			// Google's limits: 50,000 URLs per file and 10MB uncompressed
 
 			var file = new java.io.File(workDir, 'sitemap-' + setName + '.xml.gz')
-			var writer = Savory.Files.openForTextWriting(file, true)
+			var writer = Sincerity.Files.openForTextWriting(file, true)
 			var pages = 1
 			try {
 				Module.logger.info('Generating "{0}"...', file)
@@ -724,9 +724,9 @@ Savory.SEO = Savory.SEO || function() {
 				var rootUri = this.getRootUri()
 				var locations = this.getLocations(setName)
 				if (locations) {
-					locations = new Savory.Iterators.Buffer(locations, 1000)
+					locations = new Sincerity.Iterators.Buffer(locations, 1000)
 					try {
-						var dateFormat = new Savory.Localization.DateTimeFormat('yyyy-MM-dd')
+						var dateFormat = new Sincerity.Localization.DateTimeFormat('yyyy-MM-dd')
 						var rootUri = this.getRootUri()
 						var count = 0
 						
@@ -748,7 +748,7 @@ Savory.SEO = Savory.SEO || function() {
 								writer.close()
 								
 								file = new java.io.File(workDir, 'sitemap-' + setName + '-' + (pages++) + '.xml.gz')
-								writer = Savory.Files.openForTextWriting(file, true)
+								writer = Sincerity.Files.openForTextWriting(file, true)
 								count = 0
 
 								Module.logger.info('Generating "{0}"...', file)
@@ -776,7 +776,7 @@ Savory.SEO = Savory.SEO || function() {
 	 * @class
 	 * @name Savory.SEO.Provider
 	 */
-	Public.Provider = Savory.Classes.define(function() {
+	Public.Provider = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.SEO.Provider */
 		var Public = {}
 		
@@ -805,7 +805,7 @@ Savory.SEO = Savory.SEO || function() {
 		 * The locations in the form of:
 		 * {uri: '...',  lastModified: date, frequency: '', priority: number between 0.0 and 1.0}
 		 * 
-		 * @returns {Savory.Iterators.Iterator}
+		 * @returns {Sincerity.Iterators.Iterator}
 		 */
 		Public.getLocations = function() {
 			return null
@@ -814,7 +814,7 @@ Savory.SEO = Savory.SEO || function() {
 		/**
 		 * The URLs to exclude for robots.txt.
 		 * 
-		 * @returns {Savory.Iterators.Iterator}
+		 * @returns {Sincerity.Iterators.Iterator}
 		 */
 		Public.getExclusions = function() {
 			return null
@@ -823,7 +823,7 @@ Savory.SEO = Savory.SEO || function() {
 		/**
 		 * The URLs to include for robots.txt.
 		 * 
-		 * @returns {Savory.Iterators.Iterator}
+		 * @returns {Sincerity.Iterators.Iterator}
 		 */
 		Public.getInclusions = function() {
 			return null
@@ -858,7 +858,7 @@ Savory.SEO = Savory.SEO || function() {
 	 * @author Tal Liron
 	 * @version 1.0
 	 */
-	Public.ExplicitProvider = Savory.Classes.define(function(Module) {
+	Public.ExplicitProvider = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.SEO.ExplicitProvider */
 		var Public = {}
 		
@@ -879,15 +879,15 @@ Savory.SEO = Savory.SEO || function() {
 		}
 		
 		Public.getLocations = function() {
-			return new Savory.Iterators.Transformer(new Savory.Iterators.Array(this.locations), massage, this)
+			return new Sincerity.Iterators.Transformer(new Sincerity.Iterators.Array(this.locations), massage, this)
 		}
 		
 		Public.getExclusions = function() {
-			return new Savory.Iterators.Array(this.exclusions)
+			return new Sincerity.Iterators.Array(this.exclusions)
 		}
 	
 		Public.getInclusions = function() {
-			return new Savory.Iterators.Array(this.inclusions)
+			return new Sincerity.Iterators.Array(this.inclusions)
 		}
 		
 		//
@@ -895,7 +895,7 @@ Savory.SEO = Savory.SEO || function() {
 		//
 	
 		function massage(location) {
-			if (Savory.Objects.isString(location)) {
+			if (Sincerity.Objects.isString(location)) {
 				return {
 					uri: String(location),
 					lastModified: new Date(),

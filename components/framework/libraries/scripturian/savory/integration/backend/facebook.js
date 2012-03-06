@@ -12,12 +12,12 @@
 //
 
 document.executeOnce('/savory/service/nonces/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/templates/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/cryptography/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/templates/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/cryptography/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 
 var Savory = Savory || {}
 
@@ -42,9 +42,9 @@ Savory.Facebook = Savory.Facebook || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('facebook')
+	Public.logger = Prudence.Logging.getLogger('facebook')
 
 	/**
 	 * True if we are in a Facebook canvas application
@@ -73,7 +73,7 @@ Savory.Facebook = Savory.Facebook || function() {
 	 * @param [appSecret=application.globals.get('savory.integration.backend.facebook.appSecret')]
 	 * @param [callbackUri=application.globals.get('savory.integration.backend.facebook.callbackUri')]
 	 */
-	Public.Application = Savory.Classes.define(function() {
+	Public.Application = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Facebook.Application */
 	    var Public = {}
 	    
@@ -92,9 +92,9 @@ Savory.Facebook = Savory.Facebook || function() {
 		 * @returns {String} The URI
 		 */
 	    Public.getAuthenticationUri = function(from) {
-			return Savory.Resources.buildUri(authenticationUri, {
+			return Prudence.Resources.buildUri(authenticationUri, {
 				client_id: this.appId,
-				redirect_uri: from ? Savory.Resources.buildUri(this.callbackUri, {from: from}) : this.callbackUri,
+				redirect_uri: from ? Prudence.Resources.buildUri(this.callbackUri, {from: from}) : this.callbackUri,
 				response_type: 'code',
 				state: Savory.Nonces.create()
 			})
@@ -119,7 +119,7 @@ Savory.Facebook = Savory.Facebook || function() {
 			}
 			
 			// Try regular payload
-			var payload = Savory.Resources.getQuery(conversation)
+			var payload = Prudence.Resources.getQuery(conversation)
 			//Public.logger.dump(payload).info(conversation.reference.fragment)
 			
 			if (payload.code) {
@@ -147,7 +147,7 @@ Savory.Facebook = Savory.Facebook || function() {
 			var result = this.requestGraphWeb('oauth/access_token', {
 				client_id: this.appId,
 				client_secret: this.appSecret,
-				redirect_uri: Savory.Resources.buildUri(this.callbackUri, {from: from}), // This needs to be identical to our original redirect_uri
+				redirect_uri: Prudence.Resources.buildUri(this.callbackUri, {from: from}), // This needs to be identical to our original redirect_uri
 				code: code
 			})
 			
@@ -169,7 +169,7 @@ Savory.Facebook = Savory.Facebook || function() {
 				signedRequest = String(signedRequest).split('.')
 				if (signedRequest > 1) {
 					var payload = signedRequest[1]
-					var data = Savory.JSON.from(Savory.Cryptography.toBytesFromBase64(payload.replace(/-/g, '+').replace(/_/g, '/')))
+					var data = Sincerity.JSON.from(Sincerity.Cryptography.toBytesFromBase64(payload.replace(/-/g, '+').replace(/_/g, '/')))
 					
 					// Check algorithm
 					var algorithm = data.algorithm ? String(data.algorithm).toUpperCase() : null
@@ -179,7 +179,7 @@ Savory.Facebook = Savory.Facebook || function() {
 					}
 
 					// Check signature
-					var expectedSignature = Savory.Cryptography.hmac(Savory.Cryptography.toBytesFromBase64(payload), Savory.Cryptography.toBytesFromBase64(this.appSecret), 'HmacSHA256')
+					var expectedSignature = Sincerity.Cryptography.hmac(Sincerity.Cryptography.toBytesFromBase64(payload), Sincerity.Cryptography.toBytesFromBase64(this.appSecret), 'HmacSHA256')
 					var signature = null // TODO Base64.decode(signedRequest[0])
 					if (signature != expectedSignature) {
 						Public.logger.warning('Payload has wrong signature: ' + signature)
@@ -204,7 +204,7 @@ Savory.Facebook = Savory.Facebook || function() {
 		 * @returns The API results
 		 */
 		Public.requestGraphWeb = function(id, query) {
-			return Savory.Resources.request({
+			return Prudence.Resources.request({
 				uri: graphUri.cast(id),
 				query: query,
 				result: 'web'
@@ -219,7 +219,7 @@ Savory.Facebook = Savory.Facebook || function() {
 		 * @returns The API results
 		 */
 		Public.requestGraphJson = function(id, query) {
-			return Savory.Resources.request({
+			return Prudence.Resources.request({
 				uri: graphUri.cast(id),
 				query: query,
 				mediaType: 'application/json'
@@ -236,7 +236,7 @@ Savory.Facebook = Savory.Facebook || function() {
 	 * @name Savory.Facebook.Session
 	 * @see #getSession
 	 */
-	Public.Session = Savory.Classes.define(function() {
+	Public.Session = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Facebook.Session */
 	    var Public = {}
 	    
@@ -273,7 +273,7 @@ Savory.Facebook = Savory.Facebook || function() {
 	var graphUri = 'https://graph.facebook.com/{0}'
 	var defaultAppId = application.globals.get('savory.integration.backend.facebook.appId')
 	var defaultAppSecret = application.globals.get('savory.integration.backend.facebook.appSecret')
-	var defaultCallbackUri = Savory.Objects.string(application.globals.get('savory.integration.backend.facebook.callbackUri'))
+	var defaultCallbackUri = Sincerity.Objects.string(application.globals.get('savory.integration.backend.facebook.callbackUri'))
 	
 	return Public
 }()

@@ -24,7 +24,7 @@ function handleGet(conversation) {
 	if (expressCheckout) {
 		var result = expressCheckout.complete()
 		if (result) {
-			return 'Payment succeeded!\n' + Savory.JSON.to(result, true)
+			return 'Payment succeeded!\n' + Sincerity.JSON.to(result, true)
 		}
 	}
 	else if (Savory.PayPal.cancelOrder(conversation)) {

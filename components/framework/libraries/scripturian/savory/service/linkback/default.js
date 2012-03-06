@@ -12,9 +12,9 @@
 //
 
 document.executeOnce('/savory/service/rpc/')
-document.executeOnce('/savory/foundation/objects/')
+document.executeOnce('/sincerity/objects/')
 document.executeOnce('/savory/foundation/html/parsing/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 /**
@@ -34,9 +34,9 @@ Savory.Linkback = Savory.Linkback || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('linkback')
+	Public.logger = Prudence.Logging.getLogger('linkback')
 
 	/**
 	 * Installs the library's pass-throughs and RPC modules.
@@ -75,7 +75,7 @@ Savory.Linkback = Savory.Linkback || function() {
 	 */
 	Public.routing = function() {
     	var uri = predefinedGlobals['savory.service.linkback.trackbackUri']
-    	uri = (Savory.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/trackback/{uri}/'
+    	uri = (Sincerity.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/trackback/{uri}/'
 		router.captureAndHide(uri, '/savory/service/linkback/trackback/')
 	}
 
@@ -89,7 +89,7 @@ Savory.Linkback = Savory.Linkback || function() {
 		}
 		else {
 	    	var result = linkbacks.upsert({uri: uri}, {$set: {uri: uri}}, false, true)
-	    	if (result && Savory.Objects.exists(result.upserted)) {
+	    	if (result && Sincerity.Objects.exists(result.upserted)) {
 	    		id = String(result.upserted)
 	    	}
     	}
@@ -110,7 +110,7 @@ Savory.Linkback = Savory.Linkback || function() {
 	 * @param {String} [params.trackbackUri=Savory.Linkback.getTrackbackUri(params.uri)]
 	 */
 	Public.trackbackHead = function(params) {
-		params = Savory.Objects.clone(params)
+		params = Sincerity.Objects.clone(params)
 		params.indent = params.indent || ''
 		params.aboutUri = params.aboutUri || params.uri
 		params.title = params.title || params.uri
@@ -140,7 +140,7 @@ Savory.Linkback = Savory.Linkback || function() {
 	 * @throws A {@link Savory.Linkback.PingbackFault} code upon failure
 	 */
 	Public.linkback = function(params) {
-		params = Savory.Objects.clone(params)
+		params = Sincerity.Objects.clone(params)
 		var query = {links: {$not: {$elemMatch: {sourceUri: params.sourceUri}}}}
 		if (params.id) {
 			query._id = MongoDB.id(params.id)
@@ -181,7 +181,7 @@ Savory.Linkback = Savory.Linkback || function() {
 	 * @param params.excerpt
 	 */
 	Public.track = function(params) {
-		var result = Savory.Resources.request({
+		var result = Prudence.Resources.request({
 			uri: params.trackbackUri,
 			method: 'post',
 			mediaType: 'application/xml',
@@ -251,11 +251,11 @@ Savory.Linkback = Savory.Linkback || function() {
 	 * @param {String} uri The URI of the page to examine
 	 */
 	Public.discover = function(uri, tryPingbackHeaders, tryPingbackContent, tryTrackback) {
-		tryPingbackHeaders = Savory.Objects.ensure(tryPingbackHeaders, true)
-		tryPingbackContent = Savory.Objects.ensure(tryPingbackContent, true)
-		tryTrackback = Savory.Objects.ensure(tryTrackback, true)
+		tryPingbackHeaders = Sincerity.Objects.ensure(tryPingbackHeaders, true)
+		tryPingbackContent = Sincerity.Objects.ensure(tryPingbackContent, true)
+		tryTrackback = Sincerity.Objects.ensure(tryTrackback, true)
 		
-		var result = Savory.Resources.request({
+		var result = Prudence.Resources.request({
 			uri: uri,
 			mediaType: 'text/html',
 			result: {
@@ -289,7 +289,7 @@ Savory.Linkback = Savory.Linkback || function() {
 				var rdf = result.representation.match(trackbackRegExp)
 				rdf = rdf && rdf.length ? rdf[0] : null
 				if (rdf) {
-					rdf = Savory.XML.from(rdf)
+					rdf = Sincerity.XML.from(rdf)
 					rdf = rdf.getElements('rdf:RDF')
 					if (rdf.length) {
 						var description = rdf[0].getElements('rdf:Description')
@@ -353,7 +353,7 @@ Savory.Linkback = Savory.Linkback || function() {
 	Public.Pingback = {
 		ping: function(sourceUri, targetUri) {
 			// Verify that the source is linking to us
-			var html = Savory.Resources.request({
+			var html = Prudence.Resources.request({
 				uri: sourceUri,
 				mediaType: 'text/html'
 			})
@@ -397,8 +397,8 @@ Savory.Linkback = Savory.Linkback || function() {
 			'{indent}\t<rdf:Description rdf:about="{aboutUri}" dc:identifier="{uri}" dc:title="{title}" trackback:ping="{trackbackUri}" />\n' +
 		'{indent}</rdf:RDF>'
 
-   	var trackbackUri = Savory.Objects.string(application.globals.get('savory.service.linkback.trackbackUri'))
-   	var pingbackUri = Savory.Objects.string(application.globals.get('savory.service.linkback.pingbackUri'))
+   	var trackbackUri = Sincerity.Objects.string(application.globals.get('savory.service.linkback.trackbackUri'))
+   	var pingbackUri = Sincerity.Objects.string(application.globals.get('savory.service.linkback.pingbackUri'))
 
 	var linkbacks = new MongoDB.Collection('linkbacks')
 	linkbacks.ensureIndex({uri: 1}, {unique: true})

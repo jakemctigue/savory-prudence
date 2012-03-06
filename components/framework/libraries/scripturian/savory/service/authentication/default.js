@@ -20,13 +20,13 @@
 //
 
 document.executeOnce('/savory/service/internationalization/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/templates/')
-document.executeOnce('/savory/foundation/cryptography/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/prudence/lazy/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/templates/')
+document.executeOnce('/sincerity/cryptography/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/prudence/lazy/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -45,9 +45,9 @@ Savory.Authentication = Savory.Authentication || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('authentication')
+	Public.logger = Prudence.Logging.getLogger('authentication')
 	
 	Public.getProviderBySlug = function(conversation) {
 		var providerName = conversation.locals.get('provider') || conversation.query.get('provider')
@@ -95,16 +95,16 @@ Savory.Authentication = Savory.Authentication || function() {
 	Public.routing = function() {
 		// User
     	var uri = predefinedGlobals['savory.service.authentication.uri']
-    	uri = (Savory.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/authentication/'
+    	uri = (Sincerity.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/authentication/'
 		router.captureAndHide(uri, '/savory/service/authentication/')
 		
     	var logoutUri = predefinedGlobals['savory.service.authentication.logoutUri']
-    	logoutUri = (Savory.Objects.isArray(logoutUri) && logoutUri.length > 1) ? logoutUri[1] : uri + 'logout/'
+    	logoutUri = (Sincerity.Objects.isArray(logoutUri) && logoutUri.length > 1) ? logoutUri[1] : uri + 'logout/'
 		router.captureAndHide(logoutUri, '/savory/service/authentication/logout/')
 
 		// Provider callbacks (TODO: from providers?)
     	var providerBaseUri = predefinedGlobals['savory.service.authentication.providerBaseUri']
-    	providerBaseUri = (Savory.Objects.isArray(providerBaseUri) && providerBaseUri.length > 1) ? providerBaseUri[1] : uri + 'provider/'
+    	providerBaseUri = (Sincerity.Objects.isArray(providerBaseUri) && providerBaseUri.length > 1) ? providerBaseUri[1] : uri + 'provider/'
 
 		router.captureAndHide(providerBaseUri + 'facebook/', '/savory/service/authentication/provider/facebook/callback/')
 		router.captureAndHide(providerBaseUri + 'twitter/', '/savory/service/authentication/provider/twitter/callback/')
@@ -148,16 +148,16 @@ Savory.Authentication = Savory.Authentication || function() {
 	
 	Public.redirect = function(conversation) {
 		if (!conversation.internal) {
-			conversation.response.redirectSeeOther(Savory.Resources.buildUri(Public.getUri(), {from: conversation.reference}))
+			conversation.response.redirectSeeOther(Prudence.Resources.buildUri(Public.getUri(), {from: conversation.reference}))
 		}			
 	}
 	
 	Public.createPasswordSalt = function() {
-		return Savory.Cryptography.random(passwordSaltLength, 'SHA1PRNG')
+		return Sincerity.Cryptography.random(passwordSaltLength, 'SHA1PRNG')
 	}
 	
 	Public.encryptPassword = function(password, salt) {
-		var encrypted = Savory.Cryptography.digest(password, Savory.Cryptography.toBytesFromBase64(salt), passwordIterations, passwordAlgorithm)
+		var encrypted = Sincerity.Cryptography.digest(password, Sincerity.Cryptography.toBytesFromBase64(salt), passwordIterations, passwordAlgorithm)
 		Public.logger.info('Encrypted password: ' + encrypted)
 		return encrypted
 	}
@@ -174,7 +174,7 @@ Savory.Authentication = Savory.Authentication || function() {
 		}
 
 		var user = usersCollection.findOne(query)
-		if (user && Savory.Objects.exists(password)) {
+		if (user && Sincerity.Objects.exists(password)) {
 			password = Public.encryptPassword(password, user.passwordSalt)
 			if (password != user.password) {
 				user = null
@@ -223,7 +223,7 @@ Savory.Authentication = Savory.Authentication || function() {
 	
 	Public.getCurrentSession = function(conversation) {
 		var session = conversation.locals.get('savory.service.authentication.session')
-		if (!Savory.Objects.exists(session)) {
+		if (!Sincerity.Objects.exists(session)) {
 			session = Public.getSession(conversation)
 		}
 		return session
@@ -238,7 +238,7 @@ Savory.Authentication = Savory.Authentication || function() {
 		
 		if (cookie && cookie.value) {
 			sessionId = MongoDB.id(cookie.value)
-			if (!Savory.Objects.exists(sessionId)) {
+			if (!Sincerity.Objects.exists(sessionId)) {
 				// Invalid session ID?
 				cookie.path = cookiePath
 				cookie.value = null
@@ -246,11 +246,11 @@ Savory.Authentication = Savory.Authentication || function() {
 			}
 		}
 		
-		if (Savory.Objects.exists(sessionId)) {
+		if (Sincerity.Objects.exists(sessionId)) {
 			session = sessionsCollection.findOne({_id: sessionId})
 		}
 		
-		//Public.logger.info('Session: ' + Savory.JSON.to(session))
+		//Public.logger.info('Session: ' + Sincerity.JSON.to(session))
 		
 		if (session) {
 			return new Public.Session(session, cookie, conversation)
@@ -318,7 +318,7 @@ Savory.Authentication = Savory.Authentication || function() {
 			userId = usersCollection.findOne(query)._id
 		}
 		
-		if (!Savory.Objects.exists(userId)) {
+		if (!Sincerity.Objects.exists(userId)) {
 			return null
 		}
 
@@ -357,7 +357,7 @@ Savory.Authentication = Savory.Authentication || function() {
 	 * @name Savory.Authentication.Session
 	 * @see #getSession
 	 */
-	Public.Session = Savory.Classes.define(function(Module) {
+	Public.Session = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Authentication.Session */
 	    var Public = {}
 	    
@@ -431,7 +431,7 @@ Savory.Authentication = Savory.Authentication || function() {
 	 * @see #getUserByName
 	 * @see #getUserById
 	 */
-	Public.User = Savory.Classes.define(function() {
+	Public.User = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Authentication.User */
 	    var Public = {}
 	    
@@ -488,21 +488,21 @@ Savory.Authentication = Savory.Authentication || function() {
 	/**
 	 * @class
 	 * @name Savory.Authentication.Form
-     * @augments Savory.Resources.Form
+     * @augments Prudence.Resources.Form
 	 */
-	Public.Form = Savory.Classes.define(function(Module) {
+	Public.Form = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Authentication.Form */
 	    var Public = {}
 
 	    /** @ignore */
-	    Public._inherit = Savory.Resources.Form
+	    Public._inherit = Prudence.Resources.Form
 
 	    /** @ignore */
 	    Public._configure = ['conversation']
 
         /** @ignore */
     	Public._construct = function(config) {
-        	if (!Savory.Objects.exists(this.fields)) {
+        	if (!Sincerity.Objects.exists(this.fields)) {
 				this.fields = {
 					username: {
 						required: true
@@ -512,7 +512,7 @@ Savory.Authentication = Savory.Authentication || function() {
 						required: true
 					}
 				}
-        		if (Savory.Objects.exists(this.conversation)) {
+        		if (Sincerity.Objects.exists(this.conversation)) {
         			var textPack = Savory.Internationalization.getCurrentPack(this.conversation)
         			this.fields.username.label = textPack.get('savory.service.authentication.form.login.label.username')
         			this.fields.password.label = textPack.get('savory.service.authentication.form.login.label.password')
@@ -555,7 +555,7 @@ Savory.Authentication = Savory.Authentication || function() {
 	 * @class
 	 * @name Savory.Authentication.Provider
 	 */
-	Public.Provider = Savory.Classes.define(function() {
+	Public.Provider = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Authentication.Provider */
 		var Public = {}
 		
@@ -608,8 +608,8 @@ Savory.Authentication = Savory.Authentication || function() {
 	var passwordIterations = application.globals.get('savory.service.authentication.passwordIterations') || 1000
 	var passwordSaltLength = application.globals.get('savory.service.authentication.passwordSaltLength') || 8
 	var cookiePath = application.globals.get('savory.service.authentication.cookiePath') || '/'
-	var authenticationUri = Savory.Objects.string(application.globals.get('savory.service.authentication.uri'))
-	var logoutUri = Savory.Objects.string(application.globals.get('savory.service.authentication.logoutUri'))
+	var authenticationUri = Sincerity.Objects.string(application.globals.get('savory.service.authentication.uri'))
+	var logoutUri = Sincerity.Objects.string(application.globals.get('savory.service.authentication.logoutUri'))
 
 	return Public
 }()

@@ -12,11 +12,11 @@
 //
 
 document.executeOnce('/savory/service/rpc/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/xml/')
-document.executeOnce('/savory/foundation/rhino/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/xml/')
+document.executeOnce('/sincerity/rhino/')
+document.executeOnce('/prudence/resources/')
 
 // Makes sure that lazy modules are reset at the same time as this document is reset
 Savory.RPC.resetLazyModules()
@@ -63,7 +63,7 @@ function handlePost(conversation) {
 	Savory.RPC.getLazyModules()
 	module = Savory.RPC.getExportedModule(module)
 	if (!module) {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 	
 	var entity = conversation.entity ? conversation.entity.text : null
@@ -79,7 +79,7 @@ function handlePost(conversation) {
 		// Try XML-RPC
 		var doc
 		try {
-			doc = Savory.XML.from(entity)
+			doc = Sincerity.XML.from(entity)
 		}
 		catch (x) {
 			faultCode = Savory.RPC.Fault.ParseError
@@ -115,8 +115,8 @@ function handlePost(conversation) {
 	else {
 		// Try JSON-RPC
 		try {
-			calls = Savory.JSON.from(entity)
-			isBatch = Savory.Objects.isArray(calls)
+			calls = Sincerity.JSON.from(entity)
+			isBatch = Sincerity.Objects.isArray(calls)
 			if (!isBatch) {
 				calls = [calls]
 			}
@@ -266,7 +266,7 @@ function handlePost(conversation) {
 									value = x.message || 'Error'
 								}
 								else {
-									var details = Savory.Rhino.getExceptionDetails(x)
+									var details = Sincerity.Rhino.getExceptionDetails(x)
 									faultCode = Savory.RPC.Fault.ServerError
 									value = details.message
 								}
@@ -306,7 +306,7 @@ function handlePost(conversation) {
 			results.push(result)
 		}
 		// In JSON-RPC, if no ID is supplied, do not return a result (called a 'notification call')
-		else if (faultCode || Savory.Objects.exists(call.id)) {
+		else if (faultCode || Sincerity.Objects.exists(call.id)) {
 	    	var result = {
 	    		id: call.id || null
 	    	}
@@ -349,9 +349,9 @@ function handlePost(conversation) {
 	if (isXml) {
 		if (results.length) {
 			// XML-RPC does not have a batch mode
-			var xml = Savory.XML.to({methodResponse: results[0]})
+			var xml = Sincerity.XML.to({methodResponse: results[0]})
 			if (conversation.query.get('human') == 'true') {
-				xml = Savory.XML.humanize(xml)
+				xml = Sincerity.XML.humanize(xml)
 			}
 			return xml
 		}
@@ -359,10 +359,10 @@ function handlePost(conversation) {
 	else {
 		if (results.length) {
 			if (isBatch) {
-				return Savory.JSON.to(results, conversation.query.get('human') == 'true')
+				return Sincerity.JSON.to(results, conversation.query.get('human') == 'true')
 			}
 			else {
-				return Savory.JSON.to(results[0], conversation.query.get('human') == 'true')
+				return Sincerity.JSON.to(results[0], conversation.query.get('human') == 'true')
 			}
 		}
 	}

@@ -22,5 +22,5 @@ function handleInit(conversation) {
 /** @ignore */
 function handleGet(conversation) {
 	// TODO
-	return Savory.JSON.to({})
+	return Sincerity.JSON.to({})
 }

@@ -11,15 +11,15 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/xml/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/templates/')
-document.executeOnce('/savory/foundation/iterators/')
-document.executeOnce('/savory/foundation/jvm/')
-document.executeOnce('/savory/foundation/prudence/lazy/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/xml/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/templates/')
+document.executeOnce('/sincerity/iterators/')
+document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/prudence/lazy/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -38,9 +38,9 @@ Savory.REST = Savory.REST || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('rest')
+	Public.logger = Prudence.Logging.getLogger('rest')
 
 	/**
 	 * Installs the library's pass-throughs.
@@ -73,7 +73,7 @@ Savory.REST = Savory.REST || function() {
 	}
 	
 	Public.lazyConfigsForMongoDbCollection = function(baseUri, name, plural) {
-		/*if (!Savory.Objects.exists(name)) {
+		/*if (!Sincerity.Objects.exists(name)) {
 			if (plural.endsWith('es')) {
 				name = plural.substring(0, plural.length - 2)
 			}
@@ -113,7 +113,7 @@ Savory.REST = Savory.REST || function() {
 		
 		if (!collections || !collections.length) {
 			if (MongoDB.defaultDb) {
-				collections = Savory.JVM.fromCollection(MongoDB.defaultDb.collectionNames)
+				collections = Sincerity.JVM.fromCollection(MongoDB.defaultDb.collectionNames)
 			}
 			else {
 				collections = []
@@ -122,11 +122,11 @@ Savory.REST = Savory.REST || function() {
 
 		for (var c in collections) {
 			var collection = collections[c]
-			if (Savory.Objects.isString(collection)) {
+			if (Sincerity.Objects.isString(collection)) {
 				collection = String(collection)
 				collection = {plural: collection}
 			}
-			Savory.Objects.merge(configs, Public.lazyConfigsForMongoDbCollection(baseUri, collection.name, collection.plural))
+			Sincerity.Objects.merge(configs, Public.lazyConfigsForMongoDbCollection(baseUri, collection.name, collection.plural))
 		}
 		
 		return configs
@@ -160,8 +160,8 @@ Savory.REST = Savory.REST || function() {
 	 */
 	Public.Filters = {
 		primitivize: function(doc) {
-			if (Savory.Objects.isObject(doc)) {
-				if (Savory.Objects.isDate(doc)) {
+			if (Sincerity.Objects.isObject(doc)) {
+				if (Sincerity.Objects.isDate(doc)) {
 					return doc.getTime()
 				}
 				
@@ -176,8 +176,8 @@ Savory.REST = Savory.REST || function() {
 		},
 		
 		stringify: function(doc) {
-			if (Savory.Objects.isObject(doc)) {
-				if (Savory.Objects.isDate(doc)) {
+			if (Sincerity.Objects.isObject(doc)) {
+				if (Sincerity.Objects.isDate(doc)) {
 					return String(doc.getTime())
 				}
 				
@@ -198,7 +198,7 @@ Savory.REST = Savory.REST || function() {
 	 * @class
 	 * @name Savory.REST.Resource
 	 */
-	Public.Resource = Savory.Classes.define(function() {
+	Public.Resource = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.REST.Resource */
 	    var Public = {}
 	    
@@ -207,16 +207,16 @@ Savory.REST = Savory.REST || function() {
 	    
 	    /** @ignore */
 	    Public._construct = function(config) {
-        	this.allowPost = Savory.Objects.ensure(this.allowPost, true)
-			this.allowPut = Savory.Objects.ensure(this.allowPut, true)
-			this.allowDelete = Savory.Objects.ensure(this.allowDelete, true)
+        	this.allowPost = Sincerity.Objects.ensure(this.allowPost, true)
+			this.allowPut = Sincerity.Objects.ensure(this.allowPut, true)
+			this.allowDelete = Sincerity.Objects.ensure(this.allowDelete, true)
 	    }
 
 	    Public.handleInit = function(conversation) {
-	    	if (Savory.Objects.exists(this.mediaTypes)) {
+	    	if (Sincerity.Objects.exists(this.mediaTypes)) {
 	    		for (var m in this.mediaTypes) {
 	    			var mediaType = this.mediaTypes[m]
-	    			if (Savory.Objects.isString(mediaType)) {
+	    			if (Sincerity.Objects.isString(mediaType)) {
 	    				conversation.addMediaTypeByName(mediaType)
 	    			}
 	    			else {
@@ -230,23 +230,23 @@ Savory.REST = Savory.REST || function() {
 	    }
 	    
 	    Public.handleGet = function(conversation) {
-			return Savory.Resources.Status.ServerError.NotImplemented
+			return Prudence.Resources.Status.ServerError.NotImplemented
 	    }
 	    
 	    Public.handleGetInfo = function(conversation) {
-			return Savory.Resources.Status.ServerError.NotImplemented
+			return Prudence.Resources.Status.ServerError.NotImplemented
 	    }
 	    
 		Public.handlePost = function(conversation) {
-			return Savory.Resources.Status.ServerError.NotImplemented
+			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		Public.handlePut = function(conversation) {
-			return Savory.Resources.Status.ServerError.NotImplemented
+			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		Public.handleDelete = function(conversation) {
-			return Savory.Resources.Status.ServerError.NotImplemented
+			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		return Public
@@ -281,7 +281,7 @@ Savory.REST = Savory.REST || function() {
 	 * @param [config.extract] TODO
 	 * @param [config.filters] TODO
 	 */
-	Public.MongoDbResource = Savory.Classes.define(function(Module) {
+	Public.MongoDbResource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.REST.MongoDbResource */
 	    var Public = {}
 
@@ -293,20 +293,20 @@ Savory.REST = Savory.REST || function() {
 
 	    /** @ignore */
 	    Public._construct = function(config) {
-	    	if (Savory.Objects.isString(config)) {
+	    	if (Sincerity.Objects.isString(config)) {
 				this.name = String(config)
 			}
 			
-			if (Savory.Objects.exists(this.plural)) {
-				if (!Savory.Objects.isString(this.plural)) {
+			if (Sincerity.Objects.exists(this.plural)) {
+				if (!Sincerity.Objects.isString(this.plural)) {
 					this.plural = this.name + 's'
 				}
 			}
 			this.collection = this.collection || this.plural || this.name + 's'
-			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 
 			// Convert fields to MongoDB's inclusion notation
-			this.fields = Savory.Objects.array(this.fields)
+			this.fields = Sincerity.Objects.array(this.fields)
 			var fields = {}
 			for (var f in this.fields) {
 				fields[this.fields[f]] = 1
@@ -314,7 +314,7 @@ Savory.REST = Savory.REST || function() {
 			this.fields = fields
 			
 			if (this.extract) {
-				this.extract = Savory.Objects.array(this.extract)
+				this.extract = Sincerity.Objects.array(this.extract)
 			}
 			
 			Savory.REST.MongoDbResource.prototype.superclass.call(this, this)
@@ -373,13 +373,13 @@ Savory.REST = Savory.REST || function() {
 
 			var iterator, total
 			if (this.plural) {
-				var q = this.query ? castQuery(conversation, Savory.Objects.clone(this.query), this.values) : {}
+				var q = this.query ? castQuery(conversation, Sincerity.Objects.clone(this.query), this.values) : {}
 				iterator = this.collection.find(q, this.fields)
 				total = iterator.count()
 				
 				if (!total) {
 					iterator.close()
-					return Savory.Resources.Status.ClientError.NotFound
+					return Prudence.Resources.Status.ClientError.NotFound
 				}
 
 				if (query.limit === 0) {
@@ -396,13 +396,13 @@ Savory.REST = Savory.REST || function() {
 				}
 			}
 			else {
-				var q = castQuery(conversation, this.query ? Savory.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
+				var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
 				var doc = this.collection.findOne(q, this.fields)
 				if (doc) {
-					iterator = new Savory.Iterators.Array([doc])
+					iterator = new Sincerity.Iterators.Array([doc])
 				}
 				else {
-					return Savory.Resources.Status.ClientError.NotFound
+					return Prudence.Resources.Status.ClientError.NotFound
 				}
 			}
 			
@@ -416,56 +416,56 @@ Savory.REST = Savory.REST || function() {
 	    Public.handlePost = function(conversation) {
 			// TODO: must it be JSON?
 			
-			var updates = Savory.Resources.getEntity(conversation, 'extendedJson')
+			var updates = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			if (!updates) {
-				return Savory.Resources.Status.ClientError.BadRequest
+				return Prudence.Resources.Status.ClientError.BadRequest
 			}
 
 			var query = getQuery(conversation)
 			
-			if (Savory.Objects.isArray(updates)) {
+			if (Sincerity.Objects.isArray(updates)) {
 				if (!this.plural) {
 					// Only plural resources can accept arrays
-					return Savory.Resources.Status.ClientError.BadRequest
+					return Prudence.Resources.Status.ClientError.BadRequest
 				}
 			}
 			else {
-				updates = Savory.Objects.array(updates)
+				updates = Sincerity.Objects.array(updates)
 			}
 			
 			var docs = []
 			for (var u in updates) {
 				var update = updates[u]
-				if (!Savory.Objects.exists(conversation.locals.get('id')) && Savory.Objects.exists(update._id)) {
+				if (!Sincerity.Objects.exists(conversation.locals.get('id')) && Sincerity.Objects.exists(update._id)) {
 					conversation.locals.put('id', String(update._id))
 				}
 				delete update._id
-				var q = castQuery(conversation, this.query ? Savory.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
-				var doc = this.collection.findAndModify(q, {$set: update}, Savory.Objects.isEmpty(this.fields) ? {returnNew: true} : {returnNew: true, fields: this.fields})
+				var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
+				var doc = this.collection.findAndModify(q, {$set: update}, Sincerity.Objects.isEmpty(this.fields) ? {returnNew: true} : {returnNew: true, fields: this.fields})
 				if (doc) {
 					docs.push(doc)
 				}
 			}
 
-			return representIterator.call(this, conversation, query, new Savory.Iterators.Array(docs))
+			return representIterator.call(this, conversation, query, new Sincerity.Iterators.Array(docs))
 		}
 		
 	    Public.handlePut = function(conversation) {
-			var docs = Savory.Resources.getEntity(conversation, 'extendedJson')
+			var docs = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			if (!docs) {
-				return Savory.Resources.Status.ClientError.BadRequest
+				return Prudence.Resources.Status.ClientError.BadRequest
 			}
 
 			var query = getQuery(conversation)
 			
-			if (Savory.Objects.isArray(docs)) {
+			if (Sincerity.Objects.isArray(docs)) {
 				if (!this.plural) {
 					// Only plural resources can accept arrays
-					return Savory.Resources.Status.ClientError.BadRequest
+					return Prudence.Resources.Status.ClientError.BadRequest
 				}
 			}
 			else {
-				docs = Savory.Objects.array(docs)
+				docs = Sincerity.Objects.array(docs)
 			}
 			
 			var duplicates = false
@@ -485,8 +485,8 @@ Savory.REST = Savory.REST || function() {
 				}
 			}
 
-			conversation.statusCode = duplicates ? Savory.Resources.Status.ClientError.Conflict : Savory.Resources.Status.Success.Created
-			return representIterator.call(this, conversation, query, new Savory.Iterators.Array(docs))
+			conversation.statusCode = duplicates ? Prudence.Resources.Status.ClientError.Conflict : Prudence.Resources.Status.Success.Created
+			return representIterator.call(this, conversation, query, new Sincerity.Iterators.Array(docs))
 		}
 		
 	    Public.handleDelete = function(conversation) {
@@ -495,20 +495,20 @@ Savory.REST = Savory.REST || function() {
 				q = {}
 			}
 			else {
-				q = castQuery(conversation, this.query ? Savory.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
+				q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
 			}
 			
 			var result = this.collection.remove(q, 1)
 			if (result) {
 				if (result.ok == 0) {
-					return Savory.Resources.ServerError.Internal
+					return Prudence.Resources.ServerError.Internal
 				}
 				if (result.n == 0) {
-					return Savory.Resources.Status.ClientError.NotFound
+					return Prudence.Resources.Status.ClientError.NotFound
 				}
 			}
 
-			return Savory.Resources.Status.Success.NoContent
+			return Prudence.Resources.Status.Success.NoContent
 		}
 		
 		//
@@ -516,7 +516,7 @@ Savory.REST = Savory.REST || function() {
 		//
 		
 		function getQuery(conversation) {
-			var query = Savory.Resources.getQuery(conversation, {
+			var query = Prudence.Resources.getQuery(conversation, {
 				human: 'bool',
 				format: 'string',
 				filter: 'string[]',
@@ -547,21 +547,21 @@ Savory.REST = Savory.REST || function() {
 		
 		function representIterator(conversation, query, iterator, total) {
 			if (iterator) {
-				iterator = new Savory.Iterators.Transformer(iterator, function(doc) {
+				iterator = new Sincerity.Iterators.Transformer(iterator, function(doc) {
 					return extract(doc, this)
 				}, this.extract)
 				for (var f in query.filter) {
-					iterator = new Savory.Iterators.Transformer(iterator, query.filter[f])
+					iterator = new Sincerity.Iterators.Transformer(iterator, query.filter[f])
 				}
 			}
 				
 			if (this.plural) {
-				var docs = iterator ? Savory.Iterators.toArray(iterator) : []
+				var docs = iterator ? Sincerity.Iterators.toArray(iterator) : []
 				return represent(conversation, query, total ? {total: total, documents: docs} : {documents: docs}, '/savory/service/rest/plural/')
 			}
 			else {
 				if (!iterator.hasNext()) {
-					return Savory.Resources.Status.ClientError.NotFound // this shouldn't happen, really
+					return Prudence.Resources.Status.ClientError.NotFound // this shouldn't happen, really
 				}
 				var doc = iterator.next()
 				iterator.close()
@@ -575,14 +575,14 @@ Savory.REST = Savory.REST || function() {
 					return value
 
 				case 'application/xml':
-					var xml = Savory.XML.to({documents: value})
+					var xml = Sincerity.XML.to({documents: value})
 					if (query.human && xml) {
-						xml = Savory.XML.humanize(xml)
+						xml = Sincerity.XML.humanize(xml)
 					}
 					return xml || ''
 				
 				case 'text/html':
-					var html = Savory.Resources.generateHtml(htmlUri, {
+					var html = Prudence.Resources.generateHtml(htmlUri, {
 						resource: this,
 						value: value,
 						query: conversation.query,
@@ -591,14 +591,14 @@ Savory.REST = Savory.REST || function() {
 					return html || '<html>Could not represent as HTML</html>'
 			}
 			
-			return Savory.JSON.to(value, query.human || false)
+			return Sincerity.JSON.to(value, query.human || false)
 		}
 
 		function castQuery(conversation, obj, values) {
-			if (Savory.Objects.isObject(obj, true)) {
+			if (Sincerity.Objects.isObject(obj, true)) {
 				for (var k in obj) {
 					var value = obj[k]
-					if (Savory.Objects.isString(value)) {
+					if (Sincerity.Objects.isString(value)) {
 						obj[k] = String(value).cast(conversation.locals)
 						if (values) {
 							obj[k] = String(value).cast(values)
@@ -617,7 +617,7 @@ Savory.REST = Savory.REST || function() {
 				return doc
 			}
 			
-			commands = Savory.Objects.clone(commands)
+			commands = Sincerity.Objects.clone(commands)
 			var e = commands.shift()
 			return extract(doc[e], commands)
 		}

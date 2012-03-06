@@ -11,11 +11,11 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/files/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/files/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 
 /** @ignore */
 function handleInit(conversation) {
@@ -24,7 +24,7 @@ function handleInit(conversation) {
 
 /** @ignore */
 function handleGetInfo(conversation) {
-	var query = Savory.Resources.getQuery(conversation, {
+	var query = Prudence.Resources.getQuery(conversation, {
 		name: 'string'
 	})
 	
@@ -41,7 +41,7 @@ function handleGetInfo(conversation) {
 
 /** @ignore */
 function handleGet(conversation) {
-	var query = Savory.Resources.getQuery(conversation, {
+	var query = Prudence.Resources.getQuery(conversation, {
 		name: 'string',
 		lines: 'int',
 		position: 'int',
@@ -60,17 +60,17 @@ function handleGet(conversation) {
 		}
 		catch (x) {
 			// Bad pattern
-			return Savory.Resources.Status.ClientError.BadRequest
+			return Prudence.Resources.Status.ClientError.BadRequest
 		}
 		
 		if (pattern) {
-			temp = Savory.Files.temporary('savory-console-', '.log')
+			temp = Sincerity.Files.temporary('savory-console-', '.log')
 			try {
-				Savory.Files.grep(query.name, temp, pattern)
+				Sincerity.Files.grep(query.name, temp, pattern)
 			}
 			catch (x if x.javaException instanceof java.io.FileNotFoundException) {
-				Savory.Logging.getLogger().exception(x)
-				return Savory.Resources.Status.ClientError.NotFound
+				Prudence.Logging.getLogger().exception(x)
+				return Prudence.Resources.Status.ClientError.NotFound
 			}
 			query.name = temp
 		}
@@ -83,16 +83,16 @@ function handleGet(conversation) {
 			conversation.modificationTimestamp = lastModified
 	    }
 		try {
-			return Savory.JSON.to(Savory.Files.tail(file, query.position, query.forward, query.lines))
+			return Sincerity.JSON.to(Sincerity.Files.tail(file, query.position, query.forward, query.lines))
 		}
 		catch (x if x.javaException instanceof java.io.FileNotFoundException) {
-			Savory.Logging.getLogger().exception(x)
-			return Savory.Resources.Status.ClientError.NotFound
+			Prudence.Logging.getLogger().exception(x)
+			return Prudence.Resources.Status.ClientError.NotFound
 		}
 	}
 	finally {
 		if (temp) {
-			Savory.Files.remove(temp)
+			Sincerity.Files.remove(temp)
 		}
 	}
 }

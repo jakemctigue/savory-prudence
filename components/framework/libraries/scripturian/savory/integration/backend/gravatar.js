@@ -11,11 +11,11 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/cryptography/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/cryptography/')
 document.executeOnce('/savory/foundation/html/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/prudence/resources/')
 
 var Savory = Savory || {}
 
@@ -30,7 +30,7 @@ var Savory = Savory || {}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Gravatar = Savory.Gravatar || Savory.Classes.define(function() {
+Savory.Gravatar = Savory.Gravatar || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.Gravatar */
     var Public = {}
     
@@ -48,7 +48,7 @@ Savory.Gravatar = Savory.Gravatar || Savory.Classes.define(function() {
 	 */
     Public.getHash = function() {
 		if (!this.hash) {
-			this.hash = this.email ? Savory.Cryptography.md5(email.trim().toLowerCase()) : ''
+			this.hash = this.email ? Sincerity.Cryptography.md5(email.trim().toLowerCase()) : ''
 		}
 		return this.hash
 	}
@@ -68,7 +68,7 @@ Savory.Gravatar = Savory.Gravatar || Savory.Classes.define(function() {
 	 * @returns {Object}
 	 */
     Public.getProfile = function() {
-		return Savory.Resources.request({
+		return Prudence.Resources.request({
 			uri: this.getProfileUri() + '.json',
 			mediaType: 'application/json'
 		})
@@ -82,7 +82,7 @@ Savory.Gravatar = Savory.Gravatar || Savory.Classes.define(function() {
 	 */
     Public.getAvatarUri = function(size) {
 		var uri = avatarUri + this.getHash()
-		return Savory.Objects.exists(size) ? Savory.Resources.buildUri(uri, {s: size}) : uri
+		return Sincerity.Objects.exists(size) ? Prudence.Resources.buildUri(uri, {s: size}) : uri
 	}
 	
 	/**
@@ -96,8 +96,8 @@ Savory.Gravatar = Savory.Gravatar || Savory.Classes.define(function() {
     Public.img = function(size, params) {
 		var uri = this.getAvatarUri(size)
 		size = (size || 80) + 'px'
-		params = params ? Savory.Objects.clone(params) : {}
-		params = Savory.Objects.merge({src: uri, width: size, height: size}, params)
+		params = params ? Sincerity.Objects.clone(params) : {}
+		params = Sincerity.Objects.merge({src: uri, width: size, height: size}, params)
 		return Savory.HTML.img(params)
 	}
 	

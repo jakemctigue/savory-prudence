@@ -31,10 +31,10 @@
 //  
 
 document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/prudence/lazy/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/prudence/lazy/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -53,9 +53,9 @@ Savory.Notification = Savory.Notification || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('notification')
+	Public.logger = Prudence.Logging.getLogger('notification')
 
 	/**
 	 */
@@ -136,10 +136,10 @@ Savory.Notification = Savory.Notification || function() {
 		var service = Public.getServices()[subscription.service]
 		if (service) {
 			var address
-			if (Savory.Objects.exists(subscription.address)) {
+			if (Sincerity.Objects.exists(subscription.address)) {
 				address = subscription.address
 			}
-			else if (Savory.Objects.exists(subscription.reference)) {
+			else if (Sincerity.Objects.exists(subscription.reference)) {
 				var reference = getReference(subscription.reference)
 				if (reference) {
 					address = service.getAddress(reference.value, reference.type)
@@ -217,7 +217,7 @@ Savory.Notification = Savory.Notification || function() {
 	Public.sendQueuedDigests = function(mode) {
 		Public.logger.fine('Checking for {0} digests to send', mode)
 		
-		var sentProperty = Savory.Objects.camelCase('sent', mode)
+		var sentProperty = Sincerity.Objects.camelCase('sent', mode)
 		var query = {channel: {$exists: true}}
 		query[sentProperty]= {$exists: false}
 		
@@ -262,7 +262,7 @@ Savory.Notification = Savory.Notification || function() {
 	 * @class
 	 * @name Savory.Notification.Service
 	 */
-	Public.Service = Savory.Classes.define(function() {
+	Public.Service = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Notification.Service */
 		var Public = {}
 		
@@ -293,7 +293,7 @@ Savory.Notification = Savory.Notification || function() {
 		var type = 'user'
 		var id = reference
 		
-		if (Savory.Objects.isDict(reference, true)) {
+		if (Sincerity.Objects.isDict(reference, true)) {
 			type = reference.type
 			id = reference.id
 		}
@@ -309,7 +309,7 @@ Savory.Notification = Savory.Notification || function() {
 				return null
 		}
 		
-		if (Savory.Objects.exists(value)) {
+		if (Sincerity.Objects.exists(value)) {
 			return {type: type, value: value}
 		}
 		else {

@@ -11,12 +11,12 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/prudence/tasks/')
-document.executeOnce('/savory/foundation/json/')
+document.executeOnce('/prudence/tasks/')
+document.executeOnce('/sincerity/json/')
 
 function call(context) {
 	if (context) {
-		context = Savory.JSON.from(context, true)
+		context = Sincerity.JSON.from(context, true)
 		var taskContext = context['savory.task']
 		if (taskContext && taskContext.fn) {
 			try {

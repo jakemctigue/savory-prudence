@@ -12,10 +12,10 @@
 //
 
 document.executeOnce('/savory/service/internationalization/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/prudence/resources/')
 
 function handleBefore(conversation) {
-	if (Savory.Resources.hasRelativePrefix(conversation, application.globals.get('savory.service.internationalization.excludeFromFilter'))) {
+	if (Prudence.Resources.hasRelativePrefix(conversation, application.globals.get('savory.service.internationalization.excludeFromFilter'))) {
 		return 'continue'
 	}
 	

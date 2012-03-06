@@ -11,12 +11,12 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/files/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/localization/')
-document.executeOnce('/savory/foundation/prudence/tasks/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/files/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/localization/')
+document.executeOnce('/prudence/tasks/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -40,9 +40,9 @@ Savory.Backup = Savory.Backup || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('backup')
+	Public.logger = Prudence.Logging.getLogger('backup')
 	
 	/**
 	 * Multithreaded export of multiple MongoDB collection to files in a directory.
@@ -56,14 +56,14 @@ Savory.Backup = Savory.Backup || function() {
 	 * @param {String|java.io.File} params.directory The directory or its path (will be created if it doesn't exist)
 	 */
 	Public.exportMongoDb = function(params) {
-    	params = Savory.Objects.clone(params)
+    	params = Sincerity.Objects.clone(params)
     	
     	params.threads = params.threads || 5
-		params.directory = (Savory.Objects.isString(params.directory) ? new java.io.File(params.directory) : params.directory).canonicalFile
+		params.directory = (Sincerity.Objects.isString(params.directory) ? new java.io.File(params.directory) : params.directory).canonicalFile
 		params.timeout = params.timeout || (5*60*1000)
 		
 		Public.logger.time('MongoDB export ({0} threads)'.cast(params.threads), function() {
-			if (!Savory.Files.remove(params.directory, true)) {
+			if (!Sincerity.Files.remove(params.directory, true)) {
 				Module.logger.severe('Failed to delete output directory "{0}"', params.directory)
 				return false
 			}
@@ -76,25 +76,25 @@ Savory.Backup = Savory.Backup || function() {
 			var collections = params.collections
 			if (!collections || !collections.length) {
 				var db = params.db || MongoDB.defaultDb
-				if (Savory.Objects.exists(db)) {
-					if (Savory.Objects.isString(db)) {
+				if (Sincerity.Objects.exists(db)) {
+					if (Sincerity.Objects.isString(db)) {
 						db = MongoDB.getDB(MongoDB.defaultConnection, db)
 					}
-					collections = Savory.JVM.fromCollection(db.collectionNames)
+					collections = Sincerity.JVM.fromCollection(db.collectionNames)
 				}
 				else {
 					collections = []
 				}
 			}
 
-			if (Savory.Objects.exists(params.db)) {
+			if (Sincerity.Objects.exists(params.db)) {
 				params.db = String(params.db)
 			}
 
 			var futures = []
 			for (var c in collections) {
 				params.collection = collections[c]
-				if (!Savory.Objects.isString(params.collection)) {
+				if (!Sincerity.Objects.isString(params.collection)) {
 					params.query = params.collection.query
 					params.collection = params.collection.name
 				}
@@ -136,9 +136,9 @@ Savory.Backup = Savory.Backup || function() {
 	 * @param {String|java.io.File} params.directory The base directory (or its path) in which to put the file
      */
 	Public.exportMongoDbCollection = function(params) {
-    	params = Savory.Objects.clone(params)
+    	params = Sincerity.Objects.clone(params)
 
-    	params.directory = (Savory.Objects.isString(params.directory) ? new java.io.File(params.directory) : params.directory).canonicalFile
+    	params.directory = (Sincerity.Objects.isString(params.directory) ? new java.io.File(params.directory) : params.directory).canonicalFile
 		params.file = new java.io.File(params.directory, params.collection + (params.gzip ? '.json.gz' : '.json'))
     	
     	var collection = new MongoDB.Collection(params.collection, {db: params.db})
@@ -157,14 +157,14 @@ Savory.Backup = Savory.Backup || function() {
 	 * @param {Boolean} [params.human=false] True to output indented, human-readable JSON
 	 */
     Public.exportIterator = function(params) {
-    	var writer = Savory.Files.openForTextWriting(params.file, params.gzip || false)
+    	var writer = Sincerity.Files.openForTextWriting(params.file, params.gzip || false)
     	var count = 0
 		Public.logger.info('Exporting iterator to "{0}"', params.file)
     	try {
 			writer.println('[')
     		while (params.iterator.hasNext()) {
     			var entry = params.iterator.next()
-    			var text = Savory.JSON.to(entry, params.human || false)
+    			var text = Sincerity.JSON.to(entry, params.human || false)
     			if (params.iterator.hasNext()) {
     				text += ','
     			}
@@ -179,7 +179,7 @@ Savory.Backup = Savory.Backup || function() {
     		}
     		catch (x) {}
     		writer.close()
-    		Public.logger.info('{0} documents written to "{1}"', Savory.Localization.formatNumber(count), params.file)
+    		Public.logger.info('{0} documents written to "{1}"', Sincerity.Localization.formatNumber(count), params.file)
     	}
     }
     
@@ -192,19 +192,19 @@ Savory.Backup = Savory.Backup || function() {
 	 * @param {Boolean} [params.drop] True to drop the collection before importing
      */
     Public.importMongoDbCollection = function(params) {
-    	params = Savory.Objects.clone(params)
+    	params = Sincerity.Objects.clone(params)
     	
-    	if (!Savory.Objects.exists(params.name) || !Savory.Objects.exists(params.gzip)) {
+    	if (!Sincerity.Objects.exists(params.name) || !Sincerity.Objects.exists(params.gzip)) {
 	    	var name = String(new java.io.File(params.file).name)
 	    	if (name.endsWith('.gz')) {
-	    		if (!Savory.Objects.exists(params.gzip)) { 
+	    		if (!Sincerity.Objects.exists(params.gzip)) { 
 	    			params.gzip = true
 	    		}
 	    		name = name.substring(0, name.length - 3)
 	    	}
 	    	if (name.endsWith('.json')) {
 	    		name = name.substring(0, name.length - 5)
-	    		if (!Savory.Objects.exists(params.name)) {
+	    		if (!Sincerity.Objects.exists(params.name)) {
 	    			params.name = name
 	    		}
 	    	}
@@ -215,7 +215,7 @@ Savory.Backup = Savory.Backup || function() {
     		collection.drop()
     	}
 
-    	var iterator = new Savory.Iterators.JsonArray({file: params.file, gzip: params.gzip})
+    	var iterator = new Sincerity.Iterators.JsonArray({file: params.file, gzip: params.gzip})
     	try {
     		while (iterator.hasNext()) {
     			var doc = iterator.next()

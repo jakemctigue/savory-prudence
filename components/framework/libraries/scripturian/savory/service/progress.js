@@ -29,9 +29,9 @@
 // can create a process (REST) on an external server
 
 document.executeOnce('/savory/service/events/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/prudence/tasks/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/prudence/tasks/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -50,9 +50,9 @@ Savory.Progress = Savory.Progress || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('progress')
+	Public.logger = Prudence.Logging.getLogger('progress')
 	
 	/**
 	 * Installs the library's pass-throughs.
@@ -88,7 +88,7 @@ Savory.Progress = Savory.Progress || function() {
 		}
 
 		key = MongoDB.id(key)
-		var process = Savory.Objects.exists(key) ? processesCollection.findOne({_id: key}) : null
+		var process = Sincerity.Objects.exists(key) ? processesCollection.findOne({_id: key}) : null
 		return process ? new Public.Process(process, context) : null
 	}
 	
@@ -108,19 +108,19 @@ Savory.Progress = Savory.Progress || function() {
 			}]
 		}
 
-		if (Savory.Objects.exists(params.redirect)) {
+		if (Sincerity.Objects.exists(params.redirect)) {
 			process.redirect = String(params.redirect)
 		}
 
-		if (Savory.Objects.exists(params.redirectSuccess)) {
+		if (Sincerity.Objects.exists(params.redirectSuccess)) {
 			process.redirectSuccess = String(params.redirectSuccess)
 		}
 
-		if (Savory.Objects.exists(params.redirectFailure)) {
+		if (Sincerity.Objects.exists(params.redirectFailure)) {
 			process.redirectFailure = String(params.redirectFailure)
 		}
 
-		if (Savory.Objects.exists(params.redirectCancelled)) {
+		if (Sincerity.Objects.exists(params.redirectCancelled)) {
 			process.redirectCancelled = String(params.redirectCancelled)
 		}
 
@@ -138,9 +138,9 @@ Savory.Progress = Savory.Progress || function() {
 				}
 			}
 			params.task.context = params.task.context || {}
-			Savory.Objects.merge(params.task.context, context)
+			Sincerity.Objects.merge(params.task.context, context)
 			Savory.Tasks.task(params.task)
-			Savory.Objects.merge(context, {
+			Sincerity.Objects.merge(context, {
 				'savory.task': params.task
 			})
 		}
@@ -157,7 +157,7 @@ Savory.Progress = Savory.Progress || function() {
 	 * @see Savory.Progress#getProcess
 	 * @see Savory.Progress#startProcess
 	 */
-	Public.Process = Savory.Classes.define(function() {
+	Public.Process = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Progress.Process */
 	    var Public = {}
 	    

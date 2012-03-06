@@ -22,8 +22,8 @@
 //   responses: [post, post, ...]
 // }
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/objects/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -63,13 +63,13 @@ Savory.Discussion = Savory.Discussion || function() {
      * @param {Object} [doc] The MongoDB document if you already have it, otherwise will
      *        be found in the collection using the query 
      */
-	Public.Forum = Savory.Classes.define(function() {
+	Public.Forum = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Discussion.Forum */
 	    var Public = {}
 	    
 		/** @ignore */
 		Public._construct = function(collection, query, doc) {
-			this.collection = Savory.Objects.isString(collection) ? new MongoDB.Collection(collection) : collection
+			this.collection = Sincerity.Objects.isString(collection) ? new MongoDB.Collection(collection) : collection
 			this.query = query
 			this.doc = doc || this.collection.findOne(this.query, {forum: 1})
 			initialize.call(this)
@@ -120,7 +120,7 @@ Savory.Discussion = Savory.Discussion || function() {
 		 * @param {String} post.content The post's content
 		 */
 		Public.respond = function(parentPath, post) {
-			var query = Savory.Objects.clone(this.query)
+			var query = Sincerity.Objects.clone(this.query)
 			query['forum.posts'] = {
 				$elemMatch: {
 					path: parentPath

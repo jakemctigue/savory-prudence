@@ -11,11 +11,11 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/templates/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/jvm/')
+document.executeOnce('/sincerity/templates/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/savory/foundation/html/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/prudence/resources/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}

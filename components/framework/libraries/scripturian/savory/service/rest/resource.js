@@ -34,10 +34,10 @@ function handleInit(conversation) {
 function handleGet(conversation) {
 	var resource = Savory.REST.getResource(conversation, create)
 	if (!resource) {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 	if (!resource.handleGet) {
-		return Savory.Resources.Status.ClientError.MethodNotAllowed
+		return Prudence.Resources.Status.ClientError.MethodNotAllowed
 	}
 	return resource.handleGet(conversation)
 }
@@ -46,7 +46,7 @@ function handleGet(conversation) {
 function handleGetInfo(conversation) {
 	var resource = Savory.REST.getResource(conversation, create)
 	if (!resource) {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 	return resource.handleGetInfo(conversation)
 }
@@ -55,10 +55,10 @@ function handleGetInfo(conversation) {
 function handlePost(conversation) {
 	var resource = Savory.REST.getResource(conversation, create)
 	if (!resource) {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 	if (!resource.handlePost || !resource.allowPost) {
-		return Savory.Resources.Status.ClientError.MethodNotAllowed
+		return Prudence.Resources.Status.ClientError.MethodNotAllowed
 	}
 	return resource.handlePost(conversation)
 }
@@ -67,10 +67,10 @@ function handlePost(conversation) {
 function handlePut(conversation) {
 	var resource = Savory.REST.getResource(conversation, create)
 	if (!resource) {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 	if (!resource.handlePut || !resource.allowPut) {
-		return Savory.Resources.Status.ClientError.MethodNotAllowed
+		return Prudence.Resources.Status.ClientError.MethodNotAllowed
 	}
 	return resource.handlePut(conversation)
 }
@@ -79,10 +79,10 @@ function handlePut(conversation) {
 function handleDelete(conversation) {
 	var resource = Savory.REST.getResource(conversation, create)
 	if (!resource) {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 	if (!resource.handleDelete || !resource.allowDelete) {
-		return Savory.Resources.Status.ClientError.MethodNotAllowed
+		return Prudence.Resources.Status.ClientError.MethodNotAllowed
 	}
 	return resource.handleDelete(conversation)
 }

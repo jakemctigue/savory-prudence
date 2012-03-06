@@ -12,9 +12,9 @@
 //
 
 document.executeOnce('/savory/service/rpc/')
-document.executeOnce('/savory/foundation/rhino/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/rhino/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/prudence/resources/')
 
 // Makes sure that lazy modules are reset at the same time as this document is reset
 Savory.RPC.resetLazyModules()
@@ -28,7 +28,7 @@ function handleInit(conversation) {
 
 /** @ignore */
 function handleGet(conversation) {
-	var query = Savory.Resources.getQuery(conversation, {
+	var query = Prudence.Resources.getQuery(conversation, {
 		namespace: 'string',
 		human: 'bool'
 	})
@@ -36,7 +36,7 @@ function handleGet(conversation) {
 	Savory.RPC.getLazyModules()
 	var module = Savory.RPC.getExportedModule(query.namespace, true)
 	if (!module) {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 	
 	// Convert to Ext Direct representation
@@ -53,28 +53,28 @@ function handleGet(conversation) {
 				name: method.name,
 				len: method.arity
 			}
-			Savory.Objects.merge(directMethod, method.extDirect)
+			Sincerity.Objects.merge(directMethod, method.extDirect)
 			action.push(directMethod)
 		}
 	}
 	
-	return Savory.JSON.to(exports, query.human || false)
+	return Sincerity.JSON.to(exports, query.human || false)
 }
 
 /** @ignore */
 function handlePost(conversation) {
-	var query = Savory.Resources.getQuery(conversation, {
+	var query = Prudence.Resources.getQuery(conversation, {
 		namespace: 'string',
 		human: 'bool'
 	})
 	
 	var isWebForm = false
 	var calls
-	if (Savory.Objects.exists(conversation.entity) && (conversation.entity.mediaType == 'application/x-www-form-urlencoded')) {
+	if (Sincerity.Objects.exists(conversation.entity) && (conversation.entity.mediaType == 'application/x-www-form-urlencoded')) {
 		isWebForm = true
 		
 		// Unpack web form into the regular structure
-		var web = Savory.Resources.getEntity(conversation, 'web')
+		var web = Prudence.Resources.getEntity(conversation, 'web')
 		calls = {}
 		calls.type = web.extType
 		delete web.extType
@@ -92,16 +92,16 @@ function handlePost(conversation) {
 		}
 	}
 	else {
-		calls = Savory.Resources.getEntity(conversation, 'json')
+		calls = Prudence.Resources.getEntity(conversation, 'json')
 	}
 
-	//application.logger.info(Savory.JSON.to(calls))
+	//application.logger.info(Sincerity.JSON.to(calls))
 	
-	calls = Savory.Objects.array(calls)
+	calls = Sincerity.Objects.array(calls)
 	for (var c in calls) {
 		var call = calls[c]
 		if ((call.type != 'rpc') || !call.tid || !call.action || !call.method) {
-			return Savory.Resources.Status.ClientError.BadRequest
+			return Prudence.Resources.Status.ClientError.BadRequest
 		}
 	}
 
@@ -109,7 +109,7 @@ function handlePost(conversation) {
 
 	var module = Savory.RPC.getExportedModule(query.namespace)
 	if (!module) {
-		return Savory.Resources.Status.ClientError.NotFound
+		return Prudence.Resources.Status.ClientError.NotFound
 	}
 	
 	if (module.dependencies) {
@@ -157,7 +157,7 @@ function handlePost(conversation) {
 									}
 								}
 								catch (x) {
-									var details = Savory.Rhino.getExceptionDetails(x)
+									var details = Sincerity.Rhino.getExceptionDetails(x)
 									result = {
 										type: 'exception',
 										tid: call.tid,
@@ -210,5 +210,5 @@ function handlePost(conversation) {
 		results.push(result)
 	}
 	
-	return Savory.JSON.to(results, query.human || false)
+	return Sincerity.JSON.to(results, query.human || false)
 }

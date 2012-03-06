@@ -17,7 +17,7 @@ document.executeOnce('/savory/service/rpc/')
 // Modules
 //
 
-modules = Savory.Objects.pushAll(modules, Savory.RPC.buildLazyModules({
+modules = Sincerity.Objects.pushAll(modules, Savory.RPC.buildLazyModules({
 	module: 'Savory',
 	object: 'ShoppingCart',
 	dependencies: '/about/integration/sencha/shopping-cart/',

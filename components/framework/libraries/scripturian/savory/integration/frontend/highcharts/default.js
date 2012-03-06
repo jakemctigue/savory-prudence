@@ -12,7 +12,7 @@
 //
 
 document.executeOnce('/savory/foundation/svg/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/prudence/resources/')
 
 var Savory = Savory || {}
 
@@ -46,7 +46,7 @@ Savory.Highcharts = Savory.Highcharts || function() {
 	}
 	
 	Public.handlePost = function(conversation) {
-		var form = Savory.Resources.getForm(conversation, {
+		var form = Prudence.Resources.getForm(conversation, {
 			type: 'string',
 			filename: 'string',
 			svg: 'string',

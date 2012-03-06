@@ -12,12 +12,12 @@
 //
 
 document.executeOnce('/savory/service/nonces/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/jvm/')
-document.executeOnce('/savory/foundation/prudence/lazy/')
-document.executeOnce('/savory/foundation/prudence/tasks/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/prudence/lazy/')
+document.executeOnce('/prudence/tasks/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -35,9 +35,9 @@ Savory.Events = Savory.Events || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('events')
+	Public.logger = Prudence.Logging.getLogger('events')
 	
 	/**
 	 * Adds a listener for an event.
@@ -68,7 +68,7 @@ Savory.Events = Savory.Events || function() {
 			listener.dependencies = params.dependencies
 		}
 
-		var stores = params.stores ? Savory.Objects.array(params.stores) : getDefaultStores()
+		var stores = params.stores ? Sincerity.Objects.array(params.stores) : getDefaultStores()
 		if (stores) {
 			for (var s in stores) {
 				stores[s].subscribe(params.name, listener)
@@ -85,7 +85,7 @@ Savory.Events = Savory.Events || function() {
 	 * @param {Savory.Events.Store|Savory.Events.Store[]} [param.stores] The event stores to use
 	 */
 	Public.unsubscribe = function(params) {
-		var stores = params.stores ? Savory.Objects.array(params.stores) : getDefaultStores()
+		var stores = params.stores ? Sincerity.Objects.array(params.stores) : getDefaultStores()
 		if (stores) {
 			for (var s in stores) {
 				stores[s].unsubscribe(params.name, params.id)
@@ -101,7 +101,7 @@ Savory.Events = Savory.Events || function() {
 	 * @param {Savory.Events.Store|Savory.Events.Store[]} [param.stores] The event stores to use
 	 */
 	Public.reset = function(params) {
-		var stores = params.stores ? Savory.Objects.array(params.stores) : getDefaultStores()
+		var stores = params.stores ? Sincerity.Objects.array(params.stores) : getDefaultStores()
 		if (stores) {
 			for (var s in stores) {
 				stores[s].reset(params.name)
@@ -124,7 +124,7 @@ Savory.Events = Savory.Events || function() {
 	 */
 	Public.fire = function(params) {
 		var listeners = []
-		var stores = params.stores ? Savory.Objects.array(params.stores) : getDefaultStores()
+		var stores = params.stores ? Sincerity.Objects.array(params.stores) : getDefaultStores()
 		if (stores) {
 			for (var s in stores) {
 				var l = stores[s].getListeners(params.name)
@@ -138,17 +138,17 @@ Savory.Events = Savory.Events || function() {
 			return
 		}
 		
-		var async = Savory.Objects.ensure(params.async, defaultAsync)
-		var distributed = Savory.Objects.ensure(params.distributed, defaultDistributed)
+		var async = Sincerity.Objects.ensure(params.async, defaultAsync)
+		var distributed = Sincerity.Objects.ensure(params.distributed, defaultDistributed)
 
 		if (async || distributed) {
-			var task = Savory.Objects.ensure(params.task, defaultTask)
+			var task = Sincerity.Objects.ensure(params.task, defaultTask)
 			for (var l in listeners) {
 				var listener = listeners[l]
 				
 				// Make sure function is serialized
 				if (typeof listener.fn == 'function') {
-					listener = Savory.Objects.clone(listener)
+					listener = Sincerity.Objects.clone(listener)
 					listener.fn = String(listener.fn)
 				}
 				
@@ -181,7 +181,7 @@ Savory.Events = Savory.Events || function() {
 	Public.callListener = function(name, listener, context) {
 		// Execute dependencies
 		if (listener.dependencies) {
-			var dependencies = Savory.Objects.array(listener.dependencies)
+			var dependencies = Sincerity.Objects.array(listener.dependencies)
 			for (var d in dependencies) {
 				document.executeOnce(dependencies[d])
 			}
@@ -196,7 +196,7 @@ Savory.Events = Savory.Events || function() {
 			fn.call(listener.scope, name, context)
 		}
 		catch (x) {
-			var details = Savory.Rhino.getExceptionDetails(x)
+			var details = Sincerity.Rhino.getExceptionDetails(x)
 			Public.logger.warning('Exception in event "' + name + '", listener "' + listener.id + '": ' + details.message + '\n' + details.stackTrace)
 		}
 	}
@@ -205,7 +205,7 @@ Savory.Events = Savory.Events || function() {
 	 * @class
 	 * @name Savory.Events.Store
 	 */
-	Public.Store = Savory.Classes.define(function() {
+	Public.Store = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Events.Store */
 	    var Public = {}
 
@@ -226,7 +226,7 @@ Savory.Events = Savory.Events || function() {
 	 * @augments Savory.Events.Store
 	 * @param [events] The events dict to use, or leave empty to manage them internally 
 	 */
-	Public.InThreadStore = Savory.Classes.define(function(Module) {
+	Public.InThreadStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Events.InThreadStore */
 	    var Public = {}
 	    
@@ -245,7 +245,7 @@ Savory.Events = Savory.Events || function() {
 			}
 			else {
 				if (listener.id) {
-					Savory.Objects.pushUnique(listeners, listener, compareListeners)
+					Sincerity.Objects.pushUnique(listeners, listener, compareListeners)
 				}
 				else {
 					listeners.push(listener)
@@ -256,7 +256,7 @@ Savory.Events = Savory.Events || function() {
 	    Public.unsubscribe = function(name, id) {
 			var listeners = this.events[name]
 			if (listeners) {
-				Savory.Objects.removeItems(listeners, [listener], compareListeners)
+				Sincerity.Objects.removeItems(listeners, [listener], compareListeners)
 			}
 		}
 		
@@ -289,7 +289,7 @@ Savory.Events = Savory.Events || function() {
 	 * @name Savory.Events.MapStore
 	 * @augments Savory.Events.Store
 	 */
-	Public.MapStore = Savory.Classes.define(function(Module) {
+	Public.MapStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Events.MapStore */
 	    var Public = {}
 	    
@@ -305,9 +305,9 @@ Savory.Events = Savory.Events || function() {
 	    Public.subscribe = function(name, listener) {
 			name = this.prefix + name
 			var listeners = this.map.get(name)
-			if (!Savory.Objects.exists(listeners)) {
-				listeners = Savory.JVM.newMap(true)
-				listeners = Savory.Objects.ensure(this.map.putIfAbsent(name, listeners), listeners)
+			if (!Sincerity.Objects.exists(listeners)) {
+				listeners = Sincerity.JVM.newMap(true)
+				listeners = Sincerity.Objects.ensure(this.map.putIfAbsent(name, listeners), listeners)
 			}
 			
 			if (listener.id) {
@@ -321,7 +321,7 @@ Savory.Events = Savory.Events || function() {
 	    Public.unsubscribe = function(name, id) {
 			name = this.prefix + name
 			var listeners = this.map.get(name)
-			if (Savory.Objects.exists(listeners)) {
+			if (Sincerity.Objects.exists(listeners)) {
 				listeners.remove(id)
 			}
 		}
@@ -334,7 +334,7 @@ Savory.Events = Savory.Events || function() {
 	    Public.getListeners = function(name) {
 			name = this.prefix + name
 			var listeners = this.map.get(name)
-			return Savory.Objects.exists(listeners) ? Savory.JVM.fromCollection(listeners.values()) : null
+			return Sincerity.Objects.exists(listeners) ? Sincerity.JVM.fromCollection(listeners.values()) : null
 		}
 		
 		return Public
@@ -345,7 +345,7 @@ Savory.Events = Savory.Events || function() {
 	 * @name Savory.Events.DistributedStore
 	 * @augments Savory.Events.Store
 	 */
-	Public.DistributedStore = Savory.Classes.define(function(Module) {
+	Public.DistributedStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Events.DistributedStore */
 	    var Public = {}
 	    
@@ -362,9 +362,9 @@ Savory.Events = Savory.Events || function() {
 	    Public.subscribe = function(name, listener) {
 			var id = listener.id || Savory.Nonces.create(0)
 			if (this.events.put(name, id)) {
-				listener = Savory.Objects.clone(listener)
+				listener = Sincerity.Objects.clone(listener)
 				listener.fn = String(listener.fn)
-				this.listeners.put(name + '/' + id, Savory.JSON.to(listener))
+				this.listeners.put(name + '/' + id, Sincerity.JSON.to(listener))
 			}
 		}
 		
@@ -375,7 +375,7 @@ Savory.Events = Savory.Events || function() {
 		
 	    Public.reset = function(name) {
 			var ids = this.events.remove(name)
-			if (Savory.Objects.exists(ids)) {
+			if (Sincerity.Objects.exists(ids)) {
 				for (var i = ids.iterator(); i.hasNext(); ) {
 					this.listeners.remove(name + '/' + i.next())
 				}
@@ -385,11 +385,11 @@ Savory.Events = Savory.Events || function() {
 	    Public.getListeners = function(name) {
 			var array = []
 			var ids = this.events.get(name)
-			if (Savory.Objects.exists(ids)) {
+			if (Sincerity.Objects.exists(ids)) {
 				for (var i = ids.iterator(); i.hasNext(); ) {
 					var listener = this.listeners.get(name + '/' + i.next())
-					if (Savory.Objects.exists(listener)) {
-						array.push(Savory.JSON.from(listener, true))
+					if (Sincerity.Objects.exists(listener)) {
+						array.push(Sincerity.JSON.from(listener, true))
 					}
 				}
 			}
@@ -404,7 +404,7 @@ Savory.Events = Savory.Events || function() {
 	 * @name Savory.Events.MongoDbCollectionStore
 	 * @augments Savory.Events.Store
 	 */
-	Public.MongoDbCollectionStore = Savory.Classes.define(function(Module) {
+	Public.MongoDbCollectionStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Events.MongoDbCollectionStore */
 	    var Public = {}
 	    
@@ -414,12 +414,12 @@ Savory.Events = Savory.Events || function() {
 	    /** @ignore */
 	    Public._construct = function(collection) {
 			this.collection = collection || 'events'
-			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 			this.collection.ensureIndex({name: 1}, {unique: true})
 	    }
 
 	    Public.subscribe = function(name, listener) {
-			listener = Savory.Objects.clone(listener)
+			listener = Sincerity.Objects.clone(listener)
 			listener.fn = String(listener.fn)
 
 			if (listener.id) {
@@ -481,7 +481,7 @@ Savory.Events = Savory.Events || function() {
 	 * @name Savory.Events.MongoDbDocumentStore
 	 * @augments Savory.Events.Store
 	 */
-	Public.MongoDbDocumentStore = Savory.Classes.define(function(Module) {
+	Public.MongoDbDocumentStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Events.MongoDbDocumentStore */
 	    var Public = {}
 	    
@@ -496,7 +496,7 @@ Savory.Events = Savory.Events || function() {
 	    }
 
 	    Public.subscribe = function(name, listener) {
-			listener = Savory.Objects.clone(listener)
+			listener = Sincerity.Objects.clone(listener)
 			listener.fn = String(listener.fn)
 
 			// Make sure event exists
@@ -656,7 +656,7 @@ Savory.Events = Savory.Events || function() {
 	//
 
 	var defaultAsync = application.globals.get('savory.service.events.async')
-	if (Savory.Objects.exists(defaultAsync) && defaultAsync.booleanValue) {
+	if (Sincerity.Objects.exists(defaultAsync) && defaultAsync.booleanValue) {
 		defaultAsync = defaultAsync.booleanValue()
 	}
 	else {
@@ -664,7 +664,7 @@ Savory.Events = Savory.Events || function() {
 	}
 	
 	var defaultDistributed = application.globals.get('savory.service.events.distributed')
-	if (Savory.Objects.exists(defaultDistributed) && defaultDistributed.booleanValue) {
+	if (Sincerity.Objects.exists(defaultDistributed) && defaultDistributed.booleanValue) {
 		defaultDistributed = defaultDistributed.booleanValue()
 	}
 	else {
@@ -672,7 +672,7 @@ Savory.Events = Savory.Events || function() {
 	}
 	
 	var defaultTask = application.globals.get('savory.service.events.task')
-	if (Savory.Objects.exists(defaultTask)) {
+	if (Sincerity.Objects.exists(defaultTask)) {
 		defaultTask = String(defaultTask)
 	}
 	else {

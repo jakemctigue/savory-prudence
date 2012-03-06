@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/jvm/')
+document.executeOnce('/sincerity/jvm/')
 
 var ShoppingCart = ShoppingCart || function() {
 	var Public = {
@@ -20,12 +20,12 @@ var ShoppingCart = ShoppingCart || function() {
 		},
 		
 		getItems: function() {
-			return Savory.JVM.fromCollection(items)
+			return Sincerity.JVM.fromCollection(items)
 		}
 	}
 
 	// Our items need to be thread-safe
-	var items = application.getGlobal('shoppingCart', Savory.JVM.newSet(true))
+	var items = application.getGlobal('shoppingCart', Sincerity.JVM.newSet(true))
 	
 	return Public
 }()

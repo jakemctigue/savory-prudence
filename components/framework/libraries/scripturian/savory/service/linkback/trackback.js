@@ -12,9 +12,9 @@
 //
 
 document.executeOnce('/savory/service/linkback/')
-document.executeOnce('/savory/foundation/xml/')
-document.executeOnce('/savory/foundation/rhino/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/xml/')
+document.executeOnce('/sincerity/rhino/')
+document.executeOnce('/prudence/resources/')
 
 var trackbackSuccessResponse = '' +
     '<?xml version="1.0" encoding="utf-8"?>\n' +
@@ -37,7 +37,7 @@ function handleInit(conversation) {
 
 /** @ignore */
 function handlePost(conversation) {
-	var entity = Savory.Resources.getEntity(conversation, 'web', {
+	var entity = Prudence.Resources.getEntity(conversation, 'web', {
 		keys: {
     		url: 'string',
     		title: 'string', // optional
@@ -70,7 +70,7 @@ function handlePost(conversation) {
 		return trackbackSuccessResponse
 	}
 	catch (x) {
-		var details = Savory.Rhino.getExceptionDetails(x)
+		var details = Sincerity.Rhino.getExceptionDetails(x)
 		return trackbackErrorResponse.cast({message: details.message.escapeElements()})
 	}
 }

@@ -12,8 +12,8 @@
 //
 
 document.executeOnce('/savory/integration/backend/windows-live/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/prudence/resources/')
 
 Savory = Savory || {Authentication: {}}
 
@@ -24,7 +24,7 @@ Savory = Savory || {Authentication: {}}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Authentication.WindowsLiveProvider = Savory.Authentication.WindowsLiveProvider || Savory.Classes.define(function() {
+Savory.Authentication.WindowsLiveProvider = Savory.Authentication.WindowsLiveProvider || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.Authentication.WindowsLiveProvider */
     var Public = {}
 
@@ -43,7 +43,7 @@ Savory.Authentication.WindowsLiveProvider = Savory.Authentication.WindowsLivePro
     }
 
     Public.getUri = function(conversation) {
-		return Savory.Resources.buildUri(conversation.pathToBase + '/authentication/provider/windows-live/', {from: conversation.query.get('from')})
+		return Prudence.Resources.buildUri(conversation.pathToBase + '/authentication/provider/windows-live/', {from: conversation.query.get('from')})
 	}
 	
     Public.login = function(windowsLiveSession, conversation) {
@@ -66,11 +66,11 @@ Savory.Authentication.WindowsLiveProvider = Savory.Authentication.WindowsLivePro
 						return null
 					}
 					
-					conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+					conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 					return 'Invalid Windows Live session'
 				}
 				
-				conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+				conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 				return 'Could not get Windows Live session'
 				
 			case 'GET':

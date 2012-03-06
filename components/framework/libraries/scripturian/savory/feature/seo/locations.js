@@ -12,9 +12,9 @@
 //
 
 document.executeOnce('/savory/feature/seo/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/iterators/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/iterators/')
+document.executeOnce('/prudence/resources/')
 
 /** @ignore */
 function handleInit(conversation) {
@@ -26,17 +26,17 @@ function handleInit(conversation) {
 function handleGet(conversation) {
 	var set = conversation.query.get('set')
 	if (!set) {
-		return Savory.Resources.Status.ClientError.BadRequest
+		return Prudence.Resources.Status.ClientError.BadRequest
 	}
 	
 	var domain = Savory.SEO.getCurrentDomain(conversation)
 	if (domain) {
 		var locations = domain.getLocations(set)
 		if (locations) {
-			locations = Savory.Iterators.toArray(locations, 0, 50000)
-			return conversation.mediaType == 'application/java' ? locations : Savory.JSON.to(locations)
+			locations = Sincerity.Iterators.toArray(locations, 0, 50000)
+			return conversation.mediaType == 'application/java' ? locations : Sincerity.JSON.to(locations)
 		}
 	}
 
-	return Savory.Resources.Status.ClientError.NotFound
+	return Prudence.Resources.Status.ClientError.NotFound
 }

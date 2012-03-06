@@ -1,33 +1,15 @@
-//
-// This file is part of the Savory Framework for Prudence
-//
-// Copyright 2011 Three Crickets LLC.
-//
-// The contents of this file are subject to the terms of the LGPL version 3.0:
-// http://www.opensource.org/licenses/lgpl-3.0.html
-//
-// Alternatively, you can obtain a royalty free commercial license with less
-// limitations, transferable or non-transferable, directly from Three Crickets
-// at http://threecrickets.com/
-//
 
-document.execute('/defaults/application/routing/')
+app.hosts = {
+	'default': '/savory-example/'
+}
 
-document.executeOnce('/savory/service/authorization/')
-document.executeOnce('/savory/foundation/prudence/blocks/')
-
-Savory.SEO.routing(true)
-Savory.Console.routing()
-Savory.Wiki.routing()
-Savory.Registration.routing()
-Savory.RPC.routing()
-Savory.REST.routing()
-Savory.Internationalization.routing()
-Savory.Linkback.routing()
-Savory.Authentication.routing()
-Savory.Authentication.privatize('/private/')
-Savory.Authorization.routing()
-Savory.Progress.routing()
-Savory.PayPal.routing()
-Savory.Blocks.routing()
-Savory.HTML.routing()
+app.routes = {
+	'/*': [
+		'explicit',
+		'dynamicWeb',
+		[
+			'staticWeb',
+			{type: 'staticWeb', root: sincerity.container.getLibrariesFile('web')}
+		]
+	]
+}

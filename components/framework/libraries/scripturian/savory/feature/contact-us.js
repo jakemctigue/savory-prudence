@@ -17,10 +17,10 @@ document.executeOnce('/savory/service/notification/')
 document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/service/nonces/')
 document.executeOnce('/savory/integration/backend/re-captcha/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/mail/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/mail/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/prudence/resources/')
 
 var Savory = Savory || {}
 
@@ -51,7 +51,7 @@ var Savory = Savory || {}
  * <li><em>savory.feature.contactUs.form.label.message</em></li>
  * <li><em>savory.feature.contactUs.form.label.recaptcha_response_field</em></li>
  * <li><em>savory.feature.contactUs.form.success</em></li>
- * <li><em>savory.feature.contactUs.message:</em> a {@link Savory.Mail.MessageTemplate}</li>
+ * <li><em>savory.feature.contactUs.message:</em> a {@link Sincerity.Mail.MessageTemplate}</li>
  * </ul>
  *  
  * @namespace
@@ -82,14 +82,14 @@ Savory.ContactUs = Savory.ContactUs || function() {
      * 
      * @class
      * @name Savory.ContactUs.Form
-     * @augments Savory.Resources.Form
+     * @augments Prudence.Resources.Form
      */
-	Public.Form = Savory.Classes.define(function(Module) {
+	Public.Form = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.ContactUs.Form */
 	    var Public = {}
 
 	    /** @ignore */
-	    Public._inherit = Savory.Resources.Form
+	    Public._inherit = Prudence.Resources.Form
 	    
 	    /** @ignore */
 	    Public._configure = ['hasUser', 'conversation']
@@ -98,8 +98,8 @@ Savory.ContactUs = Savory.ContactUs || function() {
 		Public._construct = function(config) {
 			this.reCaptcha = this.reCaptcha || new Savory.ReCAPTCHA() // required by 'reCaptcha' field type
 
-			if (!Savory.Objects.exists(this.fields)) {
-        		if (Savory.Objects.exists(this.conversation)) {
+			if (!Sincerity.Objects.exists(this.fields)) {
+        		if (Sincerity.Objects.exists(this.conversation)) {
         	    	var session = Savory.Authentication.getCurrentSession(this.conversation)
         	    	this.hasUser = session ? session.getUser() : null
         		}
@@ -138,7 +138,7 @@ Savory.ContactUs = Savory.ContactUs || function() {
 					}
 		    	}
 		    	
-        		if (Savory.Objects.exists(this.conversation)) {
+        		if (Sincerity.Objects.exists(this.conversation)) {
         			var textPack = Savory.Internationalization.getCurrentPack(this.conversation)
         			this.fields.message.label = textPack.get('savory.feature.contactUs.form.label.message')
         			if (!this.hasUser) {
@@ -157,12 +157,12 @@ Savory.ContactUs = Savory.ContactUs || function() {
 
     	Public.process = function(results, conversation) {
     		if (results.success) {
-				var address = Savory.Resources.getClientAddress(conversation)
+				var address = Prudence.Resources.getClientAddress(conversation)
 				var session = Savory.Authentication.getCurrentSession(conversation)
 				var user = session ? session.getUser() : null
 				var email = user ? user.getEmail() : results.values.email
 				var textPack = Savory.Internationalization.getCurrentPack(conversation)
-				var messageTemplate = new Savory.Mail.MessageTemplate(textPack, 'savory.feature.contactUs.message')
+				var messageTemplate = new Sincerity.Mail.MessageTemplate(textPack, 'savory.feature.contactUs.message')
 	
 				Savory.Notification.queueForChannel(channel, messageTemplate.cast({
 					siteName: siteName,

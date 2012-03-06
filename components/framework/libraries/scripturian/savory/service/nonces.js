@@ -11,8 +11,8 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -36,9 +36,9 @@ Savory.Nonces = Savory.Nonces || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('nonces')
+	Public.logger = Prudence.Logging.getLogger('nonces')
 	
 	/**
 	 * Creates a nonce.
@@ -51,7 +51,7 @@ Savory.Nonces = Savory.Nonces || function() {
 	Public.create = function(duration, now) {
 		var nonce = MongoDB.newId()
 		
-		duration = Savory.Objects.ensure(duration, defaultDuration)
+		duration = Sincerity.Objects.ensure(duration, defaultDuration)
 		if (duration > 0) {
 			var expiration = now ? new Date(now.getTime()) : new Date()
 			expiration.setMilliseconds(expiration.getMilliseconds() + duration)

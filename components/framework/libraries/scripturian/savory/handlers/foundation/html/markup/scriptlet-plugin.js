@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/objects/')
+document.executeOnce('/sincerity/objects/')
 
 function handleGetScriptlet(conversation, code, languageAdapter, content) {
 	switch (String(code)) {

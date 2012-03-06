@@ -13,7 +13,7 @@
 
 document.executeOnce('/savory/integration/backend/pay-pal/')
 document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/prudence/resources/')
 
 /** @ignore */
 function handleInit(conversation) {
@@ -29,7 +29,7 @@ function handleGet(conversation) {
 	var order = session ? session.getValue('order') : null
 	
 	if (!order) {
-		conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+		conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 		return 'There is no order!'
 	}
 	
@@ -39,6 +39,6 @@ function handleGet(conversation) {
 		return ''
 	}
 	
-	conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+	conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 	return 'Could not create Express Checkout'
 }

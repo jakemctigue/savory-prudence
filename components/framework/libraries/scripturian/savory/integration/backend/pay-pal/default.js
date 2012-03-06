@@ -12,11 +12,11 @@
 //
 
 document.executeOnce('/savory/service/cache/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/localization/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/localization/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 
 var Savory = Savory || {}
 
@@ -39,9 +39,9 @@ Savory.PayPal = Savory.PayPal || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('payPal')
+	Public.logger = Prudence.Logging.getLogger('payPal')
 
 	/**
 	 * Installs the library's pass-throughs.
@@ -60,11 +60,11 @@ Savory.PayPal = Savory.PayPal || function() {
 	 */
 	Public.routing = function() {
     	var uri = predefinedGlobals['savory.integration.backend.payPal.expressCheckoutUri']
-    	uri = (Savory.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/pay-pal/express-checkout/'
+    	uri = (Sincerity.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/pay-pal/express-checkout/'
 		router.captureAndHide(uri, '/savory/integration/backend/pay-pal/express-checkout/')
 
     	var callbackUri = predefinedGlobals['savory.integration.backend.payPal.expressCheckoutCallbackUri']
-    	callbackUri = (Savory.Objects.isArray(callbackUri) && callbackUri.length > 1) ? callbackUri[1] : uri + 'callback/'
+    	callbackUri = (Sincerity.Objects.isArray(callbackUri) && callbackUri.length > 1) ? callbackUri[1] : uri + 'callback/'
 		router.captureAndHide(callbackUri, '/savory/integration/backend/pay-pal/express-checkout/callback/')
 	}
 
@@ -105,7 +105,7 @@ Savory.PayPal = Savory.PayPal || function() {
 	Public.orderToArgs = function(order, digitalGoods) {
 		var args = {}
 		
-		order = Savory.Objects.array(order)
+		order = Sincerity.Objects.array(order)
 		for (var p in order) {
 			var payment = order[p]
 			var prefix = 'PAYMENTREQUEST_' + p + '_'
@@ -153,7 +153,7 @@ Savory.PayPal = Savory.PayPal || function() {
 			}
 
 			// Items
-			var items = Savory.Objects.array(payment.items)
+			var items = Sincerity.Objects.array(payment.items)
 			var amountItems = 0
 			var itemsPrefix = 'L_PAYMENTREQUEST_' + p + '_'
 			for (var i in items) {
@@ -308,7 +308,7 @@ Savory.PayPal = Savory.PayPal || function() {
 		}
 		
 		order = Public.orderToArgs(order, digitalGoods)
-		Savory.Objects.merge(args, order)
+		Sincerity.Objects.merge(args, order)
 
 		var result = Public.request('SetExpressCheckout', args)
 		if (result) {
@@ -375,13 +375,13 @@ Savory.PayPal = Savory.PayPal || function() {
 			}
 		}
 
-		/*var result = Savory.Resources.request({
+		/*var result = Prudence.Resources.request({
 			uri: nvpSignatureUri,
 			query: query,
 			result: 'web'
 		})*/
 		
-		var result = Savory.Resources.request({
+		var result = Prudence.Resources.request({
 			method: 'post',
 			uri: nvpSignatureUri,
 			payload: {
@@ -397,7 +397,7 @@ Savory.PayPal = Savory.PayPal || function() {
 		
 		if (result) {
 			if (result.TIMESTAMP) {
-				result.TIMESTAMP = Savory.Localization.parseDateTime(result.TIMESTAMP, dateTimeFormat)
+				result.TIMESTAMP = Sincerity.Localization.parseDateTime(result.TIMESTAMP, dateTimeFormat)
 			}
 			
 			if (result.ACK != 'Success') {
@@ -422,7 +422,7 @@ Savory.PayPal = Savory.PayPal || function() {
 	 * @see Savory.PayPal#getExpressCheckout
 	 * @see Savory.PayPal#createExpressCheckout
 	 */
-	Public.ExpressCheckout = Savory.Classes.define(function() {
+	Public.ExpressCheckout = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.PayPal.ExpressCheckout */
 	    var Public = {}
 	    
@@ -438,7 +438,7 @@ Savory.PayPal = Savory.PayPal || function() {
 		 * @returns {String} The URI
 		 */
 	    Public.getUri = function() {
-			return Savory.Resources.buildUri(userUri, {cmd: '_express-checkout', token: details.TOKEN})
+			return Prudence.Resources.buildUri(userUri, {cmd: '_express-checkout', token: details.TOKEN})
 		}
 		
 		/**
@@ -448,7 +448,7 @@ Savory.PayPal = Savory.PayPal || function() {
 		 *          or null if the order was not completed 
 		 */
 	    Public.complete = function() {
-			var args = Savory.Objects.merge({
+			var args = Sincerity.Objects.merge({
 				TOKEN: this.details.TOKEN,
 				PAYERID: this.details.PAYERID,
 				PAYMENTACTION: 'Sale'
@@ -471,7 +471,7 @@ Savory.PayPal = Savory.PayPal || function() {
 	var defaultDuration = application.globals.get('savory.integration.backend.payPal.defaultDuration') || (15 * 60 * 1000)
 	var orders = new Savory.Cache({name: 'order', collection: 'pay_pal_orders', defaultDuration: defaultDuration, logger: Public.logger, logLevel: 'info'})
 	
-	var returnUri = Savory.Objects.string(application.globals.get('savory.integration.backend.payPal.expressCheckoutCallbackUri'))
+	var returnUri = Sincerity.Objects.string(application.globals.get('savory.integration.backend.payPal.expressCheckoutCallbackUri'))
 	var cancelUri = returnUri
 
 	var sandbox = application.globals.get('savory.integration.backend.payPal.sandbox') == true

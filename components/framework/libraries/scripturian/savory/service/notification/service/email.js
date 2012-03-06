@@ -11,10 +11,10 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/mail/')
-document.executeOnce('/savory/foundation/localization/')
-document.executeOnce('/savory/foundation/objects/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/mail/')
+document.executeOnce('/sincerity/localization/')
+document.executeOnce('/sincerity/objects/')
 
 Savory = Savory || {Notification: {}}
 
@@ -24,7 +24,7 @@ Savory = Savory || {Notification: {}}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Notification.EmailService = Savory.Notification.EmailService || Savory.Classes.define(function() {
+Savory.Notification.EmailService = Savory.Notification.EmailService || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.Notification.EmailService */
     var Public = {}
 
@@ -34,7 +34,7 @@ Savory.Notification.EmailService = Savory.Notification.EmailService || Savory.Cl
     /** @ignore */
     Public._construct = function(config) {
     	this.name = this.name || 'Email'
-    	this.smtp = new Savory.Mail.SMTP()
+    	this.smtp = new Sincerity.Mail.SMTP()
     	Savory.Notification.EmailService.prototype.superclass.call(this, this)
     }
 
@@ -48,7 +48,7 @@ Savory.Notification.EmailService = Savory.Notification.EmailService || Savory.Cl
 		for (var e in entries) {
 			var entry = entries[e]
 			text.push('{channel} on {timestamp}\nRe: {subject}\n\n{text}'.cast({
-				timestamp: entry.timestamp.format(Savory.Localization.getDateTimeFormat()),
+				timestamp: entry.timestamp.format(Sincerity.Localization.getDateTimeFormat()),
 				channel: entry.channel.capitalize(),
 				subject: entry.notice.subject,
 				text: entry.notice.text

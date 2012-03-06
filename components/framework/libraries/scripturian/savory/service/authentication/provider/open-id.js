@@ -12,8 +12,8 @@
 //
 
 document.executeOnce('/savory/integration/backend/open-id/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/prudence/resources/')
 
 Savory = Savory || {Authentication: {}}
 
@@ -24,7 +24,7 @@ Savory = Savory || {Authentication: {}}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProvider || Savory.Classes.define(function() {
+Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProvider || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.Authentication.OpenIdProvider */
     var Public = {}
 
@@ -50,7 +50,7 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 	}
 
     Public.getUri = function(conversation) {
-		return Savory.Resources.buildUri(conversation.pathToBase + '/authentication/provider/open-id/' + this.slug + '/', {from: conversation.query.get('from')})
+		return Prudence.Resources.buildUri(conversation.pathToBase + '/authentication/provider/open-id/' + this.slug + '/', {from: conversation.query.get('from')})
 	}
 	
     Public.login = function(openIdSession, conversation) {
@@ -75,7 +75,7 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 		
 		if (conversation.query.get('provider')) {
 			// If we got here, it means this a callback from an OpenID provider, but with an invalid session
-			conversation.statusCode = Savory.Resources.Status.ClientError.BadRequest
+			conversation.statusCode = Prudence.Resources.Status.ClientError.BadRequest
 			return 'invalidSession'
 		}
 		
@@ -90,7 +90,7 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 					return 'usernameForm'
 				}
 				
-				uri = uri.cast({username: Savory.Resources.encodeUrlComponent(username)})
+				uri = uri.cast({username: Prudence.Resources.encodeUrlComponent(username)})
 			}
 			
 			xrdsUri = Savory.OpenID.discoverXrdsUri(uri)
@@ -103,7 +103,7 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 					return 'usernameForm'
 				}
 				
-				xrdsUri = xrdsUri.cast({username: Savory.Resources.encodeUrlComponent(username)})
+				xrdsUri = xrdsUri.cast({username: Prudence.Resources.encodeUrlComponent(username)})
 			}
 			
 			provider = new Savory.OpenID.Provider(this.slug, xrdsUri)
@@ -126,28 +126,28 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 /**
  * @class
  * @name Savory.Authentication.OpenIdProviderForm
- * @augments Savory.Resources.Form
+ * @augments Prudence.Resources.Form
  */
-Savory.Authentication.OpenIdProviderForm = Savory.Authentication.OpenIdProviderForm || Savory.Classes.define(function() {
+Savory.Authentication.OpenIdProviderForm = Savory.Authentication.OpenIdProviderForm || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.Authentication.OpenIdProviderForm */
     var Public = {}
 
     /** @ignore */
-    Public._inherit = Savory.Resources.Form
+    Public._inherit = Prudence.Resources.Form
 
     /** @ignore */
     Public._configure = ['provider', 'conversation']
 
     /** @ignore */
 	Public._construct = function(config) {
-    	if (!Savory.Objects.exists(this.fields)) {
+    	if (!Sincerity.Objects.exists(this.fields)) {
 			this.fields = {
 				username: {
 					required: true
 				}
 			}
 			
-    		if (Savory.Objects.exists(this.conversation)) {
+    		if (Sincerity.Objects.exists(this.conversation)) {
     			var textPack = Savory.Internationalization.getCurrentPack(this.conversation)
     			this.fields.username.label = textPack.get('savory.service.authentication.form.openId.label.username', {siteName: this.provider.getName()})
 				delete this.conversation // this really shouldn't be kept beyond construction

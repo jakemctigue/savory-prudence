@@ -13,10 +13,10 @@
 
 document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/service/authorization/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/prudence/resources/')
 
 function handleBefore(conversation) {
-	if (Savory.Resources.hasRelativePrefix(conversation, application.globals.get('savory.service.authorization.excludeFromFilter'))) {
+	if (Prudence.Resources.hasRelativePrefix(conversation, application.globals.get('savory.service.authorization.excludeFromFilter'))) {
 		return 'continue'
 	}
 

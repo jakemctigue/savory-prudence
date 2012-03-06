@@ -28,12 +28,12 @@ var data = [{
 }]
 
 for (var i = 0; i < 10; i++) {
-	data = data.concat(Savory.Objects.clone(data))
+	data = data.concat(Sincerity.Objects.clone(data))
 }
 
-routes = Savory.Objects.merge(routes, Savory.Lazy.build(Savory.REST.lazyConfigsForMongoDbCollections('/mongo/')))
+routes = Sincerity.Objects.merge(routes, Savory.Lazy.build(Savory.REST.lazyConfigsForMongoDbCollections('/mongo/')))
 
-routes = Savory.Objects.merge(routes, Savory.Lazy.build({
+routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 	'/about/integration/sencha/charts/self-contained/': {
 		dependencies: '/savory/integration/frontend/sencha/',
 		name: 'Savory.Sencha.SelfContainedResource',

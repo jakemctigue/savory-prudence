@@ -40,11 +40,11 @@ Savory.MessengerConnect = Savory.MessengerConnect || function() {
 		// Resizable=yes
 		// Scrollbars=yes
 
-		return Savory.Resources.uri({
+		return Prudence.Resources.uri({
 			uri: verificationUri,
 			query: {
 				wrap_client_id: clientId,
-				wrap_scope: Savory.Objects.array(verificationScope).join(','),
+				wrap_scope: Sincerity.Objects.array(verificationScope).join(','),
 				wrap_callback: callbackUri
 			}
 		})

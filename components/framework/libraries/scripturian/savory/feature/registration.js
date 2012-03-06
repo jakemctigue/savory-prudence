@@ -15,12 +15,12 @@ document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/service/notification/')
 document.executeOnce('/savory/service/internationalization/')
 document.executeOnce('/savory/integration/backend/re-captcha/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/mail/')
-document.executeOnce('/savory/foundation/templates/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/mail/')
+document.executeOnce('/sincerity/templates/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -71,8 +71,8 @@ var Savory = Savory || {}
  * <li><em>savory.feature.registration.form.invalid.usernameUsed</em></li>
  * <li><em>savory.feature.registration.confirmation.success</em></li>
  * <li><em>savory.feature.registration.confirmation.invalid</em></li>
- * <li><em>savory.feature.registration.message.registration:</em> a {@link Savory.Mail.MessageTemplate}</li>
- * <li><em>savory.feature.registration.message.welcome:</em> a {@link Savory.Mail.MessageTemplate}</li>
+ * <li><em>savory.feature.registration.message.registration:</em> a {@link Sincerity.Mail.MessageTemplate}</li>
+ * <li><em>savory.feature.registration.message.welcome:</em> a {@link Sincerity.Mail.MessageTemplate}</li>
  * </ul>  
  * 
  * @namespace
@@ -88,9 +88,9 @@ Savory.Registration = Savory.Registration || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('registration')
+	Public.logger = Prudence.Logging.getLogger('registration')
 
 	/**
 	 * Installs the library's pass-throughs.
@@ -108,7 +108,7 @@ Savory.Registration = Savory.Registration || function() {
 	 */
     Public.routing = function() {
     	var uri = predefinedGlobals['savory.feature.registration.uri']
-    	uri = (Savory.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/registration/'
+    	uri = (Sincerity.Objects.isArray(uri) && uri.length > 1) ? uri[1] : '/registration/'
 		router.captureAndHide(uri, '/savory/feature/registration/')
 	}
 	
@@ -148,10 +148,10 @@ Savory.Registration = Savory.Registration || function() {
 			usersCollection.insert(user, 1)
 			
 			var textPack = Savory.Internationalization.getCurrentPack(conversation)
-			var registrationMessageTemplate = new Savory.Mail.MessageTemplate(textPack, 'savory.feature.registration.message.registration')
+			var registrationMessageTemplate = new Sincerity.Mail.MessageTemplate(textPack, 'savory.feature.registration.message.registration')
 
 			Savory.Notification.queueForReference('Email', {type: 'user', id: user._id}, registrationMessageTemplate.cast({
-				link: Savory.Resources.buildUri(registrationUri, {'confirm-registration': user._id}),
+				link: Prudence.Resources.buildUri(registrationUri, {'confirm-registration': user._id}),
 				siteName: siteName,
 				username: name
 			}), from)
@@ -186,7 +186,7 @@ Savory.Registration = Savory.Registration || function() {
 			var user = Savory.Authentication.getUserById(id)
 
 			var textPack = Savory.Internationalization.getCurrentPack(conversation)
-			var welcomeMessageTemplate = new Savory.Mail.MessageTemplate(textPack, 'savory.feature.registration.message.welcome')
+			var welcomeMessageTemplate = new Sincerity.Mail.MessageTemplate(textPack, 'savory.feature.registration.message.welcome')
 
 			Savory.Notification.queueForReference('Email', {type: 'user', id: id}, welcomeMessageTemplate.cast({
 				siteName: siteName,
@@ -232,14 +232,14 @@ Savory.Registration = Savory.Registration || function() {
      * 
 	 * @class
 	 * @name Savory.Registration.Form
-     * @augments Savory.Resources.Form
+     * @augments Prudence.Resources.Form
 	 */
-    Public.Form = Savory.Classes.define(function(Module) {
+    Public.Form = Sincerity.Classes.define(function(Module) {
     	/** @exports Public as Savory.Registration.Form */
         var Public = {}
 
 	    /** @ignore */
-	    Public._inherit = Savory.Resources.Form
+	    Public._inherit = Prudence.Resources.Form
 
 	    /** @ignore */
 	    Public._configure = ['conversation']
@@ -248,7 +248,7 @@ Savory.Registration = Savory.Registration || function() {
     	Public._construct = function(config) {
 			this.reCaptcha = this.reCaptcha || new Savory.ReCAPTCHA() // required by 'reCaptcha' field type
 
-			if (!Savory.Objects.exists(this.fields)) {
+			if (!Sincerity.Objects.exists(this.fields)) {
 				this.fields = {
 					email: {
 						type: 'email',
@@ -281,7 +281,7 @@ Savory.Registration = Savory.Registration || function() {
 					}
 				}
 				
-        		if (Savory.Objects.exists(this.conversation)) {
+        		if (Sincerity.Objects.exists(this.conversation)) {
         			var textPack = Savory.Internationalization.getCurrentPack(this.conversation)
         			this.fields.email.label = textPack.get('savory.feature.registration.form.label.email')
         			this.fields.username.label = textPack.get('savory.feature.registration.form.label.username')
@@ -334,7 +334,7 @@ Savory.Registration = Savory.Registration || function() {
 
 	var from = application.globals.get('savory.feature.registration.from')
 	var siteName = application.globals.get('savory.feature.registration.site')
-	var registrationUri = Savory.Objects.string(application.globals.get('savory.feature.registration.uri'))
+	var registrationUri = Sincerity.Objects.string(application.globals.get('savory.feature.registration.uri'))
 	
 	return Public
 }()

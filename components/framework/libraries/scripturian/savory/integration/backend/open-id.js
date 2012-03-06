@@ -12,11 +12,11 @@
 //
 
 document.executeOnce('/savory/service/nonces/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/localization/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/localization/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 
 var Savory = Savory || {}
 
@@ -41,9 +41,9 @@ Savory.OpenID = Savory.OpenID || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('openId')
+	Public.logger = Prudence.Logging.getLogger('openId')
 	
 	/**
 	 * Installs the 'application/xrds+xml' media type (not available by default in Restlet).
@@ -65,7 +65,7 @@ Savory.OpenID = Savory.OpenID || function() {
 	 * @returns {String} The XRDS URI
 	 */
 	Public.discoverXrdsUri = function(uri) {
-		var result = Savory.Resources.request({
+		var result = Prudence.Resources.request({
 			uri: uri,
 			mediaType: 'application/xrds+xml',
 			result: {
@@ -73,7 +73,7 @@ Savory.OpenID = Savory.OpenID || function() {
 			}
 		})
 		
-		//Public.logger.info('headers: ' + Savory.JSON.to(headers))
+		//Public.logger.info('headers: ' + Sincerity.JSON.to(headers))
 		
 		return (result && result.headers) ? result.headers['X-XRDS-Location'] : null
 	}
@@ -85,13 +85,13 @@ Savory.OpenID = Savory.OpenID || function() {
 	 * @returns {Savory.OpenID.Session}
 	 */
 	Public.getSession = function(conversation) {
-		var payload = Savory.Resources.getQuery(conversation)
+		var payload = Prudence.Resources.getQuery(conversation)
 		
 		if (!Savory.Nonces.check(payload.nonce)) {
 			return null
 		}
 		
-		//Public.logger.info('payload: ' + Savory.JSON.to(payload))
+		//Public.logger.info('payload: ' + Sincerity.JSON.to(payload))
 
 		var query = {}
 		
@@ -111,9 +111,9 @@ Savory.OpenID = Savory.OpenID || function() {
 		
 		//Public.logger.info('verifying with ' + payload['openid.op_endpoint'])
 		//Public.logger.dump(query)
-		//Public.logger.info(Savory.Resources.getWeb(query))
+		//Public.logger.info(Prudence.Resources.getWeb(query))
 		
-		var properties = Savory.Resources.request({
+		var properties = Prudence.Resources.request({
 			uri: payload['openid.op_endpoint'],
 			method: 'post',
 			payload: {
@@ -141,7 +141,7 @@ Savory.OpenID = Savory.OpenID || function() {
 	 * @param {String} [realmUri=application.globals.get('savory.foundation.openId.realmUri')] A URI identifying our application (usually our homepage)
 	 * @param {String} [callbackUri=application.globals.get('savory.foundation.openId.callbackUri')]
 	 */
-	Public.Provider = Savory.Classes.define(function(Module) {
+	Public.Provider = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.OpenID.Provider */
 	    var Public = {}
 	    
@@ -176,7 +176,7 @@ Savory.OpenID = Savory.OpenID || function() {
 		 * @returns {Savory.OpenID.Endpoint}
 		 */
 	    Public.getEndpoint = function() {
-			var xml = Savory.Resources.request({
+			var xml = Prudence.Resources.request({
 				uri: this.xrdsUri,
 				mediaType: 'application/xrds+xml'
 			})
@@ -201,7 +201,7 @@ Savory.OpenID = Savory.OpenID || function() {
 	 * @name Savory.OpenID.Endpoint
 	 * @see Savory.OpenID.Provider#getEndpoint
 	 */
-	Public.Endpoint = Savory.Classes.define(function() {
+	Public.Endpoint = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.OpenID.Endpoint */
 	    var Public = {}
 	    
@@ -220,11 +220,11 @@ Savory.OpenID = Savory.OpenID || function() {
 		 */
 	    Public.getAuthenticationUri = function(from) {
 			var nonce = Savory.Nonces.create()
-			return Savory.Resources.buildUri(this.endpointUri, {
+			return Prudence.Resources.buildUri(this.endpointUri, {
 				'openid.mode': 'checkid_setup',
 				'openid.ui.icon': true,
 				'openid.realm': this.provider.realmUri,
-				'openid.return_to': Savory.Resources.buildUri(this.provider.callbackUri, {from: from, provider: this.provider.name, nonce: nonce}),
+				'openid.return_to': Prudence.Resources.buildUri(this.provider.callbackUri, {from: from, provider: this.provider.name, nonce: nonce}),
 				'openid.ns': namespace,
 				'openid.claimed_id': identifier,
 				'openid.identity': identifier,
@@ -242,7 +242,7 @@ Savory.OpenID = Savory.OpenID || function() {
 	 * @name Savory.OpenID.Session
 	 * @see #getSession
 	 */
-	Public.Session = Savory.Classes.define(function() {
+	Public.Session = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.OpenID.Session */
 	    var Public = {}
 	    
@@ -264,7 +264,7 @@ Savory.OpenID = Savory.OpenID || function() {
 	var namespace = 'http://specs.openid.net/auth/2.0'
 	var identifier = 'http://specs.openid.net/auth/2.0/identifier_select'
 	var defaultRealmUri = application.globals.get('savory.integration.backend.openId.realmUri')
-	var defaultCallbackUri = Savory.Objects.string(application.globals.get('savory.integration.backend.openId.callbackUri'))
+	var defaultCallbackUri = Sincerity.Objects.string(application.globals.get('savory.integration.backend.openId.callbackUri'))
 		
 	return Public
 }()

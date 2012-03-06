@@ -1,21 +1,13 @@
-//
-// This file is part of the Savory Framework for Prudence
-//
-// Copyright 2011 Three Crickets LLC.
-//
-// The contents of this file are subject to the terms of the LGPL version 3.0:
-// http://www.opensource.org/licenses/lgpl-3.0.html
-//
-// Alternatively, you can obtain a royalty free commercial license with less
-// limitations, transferable or non-transferable, directly from Three Crickets
-// at http://threecrickets.com/
-//
 
-document.execute('/defaults/application/')
+document.executeOnce('/sincerity/container/')
+document.executeOnce('/prudence/routing/')
 
-document.executeOnce('/savory/integration/backend/open-id/')
-document.executeOnce('/savory/integration/backend/oauth/')
+var app = new Prudence.Routing.Application()
 
-Savory.SEO.registerExtensions()
-Savory.OpenID.registerMediaType()
-Savory.OAuth.registerHelper()
+Sincerity.Container.execute('settings')
+Sincerity.Container.execute('routing')
+
+app = app.create(component)
+
+// Restlets
+Sincerity.Container.executeAll('restlets')

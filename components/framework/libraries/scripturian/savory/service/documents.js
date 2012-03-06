@@ -11,9 +11,9 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
+document.executeOnce('/sincerity/classes/')
 document.executeOnce('/savory/foundation/html/markup/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -32,9 +32,9 @@ Savory.Documents = Savory.Documents || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('documents')
+	Public.logger = Prudence.Logging.getLogger('documents')
 	
 	/**
 	 * @returns {Savory.Documents.Site}
@@ -103,7 +103,7 @@ Savory.Documents = Savory.Documents || function() {
 	 * @name Savory.Documents.Site
 	 * @see #getSite
 	 */
-	Public.Site = Savory.Classes.define(function() {
+	Public.Site = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Documents.Site */
 	    var Public = {}
 		
@@ -115,11 +115,11 @@ Savory.Documents = Savory.Documents || function() {
 	    Public.createDocument = function(source, revision, now) {
 			now = now || new Date()
 
-			if (!Savory.Objects.exists(revision)) {
+			if (!Sincerity.Objects.exists(revision)) {
 				revision = this.revise(now)
 			}
 
-			if (!Savory.Objects.exists(revision)) {
+			if (!Sincerity.Objects.exists(revision)) {
 				return null
 			}
 			
@@ -160,7 +160,7 @@ Savory.Documents = Savory.Documents || function() {
 	 * @see #getDraft
 	 * @see #getLatestDraft
 	 */
-	Public.Draft = Savory.Classes.define(function() {
+	Public.Draft = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Documents.Draft */
 	    var Public = {}
 	    

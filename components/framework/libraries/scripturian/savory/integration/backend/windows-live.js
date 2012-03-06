@@ -12,10 +12,10 @@
 //
 
 document.executeOnce('/savory/service/nonces/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/cryptography/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/cryptography/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 
 var Savory = Savory || {}
 
@@ -38,9 +38,9 @@ Savory.WindowsLive = Savory.WindowsLive || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('windowsLive')
+	Public.logger = Prudence.Logging.getLogger('windowsLive')
 	
 	/**
 	 * The URI to which the user's browser should be redirected to in order to authenticate.
@@ -51,10 +51,10 @@ Savory.WindowsLive = Savory.WindowsLive || function() {
 	 */
 	Public.getAuthenticationUri = function(from) {
 		if (from) {
-			return Savory.Resources.buildUri(authenticationUri, {appid: clientId, appctx: Savory.JSON.to({from: from, nonce: Savory.Nonces.create()}), alg: authenticationAlgorithm, mkt: null})
+			return Prudence.Resources.buildUri(authenticationUri, {appid: clientId, appctx: Sincerity.JSON.to({from: from, nonce: Savory.Nonces.create()}), alg: authenticationAlgorithm, mkt: null})
 		}
 		else {
-			return Savory.Resources.buildUri(authenticationUri, {appid: clientId, appctx: Savory.JSON.to({nonce: Savory.Nonces.create()}), alg: authenticationAlgorithm, mkt: null})
+			return Prudence.Resources.buildUri(authenticationUri, {appid: clientId, appctx: Sincerity.JSON.to({nonce: Savory.Nonces.create()}), alg: authenticationAlgorithm, mkt: null})
 		}
 	}
 	
@@ -65,7 +65,7 @@ Savory.WindowsLive = Savory.WindowsLive || function() {
 	 * @returns {String} The decoded payload
 	 */
 	Public.decode = function(payload) {
-		return Savory.Cryptography.decode(Savory.Cryptography.toBytesFromBase64(payload), 16, Savory.Cryptography.toBytesFromBase64(cryptKey), 'AES/CBC/PKCS5Padding')
+		return Sincerity.Cryptography.decode(Sincerity.Cryptography.toBytesFromBase64(payload), 16, Sincerity.Cryptography.toBytesFromBase64(cryptKey), 'AES/CBC/PKCS5Padding')
 	}
 	
 	/**
@@ -75,7 +75,7 @@ Savory.WindowsLive = Savory.WindowsLive || function() {
 	 * @returns {String} The base64-encoded signature
 	 */
 	Public.sign = function(token) {
-		return Savory.Cryptography.hmac(Savory.Cryptography.toBytes(token), Savory.Cryptography.toBytesFromBase64(signKey), 'HmacSHA256', 'AES')
+		return Sincerity.Cryptography.hmac(Sincerity.Cryptography.toBytes(token), Sincerity.Cryptography.toBytesFromBase64(signKey), 'HmacSHA256', 'AES')
 	}
 	
 	/**
@@ -86,7 +86,7 @@ Savory.WindowsLive = Savory.WindowsLive || function() {
 	 * @returns {Savory.WindowsLive.Session}
 	 */
 	Public.getSession = function(conversation) {
-		var form = Savory.Resources.getForm(conversation, {
+		var form = Prudence.Resources.getForm(conversation, {
 			action: 'string',
 			stoken: 'string',
 			appctx: 'json'
@@ -100,7 +100,7 @@ Savory.WindowsLive = Savory.WindowsLive || function() {
 
 				var payload = Public.decode(unescape(form.stoken))
 				
-				var session = Savory.Resources.fromQueryString(payload, {
+				var session = Prudence.Resources.fromQueryString(payload, {
 					appid: 'string',
 					uid: 'string',
 					sig: 'string',
@@ -152,7 +152,7 @@ Savory.WindowsLive = Savory.WindowsLive || function() {
 	 * @class
 	 * @see #getSession
 	 */
-	Public.Session = Savory.Classes.define(function() {
+	Public.Session = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.WindowsLive.Session */
 	    var Public = {}
 	    
@@ -174,9 +174,9 @@ Savory.WindowsLive = Savory.WindowsLive || function() {
 	function deriveKey(key) {
 		var payload = key + secretKey
 		var messageDigest = java.security.MessageDigest.getInstance('SHA-256')
-		var digest = messageDigest.digest(Savory.Cryptography.toBytes(payload))
+		var digest = messageDigest.digest(Sincerity.Cryptography.toBytes(payload))
 		var derived = java.util.Arrays.copyOf(digest, 16)
-		return Savory.Cryptography.toBase64(derived)
+		return Sincerity.Cryptography.toBase64(derived)
 	}
 	
 	//

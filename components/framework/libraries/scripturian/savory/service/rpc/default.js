@@ -13,14 +13,14 @@
 
 document.executeOnce('/savory/service/rest/')
 document.executeOnce('/savory/service/serials/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/cryptography/')
-document.executeOnce('/savory/foundation/xml/')
-document.executeOnce('/savory/foundation/jvm/')
-document.executeOnce('/savory/foundation/json/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/prudence/lazy/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/cryptography/')
+document.executeOnce('/sincerity/xml/')
+document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/lazy/')
+document.executeOnce('/prudence/logging/')
 
 /**
  * Export plain-old JavaScript methods to be called via XML-RPC, JSON-RPC and other
@@ -50,9 +50,9 @@ Savory.RPC = Savory.RPC || function() {
 	 * The library's logger.
 	 *
 	 * @field
-	 * @returns {Savory.Logging.Logger}
+	 * @returns {Prudence.Logging.Logger}
 	 */
-	Public.logger = Savory.Logging.getLogger('rpc')
+	Public.logger = Prudence.Logging.getLogger('rpc')
 
 	/**
 	 * @namespace
@@ -132,7 +132,7 @@ Savory.RPC = Savory.RPC || function() {
 		var fn = 'function(){\n'
 		fn += 'document.executeOnce(\'/savory/service/rpc/\');\n'
 		fn += 'Savory.RPC.exportMethods('
-		fn += Savory.JSON.to(config, true);
+		fn += Sincerity.JSON.to(config, true);
 		fn += ');\n'
 		fn += 'return null;\n}'
 		return fn
@@ -163,18 +163,18 @@ Savory.RPC = Savory.RPC || function() {
 	Public.exportMethods = function(params) {
 		//java.lang.System.out.println(params.namespace)
 		var module = params.module || '.'
-		var dependencies = Savory.Objects.array(params.dependencies)
+		var dependencies = Sincerity.Objects.array(params.dependencies)
 		var namespace = params.namespace || params.object
 		var methods = params.methods || params.object
 		
-		if (Savory.Objects.isString(methods)) {
+		if (Sincerity.Objects.isString(methods)) {
 			for (var d in dependencies) {
 				document.executeOnce(dependencies[d])
 			}
 			methods = eval(methods)
 		}
 		
-		if (Savory.Objects.isDict(methods, true)) {
+		if (Sincerity.Objects.isDict(methods, true)) {
 			var theMethods = []
 			for (var m in methods) {
 				var method = methods[m]
@@ -190,12 +190,12 @@ Savory.RPC = Savory.RPC || function() {
 			methods = theMethods
 		}
 		
-		if (Savory.Objects.exists(params.methodOverrides)) {
+		if (Sincerity.Objects.exists(params.methodOverrides)) {
 			for (var o in params.methodOverrides) {
 				for (var m in methods) {
 					var method = methods[m]
 					if (method.name == o) {
-						Savory.Objects.merge(method, params.methodOverrides[o])
+						Sincerity.Objects.merge(method, params.methodOverrides[o])
 					}
 				}
 			}
@@ -230,10 +230,10 @@ Savory.RPC = Savory.RPC || function() {
 			try {
 				var object = method.object
 				if (object) {
-					if (Savory.Objects.isString(object)) {
+					if (Sincerity.Objects.isString(object)) {
 						object = eval(object)
 					}
-					if (Savory.Objects.exists(object)) {
+					if (Sincerity.Objects.exists(object)) {
 						fn = object[method.name]
 						// Store for later
 						// TODO: Only some stores can support this without concurrency issues, so disable for now
@@ -256,7 +256,7 @@ Savory.RPC = Savory.RPC || function() {
 	/**
 	 * XML-RPC spec.
 	 * 
-	 * @param {Savory.XML.Node} value
+	 * @param {Sincerity.XML.Node} value
 	 */
 	Public.fromXmlValue = function(value) {
 		var nil = value.getElements('nil')
@@ -296,7 +296,7 @@ Savory.RPC = Savory.RPC || function() {
 		var base64 = value.getElements('base64')
 		if (base64.length) {
 			var text = base64[0].getText()
-			return Savory.Cryptography.toBytesFromBase64(text)
+			return Sincerity.Cryptography.toBytesFromBase64(text)
 		}
 		
 		var dateTime = value.getElements('dateTime.iso8601')
@@ -371,22 +371,22 @@ Savory.RPC = Savory.RPC || function() {
 				}
 			}
 		}
-		else if (Savory.Objects.isString(value)) {
+		else if (Sincerity.Objects.isString(value)) {
 			return {
 				value: {
 					string: String(value)
 				}
 			}
 		}
-		else if (Savory.Objects.isObject(value)) {
-			if (Savory.Objects.isDate(value)) {
+		else if (Sincerity.Objects.isObject(value)) {
+			if (Sincerity.Objects.isDate(value)) {
 				return {
 					value: {
 						'dateTime.iso8601': value.format(iso8601format1, 'UTC')
 					}
 				}
 			}
-			else if (Savory.Objects.isArray(value)) {
+			else if (Sincerity.Objects.isArray(value)) {
 				var array = []
 				for (var i in value) {
 					array.push(Public.toXmlValue(value[i]))
@@ -399,7 +399,7 @@ Savory.RPC = Savory.RPC || function() {
 					}
 				}
 			}
-			else if (Savory.Objects.isDict(value, true)) {
+			else if (Sincerity.Objects.isDict(value, true)) {
 				if (value._) {
 					return {
 						value: value._
@@ -438,7 +438,7 @@ Savory.RPC = Savory.RPC || function() {
 	 * @class
 	 * @name Savory.RPC.Store
 	 */
-	Public.Store = Savory.Classes.define(function() {
+	Public.Store = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.RPC.Store */
 		var Public = {}
 
@@ -454,7 +454,7 @@ Savory.RPC = Savory.RPC || function() {
 	 * @name Savory.RPC.InThreadStore
 	 * @augments Savory.RPC.Store
 	 */
-	Public.InThreadStore = Savory.Classes.define(function(Module) {
+	Public.InThreadStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.RPC.InThreadStore */
 		var Public = {}
 
@@ -482,13 +482,13 @@ Savory.RPC = Savory.RPC || function() {
 				this.exportedModules[module] = exportedModule
 			}
 			else {
-				exportedModule.dependencies = Savory.Objects.concatUnique(exportedModule.dependencies, dependencies)
+				exportedModule.dependencies = Sincerity.Objects.concatUnique(exportedModule.dependencies, dependencies)
 				var existingMethods = namespace.namespaces[namespace]
 				if (existingMethods) {
 					exportedModule.namespaces[namespace] = methods
 				}
 				else {
-					exportedModule.namespaces[namespace] = Savory.Objects.concatUnique(existingMethods, methods, function(a, b) {
+					exportedModule.namespaces[namespace] = Sincerity.Objects.concatUnique(existingMethods, methods, function(a, b) {
 						return a.name == b.name
 					})
 				}
@@ -512,7 +512,7 @@ Savory.RPC = Savory.RPC || function() {
 	 * @name Savory.RPC.MapStore
 	 * @augments Savory.RPC.Store
 	 */
-	Public.MapStore = Savory.Classes.define(function(Module) {
+	Public.MapStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.RPC.MapStore */
 		var Public = {}
 
@@ -533,14 +533,14 @@ Savory.RPC = Savory.RPC || function() {
 		Public.addToModule = function(module, namespace, methods, dependencies) {
 			module = this.prefix + module
 			var theModule = this.map.get(module)
-			if (!Savory.Objects.exists(theModule)) {
+			if (!Sincerity.Objects.exists(theModule)) {
 				theModule = {
 					name: module,
-					namespaces: Savory.JVM.newMap(true),
-					dependencies: Savory.JVM.newSet(true)
+					namespaces: Sincerity.JVM.newMap(true),
+					dependencies: Sincerity.JVM.newSet(true)
 				}
 				var existing = this.map.putIfAbsent(module, theModule)
-				if (Savory.Objects.exists(existing)) {
+				if (Sincerity.Objects.exists(existing)) {
 					theModule = existing
 				}
 			}
@@ -548,10 +548,10 @@ Savory.RPC = Savory.RPC || function() {
 				theModule.dependencies.add(dependencies[d])
 			}
 			var theNamespace = theModule.namespaces.get(namespace)
-			if (!Savory.Objects.exists(theNamespace)) {
-				theNamespace = Savory.JVM.newList(true)
+			if (!Sincerity.Objects.exists(theNamespace)) {
+				theNamespace = Sincerity.JVM.newList(true)
 				var existing = theModule.namespaces.putIfAbsent(namespace, theNamespace)
-				if (Savory.Objects.exists(existing)) {
+				if (Sincerity.Objects.exists(existing)) {
 					theNamespace = existing
 				}
 			}
@@ -563,16 +563,16 @@ Savory.RPC = Savory.RPC || function() {
 		Public.getModule = function(module) {
 			var name = this.prefix + module
 			var theModule = this.map.get(name)
-			if (Savory.Objects.exists(theModule)) {
+			if (Sincerity.Objects.exists(theModule)) {
 				var namespaces = {}
 				for (var i = theModule.namespaces.entrySet().iterator(); i.hasNext(); ) {
 					var entry = i.next()
-					namespaces[entry.key] = Savory.Objects.clone(Savory.JVM.fromCollection(entry.value))
+					namespaces[entry.key] = Sincerity.Objects.clone(Sincerity.JVM.fromCollection(entry.value))
 				}
 				return {
 					name: module,
 					namespaces: namespaces,
-					dependencies: Savory.JVM.fromCollection(theModule.dependencies)
+					dependencies: Sincerity.JVM.fromCollection(theModule.dependencies)
 				}
 			}
 			return null
@@ -586,7 +586,7 @@ Savory.RPC = Savory.RPC || function() {
 	 * @name Savory.RPC.DistributedStore
 	 * @augments Savory.RPC.Store
 	 */
-	Public.DistributedStore = Savory.Classes.define(function(Module) {
+	Public.DistributedStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.RPC.DistributedStore */
 		var Public = {}
 	
@@ -606,8 +606,8 @@ Savory.RPC = Savory.RPC || function() {
 		Public.reset = function(module) {
 			this.dependencies.remove(module)
 			var namespaces = this.namespaces.get(module)
-			if (Savory.Objects.exists(namespaces)) {
-				namespaces = Savory.JVM.fromCollection(namespaces)
+			if (Sincerity.Objects.exists(namespaces)) {
+				namespaces = Sincerity.JVM.fromCollection(namespaces)
 			}
 			if (namespaces) {
 				for (var n in namespaces) {
@@ -624,26 +624,26 @@ Savory.RPC = Savory.RPC || function() {
 			this.namespaces.put(module, namespace)
 			var name = module + '/' + namespace
 			for (var m in methods) {
-				var method = Savory.Objects.clone(methods[m])
+				var method = Sincerity.Objects.clone(methods[m])
 				delete method.fn
-				this.methods.put(name, Savory.JSON.to(method))
+				this.methods.put(name, Sincerity.JSON.to(method))
 			}
 		}
 	
 		Public.getModule = function(module) {
 			var namespaces = {}
 			var namespaceNames = this.namespaces.get(module)
-			if (Savory.Objects.exists(namespaceNames)) {
-				namespaceNames = Savory.JVM.fromCollection(namespaceNames)
+			if (Sincerity.Objects.exists(namespaceNames)) {
+				namespaceNames = Sincerity.JVM.fromCollection(namespaceNames)
 			}
 			if (namespaceNames) {
 				for (var n in namespaceNames) {
 					var methods = this.methods.get(module + '/' + namespaceNames[n])
-					if (Savory.Objects.exists(methods)) {
-						methods = Savory.JVM.fromCollection(methods)
+					if (Sincerity.Objects.exists(methods)) {
+						methods = Sincerity.JVM.fromCollection(methods)
 						var namespace = namespaces[namespaceNames[n]] = []
 						for (var m in methods) {
-							namespace.push(Savory.JSON.from(methods[m]))
+							namespace.push(Sincerity.JSON.from(methods[m]))
 						}
 					}
 				}
@@ -653,8 +653,8 @@ Savory.RPC = Savory.RPC || function() {
 				namespaces: namespaces,
 			} 
 			var dependencies = this.dependencies.get(module)
-			if (Savory.Objects.exists(dependencies)) {
-				r.dependencies = Savory.JVM.fromCollection(dependencies)
+			if (Sincerity.Objects.exists(dependencies)) {
+				r.dependencies = Sincerity.JVM.fromCollection(dependencies)
 			}
 			return r
 		}
@@ -667,7 +667,7 @@ Savory.RPC = Savory.RPC || function() {
 	 * @name Savory.RPC.MongoDbStore
 	 * @augments Savory.RPC.Store
 	 */
-	Public.MongoDbStore = Savory.Classes.define(function(Module) {
+	Public.MongoDbStore = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.RPC.MongoDbStore */
 		var Public = {}
 
@@ -677,7 +677,7 @@ Savory.RPC = Savory.RPC || function() {
 		/** @ignore */
 		Public._construct = function(collection) {
 			this.collection = collection || 'rpc'
-			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 			this.collection.ensureIndex({name: 1}, {unique: true})
 		}
 
@@ -687,7 +687,7 @@ Savory.RPC = Savory.RPC || function() {
 		
 		Public.addToModule = function(module, namespace, methods, dependencies) {
 			// Prune functions from namespaces before sending to MongoDB
-			methods = Savory.Objects.clone(methods)
+			methods = Sincerity.Objects.clone(methods)
 			for (var m in methods) {
 				delete methods[m].fn
 			}
@@ -720,13 +720,13 @@ Savory.RPC = Savory.RPC || function() {
 	 * @param {String} [config.type='json']
 	 * @param {String} [config.version='2.0']
 	 */
-	Public.Client = Savory.Classes.define(function(Module) {
+	Public.Client = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.RPC.Client */
 		var Public = {}
 		
 		/** @ignore */
 		Public._construct = function(config) {
-			if (Savory.Objects.isString(config)) {
+			if (Sincerity.Objects.isString(config)) {
 				config = {uri: String(config)}
 			}
 			this.uri = config.uri
@@ -739,7 +739,7 @@ Savory.RPC = Savory.RPC || function() {
 			return function() {
 				return client.call({
 					method: method,
-					arguments: Savory.Objects.slice(arguments)
+					arguments: Sincerity.Objects.slice(arguments)
 				})
 			}
 		}
@@ -760,7 +760,7 @@ Savory.RPC = Savory.RPC || function() {
 		 * @throws {code:code, message:'message'}
 		 */
 		Public.call = function(params) {
-			if (Savory.Objects.isString(params)) {
+			if (Sincerity.Objects.isString(params)) {
 				params = {method: String(params)}
 			}
 			
@@ -779,7 +779,7 @@ Savory.RPC = Savory.RPC || function() {
 				for (var a in params.arguments) {
 					payload.methodCall.params.param.push(Module.toXmlValue(params.arguments[a]))
 				}
-				//Module.logger.info(Savory.XML.to(payload))
+				//Module.logger.info(Sincerity.XML.to(payload))
 			}
 			else {
 				id = Savory.Serials.next('savory.service.rpc.client')
@@ -798,7 +798,7 @@ Savory.RPC = Savory.RPC || function() {
 				}
 			}
 			
-			var result = Savory.Resources.request({
+			var result = Prudence.Resources.request({
 				uri: this.uri,
 				method: 'post',
 				mediaType: this.type == 'xml' ? 'application/xml' : 'application/json',

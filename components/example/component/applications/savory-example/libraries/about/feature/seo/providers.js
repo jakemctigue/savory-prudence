@@ -12,23 +12,23 @@
 //
 
 document.executeOnce('/savory/feature/seo/')
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/iterators/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/iterators/')
 
 Savory.SEO.resetProviders()
 
-var FakeProvider = FakeProvider || Savory.Classes.define(function() {
+var FakeProvider = FakeProvider || Sincerity.Classes.define(function() {
 	var Public = {}
 	
 	Public._inherit = Savory.SEO.Provider
 	
 	Public._construct = function(config) {
-		Savory.Objects.merge(this, config, ['name', 'domains'])
+		Sincerity.Objects.merge(this, config, ['name', 'domains'])
 		FakeProvider.prototype.superclass.call(this, this)
 	}
 	
 	Public.getLocations = function() {
-		return new Savory.Iterators.Fetcher(function(options, index) {
+		return new Sincerity.Iterators.Fetcher(function(options, index) {
 			if (index == 300000) {
 				options.hasNext = false
 				return
@@ -43,7 +43,7 @@ var FakeProvider = FakeProvider || Savory.Classes.define(function() {
 	}
 
 	Public.getExclusions = function() {
-		return new Savory.Iterators.Fetcher(function(options, index) {
+		return new Sincerity.Iterators.Fetcher(function(options, index) {
 			if (index == 100) {
 				options.hasNext = false
 				return
@@ -53,7 +53,7 @@ var FakeProvider = FakeProvider || Savory.Classes.define(function() {
 	}
 
 	Public.getInclusions = function() {
-		return new Savory.Iterators.Fetcher(function(options, index) {
+		return new Sincerity.Iterators.Fetcher(function(options, index) {
 			if (index == 100) {
 				options.hasNext = false
 				return
@@ -65,7 +65,7 @@ var FakeProvider = FakeProvider || Savory.Classes.define(function() {
 	return Public
 }())
 
-var SavoryProvider = SavoryProvider || Savory.Classes.define(function() {
+var SavoryProvider = SavoryProvider || Sincerity.Classes.define(function() {
 	var Public = {}
 	
 	Public._inherit = Savory.SEO.ExplicitProvider

@@ -11,9 +11,9 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/xml/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/xml/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -40,8 +40,8 @@ Savory.Syndication = Savory.Syndication || function() {
 	}
 	
 	Public.render = function(params) {
-		params = params ? Savory.Objects.clone(params) : {}
-		if (Savory.Objects.isString(params._object)) {
+		params = params ? Sincerity.Objects.clone(params) : {}
+		if (Sincerity.Objects.isString(params._object)) {
 			params._content = params._object
 		}
 		else {
@@ -50,14 +50,14 @@ Savory.Syndication = Savory.Syndication || function() {
 			}
 		}
 		delete params._object
-		return Savory.XML.build(params)
+		return Sincerity.XML.build(params)
 	}
 	
 	/**
 	 * @class
 	 * @name Savory.Syndication.Feed
 	 */
-	Public.Feed = Savory.Classes.define(function() {
+	Public.Feed = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Syndication.Feed */
 	    var Public = {}
 	    
@@ -96,7 +96,7 @@ Savory.Syndication = Savory.Syndication || function() {
 				}]
 			}
 			
-			return Savory.XML.build(feed)
+			return Sincerity.XML.build(feed)
 		}
 		
 		return Public
@@ -107,7 +107,7 @@ Savory.Syndication = Savory.Syndication || function() {
 	 * @name Savory.Syndication.MongoDbFeed
 	 * @augments Savory.Syndication.Feed
 	 */
-	Public.MongoDbFeed = Savory.Classes.define(function(Module) {
+	Public.MongoDbFeed = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Syndication.MongoDbFeed */
 	    var Public = {}
 
@@ -116,9 +116,9 @@ Savory.Syndication = Savory.Syndication || function() {
 
 	    /** @ignore */
 	    Public._construct = function(config) {
-        	Savory.Objects.merge(this, config, ['name', 'collection'])
+        	Sincerity.Objects.merge(this, config, ['name', 'collection'])
 
-			this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 	    }
 
 		Public.getInfo = function() {

@@ -14,7 +14,7 @@
 document.executeOnce('/savory/feature/wiki/')
 
 function handleBefore(conversation) {
-	if (Savory.Resources.hasRelativePrefix(conversation, application.globals.get('savory.feature.wiki.excludeFromFilter'))) {
+	if (Prudence.Resources.hasRelativePrefix(conversation, application.globals.get('savory.feature.wiki.excludeFromFilter'))) {
 		return 'continue'
 	}
 	

@@ -11,9 +11,9 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/objects/')
-document.executeOnce('/savory/foundation/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -38,26 +38,26 @@ var Savory = Savory || {}
  * @author Tal Liron
  * @version 1.3
  */
-Savory.Cache = Savory.Cache || Savory.Classes.define(function() {
+Savory.Cache = Savory.Cache || Sincerity.Classes.define(function() {
 	/** @exports Public as Savory.Cache */
     var Public = {}
 
     /** @ignore */
     Public._construct = function(config) {
-    	if (Savory.Objects.isString(config)) {
+    	if (Sincerity.Objects.isString(config)) {
     		this.name = String(config)
     	}
     	else {
-        	Savory.Objects.merge(this, config, ['name', 'plural', 'collection', 'logger', 'logLevel', 'defaultDuration'])
+        	Sincerity.Objects.merge(this, config, ['name', 'plural', 'collection', 'logger', 'logLevel', 'defaultDuration'])
     	}
     	
     	this.plural = this.plural || this.name + 's'
     	this.collection = this.collection || this.plural
-    	this.logger = this.logger || Savory.Logging.getLogger(this.plural)
+    	this.logger = this.logger || Prudence.Logging.getLogger(this.plural)
     	this.logLevel = this.logLevel || 'fine'
     	this.defaultDuration = this.defaultDuration || (60 * 1000)
     	
-    	this.collection = Savory.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+    	this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
     	this.collection.ensureIndex({key: 1}, {unique: true})	
     }
 
@@ -202,7 +202,7 @@ Savory.Cache = Savory.Cache || Savory.Classes.define(function() {
 			}
 			else {
 				entry = createFn.apply(null, arguments)
-				if (Savory.Objects.exists(entry)) {
+				if (Sincerity.Objects.exists(entry)) {
 					cache.store(key, entry, duration, null, now)
 				}
 			}
