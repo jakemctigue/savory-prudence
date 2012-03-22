@@ -73,7 +73,7 @@
 			<link href="http://www.h2database.com/javadoc/" />
 			<link href="http://junit.sourceforge.net/javadoc/" />
 			<!-- Jygments has no online javadocs -->
-			<link href="http://api.mongodb.org/java/2.7.2/" />
+			<link href="http://api.mongodb.org/java/2.7.3/" />
 			<link href="http://www.restlet.org/documentation/2.0/jse/api/" />
 			<link href="http://threecrickets.com/scripturian/api/" />
 			<link href="http://docs.oracle.com/cd/E17802_01/products/products/servlet/2.5/docs/servlet-2_5-mr2/" />
