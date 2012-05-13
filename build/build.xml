@@ -1,136 +1,43 @@
 <?xml version="1.0"?>
-<project name="Prudence" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
-
-	<!--
-	A straightforward Ant build file that can build a distribution for single-component projects,
-	using Ivy to pull in dependencies.
-	
-	The distribution's directory structure is compatible with Sincerity containers.
-	See: http://threecrickets.com/sincerity/
-	
-	Version: 1.0
-	-->
+<project name="The Savory Framework" default="build">
 
 	<property file="component.properties" />
 	
-	<property name="component.source" value="../components/${component}/source" />
-	<property name="component.notices" value="../components/notices" />
-	<property name="reference" value="../components/reference" />
+	<property name="notices" value="../components/notices" />
+	<property name="framework" value="../components/framework" />
+	<property name="example" value="../components/example" />
 	
-	<property name="dependencies" value="../dependencies" />
-
-	<property name="cache" value="./cache" />
-	<property name="cache.classes" value="${cache}/classes" />
-	<property name="cache.jars" value="${cache}/jars" />
-
 	<property name="distribution" value="./distribution" />
 	<property name="distribution.content" value="${distribution}/content" />
-	<property name="distribution.libraries" value="${distribution.content}/libraries" />
-	<property name="distribution.jars" value="${distribution.libraries}/jars" />
-	<property name="distribution.reference" value="${distribution.content}/reference" />
-	<property name="distribution.api" value="${distribution.reference}/documentation/api" />
-	<property name="distribution.manual" value="${distribution.reference}/documentation/manual" />
-	<property name="distribution.source" value="${distribution.content}/reference/source" />
 
-	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${dependencies}/libraries/jars/org.apache.ivy/ivy/${ivy.version}/ivy.jar" />
-
-	<target name="ivy" description="Settings for Ivy">
-		<ivy:settings file="ivy/settings.xml" />
-	</target>
-
-	<target name="dependencies" depends="ivy" description="Resolve dependencies">
-		<ivy:resolve file="ivy/${component}.xml" type="jar" log="download-only" resolveId="${component}" />
-		<ivy:cachepath pathid="dependencies" type="jar" resolveId="${component}" />
-	</target>
-
-	<target name="classes" depends="dependencies" description="Compile Java code">
-		<mkdir dir="${cache.classes}" />
-		<javac srcdir="${component.source}" destdir="${cache.classes}" source="${jvm.version}" target="${jvm.version}" includeAntRuntime="false" debug="${compile.debug}">
-			<classpath refid="dependencies" />
-		</javac>
-	</target>
-
-	<target name="javadocs" description="Create API documentation if not present">
-		<available file="${distribution.api}" property="javadocs-present" />
-		<antcall target="javadocs-overwrite" />
-	</target>
-
-	<target name="javadocs-overwrite" depends="dependencies" description="Create API documentation" unless="javadocs-present">
-		<javadoc
-			destdir="${distribution.api}" sourcepath="${component.source}" excludepackagenames="**.internal.*"
-			access="protected" source="${jvm.version}"
-			windowtitle="${documentation.title} ${version}" doctitle="${documentation.title} ${version}"
-			author="true" splitindex="true" use="true" version="true" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false">
-
-			<link href="${jvm.docs}" />
-			<link href="http://commons.apache.org/daemon/apidocs/" />
-			<link href="http://commons.apache.org/dbcp/api-1.3/" />
-			<link href="http://commons.apache.org/fileupload/apidocs/" />
-			<link href="http://commons.apache.org/pool/api-1.5.7/" />
-			<link href="http://www.sauronsoftware.it/projects/cron4j/api/" />
-			<link href="http://groboutils.sourceforge.net/docs/projects/5/api/" />
-			<link href="http://www.hazelcast.com/javadoc/" />
-			<link href="http://www.h2database.com/javadoc/" />
-			<link href="http://junit.sourceforge.net/javadoc/" />
-			<!-- Jygments has no online javadocs -->
-			<link href="http://api.mongodb.org/java/2.7.3/" />
-			<link href="http://www.restlet.org/documentation/2.0/jse/api/" />
-			<link href="http://threecrickets.com/scripturian/api/" />
-			<link href="http://docs.oracle.com/cd/E17802_01/products/products/servlet/2.5/docs/servlet-2_5-mr2/" />
-			<link href="http://dustin.github.com/java-memcached-client/apidocs/" />
-			<classpath refid="dependencies" />
-			<bottom>
-				<![CDATA[<i>${documentation.copyright}</i>]]>
-			</bottom>
-		</javadoc>
-	</target>
-
-	<target name="manual" description="Create manual if not present">
-		<available file="${distribution.manual}" property="manual-present" />
-		<antcall target="manual-overwrite" />
-	</target>
-	
-	<target name="clean-manual" description="Clean manual">
-		<delete dir="${distribution.manual}" />
-	</target>
-
-	<target name="manual-overwrite" description="Create manual" unless="manual-present">
-		<mkdir dir="${distribution.manual}" />
-		<copy todir="${distribution.manual}">
-			<fileset dir="${reference}/manual" excludes="*~" />
+	<target name="sincerity" description="Create Sincerity container">
+		<copy todir="${distribution.content}/configuration/sincerity">
+			<fileset dir="sincerity" />
 		</copy>
-		<replace dir="${distribution.manual}" includes="${component}_manual.lyx" token="%VERSION%" value="${version}" />
-		<exec executable="lyx" failifexecutionfails="false">
-			<arg value="--export" />
-			<arg value="pdf" />
-			<arg value="${distribution.manual}/${component}_manual.lyx" />
-		</exec>
-		<exec executable="elyxer" failifexecutionfails="false">
-			<arg value="--unicode" />
-			<arg value="--title" />
-			<arg value="${documentation.title} Manual" />
-			<arg value="${distribution.manual}/${component}_manual.lyx" />
-			<arg value="${distribution.manual}/${component}_manual.html" />
+		<exec executable="${sincerity.home}/sincerity">
+			<arg value="container:create" />
+			<arg value="--force" />
+			<arg value="${distribution.content}" />
+			<arg value="${sincerity.template}" />
+			<arg value=":" />
+			<arg value="repositories:attach" />
+			<arg value="three-crickets" />
+			<arg value=":" />
+			<arg value="install" />
 		</exec>
 	</target>
 
-	<target name="libraries" depends="classes" description="Create jar">
-		<mkdir dir="${distribution.jars}" />
-		<jar destfile="${distribution.jars}/${maven.group}/${maven.artifact}/${version}/${maven.artifact}.jar" basedir="${cache.classes}" />
-	</target>
-
-	<target name="distribution" depends="libraries, javadocs, manual" description="Assemble distribution">
-		<copy todir="${distribution.source}/${maven.group}/${maven.artifact}/${version}">
-			<fileset dir="${component.source}" />
-		</copy>
+	<target name="distribution" depends="sincerity" description="Assemble distribution">
 		<copy todir="${distribution.content}">
-			<fileset dir="${component.notices}" />
+			<fileset dir="${notices}" />
+			<fileset dir="${framework}" />
+			<fileset dir="${example}" />
 		</copy>
 	</target>
-	
+
 	<target name="package" depends="distribution" description="Create distribution package">
 		<zip destfile="${distribution}/${component}-${version}.zip">
-			<fileset dir="${distribution.content}" />
+			<fileset dir="${distribution.content}" excludes="cache/, logs/" />
 		</zip>
 	</target>
 	
