@@ -3,12 +3,44 @@
 
 	<property file="component.properties" />
 	
-	<property name="notices" value="../components/notices" />
+	<property name="reference" value="../components/reference" />
 	<property name="framework" value="../components/framework" />
 	<property name="example" value="../components/example" />
 	
+	<property name="cache" value="./cache" />
 	<property name="distribution" value="./distribution" />
 	<property name="distribution.content" value="${distribution}/content" />
+	<property name="distribution.reference" value="${distribution.content}/reference" />
+	<property name="distribution.manual" value="${distribution.reference}/manuals/${maven.group}/${maven.artifact}/${version}" />
+
+	<target name="manual" description="Create manual if not present">
+		<available file="${distribution.manual}" property="manual-present" />
+		<antcall target="manual-overwrite" />
+	</target>
+	
+	<target name="clean-manual" description="Clean manual">
+		<delete dir="${distribution.manual}" />
+	</target>
+
+	<target name="manual-overwrite" description="Create manual" unless="manual-present">
+		<mkdir dir="${distribution.manual}" />
+		<copy todir="${distribution.manual}">
+			<fileset dir="${reference}/manual" excludes="*~" />
+		</copy>
+		<replace dir="${distribution.manual}" includes="${component}_manual.lyx" token="%VERSION%" value="${version}" />
+		<exec executable="${lyx}" failifexecutionfails="false">
+			<arg value="--export" />
+			<arg value="pdf" />
+			<arg value="${distribution.manual}/${component}_manual.lyx" />
+		</exec>
+		<exec executable="${elyxer}" failifexecutionfails="false">
+			<arg value="--unicode" />
+			<arg value="--title" />
+			<arg value="${documentation.title} Manual" />
+			<arg value="${distribution.manual}/${component}_manual.lyx" />
+			<arg value="${distribution.manual}/${component}_manual.html" />
+		</exec>
+	</target>
 
 	<target name="sincerity" description="Create Sincerity container">
 		<copy todir="${distribution.content}/configuration/sincerity">
@@ -27,9 +59,8 @@
 		</exec>
 	</target>
 
-	<target name="distribution" depends="sincerity" description="Assemble distribution">
+	<target name="distribution" depends="sincerity, manual" description="Assemble distribution">
 		<copy todir="${distribution.content}">
-			<fileset dir="${notices}" />
 			<fileset dir="${framework}" />
 			<fileset dir="${example}" />
 		</copy>
@@ -37,11 +68,51 @@
 
 	<target name="package" depends="distribution" description="Create distribution package">
 		<zip destfile="${distribution}/${component}-${version}.zip">
-			<fileset dir="${distribution.content}" excludes="cache/, logs/" />
+			<zipfileset dir="${distribution.content}" excludes="cache/, logs/, sincerity" />
+			<zipfileset dir="${distribution.content}" includes="sincerity" filemode="755" />
 		</zip>
 	</target>
 	
-	<target name="build" depends="package" description="Build distribution" />
+	<target name="installer-installbuilder" depends="package" description="Create InstallBuilder installer">
+		<exec executable="${installbuilder}">
+			<arg value="build" />
+			<arg value="./installbuilder/${component}.xml" />
+			<arg value="linux-x64" />
+			<arg value="--license" />
+			<arg value="./installbuilder/license.xml" />
+		</exec>
+		<exec executable="${installbuilder}">
+			<arg value="build" />
+			<arg value="./installbuilder/${component}.xml" />
+			<arg value="linux" />
+				<arg value="--license" />
+				<arg value="./installbuilder/license.xml" />
+		</exec>
+		<exec executable="${installbuilder}">
+			<arg value="build" />
+			<arg value="./installbuilder/${component}.xml" />
+			<arg value="windows" />
+			<arg value="--license" />
+			<arg value="./installbuilder/license.xml" />
+		</exec>
+		<exec executable="${installbuilder}">
+			<arg value="build" />
+			<arg value="./installbuilder/${component}.xml" />
+			<arg value="osx" />
+			<arg value="--license" />
+			<arg value="./installbuilder/license.xml" />
+			<arg value="--setvars" />
+			<arg value="project.outputDirectory=${cache}" />
+		</exec>
+		<zip destfile="${distribution}/${component}-${version}-osx-installer.zip">
+			<zipfileset dir="${cache}/${component}-${version}-osx-installer.app" prefix="${component}-${version}-osx-installer.app" />
+		</zip>
+		<chmod perm="ugo+rx">
+			<fileset dir="${distribution}" includes="*.run" />
+		</chmod>
+	</target>
+
+	<target name="build" depends="distribution" description="Build distribution" />
 	
 	<target name="clean" description="Clean">
 		<delete dir="${cache}" />
