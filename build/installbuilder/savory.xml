@@ -23,7 +23,7 @@
                     <distributionFileList>
                         <distributionDirectory>
                             <allowWildcards>1</allowWildcards>
-                            <excludeFiles>*/sincerity;*/sincerity.bat</excludeFiles>
+                            <excludeFiles>*/sincerity;*/sincerity.bat;*/cache;*/logs</excludeFiles>
                             <origin>${build_project_directory}/../distribution/content/*</origin>
                         </distributionDirectory>
                     </distributionFileList>
@@ -105,6 +105,11 @@
             </validVersionList>
         </autodetectJava>
     </preInstallationActionList>
+    <postInstallationActionList>
+        <createDirectory>
+            <path>${installdir}/.sincerity</path>
+        </createDirectory>
+    </postInstallationActionList>
     <disableSplashScreen>1</disableSplashScreen>
     <enableRollback>1</enableRollback>
     <enableTimestamp>1</enableTimestamp>
