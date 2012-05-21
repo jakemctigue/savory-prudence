@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Start the Savory Framework
+Comment=Start the Savory Framework
+Terminal=false
+Exec=/usr/lib/savory/sincerity use /usr/lib/savory : start component
+Icon=/usr/lib/savory/savory.png
+Categories=Application;Development

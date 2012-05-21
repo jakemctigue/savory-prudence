@@ -1,0 +1,10 @@
+sincerity            /usr/lib/savory/
+sincerity.bat        /usr/lib/savory/
+*.jar                /usr/lib/savory/
+*.txt                /usr/lib/savory/
+programs/*           /var/lib/savory/programs/
+component/*          /var/lib/savory/component/
+configuration/*      /etc/savory/
+libraries/*          /var/lib/savory/libraries/
+savory.desktop       /usr/share/applications
+savory.png           /usr/lib/savory

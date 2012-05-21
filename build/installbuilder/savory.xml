@@ -4,7 +4,7 @@
     <version>1.0-beta1</version>
     <licenseFile>${build_project_directory}/../../components/notices/license.txt</licenseFile>
     <wrapLicenseFileText>0</wrapLicenseFileText>
-    <leftImage>${build_project_directory}/../../components/media/installer.png</leftImage>
+    <leftImage>${build_project_directory}/../../components/media/savory.png</leftImage>
     <outputDirectory>${build_project_directory}/../distribution/</outputDirectory>
     <componentList>
         <component>
