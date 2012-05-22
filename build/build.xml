@@ -13,6 +13,7 @@
 	<property name="distribution.content" value="${distribution}/content" />
 	<property name="distribution.reference" value="${distribution.content}/reference" />
 	<property name="distribution.manual" value="${distribution.reference}/manuals/${maven.group}/${maven.artifact}/${version}" />
+	<property name="distribution.api" value="${distribution.content}/component/applications/savory-example/mapped/api" />
 
 	<target name="manual" description="Create manual if not present">
 		<available file="${distribution.manual}" property="manual-present" />
