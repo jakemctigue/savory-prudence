@@ -151,10 +151,13 @@ Savory.Cache = Savory.Cache || Sincerity.Classes.define(function() {
 	 */
 	Public.prune = function(now) {
 		now = now || new Date()
-		var result = this.collection.remove({expiration: {$gte: now}}, 1)
+		var result = this.collection.remove({expiration: {$lte: now}}, 1)
 
 		if (result && result.n) {
 			this.logger.log(this.logLevel, 'Pruned {0} expired {1}', result.n, result.n > 1 ? this.plural : this.name)
+		}
+		else {
+			this.logger.log(this.logLevel, 'No {0} to prune', this.plural)
 		}
 	}
 
@@ -201,6 +204,7 @@ Savory.Cache = Savory.Cache || Sincerity.Classes.define(function() {
 				return entry
 			}
 			else {
+				// TODO: synchronize this!
 				entry = createFn.apply(null, arguments)
 				if (Sincerity.Objects.exists(entry)) {
 					cache.store(key, entry, duration, null, now)
@@ -219,7 +223,7 @@ Savory.Cache = Savory.Cache || Sincerity.Classes.define(function() {
  * @see Savory.Cache#wrap
  * @param {Number} times
  * @returns {String}
- */ 
+ */
 Function.prototype.cache = Function.prototype.cache || function(cache, duration, keyGen) {
 	return cache.wrap(this, duration, keyGen)
 }

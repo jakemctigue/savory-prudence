@@ -1148,6 +1148,842 @@ Finally, you can create your own custom store class to store events anywhere
 Internationalization Service
 \end_layout
 
+\begin_layout Standard
+This is a straightforward by powerful service that lets you render text
+ by key from 
+\begin_inset Quotes eld
+\end_inset
+
+text packs
+\begin_inset Quotes erd
+\end_inset
+
+ per locale.
+\end_layout
+
+\begin_layout Standard
+A single application can load many text packs simultaneously, such that
+ every user could see text in their preferred language, if you support it.
+ Text packs can be cached in memory (in the application globals) once loaded,
+ while giving you control over the cache duration in case you want to enable
+ on-the-fly editing of text packs.
+\end_layout
+
+\begin_layout Standard
+Importantly, this service supports bi-directionality (left-to-right or right-to-
+left languages) by keeping track of the direction of 
+\emph on
+every single key
+\emph default
+.
+ This is crucial, because you may have to render left-to-right and right-to-left
+ text on the same page, on you want to make sure that each key is rendered
+ correctly.
+\end_layout
+
+\begin_layout Standard
+Text packs can inherit each other, making it easy to manage many text packs
+ with a common base, or to merge text packs from different sources into
+ one.
+ For example, you can you have a general English text pack, and the a British
+ English text pack, which inherits the general English text pack and only
+ overrides those keys that are different.
+ Directionality of keys is maintained: if a right-to-left Arabic text pack
+ inherits an English text pack, those left-to-right keys from the English
+ text pack will stay left-to-right.
+\end_layout
+
+\begin_layout Subsubsection
+Locale Specifications
+\end_layout
+
+\begin_layout Standard
+In all the following examples, whenever you need to specify a locale you
+ can specify it either as a string signifying the language or in full form,
+ with 
+\begin_inset Quotes eld
+\end_inset
+
+language
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+country
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+variant
+\begin_inset Quotes erd
+\end_inset
+
+ keys.
+ For example, these two locale specifications would be considered equivalent:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+"en" == {"language": "en"}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+But this locale would be different:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{"language": "en", "country": "nz"}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Here's an example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/internationalization/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var textPack = Savory.Internationalization.getPack('en')
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+<p dir="<%= textPack.getDirection('application.savory-example.time') %>">
+\end_layout
+
+\begin_layout Plain Layout
+
+	<%= textPack.get('application.savory-example.time', {now: new Date()}) %>
+\end_layout
+
+\begin_layout Plain Layout
+
+</p>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var textPack = Savory.Internationalization.getCurrentPack(conversation)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+getDirection
+\begin_inset Quotes erd
+\end_inset
+
+ method will return either 
+\begin_inset Quotes eld
+\end_inset
+
+ltr
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+rtl
+\begin_inset Quotes erd
+\end_inset
+
+, according to the directionality of that specific key.
+ Note that the 
+\begin_inset Quotes eld
+\end_inset
+
+get
+\begin_inset Quotes erd
+\end_inset
+
+ method will automatically cast templates.
+ In this case, our text is a template in the form of 
+\begin_inset Quotes eld
+\end_inset
+
+It is now {now}
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In many cases, you would not want to specify the locale explicitly, but
+ instead would want it loaded from, say, the logged-in user's stored preferences.
+ In that case, you can store the selected locale in the conversation.locals
+ as 
+\begin_inset Quotes eld
+\end_inset
+
+savory.service.internationalization.text
+\begin_inset Quotes erd
+\end_inset
+
+ and then retrieve it like so:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var textPack = Savory.Internationalization.getCurrentPack(conversation)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Many of Savory's other services and features rely on this API call, so make
+ sure to set up the conversation.local appropriately if you want them to
+ support internationalization.
+\end_layout
+
+\begin_layout Subsection
+Configuration
+\end_layout
+
+\begin_layout Standard
+In your application's settings.js, add something like this to your app.globals:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+savory: {
+\end_layout
+
+\begin_layout Plain Layout
+
+	service: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		internationalization: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			defaultLocale: 'en',
+\end_layout
+
+\begin_layout Plain Layout
+
+			cacheDuration: 10000, // in milliseconds; if 0 or unspecified, will never
+ cache
+\end_layout
+
+\begin_layout Plain Layout
+
+			path: Sincerity.Container.getFileFromHere('textpacks') // optional
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It would then look for 
+\begin_inset Quotes eld
+\end_inset
+
+.json
+\begin_inset Quotes erd
+\end_inset
+
+ files in the 
+\begin_inset Quotes eld
+\end_inset
+
+/textpacks/
+\begin_inset Quotes erd
+\end_inset
+
+ directory under your application's main directory.
+\end_layout
+
+\begin_layout Standard
+To signify the locale in full form during configuration, make sure to use
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ key to avoid flattening of the dict (see Sincerity.Objects.flatten).
+ For example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+defaultLocale: {.: {language: 'en', country: 'nz'}}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Storage
+\end_layout
+
+\begin_layout Standard
+Text packs are looked for first JSON files and then in a MongoDB collection
+ called 
+\begin_inset Quotes eld
+\end_inset
+
+textpacks
+\begin_inset Quotes erd
+\end_inset
+
+.
+ You can combine text packs from both, and inherit either from the other.
+\end_layout
+
+\begin_layout Standard
+The text pack is a dict that must include at least a 
+\begin_inset Quotes eld
+\end_inset
+
+text
+\begin_inset Quotes erd
+\end_inset
+
+ key, with a structure of any depth, and optionally a 
+\begin_inset Quotes eld
+\end_inset
+
+direction
+\begin_inset Quotes erd
+\end_inset
+
+ key, which could be either 
+\begin_inset Quotes eld
+\end_inset
+
+ltr
+\begin_inset Quotes erd
+\end_inset
+
+ (for left-to-right, the default), or 
+\begin_inset Quotes eld
+\end_inset
+
+rtl
+\begin_inset Quotes erd
+\end_inset
+
+ (for right-to-left languages).
+ Additionally, you can add an 
+\begin_inset Quotes eld
+\end_inset
+
+inherits
+\begin_inset Quotes erd
+\end_inset
+
+ key, which can be either a single locale specification or an array of locale
+ specifications, which specifies which text packs should be merged into
+ this one.
+ The values of the inheriting text pack will always override those from
+ the inherited text packs.
+\end_layout
+
+\begin_layout Subsubsection
+As JSON Files
+\end_layout
+
+\begin_layout Standard
+If stored in files, the name of the file must be in the form 
+\begin_inset Quotes eld
+\end_inset
+
+[locale].json
+\begin_inset Quotes erd
+\end_inset
+
+.
+ For example, for the English locale it is 
+\begin_inset Quotes eld
+\end_inset
+
+en.json
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If the locale has country and variant specifications, they are added with
+ underscores.
+ For example, English/New Zealand would be 
+\begin_inset Quotes eld
+\end_inset
+
+en_nz.json
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+An example 
+\begin_inset Quotes eld
+\end_inset
+
+en.json
+\begin_inset Quotes erd
+\end_inset
+
+ file:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"direction": "ltr",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"text": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"application": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"savory-example": {
+\end_layout
+
+\begin_layout Plain Layout
+
+			"time": "It is now {now}"
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+As MongoDB Documents
+\end_layout
+
+\begin_layout Standard
+Text packs will be found in the collection called 
+\begin_inset Quotes eld
+\end_inset
+
+textpacks
+\begin_inset Quotes erd
+\end_inset
+
+.
+ They have the same structure as the JSON files, but must also have a 
+\begin_inset Quotes eld
+\end_inset
+
+locale
+\begin_inset Quotes erd
+\end_inset
+
+ key, with the locale specification as detailed above.
+ Here's an example document:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	_id: ObjectId("4d6803e6ddfe99e799c7b809"),
+\end_layout
+
+\begin_layout Plain Layout
+
+	"locale": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"language": "en",
+\end_layout
+
+\begin_layout Plain Layout
+
+		"country": "nz"
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	"direction": "ltr",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"inherit": ["en"],
+\end_layout
+
+\begin_layout Plain Layout
+
+	"text": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"application": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"savory-example": {
+\end_layout
+
+\begin_layout Plain Layout
+
+			"time": "It is now {now}"
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Cache Service
+\end_layout
+
+\begin_layout Standard
+The Prudence platform already provides excellent caching for your generated
+ HTML, with a lot of control over cache keys.
+ It also provides you with an API to access the cache backend directly.
+\end_layout
+
+\begin_layout Standard
+The Savory Cache Service goes a step further in letting you very easily
+ cache arbitrary JavaScript data in any MongoDB collection, again with very
+ flexible support for generating the cache key.
+ Moreover, it lets you easily wrap arbitrary JavaScript functions, so that
+ you can transparently cache their results.
+\end_layout
+
+\begin_layout Standard
+A simple example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/cache/')
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/sincerity/jvm/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var cache = new Savory.Cache('result')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var getResult = function(userId) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	Sincerity.JVM.sleep(1000)
+\end_layout
+
+\begin_layout Plain Layout
+
+	return {userId: userId, randomValue: Math.random()}
+\end_layout
+
+\begin_layout Plain Layout
+
+}.cache(cache, 10000, 'result.')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var result = getResult(123)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A few notes:
+\end_layout
+
+\begin_layout Itemize
+Our 
+\begin_inset Quotes eld
+\end_inset
+
+getResult
+\begin_inset Quotes erd
+\end_inset
+
+ function here is very silly, and purposely delays for 1 second.
+ However, it could easily do very real things: for example, a slow map-reduce
+ query on MongoDB, fetching data from an external service or site, etc.
+\end_layout
+
+\begin_layout Itemize
+We here cache the result for 10 seconds, meaning that only once every 10
+ seconds would the function actually be called.
+ In all other cases, the last cached result will be retrieved from the MongoDB
+ collection.
+ It should go without saying, but: this works in high-concurrency, so any
+ number of threads and nodes would be using the same cached value.
+\end_layout
+
+\begin_layout Itemize
+The data must be compatible with MongoDB.
+ This includes anything that works with MongoDB's extended JSON format.
+\end_layout
+
+\begin_layout Itemize
+We here use a simple string prefix (
+\begin_inset Quotes eld
+\end_inset
+
+result.
+\begin_inset Quotes erd
+\end_inset
+
+) to generate our cache key.
+ The service will automatically add the function arguments to the cache
+ key, so in this case our cache key will be 
+\begin_inset Quotes eld
+\end_inset
+
+result.123
+\begin_inset Quotes erd
+\end_inset
+
+.
+ However, you can supply a function instead of a string, which would return
+ the final cache key as the string using whatever logic you need.
+ An implication of this is that you can use a single cache collection to
+ store results of numerous functions, as long as you make sure that the
+ final cache keys don't overlap.
+\end_layout
+
+\begin_layout Itemize
+The library has overriden the JavaScript function prototype, adding the
+ 
+\begin_inset Quotes eld
+\end_inset
+
+cache
+\begin_inset Quotes erd
+\end_inset
+
+ method to it.
+ The Savory.Cache API also has methods that offer more flexibility.
+ For example, it can let you set advanced logging, so that you can see how
+ the cache is working.
+\end_layout
+
+\begin_layout Itemize
+The service removes expired entries only when you try to access them.
+ If it's important for you to save space and remove 
+\emph on
+all
+\emph default
+ expired cache entries, you might want to call the Savory.Cache.prune method
+ regularly.
+ You can do this in your crontab file.
+ Here's an example of doing so every 15 minutes:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+*/15 * * * * <% document.executeOnce('/savory/service/cache/'); new Savory.Cache('
+result').prune(); %>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Linkback Service
 \end_layout
@@ -2078,29 +2914,8 @@ The originating IP address is included in the email.
 Discussion Feature
 \end_layout
 
-\begin_layout Subsection
-Editable Graph Structures in MongoDB
-\end_layout
-
 \begin_layout Standard
-If you'll take a look at Savory's Ext JS tree integration, you'll see it's
- pretty neat.
- But it was literally neat because the trees for Ext-JS are immutable, and
- easily stored in a MongoDB document, which can hold a structure of arbitrary
- depth.
- However, if you want your tree to change, though, by multiple users and
- threads -- document databases such as MongoDB begin to show some of their
- limitations.
- (Graph databases, such as neo4j, are of course perfect for this use case.)
-\end_layout
-
-\begin_layout Standard
-Nevertheless, it's not impossible, and can get excellent all-around performance.
-\end_layout
-
-\begin_layout Standard
-How is this solved for the Discussion Feature? First off, what it does is
- let you attach a 
+This feature lets you attach a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2109,7 +2924,7 @@ forum
 \end_inset
 
  to any MongoDB document.
- It could thus be a Page from the Wiki Feature, a blog post, or just anything
+ It could be a Page from the Wiki Feature, a blog post, or just anything
  in your application.
  Of course, permissions apply, and you can allow, for example, for registered
  users to post new threads and have 
@@ -2126,9 +2941,29 @@ visitor
  instantly sociable.
 \end_layout
 
+\begin_layout Subsection
+Editable Graph Structures in MongoDB
+\end_layout
+
 \begin_layout Standard
-MongoDB's atomic operations do not support such recursion, so we needed
- a different method.
+If you'll take a look at Savory's Ext JS tree integration, you'll see it's
+ pretty neat.
+ It's 
+\emph on
+literally
+\emph default
+ neat because the trees for Ext-JS are immutable, and easily stored in a
+ MongoDB document, which can hold a structure of arbitrary depth.
+ However, if you want your tree to change by multiple users and threads,
+ document databases such as MongoDB begin to show some of their limitations.
+ (Graph databases, such as neo4j, are of course perfect for this use case.)
+\end_layout
+
+\begin_layout Standard
+Nevertheless, it's not impossible, and can get excellent all-around performance
+ for mutability.
+ How is this solved for the Discussion Feature? MongoDB's atomic operations
+ do not support such recursion, so we needed a different method.
  You can see ideas on the MongoDB 
 \begin_inset CommandInset href
 LatexCommand href
@@ -2154,9 +2989,9 @@ materialized paths
  as well as a parent field.
  We parse this document on load, to give it a tree-like structure more amenable
  to work with.
- The flat storage structure, however, allows for easy use of MongoDB's update
- operation.
- For each post, I store a 
+ The flat storage structure, however, allows for easy use of MongoDB's atomic
+ update operation.
+ For each post, we store a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2165,33 +3000,35 @@ nextResponse
 \end_inset
 
  running serial.
- I update it atomically with $inc for each new post, to make sure it's unique,
- and append that number to the parent's path to create the new path.
- I then add the new response using MongoDB's $push.
+ We update it atomically with $inc for each new post, to make sure it's
+ unique, and append that number to the parent's path to create the new path.
+ We then add the new response using MongoDB's $push.
  The result is that any number of users can respond at the same time to
  the same forum, and each response takes only two MongoDB write operations,
  only one of which waits for the response.
+ We're guaranteed atomicity and uniqueness of each path ID.
 \end_layout
 
 \begin_layout Standard
 A graph DB would do this better, but the real comparison would be to a relationa
 l database.
  Just two writes, but the whole forum is read with one read.
- I think this counts as a smashing success of an implementation.
+ We think this counts as a smashing success!
 \end_layout
 
 \begin_layout Standard
-You'll notice a rule of thumb we've applied here: if in relational database
- you always want your tables to be normalized, in document databases your
- goal is to use as few documents as possible.
+You'll notice a rule of thumb we've applied here, useful in general when
+ working with MongoDB: if in relational database you always want your tables
+ to be normalized, in document databases your goal is to use as few documents
+ as possible.
  In this case, the entire forum is embedded into one document (together
  with the document's other data, if there is any).
- The document limit in MongoDB is 4MB, easily adequate for comments.
- But what if you want a more open forum? Well, the Discussion Module also
- comes with forum implementations that store each thread in post in its
- own document, or even each post in its own document.
+ The document limit in MongoDB is 4MB, easily adequate for such discussions.
+ But, what if you want a more open forum, with no limitations on size? Well,
+ the Discussion Feature also comes with a forum implementation that stores
+ each thread in post in its own document, or even each post in its own document.
  All use the same API.
- Mix and match for the best performance and growth necessity suitable for
+ Mix and match for the best performance and growth ability suitable for
  your needs.
 \end_layout
 

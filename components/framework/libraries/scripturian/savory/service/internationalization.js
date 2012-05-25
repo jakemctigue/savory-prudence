@@ -64,9 +64,6 @@ Savory.Internationalization = Savory.Internationalization || function() {
     	if (!Sincerity.Objects.exists(pack)) {
     		pack = Public.getPack()
     		conversation.locals.put('savory.service.internationalization.text', pack)
-    		//application.logger.info(pack.get)
-    		//application.logger.info(Sincerity.JSON.to(conversation.locals.get('savory.service.internationalization.text'),true))
-    		//application.logger.info(conversation.locals.get('savory.service.internationalization.text').get('hi'))
     	}
     	return pack
     }
@@ -141,7 +138,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 				Sincerity.Objects.merge(text, ourText)
 				Sincerity.Objects.merge(directions, ourDirections)
 				
-				pack = new Public.Pack(text, directions, direction)
+				pack = new Public.Pack(locale, text, directions, direction)
 				
 				/*if (cache) {
 					var existing = cache.putIfAbsent(cacheKey, pack)
@@ -164,7 +161,8 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	    var Public = {}
 	    
 	    /** @ignore */
-	    Public._construct = function(text, directions, defaultDirection) {
+	    Public._construct = function(locale, text, directions, defaultDirection) {
+	    	this.locale = locale
 			this.text = text
 			this.directions = directions
 			this.defaultDirection = defaultDirection
@@ -256,7 +254,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 		if (basePath) {
 			// Try from file first
 			try {
-				textPack = Sincerity.JSON.from(Sincerity.Files.loadText(basePath + getCacheKey(locale) + '.json'))
+				textPack = Sincerity.JSON.from(Sincerity.Files.loadText(new java.io.File(basePath, getCacheKey(locale) + '.json')))
 			}
 			catch (x if x.javaException instanceof java.io.FileNotFoundException) {
 			}
@@ -281,17 +279,20 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	var textPacksCollection = new MongoDB.Collection('textpacks')
 	textPacksCollection.ensureIndex({locale: 1}, {unique: true})
 
-	var defaultLocale = application.globals.get('savory.service.internationalization.locale')
+	var defaultLocale = application.globals.get('savory.service.internationalization.defaultLocale')
 	if (Sincerity.Objects.isString(defaultLocale)) {
 		defaultLocale = {language: String(defaultLocale)}
 	}
 	var basePath = application.globals.get('savory.service.internationalization.path')
+	if (Sincerity.Objects.exists(basePath)) {
+		basePath = new java.io.File(basePath)
+	}
 	
 	var cache
 	var cacheDuration = application.globals.get('savory.service.internationalization.cacheDuration')
 	if (cacheDuration > 0) {
 		cache = application.globals.get('savory.service.internationalization.cache')
-		if (!cache) {
+		if (!Sincerity.Objects.exists(cache)) {
 			cache = application.getGlobal('savory.service.internationalization.cache', Sincerity.JVM.newMap(true))
 		}
 	}

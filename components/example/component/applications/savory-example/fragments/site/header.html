@@ -1,25 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<%#
-
-This file is part of the Savory Framework for Prudence
-
-Copyright 2011 Three Crickets LLC.
-
-The contents of this file are subject to the terms of the LGPL version 3.0:
-http://www.gnu.org/copyleft/lesser.html
-
-Alternatively, you can obtain a royalty free commercial license with less
-limitations, transferable or non-transferable, directly from Three Crickets
-at http://threecrickets.com/
-
-%><%
-document.executeOnce('/sincerity/localization/')
-document.executeOnce('/sincerity/json/')
-document.executeOnce('/prudence/blocks/')
-%>
 <html>
 <head>
-	<title>The Savory Framework: Scalable Prudence/MongoDB Web Development - Three Crickets</title>
+	<title>The Savory Framework - Examples</title>
 
 	<meta name="description" content="A scalable Prudence/MongoDB web development framework for JavaScript." />
 	<meta name="keywords" content="Savory, Prudence, MongoDB, Three Crickets, Scalable, Scalability, REST, RESTful, Restlet, JVM, Java Virtual Machine, Java, JavaScript, Rhino, No-SQL, NoSQL" />
@@ -57,72 +39,72 @@ document.executeOnce('/prudence/blocks/')
 						<li><a href="<%= conversation.pathToBase %>/api/">API Documentation</a></li>
 						<li><span class="heading">Drop-In Features</span>
 							<ul>
-								<li><a href="<%= conversation.pathToBase %>/about/feature/blog/">Blog</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/feature/console/">Console</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/feature/contact-us/">Contact Us</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/feature/discussion/">Discussion</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/feature/registration/">Registration</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/feature/seo/">SEO</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/feature/shopping-cart/">Shopping Cart</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/feature/wiki/">Wiki</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/feature/blog/">Blog</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/feature/console/">Console</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/feature/contact-us/">Contact Us</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/feature/discussion/">Discussion</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/feature/registration/">Registration</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/feature/seo/">SEO</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/feature/shopping-cart/">Shopping Cart</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/feature/wiki/">Wiki</a></li>
 							</ul>
 						</li>
 						<li><span class="heading">Application Services</span>
 							<ul>
-								<li><a href="<%= conversation.pathToBase %>/about/service/authentication/">Authentication</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/cache/">Cache</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/backup/">Backup</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/cache/">Cache</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/documents/">Documents</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/events/">Events</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/internationalization/">Internationalization</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/linkback/">Linkback</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/nonces/">Nonces</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/notification/">Notification</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/progress/">Progress</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/rpc/">RPC</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/rest/">REST</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/search/">Search</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/serials/">Serials</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/service/syndication/">Syndication</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/authentication/">Authentication</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/cache/">Cache</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/backup/">Backup</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/cache/">Cache</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/documents/">Documents</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/events/">Events</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/internationalization/">Internationalization</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/linkback/">Linkback</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/nonces/">Nonces</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/notification/">Notification</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/progress/">Progress</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/rpc/">RPC</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/rest/">REST</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/search/">Search</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/serials/">Serials</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/service/syndication/">Syndication</a></li>
 							</ul>
 						</li>
 						<li><span class="heading">Integrations</span>
 							<ul>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/gravatar/">Gravatar</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/pay-pal/">PayPal</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/gravatar/">Gravatar</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/pay-pal/">PayPal</a></li>
 							</ul>
 						</li>
 						<li><span class="heading">Sencha Integration</span>
 							<ul>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/sencha/">General Information</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/sencha/grids/">Ext JS Grids</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/sencha/trees/">Ext JS Trees</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/sencha/charts/">Ext JS Charts</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/sencha/forms/">Ext JS Forms</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/sencha/direct/">Ext Direct</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/integration/sencha/touch/">Sencha Touch</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/sencha/">General Information</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/sencha/grids/">Ext JS Grids</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/sencha/trees/">Ext JS Trees</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/sencha/charts/">Ext JS Charts</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/sencha/forms/">Ext JS Forms</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/sencha/direct/">Ext Direct</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/integration/sencha/touch/">Sencha Touch</a></li>
 							</ul>
 						</li>
 						<li><span class="heading">Foundation Libraries</span>
 							<ul>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/blocks/">Blocks</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/html/">HTML Building</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/html/markup/">HTML Markup</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/html/parsing/">HTML Parsing</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/iterators/">Iterators</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/lazy/">Lazy</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/logging/">Logging</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/lucene/">Lucene</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/resources/">Resources</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/resources/forms/">Resources: Forms</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/tasks/">Tasks</a></li>
-								<li><a href="<%= conversation.pathToBase %>/about/foundation/templates/">Templates</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/blocks/">Blocks</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/html/">HTML Building</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/html/markup/">HTML Markup</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/html/parsing/">HTML Parsing</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/iterators/">Iterators</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/lazy/">Lazy</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/logging/">Logging</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/lucene/">Lucene</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/resources/">Resources</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/resources/forms/">Resources: Forms</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/tasks/">Tasks</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/foundation/templates/">Templates</a></li>
 							</ul>
 						</li>
 						<li><span class="heading">Tools</span>
 							<ul>
-								<li><a href="<%= conversation.pathToBase %>/about/tool/js-doc/" class="closed">JsDoc Template</a></li>
+								<li><a href="<%= conversation.pathToBase %>/example/tool/js-doc/" class="closed">JsDoc Template</a></li>
 							</ul>
 						</li>
 					</ul>

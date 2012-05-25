@@ -2,8 +2,8 @@
 	"direction": "ltr",
 	"text": {
 		"application": {
-			"cluck": {
-				"welcome": "It is now {now}"
+			"savory-example": {
+				"time": "It is now {now}"
 			}
 		},
 		"savory": {

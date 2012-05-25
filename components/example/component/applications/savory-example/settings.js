@@ -9,7 +9,7 @@ app.settings = {
 
 	errors: {
 		debug: true,
-		homeUrl: 'http://threecrickets/savory/', // Only used when debug=false
+		homeUrl: 'http://threecrickets.com/savory/', // Only used when debug=false
 		contactEmail: 'info@threecrickets.com' // Only used when debug=false
 	},
 	
@@ -44,5 +44,15 @@ app.globals = {
 		defaultServers: '127.0.0.1',
 		defaultSwallow: true,
 		defaultDb: 'savory'
+	},
+
+	savory: {
+		service: {
+			internationalization: {
+				locale: 'en',
+				cacheDuration: 10000,
+				path: Sincerity.Container.getFileFromHere('data', 'savory', 'service', 'internationalization')
+			}
+		}
 	}
 }
