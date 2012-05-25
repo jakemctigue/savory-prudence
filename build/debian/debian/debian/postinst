@@ -18,9 +18,9 @@ case "$1" in
 	configure)
 		mkdir -p /usr/lib/savory/.sincerity
 		
-		mkdir -p /var/logs/savory
-		chmod a+w /var/logs/savory
-		ln -fsT /var/logs/savory /usr/lib/savory/logs
+		mkdir -p /var/log/savory
+		chmod a+w /var/log/savory
+		ln -fsT /var/log/savory /usr/lib/savory/logs
 
 		mkdir -p /var/cache/savory
 		chmod a+w /var/cache/savory
