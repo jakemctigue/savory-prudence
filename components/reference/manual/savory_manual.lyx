@@ -2256,15 +2256,15 @@ check.
 \emph on
 and only once 
 \emph default
-for any issued nonce.
- Furthermore, every issued nonce is given an expiration time, so that there
- is a limited time window in which the nonce can be checked.
+for any issued nonce, across all nodes accessing the same MongoDB database.
+ Furthermore, every issued nonce is given an expiration time, after which
+ it will be considered invalid.
 \end_layout
 
 \begin_layout Standard
-Nonces are used in authentication schemes, where tokens are purposely issued
- for short time periods, and are meant to be used only once, in order to
- minimize security risks.
+Nonces are often used in authentication schemes, where tokens, meant to
+ be used only once, are purposely issued for short time periods in order
+ to minimize security risks.
 \end_layout
 
 \begin_layout Standard
@@ -2314,6 +2314,38 @@ if (!Savory.Nonces.check(nonce)) {
 \begin_layout Plain Layout
 
 }
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that the nonces used in the API are 
+\emph on
+strings
+\emph default
+, which are hexadecimal representations of big integers.
+ Strings are preferable in this use case, because you can be certain that
+ precision will not be lost across various conversions and serializations.
+ If you really need a non-hexadecimal representation, you can convert it
+ a nonce using the following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var nonceInteger = new java.math.BigInteger(nonce, 16)
+\end_layout
+
+\begin_layout Plain Layout
+
+print(nonceInteger) // this will print a decimal representation on the nonce
 \end_layout
 
 \end_inset

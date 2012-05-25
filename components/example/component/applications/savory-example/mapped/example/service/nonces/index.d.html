@@ -18,6 +18,7 @@ if (conversation.request.method.name == 'POST') {
 }
 
 var nonce = Savory.Nonces.create(60 * 1000)
+
 %>
 
 <p>
@@ -25,7 +26,8 @@ var nonce = Savory.Nonces.create(60 * 1000)
 	If you copy and paste the last nonce within 60 seconds, you should see it checked successfully.
 </p>
 <p class="note">
-	Last issued nonce: <b><%= nonce %></b>
+	Last issued nonce: <b><%= nonce %></b><br />
+	(Decimal representation is <%= new java.math.BigInteger(nonce, 16) %>)
 </p>
 
 <form method="post">

@@ -154,10 +154,7 @@ Savory.Cache = Savory.Cache || Sincerity.Classes.define(function() {
 		var result = this.collection.remove({expiration: {$lte: now}}, 1)
 
 		if (result && result.n) {
-			this.logger.log(this.logLevel, 'Pruned {0} expired {1}', result.n, result.n > 1 ? this.plural : this.name)
-		}
-		else {
-			this.logger.log(this.logLevel, 'No {0} to prune', this.plural)
+			this.logger.info('Pruned {0} expired {1}', result.n, result.n > 1 ? this.plural : this.name)
 		}
 	}
 
