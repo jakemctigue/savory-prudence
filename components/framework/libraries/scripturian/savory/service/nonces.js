@@ -80,7 +80,7 @@ Savory.Nonces = Savory.Nonces || function() {
 
 		if (entry) {
 			now = now || new Date()
-			if (entry.expiration >= now) {
+			if (entry.expiration > now) {
 				Public.logger.info('Used: ' + nonce)
 				return true
 			}
@@ -95,9 +95,9 @@ Savory.Nonces = Savory.Nonces || function() {
 	 * 
 	 * @param {Date} [now=new Date()] Used to calculate the expiration
 	 */
-	Public.maintenance = function(now) {
+	Public.prune = function(now) {
 		now = now || new Date()
-		var result = noncesCollection.remove({expiration: {$gte: now}}, 1)
+		var result = noncesCollection.remove({expiration: {$lte: now}}, 1)
 		
 		if (result && result.n) {
 			Public.logger.info('Removed {0} stale {1}', result.n, result.n > 1 ? 'nonces' : 'nonce')

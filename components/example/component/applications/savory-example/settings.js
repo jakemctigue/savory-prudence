@@ -1,4 +1,6 @@
 
+document.executeOnce('/prudence/lazy/')
+
 app.settings = {
 	description: {
 		name: 'Savory Framework Example',
@@ -33,9 +35,9 @@ app.settings = {
 	},
 
 	scriptletPlugins: {
-		'{{': '/savory/handlers/foundation/blocks/scriptlet-plugin/',
+		/*'{{': '/savory/handlers/foundation/blocks/scriptlet-plugin/',
 		'}}': '/savory/handlers/foundation/blocks/scriptlet-plugin/',
-		'&&': '/savory/handlers/foundation/blocks/scriptlet-plugin/'
+		'&&': '/savory/handlers/foundation/blocks/scriptlet-plugin/'*/
 	}
 }
 
@@ -52,6 +54,21 @@ app.globals = {
 				locale: 'en',
 				cacheDuration: 10000,
 				path: Sincerity.Container.getFileFromHere('data', 'savory', 'service', 'internationalization')
+			},
+			
+			notification: {
+				services: {
+					'.': Prudence.Lazy.build({
+						Email: {
+							dependencies: '/savory/service/notification/service/email/',
+							name: 'Savory.Notification.EmailService',
+							config: {
+								from: 'emblemparade@sbcglobal.net',
+								site: 'Savory Framework Example'
+							}
+						}
+					})
+				}
 			}
 		}
 	}

@@ -1,0 +1,76 @@
+<%& '/site/header/' %>
+
+<h1>Notification Service</h1>
+<%
+
+document.executeOnce('/savory/service/notification/')
+
+if (conversation.request.method.name == 'POST') {
+	var notice = conversation.form.get('notice')
+	if (notice) {
+		var type = String(conversation.form.get('type'))
+		switch (type) {
+			case 'email':
+				var email = conversation.form.get('email')
+				Savory.Notification.queueForAddress('Email', 'tal.liron@gmail.com', {subject: 'A Test Message from the Savory Example Application', text: notice})
+				break
+			case 'channel':
+				var channel = conversation.form.get('channel')
+				Savory.Notification.queueForChannel(channel, {subject: 'A Test Message from the Savory Example Application', text: notice})
+				break
+		}
+		print('<p class="note">Queued!</p>')
+	}
+}
+
+%>
+
+<p>
+	In this example we are going to queue a notice. We've enabled a task in the crontab to send queued messages
+	every minute, so it could take up to a minute for the notices to actually be sent. In the meantime, you can
+	check out the MongoDB "notices" table to see the queue.
+</p>
+<p>
+	In our "settings.js" we've configured the Notification Service to send Email via SMTP. However, it's up to you
+	to make sure that you have access to a functioning SMTP server. Configuring that is beyond the scope of this
+	example. If no SMTP server is found, the queued messages simply won't be sent.
+</p>
+
+<form method="post">
+	<table>
+	<tr>
+		<td>
+			<input type="radio" name="type" value="email" <%= conversation.form.get('type') == 'email' ? 'checked="checked"' : '' %> />
+			Send to an email address:
+		</td>
+		<td>
+			<input name="email" value="<%= conversation.form.get('email') || '' %>" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input type="radio" name="type" value="channel" <%= ((conversation.form.get('type') == 'channel') || (conversation.form.get('type') == null)) ? 'checked="checked"' : '' %> />
+			Or, send to a channel:
+		</td>
+		<td>
+			<input name="channel" value="<%= conversation.form.get('channel') || 'main' %>" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Content:
+		</td>
+		<td>
+			<textarea name="notice"><%= conversation.form.get('notice') || '' %></textarea>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="submit" value="Send" /></td>
+	</tr>
+	</table>
+</form>
+
+<%= learn('Notification') %>
+
+<%& '/site/footer/' %>

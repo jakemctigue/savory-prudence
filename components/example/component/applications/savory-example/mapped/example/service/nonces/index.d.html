@@ -1,0 +1,41 @@
+<%& '/site/header/' %>
+
+<h1>Nonces Service</h1>
+
+<%
+
+document.executeOnce('/savory/service/nonces/')
+
+if (conversation.request.method.name == 'POST') {
+	var nonce = conversation.form.get('nonce')
+	var valid = Savory.Nonces.check(nonce)
+	if (valid) {
+		print('<p class="note">The nonce <b>{0}</b> was checked successfully. You will not be able to check it again.</p>'.cast(nonce))
+	}
+	else {
+		print('<p class="note">The nonce <b>{0}</b> is invalid.</p>'.cast(nonce))
+	}
+}
+
+var nonce = Savory.Nonces.create(60 * 1000)
+%>
+
+<p>
+	In this example we'll issue a 60-second nonce every time the page is loaded. In the form, you can enter any nonce to check.
+	If you copy and paste the last nonce within 60 seconds, you should see it checked successfully.
+</p>
+<p class="note">
+	Last issued nonce: <b><%= nonce %></b>
+</p>
+
+<form method="post">
+	<p>
+		Nonce to check:
+		<input name="nonce" />
+		<input type="submit" value="Check" />
+	</p>
+</form>
+
+<%= learn('Nonces') %>
+
+<%& '/site/footer/' %>

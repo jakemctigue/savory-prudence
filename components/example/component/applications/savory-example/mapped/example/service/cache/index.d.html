@@ -34,11 +34,6 @@ var duration = Sincerity.Localization.formatDuration(java.lang.System.currentTim
 	It took <b><%= duration %></b> to fetch this data.
 </p>
 
-<h3>Learn</h3>
-<ul>
-	<li><a href="?source=true">See the source code for this example</a></li>
-	<li><a href="<%= conversation.pathToBase %>/../api/?namespace=Savory.Cache">See the API documentation for Savory.Cache</a></li>
-	<li><a href="<%= conversation.pathToBase %>/manual/">Read the relevant chapter in the Savory Manual</a></li>
-</ul>
+<%= learn('Cache') %>
 
 <%& '/site/footer/' %>

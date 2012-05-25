@@ -60,7 +60,7 @@ Savory.Notification = Savory.Notification || function() {
 	/**
 	 */
 	Public.getServices = function() {
-		return Savory.Lazy.getGlobalMap('savory.service.notification.services', Public.logger, function(constructor) {
+		return Prudence.Lazy.getGlobalMap('savory.service.notification.services', Public.logger, function(constructor) {
 			return eval(constructor)()
 		})
 	}
@@ -180,7 +180,7 @@ Savory.Notification = Savory.Notification || function() {
 		}
 	}
 
-	Public.sendQueuedNotices = function() {
+	Public.sendQueuedNotices = function(maxCount) {
 		Public.logger.fine('Checking for immediate notices to send')
 		
 		var query = {sentImmediate: {$exists: false}}
@@ -207,6 +207,10 @@ Savory.Notification = Savory.Notification || function() {
 
 			update.$set.sentImmediate = new Date()
 			notice = noticesCollection.findAndModify(query, update)
+
+			if (maxCount && (count > maxCount)) {
+				break
+			}
 		}
 
 		if (count > 0) {

@@ -1,2 +1,5 @@
-*/1 * * * * <% document.executeOnce('/savory/service/cache/'); new Savory.Cache({name: 'result', logLevel: 'info'}).prune(); %>
-
+*/5 * * * * <% document.executeOnce('/savory/service/cache/'); new Savory.Cache({name: 'result', logLevel: 'info'}).prune(); %>
+*/5 * * * * <% document.executeOnce('/savory/service/nonces/'); Savory.Nonces.prune(); %>
+* * * * * <% document.executeOnce('/savory/service/notification/'); Savory.Notification.sendQueuedNotices(); %>
+* 4 * * * <% document.executeOnce('/savory/service/notification/'); Savory.Notification.sendQueuedDigests('daily'); %>
+* 5 * * 0 <% document.executeOnce('/savory/service/notification/'); Savory.Notification.sendQueuedDigests('weekly'); %>

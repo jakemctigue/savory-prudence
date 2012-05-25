@@ -1329,6 +1329,24 @@ The
 \begin_inset Quotes eld
 \end_inset
 
+get
+\begin_inset Quotes erd
+\end_inset
+
+ method will automatically cast templates.
+ In this case, our text is a template in the form of 
+\begin_inset Quotes eld
+\end_inset
+
+It is now {now}
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
 getDirection
 \begin_inset Quotes erd
 \end_inset
@@ -1349,25 +1367,8 @@ rtl
 \begin_inset Quotes erd
 \end_inset
 
-, according to the directionality of that specific key.
- Note that the 
-\begin_inset Quotes eld
-\end_inset
-
-get
-\begin_inset Quotes erd
-\end_inset
-
- method will automatically cast templates.
- In this case, our text is a template in the form of 
-\begin_inset Quotes eld
-\end_inset
-
-It is now {now}
-\begin_inset Quotes erd
-\end_inset
-
-.
+ according to the directionality of that specific key.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1411,7 +1412,15 @@ Configuration
 \end_layout
 
 \begin_layout Standard
-In your application's settings.js, add something like this to your app.globals:
+In your application's 
+\begin_inset Quotes eld
+\end_inset
+
+settings.js
+\begin_inset Quotes erd
+\end_inset
+
+, add something like this to your app.globals:
 \end_layout
 
 \begin_layout Standard
@@ -1441,7 +1450,7 @@ savory: {
 
 \begin_layout Plain Layout
 
-			cacheDuration: 10000, // in milliseconds; if 0 or unspecified, will never
+			cacheDuration: 10000, // in milliseconds; if 0 (the default) will never
  cache
 \end_layout
 
@@ -1562,7 +1571,7 @@ ltr
 \begin_inset Quotes erd
 \end_inset
 
- (for left-to-right, the default), or 
+ (the default, for left-to-right, the default), or 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1800,6 +1809,25 @@ status open
 
 \end_layout
 
+\begin_layout Standard
+Again we'll emphasize: even though this text pack is defined in MongoDB,
+ it can inherit the 
+\begin_inset Quotes eld
+\end_inset
+
+en
+\begin_inset Quotes erd
+\end_inset
+
+ text pack defined in the JSON file.
+\end_layout
+
+\begin_layout Standard
+You'll usually prefer one method or the other, but it might make sense to
+ use both: for example, a default text pack can be hard-coded for your applicati
+on, to allow it to function even if MongoDB is not available.
+\end_layout
+
 \begin_layout Section
 Cache Service
 \end_layout
@@ -1862,7 +1890,22 @@ var getResult = function(userId) {
 
 \begin_layout Plain Layout
 
-	return {userId: userId, randomValue: Math.random()}
+	return {
+\end_layout
+
+\begin_layout Plain Layout
+
+		userId: userId,
+\end_layout
+
+\begin_layout Plain Layout
+
+		randomValue: Math.random()
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
 \end_layout
 
 \begin_layout Plain Layout
@@ -1944,8 +1987,7 @@ result.123
 \end_layout
 
 \begin_layout Itemize
-The library has overriden the JavaScript function prototype, adding the
- 
+The library overrides the JavaScript function prototype, adding the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1957,6 +1999,7 @@ cache
  The Savory.Cache API also has methods that offer more flexibility.
  For example, it can let you set advanced logging, so that you can see how
  the cache is working.
+ See the API documentation for full details.
 \end_layout
 
 \begin_layout Itemize
@@ -1967,7 +2010,15 @@ all
 \emph default
  expired cache entries, you might want to call the Savory.Cache.prune method
  regularly.
- You can do this in your crontab file.
+ You can do this in your 
+\begin_inset Quotes eld
+\end_inset
+
+crontab
+\begin_inset Quotes erd
+\end_inset
+
+ file.
  Here's an example of doing so every 15 minutes:
 \begin_inset listings
 inline false
@@ -2180,51 +2231,583 @@ nce), readonly: 'readonly', size: 70}, {_content: 'Trackback URL:'}) %>
 Nonces Service
 \end_layout
 
+\begin_layout Standard
+This is a straightforward implementation of number-used-once, or 
+\begin_inset Quotes eld
+\end_inset
+
+nonce,
+\begin_inset Quotes erd
+\end_inset
+
+ using MongoDB atomic operations.
+\end_layout
+
+\begin_layout Standard
+It allows you to issue a unique number, which you can then 
+\begin_inset Quotes eld
+\end_inset
+
+check.
+\begin_inset Quotes erd
+\end_inset
+
+ The check will work once 
+\emph on
+and only once 
+\emph default
+for any issued nonce.
+ Furthermore, every issued nonce is given an expiration time, so that there
+ is a limited time window in which the nonce can be checked.
+\end_layout
+
+\begin_layout Standard
+Nonces are used in authentication schemes, where tokens are purposely issued
+ for short time periods, and are meant to be used only once, in order to
+ minimize security risks.
+\end_layout
+
+\begin_layout Standard
+The API is very simple.
+ To issue a 60-second nonce:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/nonces/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var nonce = Savory.Nonces.create(60 * 1000)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To check a nonce:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+if (!Savory.Nonces.check(nonce)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	print('Your token is invalid! Perhaps it was expired? Try logging in again.')
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The service removes expired nonces only when you check them.
+ If it's important for you to save space and remove 
+\emph on
+all
+\emph default
+ expired nonces, you might want to call the Savory.Nonces.prune method regularly.
+ You can do this in your 
+\begin_inset Quotes eld
+\end_inset
+
+crontab
+\begin_inset Quotes erd
+\end_inset
+
+ file.
+ Here's an example of doing so every 15 minutes:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+*/15 * * * * <% document.executeOnce('/savory/service/nonces/'); Savory.Nonces.prun
+e(); %>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Notification Service
 \end_layout
 
 \begin_layout Standard
-This awesome service can handle all the notices coming out of your application,
- whether by email, stored in a MongoDB 
-\begin_inset Quotes eld
-\end_inset
-
-inbox,
-\begin_inset Quotes erd
-\end_inset
-
- or via your own pluggable delivery mechanism.
+Sending out email from your application can quickly become non-trivial when
+ you have hundreds of thousands of emails.
+ But Savory's Notification Service is here to help! Some key features:
 \end_layout
 
-\begin_layout Standard
-To handle very large scales, it works by first having you queue new notices
- (in MongoDB), and then it sends them asynchronously (via /tasks/ configured
- in crontab) to the addressees.
- Notifications sent to millions of users can be queued just once, on a 
-\begin_inset Quotes eld
-\end_inset
+\begin_layout Itemize
+The implementation is optimized for high concurrency, making good use of
+ MongoDB's atomic update features.
+ This means that it's easy to scale: you can have many nodes all sending
+ queued notices at the same time.
+ They won't interfere with each other and there's no fear of having the
+ same email sent more than once.
+\end_layout
 
-channel,
-\begin_inset Quotes erd
-\end_inset
+\begin_layout Itemize
+It supports subscription channels: you can send a notice to the channel,
+ and it would then be sent to all subscribers.
+ This greatly minimizes the load on MongoDB.
+ Moreover, you can use a notice template such that each subscriber gets
+ a personalized email.
+ Of course, you can also send direct notices to a single addressee.
+\end_layout
 
- which individual users can 
-\begin_inset Quotes eld
-\end_inset
+\begin_layout Itemize
+Automatic handling of daily and weekly digests for subscribers who prefer
+ not to get individual emails.
+ This works by merging notices into a digest document at scheduled times.
+\end_layout
 
-subscribe
-\begin_inset Quotes erd
-\end_inset
+\begin_layout Itemize
+You don't have to use email: the service implementation is pluggable, allowing
+ you support other kinds of mailboxes if they make sense.
+ For example, you might want to have an internal messaging feature for your
+ application.
+ The implementation is configured per subscriber, so you can support different
+ kinds of mailboxes quite transparently.
+\end_layout
 
- to.
- It's essentially a subscription system, though it also handles individually
- sent notices, to known users or even to on-the-fly addressees.
- 
+\begin_layout Itemize
+Supports both plain text and mixed-media HTML email.
 \end_layout
 
 \begin_layout Subsection
-Digests
+Usage
+\end_layout
+
+\begin_layout Standard
+Here's an example of two ways for queuing a notice, the first by a direct
+ addresses, and the second to all subscribers of a channel:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/notification/') 
+\end_layout
+
+\begin_layout Plain Layout
+
+Savory.Notification.queueForAddress('Email', 'email@myorg.org', {subject: 'The
+ Subject', text: 'The content.})
+\end_layout
+
+\begin_layout Plain Layout
+
+Savory.Notification.queueForChannel('main', {subject: 'The Subject', text:
+ 'The content.'}) 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The first option doesn't require any subscription: it uses 
+\begin_inset Quotes eld
+\end_inset
+
+Email
+\begin_inset Quotes erd
+\end_inset
+
+ as the implementation, with the second argument being an identifier for
+ that implementation (in this case, simply an email address).
+ The second option queues the notice on the channel named 
+\begin_inset Quotes eld
+\end_inset
+
+main
+\begin_inset Quotes erd
+\end_inset
+
+.
+ To add a subscription, you can do the following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Savory.Notification.subscribe('main', {service: 'Email', address: 'email@myorg.org'
+, mode: 'daily'})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+mode
+\begin_inset Quotes erd
+\end_inset
+
+ key can be 
+\begin_inset Quotes eld
+\end_inset
+
+immediate
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+daily
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+weekly
+\begin_inset Quotes erd
+\end_inset
+
+, with the latter two modes for digests.
+ You don't need to create the channel itself: adding at least one subscription
+ will automatically do that.
+\end_layout
+
+\begin_layout Standard
+In the above examples we've sent plain text emails.
+ To add HTML, add an 
+\begin_inset Quotes eld
+\end_inset
+
+html
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+ Note that if you use 
+\begin_inset Quotes eld
+\end_inset
+
+html
+\begin_inset Quotes erd
+\end_inset
+
+ you need to 
+\emph on
+also
+\emph default
+ add 
+\begin_inset Quotes eld
+\end_inset
+
+text
+\begin_inset Quotes erd
+\end_inset
+
+ to specify the plain text version.
+ This is very good practice: not all email clients support HTML, and if
+ they don't your HTML will be unreadable.
+\end_layout
+
+\begin_layout Standard
+It might be useful to make use of the Sincerity.Mail.MessageTemplate class,
+ which lets you store messages in text packs.
+ For more information on text packs, see the Internationalization Service.
+\end_layout
+
+\begin_layout Subsection
+Configuration
+\end_layout
+
+\begin_layout Standard
+In your application's 
+\begin_inset Quotes eld
+\end_inset
+
+settings.js
+\begin_inset Quotes erd
+\end_inset
+
+, you want to make sure to enable lazy configuration:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/prudence/lazy/')
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And then add something like this to your app.globals:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+savory: {
+\end_layout
+
+\begin_layout Plain Layout
+
+	service: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		notification: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			services: {
+\end_layout
+
+\begin_layout Plain Layout
+
+				'.': Prudence.Lazy.build({
+\end_layout
+
+\begin_layout Plain Layout
+
+					Email: {
+\end_layout
+
+\begin_layout Plain Layout
+
+						dependencies: '/savory/service/notification/service/email/',
+\end_layout
+
+\begin_layout Plain Layout
+
+						name: 'Savory.Notification.EmailService',
+\end_layout
+
+\begin_layout Plain Layout
+
+						config: {
+\end_layout
+
+\begin_layout Plain Layout
+
+							from: 'myaddress@mymail.org',
+\end_layout
+
+\begin_layout Plain Layout
+
+							site: 'Savory Framework Example'
+\end_layout
+
+\begin_layout Plain Layout
+
+						}
+\end_layout
+
+\begin_layout Plain Layout
+
+					}
+\end_layout
+
+\begin_layout Plain Layout
+
+				})
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note the use of Prudence.Lazy.build: this allows the the Notification Service
+ to lazily create the email implementation on demand during runtime.
+ The key, 
+\begin_inset Quotes eld
+\end_inset
+
+Email
+\begin_inset Quotes erd
+\end_inset
+
+, will be tagged on all notices and subscriptions.
+ Note that ti is case-sensitive.
+ Within the lazy configuration, the 
+\begin_inset Quotes eld
+\end_inset
+
+name
+\begin_inset Quotes erd
+\end_inset
+
+ key is the class to instantiate, the 
+\begin_inset Quotes eld
+\end_inset
+
+config
+\begin_inset Quotes erd
+\end_inset
+
+ is sent to the class constructor, and values in the 
+\begin_inset Quotes eld
+\end_inset
+
+dependencies
+\begin_inset Quotes erd
+\end_inset
+
+ key are used for 
+\begin_inset Quotes eld
+\end_inset
+
+document.executeOnce
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Also note the use of the 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ key to avoid flattening of the resulting lazy build (see Sincerity.Objects.flatte
+n).
+\end_layout
+
+\begin_layout Standard
+If you want to write your own service implementations, see the source code
+ for the Savory.Notification.EmailService.
+\end_layout
+
+\begin_layout Standard
+To set up the background tasks for sending out queued notices, add something
+ like the following to your application's 
+\begin_inset Quotes eld
+\end_inset
+
+crontab
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+* * * * * <% document.executeOnce('/savory/service/notification/'); Savory.Notific
+ation.sendQueuedNotices(); %>
+\end_layout
+
+\begin_layout Plain Layout
+
+* 4 * * * <% document.executeOnce('/savory/service/notification/'); Savory.Notific
+ation.sendQueuedDigests('daily'); %>
+\end_layout
+
+\begin_layout Plain Layout
+
+* 5 * * 0 <% document.executeOnce('/savory/service/notification/'); Savory.Notific
+ation.sendQueuedDigests('weekly'); %> 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The above will check for and send regular notices every minute, send daily
+ digests at 4am, and send weekly digests every Sunday at 5am.
+ As stated above, you can have this same 
+\begin_inset Quotes eld
+\end_inset
+
+crontab
+\begin_inset Quotes erd
+\end_inset
+
+ running on many nodes.
+ Because the implementation relies on MongoDB's atomic updates, you can
+ be sure that notices will not be sent more than once.
 \end_layout
 
 \begin_layout Section
