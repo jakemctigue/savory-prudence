@@ -1,6 +1,5 @@
 <%& '/site/header/' %>
-
-<h1>Nonces Service</h1>
+<% exampleHeader('Nonces', 'Service'); %>
 
 <%
 
@@ -38,6 +37,5 @@ var nonce = Savory.Nonces.create(60 * 1000)
 	</p>
 </form>
 
-<%= learn('Nonces') %>
-
+<% exampleFooter('Nonces', 'Service'); %>
 <%& '/site/footer/' %>

@@ -1,6 +1,5 @@
 <%& '/site/header/' %>
-
-<h1>Serials Service</h1>
+<% exampleHeader('Serials', 'Service'); %>
 
 <%
 document.executeOnce('/savory/service/serials/')
@@ -13,6 +12,5 @@ document.executeOnce('/savory/service/serials/')
 	<%= Savory.Serials.next('example') %>
 </p>
 
-<%= learn('Serials') %>
-
+<% exampleFooter('Serials', 'Service'); %>
 <%& '/site/footer/' %>

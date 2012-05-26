@@ -444,6 +444,15 @@ Savory.Backup.exportMongoDb({directory: '/tmp/savory-backup/'})
 The API further lets you select the MongoDB database and collections you
  wish to export, otherwise by default it uses the current default database
  and goes through all collections.
+ You can also set 
+\begin_inset Quotes eld
+\end_inset
+
+gzip
+\begin_inset Quotes erd
+\end_inset
+
+ to true in order to gzip the resulting files.
 \end_layout
 
 \begin_layout Standard
@@ -466,7 +475,7 @@ status open
 \begin_layout Plain Layout
 
 * 6 * * * <% document.executeOnce('/savory/service/backup/'); Savory.Backup.exportM
-ongoDb({directory: '/tmp/savory-backup/'}); %>
+ongoDb({directory: '/tmp/savory-backup/', gzip: true}); %>
 \end_layout
 
 \end_inset
@@ -495,7 +504,7 @@ Savory.Backup.importMongoDbCollection({file: '/tmp/savory-backup/users.json'})
 
 \begin_layout Standard
 The collection name will be parsed from the filename.
- Likewise, if the filename ends with 
+ If the filename ends with 
 \begin_inset Quotes eld
 \end_inset
 
@@ -503,8 +512,8 @@ The collection name will be parsed from the filename.
 \begin_inset Quotes erd
 \end_inset
 
-, it will be assumed to be gzipped.
- For example 
+, it will be assumed to be gzipped and unzipped accordingly.
+ (For example 
 \begin_inset Quotes eld
 \end_inset
 
@@ -512,9 +521,8 @@ The collection name will be parsed from the filename.
 \begin_inset Quotes erd
 \end_inset
 
-.
- By default the imported documents will be merged into the collection.
- Set the 
+.) By default the imported documents will be merged into the collection:
+ set the 
 \begin_inset Quotes eld
 \end_inset
 

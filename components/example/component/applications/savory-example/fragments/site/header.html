@@ -130,11 +130,16 @@ if (permissions) {
 			<td id="main-column" width="50%">
 				<div id="main">
 					<div id="main-content">
-<% function learn(name) { %>
-<h3>Learn</h3>
-<ul>
-	<li><a href="?source=true">See the source code for this example</a></li>
-	<li><a href="<%= conversation.pathToBase %>/../api/?namespace=Savory.<%= name %>">See the API documentation for Savory.<%= name %></a></li>
-	<li><a href="<%= conversation.pathToBase %>/manual/">Read the relevant chapter in the Savory Manual</a></li>
-</ul>
+<% function exampleHeader(name, kind) { %>
+<h1><%= name + ' ' + kind %></h1>
+<p><a href="?source=true">Click to see the source code for this example</a></p>
+<% } %>
+<% function exampleFooter(name, kind) { %>
+<div class="hr"><hr /></div>
+<%# '/manual/license/' %>
+<h1>Manual</h1>
+<p>
+	<a href="<%= conversation.pathToBase %>/../api/?namespace=Savory.<%= name %>">Click to see the API documentation for Savory.<%= name %></a>
+</p>
+<%& '/manual/' + kind.toLowerCase() + '/' + name.toLowerCase() + '/' %>
 <% } %>

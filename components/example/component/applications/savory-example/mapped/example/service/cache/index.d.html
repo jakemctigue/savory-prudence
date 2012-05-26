@@ -1,6 +1,5 @@
 <%& '/site/header/' %>
-
-<h1>Cache Service</h1>
+<% exampleHeader('Cache', 'Service'); %>
 
 <%
 
@@ -36,6 +35,5 @@ var duration = Sincerity.Localization.formatDuration(java.lang.System.currentTim
 	It took <b><%= duration %></b> to fetch this data.
 </p>
 
-<%= learn('Cache') %>
-
+<% exampleFooter('Cache', 'Service'); %>
 <%& '/site/footer/' %>

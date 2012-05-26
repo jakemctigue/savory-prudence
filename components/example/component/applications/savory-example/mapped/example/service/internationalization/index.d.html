@@ -1,6 +1,5 @@
 <%& '/site/header/' %>
-
-<h1>Internationalization Service</h1>
+<% exampleHeader('Internationalization', 'Service'); %>
 
 <%
 document.executeOnce('/savory/service/internationalization/')
@@ -17,6 +16,5 @@ var textPack = Savory.Internationalization.getCurrentPack(conversation)
 	The direction for the above key is: <b><%= textPack.getDirection('application.savory-example.time') %></b>.
 </p>
 
-<%= learn('Internationalization') %>
-
+<% exampleFooter('Internationalization', 'Service'); %>
 <%& '/site/footer/' %>

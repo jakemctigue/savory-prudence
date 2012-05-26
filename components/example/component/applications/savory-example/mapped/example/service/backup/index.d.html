@@ -1,4 +1,5 @@
 <%& '/site/header/' %>
+<% exampleHeader('Backup', 'Service'); %>
 
 <h1>Backup Service</h1>
 
@@ -25,6 +26,5 @@ if (conversation.request.method.name == 'POST') {
 	</p>
 </form>
 
-<%= learn('Backup') %>
-
+<% exampleFooter('Backup', 'Service'); %>
 <%& '/site/footer/' %>
