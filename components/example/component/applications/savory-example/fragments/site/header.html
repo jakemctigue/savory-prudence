@@ -1,4 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%
+document.include('/example/header/')
+document.include('/example/footer/')
+%>
 <html>
 <head>
 	<title>The Savory Framework - Examples</title>
@@ -130,16 +134,3 @@ if (permissions) {
 			<td id="main-column" width="50%">
 				<div id="main">
 					<div id="main-content">
-<% function exampleHeader(name, kind) { %>
-<h1><%= name + ' ' + kind %></h1>
-<p><a href="?source=true">Click to see the source code for this example</a></p>
-<% } %>
-<% function exampleFooter(name, kind) { %>
-<div class="hr"><hr /></div>
-<%# '/manual/license/' %>
-<h1>Manual</h1>
-<p>
-	<a href="<%= conversation.pathToBase %>/../api/?namespace=Savory.<%= name %>">Click to see the API documentation for Savory.<%= name %></a>
-</p>
-<%& '/manual/' + kind.toLowerCase() + '/' + name.toLowerCase() + '/' %>
-<% } %>

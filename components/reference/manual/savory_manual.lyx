@@ -2523,8 +2523,8 @@ Notification Service
 \end_layout
 
 \begin_layout Standard
-Sending out email from your application can quickly become non-trivial when
- you have hundreds of thousands of emails.
+Sending out email from your application can quickly become difficult to
+ manage when you have hundreds of thousands of emails to send out.
  But Savory's Notification Service is here to help! Some key features:
 \end_layout
 
@@ -2563,6 +2563,44 @@ You don't have to use email: the service implementation is pluggable, allowing
 
 \begin_layout Itemize
 Supports both plain text and mixed-media HTML email.
+\end_layout
+
+\begin_layout Standard
+Note that the Savory Framework connects to but is 
+\emph on
+not
+\emph default
+ itself an SMTP server.
+ SMTP servers are complex beasts in their own right: they must handle errors
+ and retries, queuing of outgoing messages, as well as incoming ones if
+ they are configured for relaying or for mailboxes.
+ It's a good idea to keep that separate from your main application.
+ We like 
+\begin_inset CommandInset href
+LatexCommand href
+name "Postfix"
+target "http://www.postfix.org/"
+
+\end_inset
+
+, a mature SMTP server that offers excellent scalability and security.
+\end_layout
+
+\begin_layout Standard
+If you want your application to 
+\emph on
+receive
+\emph default
+ email, which is quite a different task than relaying it onwards, check
+ out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "SubEtha SMTP library"
+target "http://code.google.com/p/subethasmtp/"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
