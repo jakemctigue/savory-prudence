@@ -53,6 +53,7 @@ Savory.Backup = Savory.Backup || function() {
 	 * @param {String|com.mongodb.DB} [params.db=MongoDB.defaultDb] The MongoDB database to use
 	 * @param {Number} [params.threads=5] How many threads (and thus MongoDB connections) to use at once
 	 * @param {Number} [params.timeout=5*60*1000] Maximum time allowed for exporting per collection in milliseconds (the default is 5 minutes)
+     * @param {Boolean} [gzip=false] True to gzip the output
 	 * @param {String|java.io.File} params.directory The directory or its path (will be created if it doesn't exist)
 	 */
 	Public.exportMongoDb = function(params) {
@@ -99,7 +100,7 @@ Savory.Backup = Savory.Backup || function() {
 					params.collection = params.collection.name
 				}
 				
-				futures.push(Savory.Tasks.task({
+				futures.push(Prudence.Tasks.task({
 					fn: function(params) {
 						document.executeOnce('/savory/service/backup/')
 						Savory.Backup.exportMongoDbCollection(params)

@@ -349,33 +349,36 @@ Backup Service
 \end_layout
 
 \begin_layout Standard
-Let's you do a live export of your MongoDB databases and collections to
- JSON, optionally gzipping the output to save space.
- You can set up your application's crontab to have the backup run regularly.
+This service lets you do a live export of your MongoDB databases and collections
+ to JSON, optionally gzipping the output to save space.
+ You can set up your application's 
+\begin_inset Quotes eld
+\end_inset
+
+crontab
+\begin_inset Quotes erd
+\end_inset
+
+ to have the backup run regularly.
 \end_layout
 
 \begin_layout Standard
-Backups are very, very fast: even very large databases can be fully exported
- in durations measured in seconds or minutes.
-\end_layout
-
-\begin_layout Subsection
-Why Not Use MongoDB's mongodump or mongoexport Tools?
+Backups are very fast: large databases can be fully exported in durations
+ measured in seconds or minutes.
 \end_layout
 
 \begin_layout Standard
-From our experience, the admin tools that come with MongoDB are overly simplisti
-c and unreliable.
-\end_layout
-
-\begin_layout Itemize
-Otherwise, Savory's backup service offers the following advantages:
+You might wonder what advantages this service has over MongoDB's mongodump
+ or mongoexport tools.
+ First, from our experience, the admin tools that come with MongoDB are
+ overly simplistic and unreliable.
+ Otherwise, Savory's backup service offers the following advantages:
 \end_layout
 
 \begin_layout Itemize
 Thoughput: Because we're using the Java MongoDB driver underneath, with
- its support for connection pooling, we can achieve much higher througput
- than the command line tools, which use a single connection.
+ its support for connection pooling, we can achieve much higher throughput
+ than the command line tools, which use a single connection and no concurrency.
  The default is to use 5 threads (and thus 5 connection at most) at once.
 \end_layout
 
@@ -397,15 +400,129 @@ exactly
 \end_layout
 
 \begin_layout Itemize
-Fully integrated: You don't have to create bash scripts to backup your DB.
- Instead, you can stay in JavaScript and Savory and your regular application
- code.
+Fully integrated in your application: You don't have to create system scripts
+ to backup your DB.
+ Instead, you can stay in JavaScript and Savory.
+ You do not need MongoDB installed.
 \end_layout
 
 \begin_layout Itemize
 Iterators: The backup service uses Savory <a href="../../foundation/iterators/">iter
 ators</a>, so you can transform your data in various ways while backing
  up, or even include non-MongoDB data.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+To export the whole database:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/backup/')
+\end_layout
+
+\begin_layout Plain Layout
+
+Savory.Backup.exportMongoDb({directory: '/tmp/savory-backup/'})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The API further lets you select the MongoDB database and collections you
+ wish to export, otherwise by default it uses the current default database
+ and goes through all collections.
+\end_layout
+
+\begin_layout Standard
+To schedule the backup to run every day at 6am, add this to your 
+\begin_inset Quotes eld
+\end_inset
+
+crontab
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+* 6 * * * <% document.executeOnce('/savory/service/backup/'); Savory.Backup.exportM
+ongoDb({directory: '/tmp/savory-backup/'}); %>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To import a collection:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Savory.Backup.importMongoDbCollection({file: '/tmp/savory-backup/users.json'})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The collection name will be parsed from the filename.
+ Likewise, if the filename ends with 
+\begin_inset Quotes eld
+\end_inset
+
+.gz
+\begin_inset Quotes erd
+\end_inset
+
+, it will be assumed to be gzipped.
+ For example 
+\begin_inset Quotes eld
+\end_inset
+
+/tmp/savory-backup/users.json.gz
+\begin_inset Quotes erd
+\end_inset
+
+.
+ By default the imported documents will be merged into the collection.
+ Set the 
+\begin_inset Quotes eld
+\end_inset
+
+drop
+\begin_inset Quotes erd
+\end_inset
+
+ key true if you want the collection to be dropped before importing.
 \end_layout
 
 \begin_layout Section
@@ -2267,6 +2384,10 @@ Nonces are often used in authentication schemes, where tokens, meant to
  to minimize security risks.
 \end_layout
 
+\begin_layout Subsection
+Usage
+\end_layout
+
 \begin_layout Standard
 The API is very simple.
  To issue a 60-second nonce:
@@ -2345,12 +2466,16 @@ var nonceInteger = new java.math.BigInteger(nonce, 16)
 
 \begin_layout Plain Layout
 
-print(nonceInteger) // this will print a decimal representation on the nonce
+print(nonceInteger) // this will print a decimal representation of the nonce
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Configuration
 \end_layout
 
 \begin_layout Standard
@@ -3403,6 +3528,64 @@ Search Service
 
 \begin_layout Section
 Serials Service
+\end_layout
+
+\begin_layout Standard
+This straightforward service generates unique integers in a series, using
+ MongoDB atomic operations.
+ No number in a specific series will ever be generated again.
+ This service is thus useful for generating integer IDs.
+\end_layout
+
+\begin_layout Standard
+Note that uniqueness is only guaranteed by the intactness of the MongoDB
+ database.
+ If you somehow lose it and have to start over, there's a chance you would
+ regenerate IDs that have already been used.
+ If you need unique IDs that don't have this limitation, you'll want to
+ use GUIDs instead.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Usage is very simple:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/serials/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var id = Savory.Serials.next('person')
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Each series is stored as a single document in the 
+\begin_inset Quotes eld
+\end_inset
+
+serials
+\begin_inset Quotes erd
+\end_inset
+
+ MongoDB collection.
+ By default, the method will create the series document if it does not yet
+ exist, initializing it with the number 1.
 \end_layout
 
 \begin_layout Section

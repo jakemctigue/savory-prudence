@@ -3,6 +3,7 @@
 <h1>Cache Service</h1>
 
 <%
+
 document.executeOnce('/savory/service/cache/')
 document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/localization/')
@@ -18,6 +19,7 @@ var getResult = function(userId) {
 var start = java.lang.System.currentTimeMillis()
 var result = getResult(123)
 var duration = Sincerity.Localization.formatDuration(java.lang.System.currentTimeMillis() - start)
+
 %>
 
 <p>
