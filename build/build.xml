@@ -3,15 +3,15 @@
 
 	<property file="custom.properties" />
 	
-	<property name="manual" value="../components/reference/manual" />
-	<property name="framework" value="../components/framework" />
-	<property name="example" value="../components/example" />
+	<property name="manual" location="../components/reference/manual" />
+	<property name="framework" location="../components/framework" />
+	<property name="example" location="../components/example" />
 	
-	<property name="cache" value="./cache" />
+	<property name="cache" location="./cache" />
 	<property name="cache.manual" location="${cache}/framework/reference/manuals/${maven.group}/${maven.artifact}/${version}" />
-	<property name="cache.example" value="${cache}/example" />
-	<property name="distribution" value="./distribution" />
-	<property name="distribution.content" value="${distribution}/content" />
+	<property name="cache.example" location="${cache}/example" />
+	<property name="distribution" location="./distribution" />
+	<property name="distribution.content" location="${distribution}/content" />
 
 	<target name="manual" description="Create manual if not present">
 		<available file="${cache.manual}" property="manual-present" />
