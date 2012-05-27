@@ -80,11 +80,12 @@ var Manual = function(file) {
 		}
 	}
 
+	println('Loading ' + file)
 	this.content = String(Sincerity.Files.loadText(file))
 	this.clean()
 }
 
-var manual = new Manual(sincerity.container.getFile('reference', 'manuals', 'com.threecrickets.savory', 'savory-framework', '1.0-beta1', 'savory_manual.html'))
+var manual = new Manual(application.arguments[1])
 manual.generate({
 	'Backup Service': ['component/applications/savory-example/fragments/manual/service/backup.html'],
 	'Cache Service': ['component/applications/savory-example/fragments/manual/service/cache.html'],
@@ -93,4 +94,3 @@ manual.generate({
 	'Notification Service': ['component/applications/savory-example/fragments/manual/service/notification.html'],
 	'Serials Service': ['component/applications/savory-example/fragments/manual/service/serials.html']
 })
-

@@ -19,6 +19,13 @@
 				<include>**</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<directory>../../cache/example</directory>
+			<outputDirectory>.</outputDirectory>
+			<includes>
+				<include>component/**</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 
 </assembly>

@@ -1,52 +1,72 @@
 <?xml version="1.0"?>
 <project name="The Savory Framework" default="build">
 
-	<property file="component.properties" />
+	<property file="custom.properties" />
 	
-	<property name="reference" value="../components/reference" />
+	<property name="manual" value="../components/reference/manual" />
 	<property name="framework" value="../components/framework" />
 	<property name="example" value="../components/example" />
-	<property name="notices" value="../components/notices" />
 	
 	<property name="cache" value="./cache" />
+	<property name="cache.manual" location="${cache}/framework/reference/manuals/${maven.group}/${maven.artifact}/${version}" />
+	<property name="cache.example" value="${cache}/example" />
 	<property name="distribution" value="./distribution" />
 	<property name="distribution.content" value="${distribution}/content" />
-	<property name="distribution.reference" value="${distribution.content}/reference" />
-	<property name="distribution.manual" value="${distribution.reference}/manuals/${maven.group}/${maven.artifact}/${version}" />
-	<property name="distribution.api" value="${distribution.content}/component/applications/savory-example/mapped/api" />
 
 	<target name="manual" description="Create manual if not present">
-		<available file="${distribution.manual}" property="manual-present" />
+		<available file="${cache.manual}" property="manual-present" />
 		<antcall target="manual-overwrite" />
 	</target>
 	
 	<target name="clean-manual" description="Clean manual">
-		<delete dir="${distribution.manual}" />
+		<delete dir="${cache.manual}" />
 	</target>
 
 	<target name="manual-overwrite" description="Create manual" unless="manual-present">
-		<mkdir dir="${distribution.manual}" />
-		<copy todir="${distribution.manual}">
-			<fileset dir="${reference}/manual" excludes="*~" />
+		<mkdir dir="${cache.manual}" />
+		<copy todir="${cache.manual}">
+			<fileset dir="${manual}" excludes="*~, *.js" />
 		</copy>
-		<replace dir="${distribution.manual}" includes="${component}_manual.lyx" token="%VERSION%" value="${version}" />
+		<replace dir="${cache.manual}" includes="${component}_manual.lyx" token="%VERSION%" value="${version}" />
+		<!-- LyX to PDF -->
 		<exec executable="${lyx}" failifexecutionfails="false">
 			<arg value="--export" />
 			<arg value="pdf" />
-			<arg value="${distribution.manual}/${component}_manual.lyx" />
+			<arg value="${cache.manual}/${component}_manual.lyx" />
 		</exec>
+		<!-- LyX to HTML -->
 		<exec executable="${elyxer}" failifexecutionfails="false">
 			<arg value="--unicode" />
 			<arg value="--title" />
 			<arg value="${documentation.title} Manual" />
 			<arg value="--css" />
 			<arg value="soft-cricket-api.css" />
-			<arg value="${distribution.manual}/${component}_manual.lyx" />
-			<arg value="${distribution.manual}/${component}_manual.html" />
+			<arg value="${cache.manual}/${component}_manual.lyx" />
+			<arg value="${cache.manual}/${component}_manual.html" />
+		</exec>
+		<!-- Export HTML -->
+		<copy todir="${cache.example}/programs">
+			<fileset dir="${manual}" includes="*.js" />
+		</copy>
+		<mkdir dir="${cache.example}/.sincerity" />
+		<exec executable="${sincerity.home}/sincerity">
+			<arg value="container:use" />
+			<arg value="${cache.example}" />
+			<arg value=":" />
+			<arg value="delegate:start" />
+			<arg value="export-manual" />
+			<arg value="${cache.manual}/${component}_manual.lyx" />
 		</exec>
 	</target>
 
-	<target name="sincerity" description="Create Sincerity container">
+	<target name="components" depends="manual" description="Assemble components">
+		<exec executable="${maven}" dir="maven" failifexecutionfails="false">
+			<arg value="deploy" />
+			<arg value="-DaltDeploymentRepository=${maven.repo}" />
+		</exec>
+	</target>
+
+	<target name="distribution" depends="components" description="Create Sincerity container">
 		<copy todir="${distribution.content}/configuration/sincerity">
 			<fileset dir="sincerity" />
 		</copy>
@@ -61,14 +81,6 @@
 			<arg value=":" />
 			<arg value="install" />
 		</exec>
-	</target>
-
-	<target name="distribution" depends="sincerity, manual" description="Assemble distribution">
-		<copy todir="${distribution.content}">
-			<fileset dir="${notices}" />
-			<fileset dir="${framework}" />
-			<fileset dir="${example}" />
-		</copy>
 	</target>
 
 	<target name="package-zip" depends="distribution" description="Create distribution package">
@@ -111,5 +123,25 @@
 	</target>
 	
 	<target name="rebuild" depends="clean, build" description="First clean and then build distribution" />
+	
+	<target name="dirty" description="Quick-and-dirty update of the content">
+		<copy todir="${distribution.content}">
+			<fileset dir="${framework}" />
+			<fileset dir="${example}" />
+		</copy>
+		<copy todir="${distribution.content}/programs">
+			<fileset dir="${manual}" includes="*.js" />
+		</copy>
+		<!--
+		<exec executable="${sincerity.home}/sincerity">
+			<arg value="container:use" />
+			<arg value="${distribution.content}" />
+			<arg value=":" />
+			<arg value="delegate:start" />
+			<arg value="export-manual" />
+			<arg value="${cache.manual}/${component}_manual.html" />
+		</exec>
+		-->
+	</target>
 	
 </project>

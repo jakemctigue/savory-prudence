@@ -2648,8 +2648,16 @@ Email
 \begin_inset Quotes erd
 \end_inset
 
- as the implementation, with the second argument being an identifier for
- that implementation (in this case, simply an email address).
+ as the implementation (see 
+\begin_inset Quotes eld
+\end_inset
+
+configuration,
+\begin_inset Quotes erd
+\end_inset
+
+ below), with the second argument being an identifier for that implementation
+ (in this case, simply an email address).
  The second option queues the notice on the channel named 
 \begin_inset Quotes eld
 \end_inset
@@ -2904,8 +2912,8 @@ Email
 \begin_inset Quotes erd
 \end_inset
 
-, will be tagged on all notices and subscriptions.
- Note that ti is case-sensitive.
+, will be used in subscriptions, as in the examples above.
+ Note that it is case-sensitive.
  Within the lazy configuration, the 
 \begin_inset Quotes eld
 \end_inset
@@ -3018,10 +3026,17 @@ Progress Service
 \end_layout
 
 \begin_layout Standard
-If you've read Prudence's <a href="http://threecrickets.com/prudence/scaling/">Sc
-aling Tips</a> article, you know that for potentially long-running tasks
- you want to release conversation threads as soon as possible, and notify
- the user in some way as to when the task is finished.
+If you've read Prudence's 
+\begin_inset CommandInset href
+LatexCommand href
+name "Scaling Tips"
+target "http://threecrickets.com/prudence/scaling/"
+
+\end_inset
+
+ article, you know that for potentially long-running tasks you want to release
+ conversation threads as soon as possible, and notify the user in some way
+ as to when the task is finished.
  This service helps you do it.
 \end_layout
 
