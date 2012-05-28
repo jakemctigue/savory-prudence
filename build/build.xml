@@ -17,24 +17,20 @@
 		<available file="${cache.manual}" property="manual-present" />
 		<antcall target="manual-overwrite" />
 	</target>
-	
+
 	<target name="clean-manual" description="Clean manual">
 		<delete dir="${cache.manual}" />
 	</target>
 
-	<target name="manual-overwrite" description="Create manual" unless="manual-present">
-		<mkdir dir="${cache.manual}" />
-		<copy todir="${cache.manual}">
-			<fileset dir="${manual}" excludes="*~, *.js" />
-		</copy>
-		<replace dir="${cache.manual}" includes="${component}_manual.lyx" token="%VERSION%" value="${version}" />
-		<!-- LyX to PDF -->
+	<target name="manual-lyx" if="lyx">
 		<exec executable="${lyx}" failifexecutionfails="false">
 			<arg value="--export" />
 			<arg value="pdf" />
 			<arg value="${cache.manual}/${component}_manual.lyx" />
 		</exec>
-		<!-- LyX to HTML -->
+	</target>
+
+	<target name="manual-elyxer" if="elyxer">
 		<exec executable="${elyxer}" failifexecutionfails="false">
 			<arg value="--unicode" />
 			<arg value="--title" />
@@ -44,7 +40,16 @@
 			<arg value="${cache.manual}/${component}_manual.lyx" />
 			<arg value="${cache.manual}/${component}_manual.html" />
 		</exec>
-		<!-- Export HTML -->
+	</target>
+
+	<target name="manual-overwrite" description="Create manual" unless="manual-present">
+		<mkdir dir="${cache.manual}" />
+		<copy todir="${cache.manual}">
+			<fileset dir="${reference}/manual" excludes="*~, *.s" />
+		</copy>
+		<replace dir="${cache.manual}" includes="${component}_manual.lyx" token="%VERSION%" value="${version}" />
+		<antcall target="manual-lyx" />
+		<antcall target="manual-elyxer" />
 		<copy todir="${cache.example}/programs">
 			<fileset dir="${manual}" includes="*.js" />
 		</copy>
@@ -59,12 +64,14 @@
 		</exec>
 	</target>
 
-	<target name="components" depends="manual" description="Assemble components">
+	<target name="deploy" if="maven" description="Deploy to Maven repository">
 		<exec executable="${maven}" dir="maven" failifexecutionfails="false">
 			<arg value="deploy" />
 			<arg value="-DaltDeploymentRepository=${maven.repo}" />
 		</exec>
 	</target>
+
+	<target name="components" depends="manual, deploy" description="Assemble components" />
 
 	<target name="distribution" depends="components" description="Create Sincerity container">
 		<copy todir="${distribution.content}/configuration/sincerity">
