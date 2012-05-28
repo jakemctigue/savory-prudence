@@ -142,7 +142,6 @@ Savory.Events = Savory.Events || function() {
 		var distributed = Sincerity.Objects.ensure(params.distributed, defaultDistributed)
 
 		if (async || distributed) {
-			var task = Sincerity.Objects.ensure(params.task, defaultTask)
 			for (var l in listeners) {
 				var listener = listeners[l]
 				
@@ -152,13 +151,15 @@ Savory.Events = Savory.Events || function() {
 					listener.fn = String(listener.fn)
 				}
 				
-				Savory.Tasks.task({
-					name: task,
-					entryPoint: 'call',
+				Prudence.Tasks.task({
+					fn: function(context) {
+						document.executeOnce('/savory/service/events/')
+						Savory.Events.callListener(context.event, context.listener, context.context)
+					},
 					context: {
-						context: params.context,
-						event: params.name,
-						listener: listener
+						name: params.name,
+						listener: listener,
+						context: params.context
 					},
 					distributed: distributed || false
 				})
@@ -646,7 +647,8 @@ Savory.Events = Savory.Events || function() {
 	//
 	
 	function getDefaultStores() {
-		return Savory.Lazy.getGlobalList('savory.service.events.defaultStores', Public.logger, function(constructor) {
+		return Prudence.Lazy.getGlobalList('savory.service.events.defaultStores', Public.logger, function(constructor) {
+			//logger.info(constructor)
 			return eval(constructor)()
 		})
 	}
@@ -655,7 +657,7 @@ Savory.Events = Savory.Events || function() {
 	// Initialization
 	//
 
-	var defaultAsync = application.globals.get('savory.service.events.async')
+	var defaultAsync = application.globals.get('savory.service.events.defaultAsync')
 	if (Sincerity.Objects.exists(defaultAsync) && defaultAsync.booleanValue) {
 		defaultAsync = defaultAsync.booleanValue()
 	}
@@ -663,20 +665,12 @@ Savory.Events = Savory.Events || function() {
 		defaultAsync = false
 	}
 	
-	var defaultDistributed = application.globals.get('savory.service.events.distributed')
+	var defaultDistributed = application.globals.get('savory.service.events.defaultDistributed')
 	if (Sincerity.Objects.exists(defaultDistributed) && defaultDistributed.booleanValue) {
 		defaultDistributed = defaultDistributed.booleanValue()
 	}
 	else {
 		defaultDistributed = false
-	}
-	
-	var defaultTask = application.globals.get('savory.service.events.task')
-	if (Sincerity.Objects.exists(defaultTask)) {
-		defaultTask = String(defaultTask)
-	}
-	else {
-		defaultTask = '/savory/call-event-listener/'
 	}
 	
 	return Public

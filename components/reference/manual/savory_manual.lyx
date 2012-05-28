@@ -546,8 +546,8 @@ Events Service
 \end_layout
 
 \begin_layout Standard
-Every framework provides some generic way to send, listen to and fire one-way
- messages called 
+Almost every application framework provides some generic way to listen to
+ and fire one-way messages called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -566,9 +566,12 @@ Or not.
  application runs.
  It's hard to know, simply looking at the code, what code will be triggered
  when an event is fired.
- Decoupling is a great way to introduce some really difficult bugs into
- your codebase.
- It's best not to use events if you don't actually need them!
+ Decoupling code is always great way to introduce some really difficult
+ bugs into your codebase, and vastly reduce its debuggability.
+ We present this service for your use, but encourage you to think of the
+ costs vs.
+ the benefits.
+ Perhaps there is a more straightforward way to solve your problem?
 \end_layout
 
 \begin_layout Standard
@@ -577,12 +580,13 @@ Some frameworks go a step beyond simple code decoupling, and treat producers
 \emph on
 components
 \emph default
-, where the producer cannot make any assumptions on the consumer's thread
+, in which the producer cannot make any assumptions on the consumer's thread
  behavior.
- For example, a consumer might respond to events immediately, in thread,
- possibly tying up the producer's thread in the process.
- Or, it might have events queues up, and poll occasionally to handle them.
- In such highly generic situations, events are called 
+ Consider two extremes: a consumer might respond to events immediately,
+ in thread, possibly tying up the producer's thread in the process.
+ Or, it might allow for events to be queued up, and poll occasionally to
+ handle them.
+ In the latter highly abstracted situations, events are called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -591,20 +595,22 @@ messages,
 \end_inset
 
  and implementations often involve sophisticated middleware to queue messages,
- persist them, create inter-dependencies, and make sure they travel from
+ persist them, create interdependencies, and make sure they travel from
  source to destination via repeated attempts, back-off algorithms, notifications
- to system administrators, etc.
+ to system administrators in case of failure, etc.
 \end_layout
 
 \begin_layout Standard
 One size does not fit all.
  With Savory, we wanted to keep events lightweight: we assume that your
  consumer and producer components are all running inside a Prudence container:
- they are /resources/ and /web/dynamic/ documents that run in web request
- threads, or /tasks/ that run asynchronously.
- There's thus no need for generic middleware, though more sophisticated,
- dedicated messaging middleware is out there and available if you need it.
- (See 
+ either they are explicit or implicit resources running in web request threads,
+ or they are asynchronous tasks.
+ This allows us to optimize for this situation without having to rely on
+ abstracting middleware.
+ Still, more sophisticated, dedicated messaging middleware is out there
+ and available if you need it.
+ We suggest you try 
 \begin_inset CommandInset href
 LatexCommand href
 name "RabbitMQ"
@@ -612,18 +618,23 @@ target "http://www.rabbitmq.com/"
 
 \end_inset
 
-.)
+.
 \end_layout
 
 \begin_layout Standard
-On the other hand, the combination of Prudence Hazelcast clusters, MongoDB,
- and JavaScript's inherent dynamism within the Prudence container allows
- for some really scalable events! If what you need is asynchronicity and
- scalable distribution, rather than generic decoupling, then Savory events
- might be far more useful and simpler than deploying complex middleware.
+That said, the combination of Prudence Hazelcast clusters, MongoDB, and
+ JavaScript's inherent dynamism within the Prudence container allows for
+ a truly scalable event framework.
+ If what you need is asynchronicity and scalable distribution, rather than
+ generic decoupling, then Savory events might be far more useful and simpler
+ than deploying complex middleware.
 \end_layout
 
 \begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Subsubsection
 In-Thread Events
 \end_layout
 
@@ -696,7 +707,7 @@ status open
 
 \begin_layout Plain Layout
 
-document.executeOnce('/libraries/politeness/acknowledgements/')
+document.executeOnce('/politeness/acknowledgements/')
 \end_layout
 
 \begin_layout Plain Layout
@@ -747,16 +758,22 @@ Savory.Events.fire({
 \begin_layout Standard
 For this to work, you have to make sure the firing code has already run
  the code that hooks up the listeners.
- Often, a simple document.execute will do the trick, like in this example.
+ Often, a simple document.execute will do the trick, as in this example.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Asynchronous Events
 \end_layout
 
 \begin_layout Standard
 You can easily make the listeners run outside your thread, in fact anywhere
- in your Prudence cluster:
+ in your Prudence cluster.
+ This, of course, is crucial for scalability, because you don't want the
+ listeners holding your web request thread.
+\end_layout
+
+\begin_layout Standard
+For this to work, we need to add something small to our subscription:
 \end_layout
 
 \begin_layout Standard
@@ -810,7 +827,7 @@ Savory.Events.subscribe({
 \end_layout
 
 \begin_layout Standard
-Note that we added 
+Note that we had to add a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -818,9 +835,9 @@ dependencies
 \begin_inset Quotes erd
 \end_inset
 
- to the listener, to allow it to be called in different contexts.
- These dependencies are document.executeOnce'd to make sure the thread has
- access to all the code it needs.
+ key to the listener, to allow it to be called in different contexts.
+ These dependencies are document.executeOnce'd to make sure the calling thread
+ has access to all the code it needs.
 \end_layout
 
 \begin_layout Standard
@@ -834,7 +851,7 @@ status open
 
 \begin_layout Plain Layout
 
-document.executeOnce('/libraries/politeness/acknowledgements/')
+document.executeOnce('/politeness/acknowledgements/')
 \end_layout
 
 \begin_layout Plain Layout
@@ -888,7 +905,15 @@ Savory.Events.fire({
 \end_layout
 
 \begin_layout Standard
-And\SpecialChar \ldots{}
+All we did was add 
+\begin_inset Quotes eld
+\end_inset
+
+async: true
+\begin_inset Quotes erd
+\end_inset
+
+, and\SpecialChar \ldots{}
  that's pretty much it.
  Every listener will run in its own thread within the global pool.
  You can add a 
@@ -899,16 +924,18 @@ distributed: true
 \begin_inset Quotes erd
 \end_inset
 
- flag to cause listeners to be executed anywhere in the cluster.
+ flag to cause listeners to be executed anywhere in the cluster, and there's
+ where things get really powerful: you can properly scale out your event
+ handling in the cluster, with nothing more than a simple flag.
 \end_layout
 
 \begin_layout Standard
 How does this magic work? It's JavaScript magic: 
 \emph on
-the listener function's source code is serialized
+we're evaluating the serialized listener source code
 \emph default
 .
- The code that fires the event is called via <a href="../tasks/">Savory's
+ The code that fires the event is called via <a href="../tasks/">Prudence's
  tasks library</a>.
  The task makes sure to run the dependencies and evaluate the JavaScript
  you stored.
@@ -921,19 +948,20 @@ the listener function's source code is serialized
 Concerned about JavaScript eval performance? Generally, it's very fast,
  and surely whatever overhead is required to parse the JavaScript grammar
  would be less than any network I/O that a distributed event would involve.
- If you're really worried, make sure to store as little as possible in the
- listener function.
- It's best to just call a function from one of the dependency libraries,
- which are already compiled and at their most efficient.
+ If you're really worried about performance, make sure to store as little
+ code as possible in the listener function and quickly delegate to compiled
+ code.
+ For example, your listener can simply call a function from one of the dependenc
+y libraries, which are already compiled and at their most efficient.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Stored Listeners
 \end_layout
 
 \begin_layout Standard
 So far so good, but both examples above require you to execute the code
- that subcribes the listeners before firing the event.
+ that subscribes the listeners before firing the event.
  Stored listeners remove this requirement by saving the event and its listeners
  in one of several storage implementations.
 \end_layout
@@ -1014,14 +1042,12 @@ We can also use application.globals or application.sharedGlobals.
 \end_layout
 
 \begin_layout Standard
-One small issue is that with stored listeners is that they are inherently
- multithreaded: so, you need to make sure that they are not registered more
- than once, say by multiple nodes in the cluster, otherwise your listener
- code would be called multiple times.
-\end_layout
-
-\begin_layout Standard
-That's what the listener 
+One small issue to note when using stored listeners is that storage must
+ support concurrency.
+ One implication of this is that you need to make sure that they are not
+ registered more than once, say by multiple nodes in the cluster, otherwise
+ your listener code would be called multiple times.
+ And that's what the listener 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1030,7 +1056,7 @@ id
 \end_inset
 
  field is for.
- In fact, the 
+ (In fact, the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1038,8 +1064,8 @@ id
 \begin_inset Quotes erd
 \end_inset
 
- field can also be used for in-thread listeners.
- It also might make sense to set up all your stored listeners in your 
+ field can also be used for in-thread listeners.) It also might make sense
+ to set up all your stored listeners in your 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1154,7 +1180,7 @@ Savory.Events.defaultStore
  to your own value.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Persistent Listeners
 \end_layout
 
@@ -1267,6 +1293,99 @@ Savory.Events.MongoDbDocumentStore
 \begin_layout Standard
 Finally, you can create your own custom store class to store events anywhere
  else.
+\end_layout
+
+\begin_layout Subsection
+Configuration
+\end_layout
+
+\begin_layout Standard
+You don't have to configure the Events Service, but it is possible to set
+ a few defaults.
+ In your application's 
+\begin_inset Quotes eld
+\end_inset
+
+settings.js
+\begin_inset Quotes erd
+\end_inset
+
+ add something like this to your app.globals:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+savory: {
+\end_layout
+
+\begin_layout Plain Layout
+
+	service: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		events: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			defaultAsync: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+			defaultDistributed: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+			defaultStores: [function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+				document.executeOnce('/savory/service/events/')
+\end_layout
+
+\begin_layout Plain Layout
+
+				return new Savory.Events.MongoDbCollectionStore()
+\end_layout
+
+\begin_layout Plain Layout
+
+			}]
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note the use of function(): this is required in order to allow the Events
+ Service to lazily create the service implementations on demand during runtime.
 \end_layout
 
 \begin_layout Section
@@ -1795,12 +1914,17 @@ status open
 
 \begin_layout Plain Layout
 
-		"savory-example": {
+			"savory-example": {
 \end_layout
 
 \begin_layout Plain Layout
 
-			"time": "It is now {now}"
+				"time": "It is now {now}"
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
 \end_layout
 
 \begin_layout Plain Layout
@@ -1891,7 +2015,7 @@ status open
 
 \begin_layout Plain Layout
 
-	"inherit": ["en"],
+	"inherit": "en",
 \end_layout
 
 \begin_layout Plain Layout
@@ -1911,7 +2035,12 @@ status open
 
 \begin_layout Plain Layout
 
-			"time": "It is now {now}"
+				"time": "It is now {now}"
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
 \end_layout
 
 \begin_layout Plain Layout
@@ -2591,8 +2720,8 @@ If you want your application to
 \emph on
 receive
 \emph default
- email, which is quite a different task than relaying it onwards, check
- out the 
+ email, which is quite a different task than relaying it onwards, we recommend
+ the 
 \begin_inset CommandInset href
 LatexCommand href
 name "SubEtha SMTP library"
@@ -2601,6 +2730,8 @@ target "http://code.google.com/p/subethasmtp/"
 \end_inset
 
 .
+ If there's interest, we may incorporate into the Savory Framework more
+ directly in the future.
 \end_layout
 
 \begin_layout Subsection
@@ -2609,7 +2740,7 @@ Usage
 
 \begin_layout Standard
 Here's an example of two ways for queuing a notice, the first by a direct
- addresses, and the second to all subscribers of a channel:
+ address, and the second to all subscribers of a channel:
 \end_layout
 
 \begin_layout Standard
@@ -2757,7 +2888,7 @@ text
 
  to specify the plain text version.
  This is very good practice: not all email clients support HTML, and if
- they don't your HTML will be unreadable.
+ they don't your HTML will be unreadable without a plain text fallback.
 \end_layout
 
 \begin_layout Standard
@@ -2779,7 +2910,7 @@ settings.js
 \begin_inset Quotes erd
 \end_inset
 
-, you want to make sure to enable lazy configuration:
+ you want to make sure to enable lazy configuration:
 \end_layout
 
 \begin_layout Standard
@@ -2902,7 +3033,7 @@ savory: {
 \end_layout
 
 \begin_layout Standard
-Note the use of Prudence.Lazy.build: this allows the the Notification Service
+Note the use of Prudence.Lazy.build: this allows the Notification Service
  to lazily create the email implementation on demand during runtime.
  The key, 
 \begin_inset Quotes eld

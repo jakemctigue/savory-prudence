@@ -69,6 +69,13 @@ app.globals = {
 						}
 					})
 				}
+			},
+			
+			events: {
+				defaultStores: [function() {
+					document.executeOnce('/savory/service/events/')
+					return new Savory.Events.MongoDbCollectionStore() 				
+				}]
 			}
 		}
 	}

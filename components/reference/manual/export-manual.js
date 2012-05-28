@@ -92,5 +92,6 @@ manual.generate({
 	'Internationalization Service': ['component/applications/savory-example/fragments/manual/service/internationalization.html'],
 	'Nonces Service': ['component/applications/savory-example/fragments/manual/service/nonces.html'],
 	'Notification Service': ['component/applications/savory-example/fragments/manual/service/notification.html'],
-	'Serials Service': ['component/applications/savory-example/fragments/manual/service/serials.html']
+	'Serials Service': ['component/applications/savory-example/fragments/manual/service/serials.html'],
+	'Events Service': ['component/applications/savory-example/fragments/manual/service/events.html']
 })

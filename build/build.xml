@@ -86,7 +86,7 @@
 			<arg value="repositories:attach" />
 			<arg value="three-crickets" />
 			<arg value=":" />
-			<arg value="install" />
+			<arg value="dependencies:install" />
 		</exec>
 	</target>
 
@@ -139,7 +139,6 @@
 		<copy todir="${distribution.content}/programs">
 			<fileset dir="${manual}" includes="*.js" />
 		</copy>
-		<!--
 		<exec executable="${sincerity.home}/sincerity">
 			<arg value="container:use" />
 			<arg value="${distribution.content}" />
@@ -148,7 +147,6 @@
 			<arg value="export-manual" />
 			<arg value="${cache.manual}/${component}_manual.html" />
 		</exec>
-		-->
 	</target>
 	
 </project>
