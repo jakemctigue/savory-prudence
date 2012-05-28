@@ -45,7 +45,7 @@
 	<target name="manual-overwrite" description="Create manual" unless="manual-present">
 		<mkdir dir="${cache.manual}" />
 		<copy todir="${cache.manual}">
-			<fileset dir="${reference}/manual" excludes="*~, *.s" />
+			<fileset dir="${manual}" excludes="*~, *.js" />
 		</copy>
 		<replace dir="${cache.manual}" includes="${component}_manual.lyx" token="%VERSION%" value="${version}" />
 		<antcall target="manual-lyx" />
@@ -60,7 +60,7 @@
 			<arg value=":" />
 			<arg value="delegate:start" />
 			<arg value="export-manual" />
-			<arg value="${cache.manual}/${component}_manual.lyx" />
+			<arg value="${cache.manual}/${component}_manual.html" />
 		</exec>
 	</target>
 
