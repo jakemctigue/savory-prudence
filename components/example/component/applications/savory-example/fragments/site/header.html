@@ -16,6 +16,9 @@ document.include('/example/footer/')
 
 	<!-- Ubuntu font -->
 	<link href="http://fonts.googleapis.com/css?family=Ubuntu|Ubuntu:italic|Ubuntu:bold|Ubuntu:bolditalic" rel="stylesheet" type="text/css" />
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="<%= conversation.pathToBase %>/scripts/jquery/jquery.core.min.js"></script>
 	<% if(null !== conversation.locals.get('reCaptcha')) { %>
 	<!-- reCAPTCHA -->
 	<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script><% } %>

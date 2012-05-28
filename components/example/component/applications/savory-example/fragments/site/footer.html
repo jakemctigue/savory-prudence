@@ -16,6 +16,32 @@
 			pageTracker._trackPageview();
 		} catch(err) {}
 	</script>
+	<script type="text/javascript">
+		function toc(options) {
+			var win = $(window);
+			var main = $('#main-column');
+			var toc = $('#toc');
+			options.queue = false;
+			toc.animate({
+				top: win.scrollTop() + win.height() - toc.height() - 80,
+				left: main.offset().left + main.width()
+			}, options);
+		}
+	
+		$(document).ready(function() {
+			toc({
+				duration: 0,
+				complete: function() {
+					$(this).show();
+					toc({duration: 0});
+				}
+			});
+			
+			$(window)
+			.scroll(function() { toc({duration: 150}); })
+			.resize(function() { toc({duration: 150}); });
+		});
+	</script>	
 <%
 if(null !== conversation.locals.get('reCaptcha')) {
 	document.executeOnce('/savory/foundation/prudence/blocks/')
