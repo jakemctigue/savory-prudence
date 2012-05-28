@@ -135,10 +135,25 @@ logged into
 \end_inset
 
  by individual users.
- 
 \end_layout
 
 \begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Authentication"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Authentication"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
 Users
 \end_layout
 
@@ -175,7 +190,7 @@ Though you can maintain the user documents yourself, you can add the <a
  to create their own users.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Sessions
 \end_layout
 
@@ -198,7 +213,7 @@ The service comes with a task to make sure to remove sessions that have
  can be especially dangerous in public places.)
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Caching Per User
 \end_layout
 
@@ -212,7 +227,7 @@ This very powerful feature uses a cache key patten handler to inject the
  users then you've achieved a lot.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Authentication Forms
 \end_layout
 
@@ -221,10 +236,9 @@ The authentication service comes with a bunch of /web/fragments/ that you
  can easily drop in to any page.
  They handle things like logging in, logging out, and showing the currently
  logged-in user.
- </p>
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Providers
 \end_layout
 
@@ -279,6 +293,22 @@ Authorization Service
 When used with the <a href="../authentication/">authentication service</a>,
  this service lets you secure your site by allowing only authorized users
  to access certain resources or perform certain operations.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Authorization"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Authorizaion"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -417,6 +447,18 @@ Usage
 \end_layout
 
 \begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Backup"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Backup"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 To export the whole database:
 \end_layout
 
@@ -534,11 +576,23 @@ drop
 \end_layout
 
 \begin_layout Section
-Cache Service
+Documents Service
 \end_layout
 
-\begin_layout Section
-Documents Service
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Documents"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Documents"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -555,23 +609,8 @@ events.
 \begin_inset Quotes erd
 \end_inset
 
- By decoupling event producer code from event consumer code, you can better
- organize your code architecture.
-\end_layout
-
-\begin_layout Quote
-\SpecialChar \ldots{}
-Or not.
- The problem with events is that they are hooked up dynamically while the
- application runs.
- It's hard to know, simply looking at the code, what code will be triggered
- when an event is fired.
- Decoupling code is always great way to introduce some really difficult
- bugs into your codebase, and vastly reduce its debuggability.
- We present this service for your use, but encourage you to think of the
- costs vs.
- the benefits.
- Perhaps there is a more straightforward way to solve your problem?
+ By decoupling event producer code from event consumer code, you can allow
+ for a looser, more dynamic code architecture.
 \end_layout
 
 \begin_layout Standard
@@ -630,8 +669,49 @@ That said, the combination of Prudence Hazelcast clusters, MongoDB, and
  than deploying complex middleware.
 \end_layout
 
+\begin_layout Quote
+The point of an event-driven architecture is that you're relinquishing some
+ control of your code-flow.
+ It's thus hard to know, by simply looking at the code, which parts of the
+ it will be triggered when an event is fired.
+ You also need to know who exactly is subscribing.
+ Decoupling code is a great way to introduce some really difficult bugs
+ into your codebase, and vastly reduce its debuggability.
+ We present this service for your use, but encourage you to think of the
+ costs vs.
+ the benefits in terms of code clarity.
+ Perhaps there is a more straightforward way to solve your problem? If all
+ you need as asynchronicity, then you can also use the 
+\begin_inset CommandInset href
+LatexCommand href
+name "Prudence.Task API"
+target "http://threecrickets.com/javascript-api/?namespace=Prudence.Task"
+
+\end_inset
+
+ more directly, allowing you to call 
+\emph on
+specific
+\emph default
+ listening code, rather than any generic subscriber.
+ The bottom line is that as great as this service is, we don't recommend
+ using it indiscriminately.
+\end_layout
+
 \begin_layout Subsection
 Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Events"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Events"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1277,11 +1357,11 @@ Everything is otherwise the same.
 \begin_layout Standard
 You can also store events inside a specific, arbitrary MongoDB document,
  using 
-\begin_inset Quotes eld
-\end_inset
+\begin_inset CommandInset href
+LatexCommand href
+name "Savory.Events.MongoDbDocumentStore"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Events.MongoDbDocumentStore"
 
-Savory.Events.MongoDbDocumentStore
-\begin_inset Quotes erd
 \end_inset
 
 .
@@ -1508,6 +1588,18 @@ status open
 
 \begin_layout Subsection
 Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Internationalization"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Internationalization"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2100,6 +2192,22 @@ The Savory Cache Service goes a step further in letting you very easily
  you can transparently cache their results.
 \end_layout
 
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Cache"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Cache"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Standard
 A simple example:
 \end_layout
@@ -2354,6 +2462,22 @@ Pingback is by far the more complicated spec: it requires XML-RPC (we are
 \end_layout
 
 \begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Linkback"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Linkback"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
 Integrating Linkbacks into Your Product
 \end_layout
 
@@ -2381,7 +2505,7 @@ linkback
  the rest.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 How to Linkback 
 \emph on
 from
@@ -2389,7 +2513,7 @@ from
  This Page?
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Paragraph
 1.
  Link
 \end_layout
@@ -2423,7 +2547,7 @@ First, we need to make sure that we actually have a link to the remote site
  ) { var link = i.next(); %> <a href="<%= link %>">link</a> <% } %> </p>
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Paragraph
 2.
  Auto-Discovery
 \end_layout
@@ -2460,7 +2584,7 @@ We support auto-discovery of trackback and pingback URLs, so you can first
 <p> <span style="color: red;"><%= message %></span> </p> <% } %>
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 How to Linkback 
 \emph on
 to
@@ -2523,6 +2647,18 @@ Nonces are often used in authentication schemes, where tokens, meant to
 
 \begin_layout Subsection
 Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Nonces"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Nonces"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2736,6 +2872,18 @@ target "http://code.google.com/p/subethasmtp/"
 
 \begin_layout Subsection
 Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Notification"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Notification"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -3225,6 +3373,22 @@ cation service</a> to notify the user about changes to the process.
 \end_layout
 
 \begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Progress"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Progress"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
 Trivial Example
 \end_layout
 
@@ -3710,12 +3874,60 @@ The process.attempt call doest most of the work: it makes sure to call the
 REST Service
 \end_layout
 
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.REST"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.REST"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 RPC Service
 \end_layout
 
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.RPC"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.RPC"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 Search Service
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Search"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Search"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -3740,6 +3952,18 @@ Note that uniqueness is only guaranteed by the intactness of the MongoDB
 
 \begin_layout Subsection
 Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Serials"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Serials"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -3782,6 +4006,22 @@ serials
 
 \begin_layout Section
 Syndication Service
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Syndication"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Syndication"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -3847,7 +4087,19 @@ Worried about forcing users to use an external service? Then make Gravatar
 \end_layout
 
 \begin_layout Subsection
-Let's Do It
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Gravatar"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Gravatar"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -3863,16 +4115,80 @@ The avatar above is hyperlinked to their Gravatar profile page.
 PayPal Integration
 \end_layout
 
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.PayPal"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.PayPal"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 Ext JS and Sencha Touch Integration
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Sencha"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Sencha"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
 Blog Feature
 \end_layout
 
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Blog"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Blog"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 Console Feature
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Console"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Console"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -3898,6 +4214,22 @@ Note that a different form is displayed depending on whether the user is
 
 \begin_layout Standard
 The originating IP address is included in the email.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.ContactUs"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.ContactUs"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -3929,6 +4261,22 @@ visitor
  The discussion is threaded, in that comments can have any level of depth.
  It's very easy to drop in, and makes a lot of web application features
  instantly sociable.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Discussion"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Discussion"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -4054,6 +4402,22 @@ The feature allows for not-yet-activated users to be automatically deleted
  This would release the username for others to use.
 \end_layout
 
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Registration"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Registration"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 SEO Feature
 \end_layout
@@ -4079,6 +4443,22 @@ At first glance, there's nothing very sophisticated about these standards,
 very, very
 \emph default
  large site maps.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.SEO"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.SEO"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -4798,8 +5178,40 @@ And that's pretty much it!
 Shopping Cart Feature
 \end_layout
 
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.ShoppingCart"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.ShoppingCart"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 Wiki Feature
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Wiki"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Wiki"
+
+\end_inset
+
+.
 \end_layout
 
 \end_body

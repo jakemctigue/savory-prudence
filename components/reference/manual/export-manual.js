@@ -50,7 +50,11 @@ var Manual = function(file) {
 		
 		// Tricks with labels
 		this.content = this.content.replace(/<a class="Label" name=".+#/g, '<a class="Label" name="')
-	}
+
+		
+		// Tricks with labels
+		this.content = this.content.replace(/http:\/\/threecrickets.com\/javascript-api\//g, '/javascript-api/')
+}
 	
 	this.getSection = function(name) {
 		var headingRE = new RegExp('<a class="toc" name="toc-Section-\\d+"></a>' + name)
