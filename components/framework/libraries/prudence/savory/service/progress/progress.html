@@ -1,8 +1,8 @@
+<html>
 <%
 document.executeOnce('/savory/foundation/html/')
 document.executeOnce('/sincerity/localization/')
 %>
-<html>
 <head>
 	<%= Savory.HTML.build({_content: process.getDescription(), _tag: 'title'}) %>
 </head>
@@ -27,7 +27,7 @@ document.executeOnce('/sincerity/localization/')
 			<noscript>
 				<p align="center">
 					<a href=".">Click to check status</a>
-					<!--<input type="submit" value="Click to check status" />-->
+					<input type="submit" value="Click to check status" />
 				</p>
 			</noscript>
 		</form>
@@ -36,7 +36,6 @@ document.executeOnce('/sincerity/localization/')
 <script>
 setTimeout(function() {
 	location.reload(true);
-	//document.forms['form'].submit();
 }, 1000);	
 </script>
 </html>
