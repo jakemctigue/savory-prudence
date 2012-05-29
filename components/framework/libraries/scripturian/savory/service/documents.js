@@ -55,15 +55,16 @@ Savory.Documents = Savory.Documents || function() {
 	 */
 	Public.getDraft = function(documentId, revision) {
 		if (revision) {
-			if (typeof revision == 'number') {
-				revision = 'r' + revision
+			var key = revision
+			if (typeof key == 'number') {
+				key = 'r' + key
 			}
 			
 			var fields = {name: 1, site: 1}
-			fields['drafts.' + revision] = 1
+			fields['drafts.' + key] = 1
 
 			var document = documentsCollection.findOne({_id: {$oid: documentId}}, fields)
-			var draft = document && document.drafts ? document.drafts[revision] : null
+			var draft = document && document.drafts ? document.drafts[key] : null
 			return draft ? new Public.Draft(draft, revision, document) : null
 		}
 		else {
@@ -112,8 +113,9 @@ Savory.Documents = Savory.Documents || function() {
 	    	this.site = site
 	    }
 		
-	    Public.createDocument = function(source, revision, now) {
+	    Public.createDocument = function(source, language, revision, now) {
 			now = now || new Date()
+			language = language || defaultLanguage
 
 			if (!Sincerity.Objects.exists(revision)) {
 				revision = this.revise(now)
@@ -130,6 +132,7 @@ Savory.Documents = Savory.Documents || function() {
 				site: this.site._id,
 				activeDraft: {
 					source: source,
+					language: language,
 					revision: revision
 				},
 				drafts: {},
@@ -189,11 +192,16 @@ Savory.Documents = Savory.Documents || function() {
 		}
 		
 	    Public.getSource = function() {
-			return this.draft.source ? this.draft.source : null
+			return this.draft.source || null
 		}
-		
-	    Public.revise = function(source, newRevision, now) {
+
+	    Public.getLanguage = function() {
+			return this.draft.language || null
+		}
+
+	    Public.revise = function(source, language, newRevision, now) {
 			now = now || new Date()
+			language = language || defaultLanguage
 			
 			if (!Sincerity.Objects.exists(newRevision)) {
 				var site = this.getSite()
@@ -207,20 +215,21 @@ Savory.Documents = Savory.Documents || function() {
 				return
 			}
 			
-			if (typeof newRevision == 'number') {
-				this.revision = newRevision
-			}
-			else {
-				this.revision = newRevision = parseInt(String(newRevision).substring(1))
+			this.revision = newRevision
+			if (typeof this.revision != 'number') {
+				this.revision = parseInt(String(this.revision = newRevision).substring(1))
 			}
 			
 			this.draft.source = source
+			this.draft.language = language
 			delete this.draft.rendered
 
+			// Set as active draft
 			var update = {
 				$set: {
-					'activeDraft.source': source,
-					'activeDraft.revision': newRevision,
+					'activeDraft.source': this.draft.source,
+					'activeDraft.language': this.draft.language,
+					'activeDraft.revision': this.revision,
 					lastUpdated: now
 				},
 				$unset: {
@@ -230,9 +239,11 @@ Savory.Documents = Savory.Documents || function() {
 					revisions: newRevision
 				}
 			}
-			
-			update.$set['drafts.r' + newRevision + '.source'] = source
-			
+
+			// Move current draft to drafts
+			update.$set['drafts.r' + this.revision + '.source'] = this.draft.source
+			update.$set['drafts.r' + this.revision + '.language'] = this.draft.language
+
 			documentsCollection.update({_id: this.document._id}, update)
 		}
 		
@@ -259,7 +270,7 @@ Savory.Documents = Savory.Documents || function() {
 		
 		function getRenderer() {
 			if (!this.renderer) {
-				this.renderer = Savory.HTML.getRenderer(this.document.language || defaultLanguage, {
+				this.renderer = Savory.HTML.getRenderer(this.draft.language || defaultLanguage, {
 					escapingHtmlAndXml: true,
 					phraseModifiers: getReferenceReplacementToken(mapReference)
 				})

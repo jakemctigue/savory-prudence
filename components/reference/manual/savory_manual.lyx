@@ -581,8 +581,55 @@ Documents Service
 
 \begin_layout Standard
 This service lets you store versioned HTML documents in MongoDB using your
- choice among several markup languages: Markdown, Textile, Confluence, MediaWiki
-, TWiki and Trac.
+ choice among several markup languages: 
+\begin_inset CommandInset href
+LatexCommand href
+name "Markdown"
+target "http://daringfireball.net/projects/markdown/"
+
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "Textile"
+target "http://redcloth.org/textile"
+
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "Confluence"
+target "http://confluence.atlassian.com/display/DOC/Confluence+Wiki+Markup"
+
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "MediaWiki"
+target "http://www.mediawiki.org/wiki/Help:Formatting"
+
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "TWiki"
+target "http://twiki.org/cgi-bin/view/TWiki/TextFormattingRules"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset href
+LatexCommand href
+name "Trac"
+target "http://trac.edgewall.org/wiki/WikiFormatting"
+
+\end_inset
+
+.
  It's thus an essential building block for CMS features, such as wikis and
  blogs.
 \end_layout
@@ -672,7 +719,7 @@ revision numbers per that site.
 \end_layout
 
 \begin_layout Standard
-Not the markup rendering is handled by a lower-level library, 
+Note the markup rendering is handled by a lower-level library, 
 \begin_inset CommandInset href
 LatexCommand href
 name "Savory.HTML"
