@@ -1,27 +1,14 @@
-<%#
+<%
 
-This file is part of the Savory Framework for Prudence
-
-Copyright 2011 Three Crickets LLC.
-
-The contents of this file are subject to the terms of the LGPL version 3.0:
-http://www.gnu.org/copyleft/lesser.html
-
-Alternatively, you can obtain a royalty free commercial license with less
-limitations, transferable or non-transferable, directly from Three Crickets
-at http://threecrickets.com/
-
-%><%
-
-document.executeOnce('/savory/service/processing/')
-document.executeOnce('/savory/foundation/prudence/resources/')
+document.executeOnce('/savory/service/progress/')
+document.executeOnce('/prudence/resources/')
 
 var key = conversation.locals.get('process') || conversation.form.get('process')
-var process = Savory.Processing.getProcess(key)
+var process = Savory.Progress.getProcess(key)
 if (process) {
 	if (process.isActive()) {
 		var lastMilestone = process.getLastMilestone()
-		document.include('/savory/service/processing/progress/')
+		document.include('/savory/service/progress/progress/')
 	}
 	else if (process.isSuccess()) {
 		process.redirectSuccess(conversation)
@@ -34,6 +21,7 @@ if (process) {
 	}
 }
 else {
-	conversation.statusCode = Savory.Resources.Status.ClientError.NotFound
+	conversation.statusCode = Prudence.Resources.Status.ClientError.NotFound
 }
+
 %>

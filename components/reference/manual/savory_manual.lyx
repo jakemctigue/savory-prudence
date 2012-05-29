@@ -3314,17 +3314,17 @@ target "http://threecrickets.com/prudence/scaling/"
 \end_inset
 
  article, you know that for potentially long-running tasks you want to release
- conversation threads as soon as possible, and notify the user in some way
+ web request threads as soon as possible, and notify the user in some way
  as to when the task is finished.
- This service helps you do it.
+ This service helps you do exactly that.
 \end_layout
 
 \begin_layout Standard
 For a use case example, consider an application that searches for flight
- information using several off-site databases and services.
+ information using several databases and services.
  The search can take many seconds, if not minutes! Of course, you do not
- want to hold up a user thread and have the browser spin while the search
- is going on, so you turn to Savory's processing service.
+ want to hold up a web request thread and have the browser spin while the
+ search is going on, so you turn to Savory's Progress Service.
 \end_layout
 
 \begin_layout Standard
@@ -3336,7 +3336,8 @@ process,
 \begin_inset Quotes erd
 \end_inset
 
- which is a MongoDB document, and you can asynchronously update 
+ which is stored in a MongoDB document, and you can asynchronously mark
+ when certain 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3344,7 +3345,7 @@ milestones
 \begin_inset Quotes erd
 \end_inset
 
- in it, including marking it as done.
+ are completed, including the final completion of the whole process.
  Processes can be associated with a user, which allows you to use the <a
  href="../authorization/">authorization service</a> to allow only that user
  access to the process' status, and also to allow the user to query all
@@ -3354,9 +3355,9 @@ milestones
 \begin_layout Standard
 The service supports two ways of letting the user know the status of the
  process.
- The first is for short-term processes: a /web/fragments/ drop-in that simply
- shows the current status of the process, and uses browser JavaScript to
- refresh the page every few seconds.
+ The first is for short-term processes: a drop-in fragment that simply shows
+ the current status of the process and uses browser JavaScript to refresh
+ the page every few seconds.
  The user would see milestones along the way to completion, if there are
  any, and eventually be redirected to another page when the process completes
  (or fails!).
@@ -3364,12 +3365,12 @@ The service supports two ways of letting the user know the status of the
 
 \begin_layout Standard
 For longer running processes, you cannot expect the user to wait in front
- of their web browsers.
- In these cases, the processing service uses the <a href="../notification/">notifi
-cation service</a> to notify the user about changes to the process.
- Additionally, there is a /web/fragments/ drop-in that would allow the user
- to see the current state of the process on the web, and another one that
- lets the user access all processes associated with them.
+ of the web browsers.
+ In these cases, the Progress Service uses the <a href="../notification/">notifica
+tion service</a> to notify the user about milestones, success and failure.
+ Additionally, we provide a drop-in fragment that would allow the user to
+ see the current state of the process on the web, and another one that lets
+ the user access all processes associated with them.
 \end_layout
 
 \begin_layout Subsection
@@ -3388,7 +3389,7 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.Progress"
 .
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Trivial Example
 \end_layout
 
@@ -3403,7 +3404,11 @@ status open
 
 \begin_layout Plain Layout
 
-document.executeOnce('/savory/service/processing/')
+document.executeOnce('/savory/service/progress/')
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -3413,7 +3418,7 @@ var process = Savory.Progress.startProcess({
 
 \begin_layout Plain Layout
 
-	description: 'Waiting for this fake process to expire...',
+	description: 'Searching for your flights...',
 \end_layout
 
 \begin_layout Plain Layout
@@ -3433,7 +3438,11 @@ var process = Savory.Progress.startProcess({
 
 \begin_layout Plain Layout
 
-process.redirectWait(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+process.redirectWait(conversation, application)
 \end_layout
 
 \end_inset
@@ -3466,14 +3475,51 @@ Searching for your flights\SpecialChar \ldots{}
  etc.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+please wait
+\begin_inset Quotes erd
+\end_inset
+
+ page is in 
+\begin_inset Quotes eld
+\end_inset
+
+/savory/service/progress/wait/
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If you don't have it in your 
+\begin_inset Quotes eld
+\end_inset
+
+/fragments/
+\begin_inset Quotes erd
+\end_inset
+
+ then a default page will be used, which is in your container's 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/prudence/
+\begin_inset Quotes erd
+\end_inset
+
+ directory.
+ You can use that as a template for your own custom page.
+\end_layout
+
+\begin_layout Subsubsection
 Example with Milestones
 \end_layout
 
 \begin_layout Standard
-You can launch a task, via the Tasks.task API, at the same time as you start
- a process.
- Conveniently, you can then access the process via the task context:
+You can launch a task from within startProcess, which simply wraps the Prudence.T
+asks.task API.
 \end_layout
 
 \begin_layout Standard
@@ -3546,7 +3592,7 @@ Our
 \begin_inset Quotes eld
 \end_inset
 
-/tasks/flights/search.js
+/libraries/flights/search.js
 \begin_inset Quotes erd
 \end_inset
 
@@ -3575,7 +3621,7 @@ if (process && process.isActive()) {
 
 \begin_layout Plain Layout
 
-	var task = process.getContext()['savory.task']
+	var task = process.getTask()
 \end_layout
 
 \begin_layout Plain Layout
@@ -3621,7 +3667,7 @@ if (process && process.isActive()) {
 
 \begin_layout Plain Layout
 
-				Tasks.task(task)
+				Prudence.Tasks.task(task)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3696,8 +3742,17 @@ if (process && process.isActive()) {
 \end_layout
 
 \begin_layout Standard
-Note that we've handled each milestone as a new execution of the task (the
- first milestone is always 
+Notes:
+\end_layout
+
+\begin_layout Itemize
+The Savory.Progress.getProcess() API works here only because we launched the
+ task from within startProcess.
+ It works by putting the process ID in the context.
+\end_layout
+
+\begin_layout Itemize
+The first milestone is always 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3705,14 +3760,55 @@ started
 \begin_inset Quotes erd
 \end_inset
 
-).
- This allows for better concurrency (the task is distributed, too, so each
- milestone might be executed on a different instance in the cluster), and
- also makes sure that a milestone is not performed if the process expires
- and is thus not longer active (isActive would return false).
+, and the last one is always 
+\begin_inset Quotes eld
+\end_inset
+
+done
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The name 
+\begin_inset Quotes eld
+\end_inset
+
+failed
+\begin_inset Quotes erd
+\end_inset
+
+ is reserved for failed processes, and like 
+\begin_inset Quotes eld
+\end_inset
+
+done
+\begin_inset Quotes erd
+\end_inset
+
+ will mark the process as inactive.
+ Otherwise, you can set any milestone name you wish.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Itemize
+You'll also see that we've handled each milestone as a new execution of
+ the task.
+ process.getTask() returns a copy of the arguments sent to the last Prudence.Tasks.
+task call, so we can simply call it again with the same arguments.
+\end_layout
+
+\begin_layout Itemize
+Breaking up our work into separate tasks allows for better concurrency:
+ we're not holding on the thread at once longer than makes sense.
+ Also note that if the task is distributed, each milestone could be executed
+ in a different node in the cluster.
+\end_layout
+
+\begin_layout Itemize
+This method and also makes sure that a milestone will not be executed if
+ a process expires (isActive would return false).
+\end_layout
+
+\begin_layout Subsubsection
 Reattempts
 \end_layout
 
@@ -3725,7 +3821,23 @@ A common use case for the processing service is in dealing with an unreliable
 \end_layout
 
 \begin_layout Standard
-The processing service automates much of this:
+The Progress Service automates much of this using the 
+\begin_inset Quotes eld
+\end_inset
+
+maxAttempts
+\begin_inset Quotes erd
+\end_inset
+
+ key in 
+\begin_inset Quotes eld
+\end_inset
+
+task
+\begin_inset Quotes erd
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
@@ -3766,17 +3878,17 @@ emoteLocation),
 
 \begin_layout Plain Layout
 
-		fn: '/remote/connect/',
+		name: '/remote/connect/',
 \end_layout
 
 \begin_layout Plain Layout
 
-		maxAttempts: 50,
+		maxAttempts: 10, // for reattempts
 \end_layout
 
 \begin_layout Plain Layout
 
-		delay: 5000,
+		delay: 5000, // between reattempts
 \end_layout
 
 \begin_layout Plain Layout
@@ -3804,7 +3916,7 @@ Our
 \begin_inset Quotes eld
 \end_inset
 
-/tasks/remote/connect.js
+/libraries/remote/connect.js
 \begin_inset Quotes erd
 \end_inset
 
@@ -3818,7 +3930,7 @@ status open
 
 \begin_layout Plain Layout
 
-document.executeOnce('/savory/service/processing/')
+document.executeOnce('/savory/service/progress/')
 \end_layout
 
 \begin_layout Plain Layout
@@ -3833,7 +3945,7 @@ if (process) {
 
 \begin_layout Plain Layout
 
-	process.attempt(function(process, task) {
+	process.attempt(function(process) {
 \end_layout
 
 \begin_layout Plain Layout
@@ -3843,7 +3955,7 @@ if (process) {
 
 \begin_layout Plain Layout
 
-		return connectRemote(task.remoteLocation)
+		return connectRemote(process.getTask().remoteLocation)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3862,12 +3974,44 @@ if (process) {
 \end_layout
 
 \begin_layout Standard
+Notes:
+\end_layout
+
+\begin_layout Itemize
 The process.attempt call doest most of the work: it makes sure to call the
  task again if there's still time before the process expires and the maximum
  number of attempts has not been exceeded, waiting the appropriate delay
  before each attempt.
  Your function just has to make sure to return true if the attempt has succeeded.
- Easy!
+\end_layout
+
+\begin_layout Itemize
+Each attempt will get a milestone name in the form of 
+\begin_inset Quotes eld
+\end_inset
+
+attempt #X
+\begin_inset Quotes erd
+\end_inset
+
+ where X starts at 1.
+\end_layout
+
+\begin_layout Itemize
+If the maximum number of attempts has been reached, the milestone will be
+ set to 
+\begin_inset Quotes eld
+\end_inset
+
+failed
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Reattempts are logged, to help you debug problems.
 \end_layout
 
 \begin_layout Section

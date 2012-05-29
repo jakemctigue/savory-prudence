@@ -55,30 +55,12 @@ Savory.Progress = Savory.Progress || function() {
 	Public.logger = Prudence.Logging.getLogger('progress')
 	
 	/**
-	 * Installs the library's pass-throughs.
-	 * <p>
-	 * Can only be called from Prudence configuration scripts!
-	 */
-	Public.settings = function() {
-		dynamicWebPassThrough.push('/savory/service/progress/wait/')
-	}
-
-	/**
-	 * Installs the library's captures.
-	 * <p>
-	 * Can only be called from Prudence configuration scripts!
-	 */
-	Public.routing = function() {
-		router.captureAndHide('/wait/{process}/', '/savory/service/progress/wait/')
-	}
-	
-	/**
 	 * @returns {Savory.Progress.Process}
 	 */
 	Public.getProcess = function(key) {
 		var context
 		if (!key) {
-			context = Savory.Tasks.getContext()
+			context = Prudence.Tasks.getContext()
 			if (context) {
 				var processContext = context['savory.process']
 				if (processContext) {
@@ -139,7 +121,7 @@ Savory.Progress = Savory.Progress || function() {
 			}
 			params.task.context = params.task.context || {}
 			Sincerity.Objects.merge(params.task.context, context)
-			Savory.Tasks.task(params.task)
+			Prudence.Tasks.task(params.task)
 			Sincerity.Objects.merge(context, {
 				'savory.task': params.task
 			})
@@ -157,7 +139,7 @@ Savory.Progress = Savory.Progress || function() {
 	 * @see Savory.Progress#getProcess
 	 * @see Savory.Progress#startProcess
 	 */
-	Public.Process = Sincerity.Classes.define(function() {
+	Public.Process = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Progress.Process */
 	    var Public = {}
 	    
@@ -202,7 +184,11 @@ Savory.Progress = Savory.Progress || function() {
 	    Public.getContext = function() {
 			return context
 		}
-		
+
+	    Public.getTask = function() {
+			return context['savory.task']
+		}
+
 	    Public.isActive = function(now) {
 			var last = this.getLastMilestone(now)
 			if (!last) {
@@ -245,14 +231,14 @@ Savory.Progress = Savory.Progress || function() {
 					if (last && (last.name != 'expired')) {
 						now = now || new Date()
 						if (now >= this.process.expiration) {
-							Public.logger.info('Process {0} has expired', String(this.process._id))
+							Module.logger.info('Process {0} has expired', String(this.process._id))
 							this.addMilestone({name: 'expired'})
 						}
 					}
 				}
 			}
 				
-			return milestones
+			return this.milestones
 		}
 		
 		Public.getLastMilestone = function(now) {
@@ -272,7 +258,7 @@ Savory.Progress = Savory.Progress || function() {
 				this.milestones.unshift(milestone)
 			}
 
-			Public.logger.info('Milestone "{0}" added to {1}', milestone.name, String(this.process._id))
+			Module.logger.info('Milestone "{0}" added to {1}', milestone.name, String(this.process._id))
 
 			// TODO: broadcast
 		}
@@ -281,28 +267,41 @@ Savory.Progress = Savory.Progress || function() {
 			processesCollection.remove({_id: this.process._id})
 		}
 
-		Public.redirectWait = function(conversation) {
+		Public.redirectWait = function(conversation, application) {
 			fire.call(this, 'wait', conversation)
-			conversation.response.redirectSeeOther('/savory/wait/' + this.getKey() + '/')
-			conversation.stop()
+			
+			// Simple optimization to try not to call captureAndHide if we don't need to
+			var exists = false
+			for (var i = application.application.inboundRoot.routes.iterator(); i.hasNext(); ) {
+				var route = i.next()
+				if (route.template.pattern == '/wait/{process}/') {
+					exists = true
+					break
+				}
+			}
+			
+			if (!exists) {
+				// Even if the route exists, it will simply be replaced with this one
+				application.application.inboundRoot.captureAndHide('/wait/{process}/', '/savory/service/progress/wait/')
+				document.passThroughDocuments.add('/savory/service/progress/wait/')
+			}
+			
+			redirect(conversation, '/wait/' + this.getKey() + '/')
 		}
 
 		Public.redirectSuccess = function(conversation) {
 			fire.call(this, 'success', conversation)
-			conversation.response.redirectSeeOther(this.process.redirectSuccess || this.process.redirect || conversation.reference.baseRef)
-			conversation.stop()
+			redirect(conversation, this.process.redirectSuccess || this.process.redirect || '/')
 		}
 
 		Public.redirectFailure = function(conversation) {
 			fire.call(this, 'failure', conversation)
-			conversation.response.redirectSeeOther(this.process.redirectFailure || this.process.redirect || conversation.reference.baseRef)
-			conversation.stop()
+			redirect(conversation, this.process.redirectFailure || this.process.redirect || '/')
 		}
 
 		Public.redirectCancelled = function(conversation) {
 			fire.call(this, 'cancelled', conversation)
-			conversation.response.redirectSeeOther(this.process.redirectCancelled || this.process.redirect || conversation.reference.baseRef)
-			conversation.stop()
+			redirect(conversation, this.process.redirectCancelled || this.process.redirect || '/')
 		}
 		
 		Public.subscribeRedirect = function(name, fn, scope) {
@@ -319,25 +318,24 @@ Savory.Progress = Savory.Progress || function() {
 				return
 			}
 
-			var context = this.getContext()
-			var task = context['savory.task']
+			var task = this.getTask()
 			task.attempt = task.attempt == undefined ? 1 : task.attempt
 
 			this.addMilestone({name: 'attempt #' + task.attempt})
 			
-			if (fn(this, task)) {
-				Public.logger.info('Attempt #{0} succeeded for {1} in {2}', task.attempt, String(this.process._id), task.name)
+			if (fn(this)) {
+				Module.logger.info('Attempt #{0} succeeded for {1} in {2}', task.attempt, String(this.process._id), task.name)
 				this.addMilestone({name: 'done'})
 			}
 			else {
 				if (task.attempt < task.maxAttempts) {
-					Public.logger.info('Attempt #{0} failed for {1} in {2}, will try again', task.attempt, String(this.process._id), task.name)
+					Module.logger.info('Attempt #{0} failed for {1} in {2}, will try again', task.attempt, String(this.process._id), task.name)
 					task.attempt++
 					task.distributed = false
 					Tasks.task(task)
 				}
 				else {
-					Public.logger.info('Attempt #{0} failed for {1} in {2}', task.attempt, String(this.process._id), task.name)
+					Module.logger.info('Attempt #{0} failed for {1} in {2}', task.attempt, String(this.process._id), task.name)
 					this.addMilestone({name: 'failed'})
 				}
 			}
@@ -358,8 +356,17 @@ Savory.Progress = Savory.Progress || function() {
 			})
 		}
 		
+		function redirect(conversation, uri) {
+			uri = String(uri)
+			if (uri.startsWith('/')) {
+				uri = conversation.reference.baseRef + uri.substring(1)
+			}
+			conversation.response.redirectSeeOther(uri)
+			conversation.stop()
+		}
+		
 		return Public
-	}())
+	}(Public))
 	
 	//
 	// Private
