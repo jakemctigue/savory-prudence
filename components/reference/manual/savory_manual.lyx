@@ -579,6 +579,111 @@ drop
 Documents Service
 \end_layout
 
+\begin_layout Standard
+This service lets you store versioned HTML documents in MongoDB using your
+ choice among several markup languages: Markdown, Textile, Confluence, MediaWiki
+, TWiki and Trac.
+ It's thus an essential building block for CMS features, such as wikis and
+ blogs.
+\end_layout
+
+\begin_layout Standard
+Every 
+\begin_inset Quotes eld
+\end_inset
+
+document
+\begin_inset Quotes erd
+\end_inset
+
+ in this service is indeed a single MongoDB document, but internally it
+ composed of versioned 
+\begin_inset Quotes eld
+\end_inset
+
+drafts
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The last draft (of the highest revision number) represents the current
+ state of the document.
+ For efficiency, the last draft in its own key (
+\begin_inset Quotes eld
+\end_inset
+
+activeDraft
+\begin_inset Quotes erd
+\end_inset
+
+), allowing you to retrieve it from MongoDB without retrieving the whole
+ history of drafts, which is an array.
+ Additionally, each draft is stored both as markup source code and as rendered
+ result, so that rendering only happens once.
+\end_layout
+
+\begin_layout Standard
+MongoDB atomic operations guarantee that even if more than one person is
+ revising a document at the same, no draft will be lost.
+ Only last update to come in, though, will get to set the 
+\begin_inset Quotes eld
+\end_inset
+
+activeDraft
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Documents are associated with a 
+\begin_inset Quotes eld
+\end_inset
+
+site
+\begin_inset Quotes erd
+\end_inset
+
+, of which there must be at least one.
+ The Document Service can handle many 
+\begin_inset Quotes eld
+\end_inset
+
+sites
+\begin_inset Quotes erd
+\end_inset
+
+ at once, each with its own set of documents.
+ The versioning system is designed to be global per each site, meaning that
+ all drafts associated with a site will have 
+\emph on
+serial 
+\emph default
+and 
+\emph on
+unique 
+\emph default
+revision numbers per that site.
+ This allows time travel: you that you can view the entire state of a site
+ at a given time by fetching only drafts smaller than a certain revision.
+ (This also implies that every draft as its own unique revision number,
+ but there's no easy way in MongoDB to traverse drafts in this order.)
+\end_layout
+
+\begin_layout Standard
+Not the markup rendering is handled by a lower-level library, 
+\begin_inset CommandInset href
+LatexCommand href
+name "Savory.HTML"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.HTML"
+
+\end_inset
+
+, which you can choose to use directly if you do not need the versioning
+ system.
+\end_layout
+
 \begin_layout Subsection
 Usage
 \end_layout
@@ -664,9 +769,9 @@ target "http://www.rabbitmq.com/"
 That said, the combination of Prudence Hazelcast clusters, MongoDB, and
  JavaScript's inherent dynamism within the Prudence container allows for
  a truly scalable event framework.
- If what you need is asynchronicity and scalable distribution, rather than
- generic decoupling, then Savory events might be far more useful and simpler
- than deploying complex middleware.
+ If what you need is asynchrony and scalable distribution, rather than generic
+ decoupling, then Savory events might be far more useful and simpler than
+ deploying complex middleware.
 \end_layout
 
 \begin_layout Quote

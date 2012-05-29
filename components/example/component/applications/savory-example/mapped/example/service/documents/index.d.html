@@ -1,0 +1,32 @@
+<%& '/site/header/' %>
+<% exampleHeader('Documents', 'Service'); %>
+
+<%
+
+document.executeOnce('/savory/service/documents/')
+
+var draft = Savory.Documents.getLatestDraft('4fc4457ae4b030c6611c072f')
+
+if (conversation.request.method.name == 'POST') {
+	var source = conversation.form.get('source')
+	draft.revise(source)
+}
+
+%>
+
+<p>
+	Showing document: <b><%= draft.document._id %></b>, revision: <b><%= draft.revision %></b>
+</p>
+<div class="note">
+<%= draft.render() %>
+</div>
+
+<form method="post">
+	<p>
+		<textarea name="source"><%= draft.getSource() %></textarea><br />
+		<input type="submit" value="Revise" />
+	</p>
+</form>
+
+<% exampleFooter('Documents', 'Service'); %>
+<%& '/site/footer/' %>

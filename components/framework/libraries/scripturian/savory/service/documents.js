@@ -40,12 +40,12 @@ Savory.Documents = Savory.Documents || function() {
 	 * @returns {Savory.Documents.Site}
 	 */
 	Public.getSite = function(id) {
-		var site = sitesCollection.findOne({_id: id})
+		var site = sitesCollection.findOne({_id: {$oid: id}})
 		return site ? new Public.Site(site) : null
 	}
 	
 	Public.getDocument = function(id, revision) {
-		return documentsCollection.findOne({_id: id})
+		return documentsCollection.findOne({_id: {$oid: id}})
 	}
 
 	// No revision means fetch the active draft
@@ -62,14 +62,14 @@ Savory.Documents = Savory.Documents || function() {
 			var fields = {name: 1, site: 1}
 			fields['drafts.' + revision] = 1
 
-			var document = documentsCollection.findOne({_id: documentId}, fields)
+			var document = documentsCollection.findOne({_id: {$oid: documentId}}, fields)
 			var draft = document && document.drafts ? document.drafts[revision] : null
 			return draft ? new Public.Draft(draft, revision, document) : null
 		}
 		else {
 			var fields = {name: 1, activeDraft: 1, site: 1}
 
-			var document = documentsCollection.findOne({_id: documentId}, fields)
+			var document = documentsCollection.findOne({_id: {$oid: documentId}}, fields)
 			return document ? new Public.Draft(document.activeDraft || {source: ''}, document.activeDraft ? document.activeDraft.revision : null, document) : null
 		}
 	}
@@ -82,7 +82,7 @@ Savory.Documents = Savory.Documents || function() {
 			return Public.getDraft(documentId)
 		}
 		
-		var document = documentsCollection.findOne({_id: documentId}, {revisions: 1})
+		var document = documentsCollection.findOne({_id: {$oid: documentId}}, {revisions: 1})
 
 		var latestRevision = null
 		if (document && document.revisions) {
@@ -195,19 +195,24 @@ Savory.Documents = Savory.Documents || function() {
 	    Public.revise = function(source, newRevision, now) {
 			now = now || new Date()
 			
-			if (!Objects.exists(newRevision)) {
+			if (!Sincerity.Objects.exists(newRevision)) {
 				var site = this.getSite()
 				if (site) {
 					newRevision = site.revise(now)
 				}
 			}
 
-			if (!Objects.exists(newRevision)) {
+			if (!Sincerity.Objects.exists(newRevision)) {
 				// Can't revise without a revision
 				return
 			}
 			
-			var key = typeof newRevision == 'number' ? 'r' + newRevision : newRevision
+			if (typeof newRevision == 'number') {
+				this.revision = newRevision
+			}
+			else {
+				this.revision = newRevision = parseInt(String(newRevision).substring(1))
+			}
 			
 			this.draft.source = source
 			delete this.draft.rendered
@@ -226,7 +231,7 @@ Savory.Documents = Savory.Documents || function() {
 				}
 			}
 			
-			update.$set['drafts.' + key + '.source'] = source
+			update.$set['drafts.r' + newRevision + '.source'] = source
 			
 			documentsCollection.update({_id: this.document._id}, update)
 		}
@@ -237,7 +242,7 @@ Savory.Documents = Savory.Documents || function() {
 				
 				// Update our draft
 				var update = {$set: {}}
-				update.$set['drafts.r' + revision + '.rendered'] = this.draft.rendered
+				update.$set['drafts.r' + this.revision + '.rendered'] = this.draft.rendered
 				documentsCollection.update({_id: this.document._id}, update)
 
 				// Update active draft, if we are it

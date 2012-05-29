@@ -59,11 +59,6 @@
 			<version>1.70</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.6.3</version>
-		</dependency>
-		<dependency>
 			<groupId>com.sencha</groupId>
 			<artifactId>ext-js</artifactId>
 			<version>4.1.0</version>
@@ -87,6 +82,36 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-highlighter</artifactId>
 			<version>3.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.pegdown</groupId>
+			<artifactId>pegdown</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.mylyn</groupId>
+			<artifactId>wikitext-confluence</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.mylyn</groupId>
+			<artifactId>wikitext-mediawiki</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.mylyn</groupId>
+			<artifactId>wikitext-twiki</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.mylyn</groupId>
+			<artifactId>wikitext-tracwiki</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.mylyn</groupId>
+			<artifactId>wikitext-textile</artifactId>
+			<version>1.5.0</version>
 		</dependency>
 	</dependencies>
 

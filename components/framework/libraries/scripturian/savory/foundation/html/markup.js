@@ -11,10 +11,10 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
-document.executeOnce('/savory/foundation/jvm/')
+document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/savory/foundation/html/')
 
 var Savory = Savory || {}
 
@@ -27,7 +27,6 @@ var Savory = Savory || {}
  * @namespace
  * @requires For Textile: org.eclipse.mylyn.wikitext.textile.jar, org.eclipse.mylyn.wikitext.core.jar;
  * @requires For Confluence: org.eclipse.mylyn.wikitext.confluence.jar, org.eclipse.mylyn.wikitext.core.jar;
- * @requires For Textile: org.eclipse.mylyn.wikitext.textile.jar, org.eclipse.mylyn.wikitext.core.jar;
  * @requires For MediaWiki: org.eclipse.mylyn.wikitext.mediawiki.jar, org.eclipse.mylyn.wikitext.core.jar;
  * @requires For Trac: org.eclipse.mylyn.wikitext.tracwiki.jar, org.eclipse.mylyn.wikitext.core.jar;
  * @requires For TWiki: org.eclipse.mylyn.wikitext.twiki.jar, org.eclipse.mylyn.wikitext.core.jar;
@@ -91,7 +90,7 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	 * 
 	 * @see Savory.HTML#getRenderer
 	 */
-	Public.Renderer = Savory.Classes.define(function() {
+	Public.Renderer = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.HTML.Renderer */
 	    var Public = {}
 	    
@@ -111,7 +110,7 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 		 * @param {Boolean} [configuration.newlinesMustCauseLineBreak]
 		 * @param {Boolean} [configuration.optimizeForRepositoryUsage]
 		 * @param {Boolean} [configuration.wikiWordLinking]
-		 * @param [configuration.locale] See {@link Savory.JVM#toLocale}
+		 * @param [configuration.locale] See {@link Sincerity.JVM#toLocale}
 		 * @param {PatternBasedElement[]} [configuration.tokenExtensions]
 		 * @param {PatternBasedElement[]} [configuration.phraseModifiers]
 		 * @param {Boolean} [configuration.blockExtensions] Currently unsupported
@@ -122,7 +121,7 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 				var value = configuration[c]
 				switch (c) {
 					case 'locale':
-						languageConfiguration[c] = Savory.JVM.toLocale(value)
+						languageConfiguration[c] = Sincerity.JVM.toLocale(value)
 						break
 					
 					case 'tokenExtensions':
