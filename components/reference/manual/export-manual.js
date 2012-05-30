@@ -35,8 +35,8 @@ var Section = function(name, content) {
 var Manual = function(file) {
 	this.clean = function() {
 		// Fix eLyXer output to more common HTML text
-		this.content = this.content.replace(/‘‘/g, '"')
-		this.content = this.content.replace(/’’/g, '"')
+		this.content = this.content.replace(/&ldquo;/g, '"')
+		this.content = this.content.replace(/&rdquo;/g, '"')
 		this.content = this.content.replace(/’/g, "'")
 		this.content = this.content.replace(/---/g, '&mdash;')
 		
@@ -50,11 +50,10 @@ var Manual = function(file) {
 		
 		// Tricks with labels
 		this.content = this.content.replace(/<a class="Label" name=".+#/g, '<a class="Label" name="')
-
 		
-		// Tricks with labels
+		// Links
 		this.content = this.content.replace(/http:\/\/threecrickets.com\/javascript-api\//g, '/javascript-api/')
-}
+	}
 	
 	this.getSection = function(name) {
 		var headingRE = new RegExp('<a class="toc" name="toc-Section-\\d+"></a>' + name)
