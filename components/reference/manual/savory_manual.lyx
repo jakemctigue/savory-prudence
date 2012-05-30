@@ -747,6 +747,313 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.Documents"
 .
 \end_layout
 
+\begin_layout Standard
+The API doesn't actually encourage you to access 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+ directly.
+ Instead, you access 
+\begin_inset Quotes eld
+\end_inset
+
+drafts
+\begin_inset Quotes erd
+\end_inset
+
+ via the document ID and its revision, or simply request the latest draft.
+ As stated above, the API is designed to be very efficient in doing this:
+ whether it's the latest draft you need or a specific older revision, it's
+ a very direct MongoDB fetch.
+\end_layout
+
+\begin_layout Standard
+To fetch the latest draft by the document ID and print out its rendered
+ HTML:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/documents/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var draft = Savory.Documents.getLatestDraft('4fc4457ae4b030c6611c072f')
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%= draft.render() %>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Efficiency note: if that particular draft has already been rendered once,
+ the render() call won't do anything at all, the rendered version having
+ already been fetched.
+ Also note that you can also call 
+\begin_inset Quotes eld
+\end_inset
+
+getLatestDraft
+\begin_inset Quotes erd
+\end_inset
+
+ with a maximum revision number.
+ Or, just call 
+\begin_inset Quotes eld
+\end_inset
+
+getDraft
+\begin_inset Quotes erd
+\end_inset
+
+ with a specific revision number you want.
+\end_layout
+
+\begin_layout Standard
+To revise a draft, meaning that you will add a new revision to the document:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+draft.revise('this is the markup source', 'textile')
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that after revision, the draft object is updated with the new information.
+ So you can call 
+\begin_inset Quotes eld
+\end_inset
+
+draft.getRevision()
+\begin_inset Quotes erd
+\end_inset
+
+ to see the new revision number if you need it.
+ Again, remember that this particular revision number will be unique for
+ the entire 
+\begin_inset Quotes eld
+\end_inset
+
+site
+\begin_inset Quotes erd
+\end_inset
+
+: no other document or draft will have it.
+\end_layout
+
+\begin_layout Standard
+To create a new document:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var site = Savory.Documents.getSite('4d5595e3f7f2d14d2ab9630f')
+\end_layout
+
+\begin_layout Plain Layout
+
+var draft = site.createDocument('a new document!', 'textile')
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that 
+\begin_inset Quotes eld
+\end_inset
+
+createDocument
+\begin_inset Quotes erd
+\end_inset
+
+ returns a draft object, which will be the first and only draft of the document.
+\end_layout
+
+\begin_layout Standard
+As you you can see, the usage is simple and efficient, but the implementation
+ does have some sophistication.
+ It's recommended that you look at the MongoDB collections for 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+sites
+\begin_inset Quotes erd
+\end_inset
+
+ to get a sense of how they work together.
+\end_layout
+
+\begin_layout Standard
+To integrate the Documents Service into your application, use the document
+ ID by called 
+\begin_inset Quotes eld
+\end_inset
+
+getDocumentId()
+\begin_inset Quotes erd
+\end_inset
+
+ on a draft object, and then store that ID in your own structure.
+ For example, if you're writing a wiki, you might want to associate a wiki
+ page with that document ID.
+ Similarly for a blog entry.
+ And, of course, this is schema-free MongoDB: feel free to add whatever
+ data you need to your 
+\begin_inset Quotes eld
+\end_inset
+
+document
+\begin_inset Quotes erd
+\end_inset
+
+ documents.
+ You can inherit the Document Service classes and add the necessary functionalit
+y.
+\end_layout
+
+\begin_layout Subsection
+Configuration
+\end_layout
+
+\begin_layout Standard
+If you like, you can avoid specifying the markup language in all the API
+ calls.
+ The default language would then be 
+\begin_inset Quotes eld
+\end_inset
+
+textile
+\begin_inset Quotes erd
+\end_inset
+
+, but you can change it in your application's 
+\begin_inset Quotes eld
+\end_inset
+
+settings.js
+\begin_inset Quotes erd
+\end_inset
+
+ by adding something like this to your app.globals:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+savory: {
+\end_layout
+
+\begin_layout Plain Layout
+
+	service: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		documents: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			defaultLanguage: 'markdown'
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Events Service
 \end_layout

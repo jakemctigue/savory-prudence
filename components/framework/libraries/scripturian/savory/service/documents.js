@@ -113,6 +113,9 @@ Savory.Documents = Savory.Documents || function() {
 	    	this.site = site
 	    }
 		
+		/**
+		 * @returns {Savory.Documents.Draft}
+		 */
 	    Public.createDocument = function(source, language, revision, now) {
 			now = now || new Date()
 			language = language || defaultLanguage
@@ -148,6 +151,9 @@ Savory.Documents = Savory.Documents || function() {
 			return new Public.Draft(document.activeDraft, revision, document)
 		}
 		
+		/**
+		 * @returns {Number}
+		 */
 	    Public.revise = function(now) {
 			now = now || new Date()
 			this.site = sitesCollection.findAndModify({_id: this.site._id}, {$inc: {nextRevision: 1}, $set: {lastRevised: now}})
@@ -176,10 +182,16 @@ Savory.Documents = Savory.Documents || function() {
 			this.renderer = null
 	    }
 		
+		/**
+		 * @returns {String}
+		 */
 	    Public.getDocumentId = function() {
 			return this.document._id
 		}
 		
+		/**
+		 * @returns {Savory.Documents.Site}
+		 */
 	    Public.getSite = function() {
 			if (!this.site) {
 				this.site = Savory.Documents.getSite(this.document.site)
@@ -187,14 +199,23 @@ Savory.Documents = Savory.Documents || function() {
 			return this.site
 		}
 		
+		/**
+		 * @returns {Number}
+		 */
 	    Public.getRevision = function() {
 			return this.revision
 		}
 		
+		/**
+		 * @returns {String}
+		 */
 	    Public.getSource = function() {
 			return this.draft.source || null
 		}
 
+		/**
+		 * @returns {String}
+		 */
 	    Public.getLanguage = function() {
 			return this.draft.language || null
 		}
@@ -247,6 +268,9 @@ Savory.Documents = Savory.Documents || function() {
 			documentsCollection.update({_id: this.document._id}, update)
 		}
 		
+		/**
+		 * @returns {String}
+		 */
 	    Public.render = function() {
 			if (!this.draft.rendered && this.draft.source) {
 				this.draft.rendered = getRenderer.call(this).render(this.draft.source)
