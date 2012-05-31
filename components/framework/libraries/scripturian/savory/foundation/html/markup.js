@@ -156,25 +156,23 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 		/**
 		 * Renders source markup into HTML.
 		 * 
-		 * @param {String} source The markup source
-		 * @param [complete=false] If true, renders a complete HTML page, with headers and all
+		 * @param params
+		 * @param {String} params.source The markup source
+		 * @param [params.complete=false] If true, renders a complete HTML page, with headers and all
 		 * @returns {String} The rendered HTML
 		 */
-	    Public.render = function(source, complete) {
+	    Public.render = function(params) {
 			if (this.name == 'markdown') {
 				// pegdown
-				source = new java.lang.String(source).toCharArray()
-				return String(this.parser.markdownToHtml(source))
+				var chars = new java.lang.String(params.source).toCharArray()
+				return String(this.parser.markdownToHtml(chars))
 			}
 			else {
 				// Mylyn
 				var writer = new java.io.StringWriter()
-				var builder = new org.eclipse.mylyn.wikitext.core.parser.builder.HtmlDocumentBuilder(writer)
-				this.parser.builder = builder
-				this.parser.parse(source, complete ? true : false)
-				var rendered = String(writer.toString())
-				
-				return rendered
+				this.parser.builder = new org.eclipse.mylyn.wikitext.core.parser.builder.HtmlDocumentBuilder(writer)
+				this.parser.parse(params.source, params.complete ? true : false)
+				return String(writer)
 			}
 		}
 		
@@ -189,11 +187,11 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 
 	var shortLanguageNames = {
 		confluence: 'Confluence',
-		mediaWiki: 'MediaWiki',
+		mediawiki: 'MediaWiki',
 		twiki: 'TWiki',
 		trac: 'TracWiki',
 		textile: 'Textile',
-		bugzillaTextile: 'Textile Bugzilla Dialect'
+		bugzillatextile: 'Textile Bugzilla Dialect'
 	}
 	
 	return Public

@@ -19,6 +19,9 @@ document.executeOnce('/mongo-db/')
 var Savory = Savory || {}
 
 /**
+ * This service lets you store versioned HTML documents in MongoDB using your choice among several markup languages.
+ * It's thus an essential building block for CMS features, such as wikis and blogs.
+ * 
  * @namespace
  * 
  * @author Tal Liron
@@ -37,21 +40,33 @@ Savory.Documents = Savory.Documents || function() {
 	Public.logger = Prudence.Logging.getLogger('documents')
 	
 	/**
-	 * @returns {Savory.Documents.Site}
+	 * Retrieves a site.
+	 * 
+	 * @param {String} id The site ID
+	 * @returns {Savory.Documents.Site} The site or null if not found
 	 */
 	Public.getSite = function(id) {
 		var site = sitesCollection.findOne({_id: {$oid: id}})
 		return site ? new Public.Site(site) : null
 	}
 	
-	Public.getDocument = function(id, revision) {
+	/**
+	 * Low-level access to a document. You usually will not want to use this:
+	 * use {@link Savory.Documents#getDraft}, instead. 
+	 * 
+	 * @param {String} id The document ID
+	 * @returns {Object} The document or null if not found
+	 */
+	Public.getDocument = function(id) {
 		return documentsCollection.findOne({_id: {$oid: id}})
 	}
 
-	// No revision means fetch the active draft
-	
 	/**
-	 * @returns {Savory.Documents.Draft}
+	 * Gets a draft of a document.
+	 * 
+	 * @param {String} id The document ID
+	 * @param {Number} [revision] The optional revision to fetch, otherwise fetches the latest draft
+	 * @returns {Savory.Documents.Draft} The draft or null if not found
 	 */
 	Public.getDraft = function(documentId, revision) {
 		if (revision) {
@@ -76,7 +91,13 @@ Savory.Documents = Savory.Documents || function() {
 	}
 	
 	/**
-	 * @returns {Savory.Documents.Draft}
+	 * Gets the latest draft of a document under a certain threshold. Because all drafts
+	 * within a site use serial unique revision numbers, this can be used to capture a view
+	 * of the entire site at a given time in the past.
+	 * 
+	 * @param {String} id The document ID
+	 * @param {Number} [maxRevision] The optional maximum revision to fetch, otherwise fetches the latest draft
+	 * @returns {Savory.Documents.Draft} The draft or null if not found
 	 */
 	Public.getLatestDraft = function(documentId, maxRevision) {
 		if (!maxRevision) {
@@ -100,9 +121,12 @@ Savory.Documents = Savory.Documents || function() {
 	}
 	
 	/**
+	 * A site is a simple object used to associate documents together
+	 * and generate serial unique revision numbers for their drafts. 
+	 * 
 	 * @class
 	 * @name Savory.Documents.Site
-	 * @see #getSite
+	 * @see Savory.Documents#getSite
 	 */
 	Public.Site = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Documents.Site */
@@ -114,7 +138,11 @@ Savory.Documents = Savory.Documents || function() {
 	    }
 		
 		/**
-		 * @returns {Savory.Documents.Draft}
+		 * Creates a new document associated with this site.
+		 * 
+		 * @param {String} source The markup source code
+		 * @param {String} [language=application.globals.get('savory.service.documents.defaultLanguage')] The markup language of the source code
+		 * @returns {Savory.Documents.Draft} The first draft of the document
 		 */
 	    Public.createDocument = function(source, language, revision, now) {
 			now = now || new Date()
@@ -152,7 +180,9 @@ Savory.Documents = Savory.Documents || function() {
 		}
 		
 		/**
-		 * @returns {Number}
+		 * Generates serial unique revision numbers for this site.
+		 * 
+		 * @returns {Number} A serial unique revision number for this site
 		 */
 	    Public.revise = function(now) {
 			now = now || new Date()
@@ -164,10 +194,15 @@ Savory.Documents = Savory.Documents || function() {
 	}())
 	
 	/**
+	 * Drafts are stored within a document: a single document can have many of them,
+	 * and each can be in a different markup language. Draft revision numbers are
+	 * serial, such that higher numbers are always later than lower numbers.
+	 * 
 	 * @class
 	 * @name Savory.Documents.Draft
-	 * @see #getDraft
-	 * @see #getLatestDraft
+	 * @see Savory.Documents#getDraft
+	 * @see Savory.Documents#getLatestDraft
+	 * @see Savory.Documents.Site#createDocument
 	 */
 	Public.Draft = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.Documents.Draft */
@@ -183,13 +218,17 @@ Savory.Documents = Savory.Documents || function() {
 	    }
 		
 		/**
-		 * @returns {String}
+		 * The document ID of this draft.
+		 * 
+		 * @returns {String} The document ID
 		 */
 	    Public.getDocumentId = function() {
 			return this.document._id
 		}
 		
 		/**
+		 * The site associated with the document.
+		 * 
 		 * @returns {Savory.Documents.Site}
 		 */
 	    Public.getSite = function() {
@@ -200,26 +239,40 @@ Savory.Documents = Savory.Documents || function() {
 		}
 		
 		/**
-		 * @returns {Number}
+		 * The revision number of this draft, unique within its site.
+		 * 
+		 * @returns {Number} The revision number
 		 */
 	    Public.getRevision = function() {
 			return this.revision
 		}
 		
 		/**
-		 * @returns {String}
+		 * The markup source code for this draft.
+		 * 
+		 * @returns {String} The markup source code
 		 */
 	    Public.getSource = function() {
 			return this.draft.source || null
 		}
 
 		/**
-		 * @returns {String}
+		 * The markup language of this draft.
+		 * 
+		 * @returns {String} The markup language name
 		 */
 	    Public.getLanguage = function() {
 			return this.draft.language || null
 		}
 
+	    /**
+	     * Creates a new draft within the document in which the current draft resides.
+	     * After calling this method, the current draft object will represent the
+	     * new draft.
+	     * 
+		 * @param {String} source The markup source code
+		 * @param {String} [language=application.globals.get('savory.service.documents.defaultLanguage')] The markup language of the source code
+	     */
 	    Public.revise = function(source, language, newRevision, now) {
 			now = now || new Date()
 			language = language || defaultLanguage
@@ -269,12 +322,35 @@ Savory.Documents = Savory.Documents || function() {
 		}
 		
 		/**
-		 * @returns {String}
+		 * Returns the rendered HTML based on the draft's markup source code and language.
+		 * Note that the method cached the rendered HTML in MongoDB, so that the actual
+		 * rendering won't be performed again if it has already happened.
+		 * 
+		 * @param params
+		 * @param {Function} params.renderWikiLinkFn
+		 * @returns {String} The rendered HTML
 		 */
-	    Public.render = function() {
+	    Public.render = function(params) {
 			if (!this.draft.rendered && this.draft.source) {
-				this.draft.rendered = getRenderer.call(this).render(this.draft.source)
+				this.draft.rendered = getRenderer.call(this, params).render({source: this.draft.source})
 				
+				if (params.codes) {
+					var codes = Sincerity.Objects.array(params.codes)
+					for (var c in codes) {
+						var code = codes[c]
+						var re = Sincerity.Objects.escapeRegExp(code.start) + '(.*?)' + Sincerity.Objects.escapeRegExp(code.end)
+						var me = this
+						this.draft.rendered = this.draft.rendered.replace(new RegExp(re, 'g'), function(whole, text) {
+							java.lang.System.out.println(whole)
+							return code.fn.call(me, text)
+						})
+					}
+				}
+
+				/*this.draft.rendered = this.draft.rendered.replace(wikiLinkRegExp, function(anchor, title, href, text) {
+					return params.renderWikiLinkFn({title: title, href: href, text: text})
+				})*/
+
 				// Update our draft
 				var update = {$set: {}}
 				update.$set['drafts.r' + this.revision + '.rendered'] = this.draft.rendered
@@ -285,50 +361,46 @@ Savory.Documents = Savory.Documents || function() {
 				documentsCollection.update({_id: this.document._id, 'activeDraft.revision': this.revision}, update)
 			}
 
-			return this.draft.rendered ? this.draft.rendered : ''
+			return this.draft.rendered || ''
 		}
 		
 		//
 		// Private
 		//
 		
-		function getRenderer() {
+		function getRenderer(params) {
 			if (!this.renderer) {
-				this.renderer = Savory.HTML.getRenderer(this.draft.language || defaultLanguage, {
+				this.renderer = Savory.HTML.getRenderer(this.draft.language || defaultLanguage, {escapingHtmlAndXml: true})
+				
+				// We won't use this method for now: it is unclear if the JVM classes we generate here would be garbage
+				// collected. We'll solve the problem of wiki-links in pure JavaScript using regular expressions. 
+				
+				/*this.renderer = Savory.HTML.getRenderer(this.draft.language || defaultLanguage, {
 					escapingHtmlAndXml: true,
-					phraseModifiers: getReferenceReplacementToken(mapReference)
-				})
-				
-				/* For MediaWiki:
-					language.pageMapping = new org.eclipse.mylyn.internal.wikitext.mediawiki.core.PageMapping({
-						mapPageNameToHref: function(pageName) {
-							return mapper(pageName)
-						}
-					})
-				 */
-				
-				/*var token1 = new com.threecrickets.util.wikitext.ReferenceReplacementToken(new com.threecrickets.util.wikitext.ReferenceMapping({
-					mapReferenceToHref: function(pageName) {
-						Public.logger.info('REFERENCE')
-						return pageName + 'REFERENCE'
-					}
-				}))*/
+					phraseModifiers: getReferenceReplacementToken(params)
+				})*/
 			}	
 			
 			return this.renderer
 		}
 		
-		function mapReference(reference) {
+		function renderTarget(reference) {
 			return 'reference/' + reference + '/'
 		}
-		
-		function getReferenceReplacementToken(mapper) {
-			
-			// TODO: is this a good idea?! are these generated classes being garbage collected?
+
+		function renderLink(reference) {
+			return '*'
+		}
+
+		function getReferenceReplacementToken(params) {
+			params = params ? Sincerity.Objects.clone(params) : {}
+			params.pattern = params.pattern || '(?:\\[\\[(\\w+)\\]\\])'
+			params.renderTargetFn = params.renderTargetFn || renderTarget
+			params.renderLinkFn = params.renderLinkFn || renderLink
 			
 			return new org.eclipse.mylyn.wikitext.core.parser.markup.PatternBasedElement({
 				getPattern: function() {
-					return '(?:\\[\\[(\\w+)\\]\\])'
+					return params.pattern
 				},
 				
 				getPatternGroupCount: function() {
@@ -339,11 +411,11 @@ Savory.Documents = Savory.Documents || function() {
 					return new org.eclipse.mylyn.wikitext.core.parser.markup.PatternBasedElementProcessor({
 						emit: function() {
 							var reference = this.group(1)
-							var href = mapper(String(reference))
+							var href = params.renderTargetFn(String(reference))
 							var attributes = new org.eclipse.mylyn.wikitext.core.parser.Attributes(null, 'reference', null, null)
 				
 							this.builder.beginSpan(org.eclipse.mylyn.wikitext.core.parser.DocumentBuilder.SpanType.SUPERSCRIPT, attributes)
-							this.builder.link(href, '*')
+							this.builder.link(href, params.renderLinkFn(String(reference)))
 							this.builder.endSpan()
 						}
 					})
@@ -358,6 +430,8 @@ Savory.Documents = Savory.Documents || function() {
 	// Initialization
 	//
 
+	var wikiLinkRegExp = /(<a href="wiki\/([^"]+)" title="([^"]+)">([^<]+)<\/a>)/g
+	
 	var documentsCollection = new MongoDB.Collection('documents')
 	var sitesCollection = new MongoDB.Collection('sites')
 	

@@ -5,13 +5,23 @@
 
 document.executeOnce('/savory/service/documents/')
 
-var draft = Savory.Documents.getLatestDraft('4fc4457ae4b030c6611c072f')
+var draft = Savory.Documents.getDraft('4fc4457ae4b030c6611c072f')
 
 if (conversation.request.method.name == 'POST') {
 	var source = conversation.form.get('source')
 	var language = conversation.form.get('language')
 	draft.revise(source, language)
 }
+
+var rendered = draft.render({
+	codes: {
+		start: '{{',
+		end: '}}',
+		fn: function(text) {
+			return '<a href="/link/{0}">{0}</a>'.cast(text)
+		}
+	}
+})
 
 %>
 
@@ -22,7 +32,7 @@ if (conversation.request.method.name == 'POST') {
 <p>
 	Showing document: <b><%= draft.document._id %></b>, revision: <b><%= draft.revision %></b>
 </p>
-<%= draft.render() %>
+<%= rendered %>
 </div>
 
 <form method="post">
@@ -32,7 +42,7 @@ if (conversation.request.method.name == 'POST') {
 			<option value="markdown" <%= draft.getLanguage() == 'markdown' ? 'selected="true"' : '' %>>Markdown</option>
 			<option value="textile" <%= draft.getLanguage() == 'textile' ? 'selected="true"' : '' %>>Textile</option>
 			<option value="confluence" <%= draft.getLanguage() == 'confluence' ? 'selected="true"' : '' %>>Confluence</option>
-			<option value="mediaWiki" <%= draft.getLanguage() == 'mediaWiki' ? 'selected="true"' : '' %>>MediaWiki</option>
+			<option value="mediawiki" <%= draft.getLanguage() == 'mediaWiki' ? 'selected="true"' : '' %>>MediaWiki</option>
 			<option value="trac" <%= draft.getLanguage() == 'trac' ? 'selected="true"' : '' %>>Trac</option>
 			<option value="twiki" <%= draft.getLanguage() == 'twiki' ? 'selected="true"' : '' %>>TWiki</option>
 		</select><br />

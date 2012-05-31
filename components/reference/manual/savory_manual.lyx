@@ -798,7 +798,7 @@ document.executeOnce('/savory/service/documents/')
 
 \begin_layout Plain Layout
 
-var draft = Savory.Documents.getLatestDraft('4fc4457ae4b030c6611c072f')
+var draft = Savory.Documents.getDraft('4fc4457ae4b030c6611c072f')
 \end_layout
 
 \begin_layout Plain Layout
@@ -835,7 +835,7 @@ var draft = Savory.Documents.getLatestDraft('4fc4457ae4b030c6611c072f')
 Efficiency note: if that particular draft has already been rendered once,
  the render() call won't do anything at all, the rendered version having
  already been fetched.
- Also note that you can also call 
+ Other options for fetching drafts: you can also call 
 \begin_inset Quotes eld
 \end_inset
 
@@ -843,8 +843,7 @@ getLatestDraft
 \begin_inset Quotes erd
 \end_inset
 
- with a maximum revision number.
- Or, just call 
+ with a maximum revision number, or just call 
 \begin_inset Quotes eld
 \end_inset
 
@@ -953,6 +952,121 @@ sites
 \end_inset
 
  to get a sense of how they work together.
+\end_layout
+
+\begin_layout Subsubsection
+Handling Wiki Links
+\end_layout
+
+\begin_layout Standard
+An important feature of wiki markup languages is support for special processing
+ of references as HTML hyperlinks.
+ The Documents Service lets you hook in your code to support your own special
+ delimiters.
+ Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var rendered = draft.render({
+\end_layout
+
+\begin_layout Plain Layout
+
+	codes: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		start: '{{',
+\end_layout
+
+\begin_layout Plain Layout
+
+		end: '}}',
+\end_layout
+
+\begin_layout Plain Layout
+
+		fn: function(text) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			return '<a href="/link/{0}">{0}</a>'.cast(text)
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}) 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You could then insert these special codes in your markup:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+This is a link to {{wikitopic}}.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+codes
+\begin_inset Quotes erd
+\end_inset
+
+ key can be an array of several such code processors.
+\end_layout
+
+\begin_layout Standard
+Note that this processing happens only during the first render: in subsequent
+ calls to 
+\begin_inset Quotes eld
+\end_inset
+
+render()
+\begin_inset Quotes erd
+\end_inset
+
+ on this draft these arguments will be ignored.
+\end_layout
+
+\begin_layout Subsubsection
+Integration
 \end_layout
 
 \begin_layout Standard
