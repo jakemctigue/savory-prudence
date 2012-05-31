@@ -955,14 +955,42 @@ sites
 \end_layout
 
 \begin_layout Subsubsection
-Handling Wiki Links
+Integration
+\end_layout
+
+\begin_layout Standard
+To integrate the Documents Service into your application, use the document
+ ID by called 
+\begin_inset Quotes eld
+\end_inset
+
+getDocumentId()
+\begin_inset Quotes erd
+\end_inset
+
+ on a draft object, and then store that ID in your own structure.
+ For example, if you're writing a wiki, you might want to associate a wiki
+ page with that document ID.
+ Similarly for a blog entry.
+ And, of course, this is schema-free MongoDB: feel free to add whatever
+ data you need to your 
+\begin_inset Quotes eld
+\end_inset
+
+document
+\begin_inset Quotes erd
+\end_inset
+
+ documents.
+ You can inherit the Document Service classes and add the necessary functionalit
+y.
 \end_layout
 
 \begin_layout Standard
 An important feature of wiki markup languages is support for special processing
  of references as HTML hyperlinks.
- The Documents Service lets you hook in your code to support your own special
- delimiters.
+ The Documents Service lets you hook in your code to support custom delimiters,
+ so it can output proper links.
  Example:
 \end_layout
 
@@ -1022,7 +1050,7 @@ var rendered = draft.render({
 \end_layout
 
 \begin_layout Standard
-You could then insert these special codes in your markup:
+You could then insert these custom codes in your markup:
 \end_layout
 
 \begin_layout Standard
@@ -1049,12 +1077,17 @@ codes
 \begin_inset Quotes erd
 \end_inset
 
- key can be an array of several such code processors.
+ key can be an array of several such code processors, and the function can
+ output anything at all, not just links, so you can use it to extend the
+ markup language.
+ In fact, the function can actually do something more substantial than output:
+ you could, for example, save a cross reference to the remote wiki page.
+ Neat!
 \end_layout
 
 \begin_layout Standard
-Note that this processing happens only during the first render: in subsequent
- calls to 
+Note that custom code processing happens only during the first render: in
+ subsequent calls to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1063,38 +1096,6 @@ render()
 \end_inset
 
  on this draft these arguments will be ignored.
-\end_layout
-
-\begin_layout Subsubsection
-Integration
-\end_layout
-
-\begin_layout Standard
-To integrate the Documents Service into your application, use the document
- ID by called 
-\begin_inset Quotes eld
-\end_inset
-
-getDocumentId()
-\begin_inset Quotes erd
-\end_inset
-
- on a draft object, and then store that ID in your own structure.
- For example, if you're writing a wiki, you might want to associate a wiki
- page with that document ID.
- Similarly for a blog entry.
- And, of course, this is schema-free MongoDB: feel free to add whatever
- data you need to your 
-\begin_inset Quotes eld
-\end_inset
-
-document
-\begin_inset Quotes erd
-\end_inset
-
- documents.
- You can inherit the Document Service classes and add the necessary functionalit
-y.
 \end_layout
 
 \begin_layout Subsection

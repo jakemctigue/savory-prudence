@@ -327,7 +327,8 @@ Savory.Documents = Savory.Documents || function() {
 		 * rendering won't be performed again if it has already happened.
 		 * 
 		 * @param params
-		 * @param {Function} params.renderWikiLinkFn
+		 * @param {Function} params.codes An array of or a single custom code processor, in the form
+		 *                                 of {start: '', end: '', fn: function(text) {} }
 		 * @returns {String} The rendered HTML
 		 */
 	    Public.render = function(params) {
@@ -347,7 +348,9 @@ Savory.Documents = Savory.Documents || function() {
 					}
 				}
 
-				/*this.draft.rendered = this.draft.rendered.replace(wikiLinkRegExp, function(anchor, title, href, text) {
+				/*
+				var wikiLinkRegExp = /(<a href="wiki\/([^"]+)" title="([^"]+)">([^<]+)<\/a>)/g
+				this.draft.rendered = this.draft.rendered.replace(wikiLinkRegExp, function(anchor, title, href, text) {
 					return params.renderWikiLinkFn({title: title, href: href, text: text})
 				})*/
 
@@ -430,8 +433,6 @@ Savory.Documents = Savory.Documents || function() {
 	// Initialization
 	//
 
-	var wikiLinkRegExp = /(<a href="wiki\/([^"]+)" title="([^"]+)">([^<]+)<\/a>)/g
-	
 	var documentsCollection = new MongoDB.Collection('documents')
 	var sitesCollection = new MongoDB.Collection('sites')
 	
