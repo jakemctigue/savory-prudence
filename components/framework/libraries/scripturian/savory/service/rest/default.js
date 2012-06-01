@@ -269,14 +269,12 @@ Savory.REST = Savory.REST || function() {
 	 * @augments Savory.REST.Resource
 	 * 
 	 * @param {Object|String} config
-	 * @param {String} config.name
-	 * @param {Boolean|String} [config.plural=false] If true, becomes config.name+'s',
-	 *        otherwise can be an explicit plural form; in any case, if this param is
-	 *        not false, the RESTful resource will work in plural mode
-	 * @param {MongoDB.Collection|String} [config.collection=config.plural||config.name+'s'] The MongoDB collection or
-	 *        its name
+	 * @param {String} [config.name]
+	 * @param {Boolean} [config.plural=false] If true the RESTful resource will work in plural mode
+	 * @param {MongoDB.Collection|String} [config.collection=config.name+'s'] The MongoDB collection or
+	 *         its name
 	 * @param {String|String[]} [config.fields] The document fields to retrieve
-	 *        (see {@link MongoDB#find})
+	 *         (see {@link MongoDB#find})
 	 * @param [config.values] TODO
 	 * @param [config.extract] TODO
 	 * @param [config.filters] TODO
@@ -297,23 +295,20 @@ Savory.REST = Savory.REST || function() {
 				this.name = String(config)
 			}
 			
-			if (Sincerity.Objects.exists(this.plural)) {
-				if (!Sincerity.Objects.isString(this.plural)) {
-					this.plural = this.name + 's'
-				}
-			}
-			this.collection = this.collection || this.plural || this.name + 's'
+			this.collection = this.collection || this.name + 's'
 			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 
 			// Convert fields to MongoDB's inclusion notation
-			this.fields = Sincerity.Objects.array(this.fields)
 			var fields = {}
-			for (var f in this.fields) {
-				fields[this.fields[f]] = 1
+			if (Sincerity.Objects.exists(this.fields)) {
+				this.fields = Sincerity.Objects.array(this.fields)
+				for (var f in this.fields) {
+					fields[this.fields[f]] = 1
+				}
 			}
 			this.fields = fields
 			
-			if (this.extract) {
+			if (Sincerity.Objects.exists(this.extract)) {
 				this.extract = Sincerity.Objects.array(this.extract)
 			}
 			
@@ -409,9 +404,9 @@ Savory.REST = Savory.REST || function() {
 			return representIterator.call(this, conversation, query, iterator, total)
 		}
 		
-	    Public.handleGetInfo = function(conversation) {
+	    /*Public.handleGetInfo = function(conversation) {
 			// TODO:
-		}
+		}*/
 		
 	    Public.handlePost = function(conversation) {
 			// TODO: must it be JSON?
@@ -524,7 +519,6 @@ Savory.REST = Savory.REST || function() {
 				start: 'int',
 				limit: 'int'
 			})
-							
 			query.limit = query.limit || minLimit
 			query.filter = getFilters.call(this, query.filter)
 			return query
@@ -557,7 +551,7 @@ Savory.REST = Savory.REST || function() {
 				
 			if (this.plural) {
 				var docs = iterator ? Sincerity.Iterators.toArray(iterator) : []
-				return represent(conversation, query, total ? {total: total, documents: docs} : {documents: docs}, '/savory/service/rest/plural/')
+				return represent.call(this, conversation, query, total ? {total: total, documents: docs} : {documents: docs}, '/savory/service/rest/plural/')
 			}
 			else {
 				if (!iterator.hasNext()) {
@@ -582,6 +576,7 @@ Savory.REST = Savory.REST || function() {
 					return xml || ''
 				
 				case 'text/html':
+					document.passThroughDocuments.add(htmlUri)
 					var html = Prudence.Resources.generateHtml(htmlUri, {
 						resource: this,
 						value: value,

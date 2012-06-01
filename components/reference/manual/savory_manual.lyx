@@ -982,13 +982,14 @@ document
 \end_inset
 
  documents.
- You can inherit the Document Service classes and add the necessary functionalit
-y.
+ You can also inherit the Document Service classes and add the necessary
+ functionality.
 \end_layout
 
 \begin_layout Standard
 An important feature of wiki markup languages is support for special processing
- of references as HTML hyperlinks.
+ of wiki page references, turning them into HTML hyperlinks and possibly
+ creating the page in the wiki.
  The Documents Service lets you hook in your code to support custom delimiters,
  so it can output proper links.
  Example:
@@ -1060,7 +1061,7 @@ status open
 
 \begin_layout Plain Layout
 
-This is a link to {{wikitopic}}.
+This is a link to {{mywikitopic}}.
 \end_layout
 
 \end_inset
@@ -1081,8 +1082,8 @@ codes
  output anything at all, not just links, so you can use it to extend the
  markup language.
  In fact, the function can actually do something more substantial than output:
- you could, for example, save a cross reference to the remote wiki page.
- Neat!
+ you could, for example, save a cross reference to the remote wiki page,
+ or create an empty template for a non-existing page.
 \end_layout
 
 \begin_layout Standard
@@ -1095,7 +1096,15 @@ render()
 \begin_inset Quotes erd
 \end_inset
 
- on this draft these arguments will be ignored.
+ on this draft the 
+\begin_inset Quotes eld
+\end_inset
+
+codes
+\begin_inset Quotes erd
+\end_inset
+
+ argument will be ignored.
 \end_layout
 
 \begin_layout Subsection

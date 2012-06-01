@@ -1,26 +1,17 @@
-<html>
-<%#
+<%
 
-This file is part of the Savory Framework for Prudence
-
-Copyright 2011 Three Crickets LLC.
-
-The contents of this file are subject to the terms of the LGPL version 3.0:
-http://www.gnu.org/copyleft/lesser.html
-
-Alternatively, you can obtain a royalty free commercial license with less
-limitations, transferable or non-transferable, directly from Three Crickets
-at http://threecrickets.com/
-
-%><%
 document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/sincerity/json/')
+
 %>
+<html>
 <head>
-	<%= Savory.HTML.build({_content: 'Savory REST Service - ' + data.resource.plural, _tag: 'title'}) %>
+	<%= Savory.HTML.build({_content: 'Savory REST Service - ' + data.resource.name, _tag: 'title'}) %>
 </head>
 <body>
+<%= Savory.HTML.build({_content: 'Resource: ' + data.resource.name, _tag: 'h3'}) %>
 <pre>
-<%= Savory.JSON.to(data.value.documents, true).escapeElements() %>
+<%= Sincerity.JSON.to(data.value.documents, true).escapeElements() %>
 </pre>
 </body>
 </html>
