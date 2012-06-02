@@ -1,5 +1,9 @@
 
+try {
 delete MongoDB
+document.execute('/mongo-db/')
+} catch(x) {}
+
 document.executeOnce('/savory/service/rest/')
 
 app.hosts = {

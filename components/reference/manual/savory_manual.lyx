@@ -4955,7 +4955,26 @@ status open
 
 \begin_layout Plain Layout
 
+try {
+\end_layout
+
+\begin_layout Plain Layout
+
 delete MongoDB
+\end_layout
+
+\begin_layout Plain Layout
+
+document.execute('/mongo-db/')
+\end_layout
+
+\begin_layout Plain Layout
+
+} catch(x) {}
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -4995,6 +5014,13 @@ Sincerity.Objects.merge(app.routes, Savory.REST.createMongoDbRoutes({prefix:
 \end_inset
 
 
+\end_layout
+
+\begin_layout Quote
+Important! The code in the initial try/catch block makes sure that MongoDB
+ is re-initialized before proceeding, so that we can be sure to avoid using
+ the default MongoDB initialization in other applications.
+ This is good practice when using Savory in any initialization script.
 \end_layout
 
 \begin_layout Standard
