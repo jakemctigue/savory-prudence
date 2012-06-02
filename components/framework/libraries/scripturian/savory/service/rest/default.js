@@ -41,117 +41,50 @@ Savory.REST = Savory.REST || function() {
 	 * @returns {Prudence.Logging.Logger}
 	 */
 	Public.logger = Prudence.Logging.getLogger('rest')
-
-	/**
-	 * Installs the library's pass-throughs.
-	 * <p>
-	 * Can only be called from Prudence configuration scripts!
-	 */
-	Public.settings = function() {
-		resourcesPassThrough.push('/savory/service/rest/resource/')
-		dynamicWebPassThrough.push('/savory/service/rest/singular/')
-		dynamicWebPassThrough.push('/savory/service/rest/plural/')
-	}
 	
 	/**
-	 * Installs the library's captures according the 'savory.service.rest.routes'
-	 * predefined global.
-	 * <p>
-	 * Can only be called from Prudence configuration scripts!
+	 * Creates a dict of {@link Savory.REST.MongoDbResource} instances for all collections.
+	 * Note that two instances are created per collection: one singular and one plural.
+	 * 
+	 * @param params
+	 * @param {String|com.mongodb.DB} [params.db=MongoDB.defaultDb] The MongoDB database to use
+	 * @param {String[]} [params.collections] The collections for which we will create instances,
+	 *                    otherwise queries the database for a list of all collections
+	 * @returns {Object} A dict of resources
 	 */
-	Public.routing = function() {
-		var routes = predefinedGlobals['savory.service.rest.routes'] || {}
+	Public.createMongoDbResources = function(params) {
+    	params = params || {}
+		var resources = {}
+
+		if (!Sincerity.Objects.exists(params.db)) {
+			params.db = MongoDB.defaultDb
+		}
 		
-		var capture = new com.threecrickets.prudence.util.CapturingRedirector(router.context, 'riap://application/savory/service/rest/resource/?{rq}', false)
-		for (var uri in routes) {
-			var injector = new com.threecrickets.prudence.util.Injector(router.context, capture)
-			injector.values.put('savory.service.rest.uri', uri)
-			router.attach(uri, injector)
+		if (Sincerity.Objects.isString(params.db)) {
+			params.db = MongoDB.getDB(MongoDB.defaultConnection, params.db)
 		}
 
-		router.hide('/savory/service/rest/resource/')
-	}
-	
-	Public.lazyConfigsForMongoDbCollection = function(baseUri, name, plural) {
-		/*if (!Sincerity.Objects.exists(name)) {
-			if (plural.endsWith('es')) {
-				name = plural.substring(0, plural.length - 2)
-			}
-			else if (plural.endsWith('s')) {
-				name = plural.substring(0, plural.length - 1)
-			}
-			else {
-				name = plural
-			}
-		}*/
-		name = name || plural
-		plural = plural || name
-		var configs = {}
-		configs[baseUri + name + '/{id}/'] = {
-			dependencies: '/savory/service/rest/',
-			name: 'Savory.REST.MongoDbResource',
-			config: {
-				name: name,
-				collection: plural
-			}
-		}
-		configs[baseUri + plural + '/'] = {
-			dependencies: '/savory/service/rest/',
-			name: 'Savory.REST.MongoDbResource',
-			config: {
-				name: name,
-				collection: plural,
-				plural: plural
-			}
-		}
-		return configs
-	}
-	
-	Public.lazyConfigsForMongoDbCollections = function(baseUri, collections) {
-		baseUri = baseUri || 'data'
-		var configs = {}
-		
-		if (!collections || !collections.length) {
-			if (MongoDB.defaultDb) {
-				collections = Sincerity.JVM.fromCollection(MongoDB.defaultDb.collectionNames)
-			}
-			else {
-				collections = []
-			}
+		if (!Sincerity.Objects.exists(params.collections)) {
+			params.collections = Sincerity.JVM.fromCollection(params.db.collectionNames)
 		}
 
-		for (var c in collections) {
-			var collection = collections[c]
+		for (var c in params.collections) {
+			var collection = params.collections[c]
+
+			var name
 			if (Sincerity.Objects.isString(collection)) {
-				collection = String(collection)
-				collection = {plural: collection}
+				name = collection = String(collection)
 			}
-			Sincerity.Objects.merge(configs, Public.lazyConfigsForMongoDbCollection(baseUri, collection.name, collection.plural))
+			else {
+				name = collection.collection.name
+			}
+			
+			resources[name] = new Public.MongoDbResource({name: name, collection: collection})
+			resources[name + '.plural'] = new Public.MongoDbResource({name: name, collection: collection, plural: true})
 		}
 		
-		return configs
-	}
-
-	/**
-	 * @returns {Savory.Lazy.Map}
-	 */
-	Public.getRoutes = function() {
-		return Savory.Lazy.getGlobalMap('savory.service.rest.routes', Public.logger)
-	}
-	
-	/**
-	 * @param conversation The Prudence conversation
-	 * @param {Function} [createFn] An optional function that receives a stringified
-	 *        version of the resource constructor and returns a created instance; at
-	 *        its simplest, it should be: function(constructor) { return eval(constructor)() }
-	 *        (see {@link Savory.Lazy.Map#get}) 
-	 */
-	Public.getResource = function(conversation, createFn) {
-		var uri = conversation.locals.get('savory.service.rest.uri')
-		return Public.getRoutes().get(uri, createFn || function(constructor) {
-			return eval(constructor)()
-		})
-	}
+		return resources
+    }
 	
 	/**
 	 * A few useful filters.
@@ -271,7 +204,7 @@ Savory.REST = Savory.REST || function() {
 	 * @param {Object|String} config
 	 * @param {String} [config.name]
 	 * @param {Boolean} [config.plural=false] If true the RESTful resource will work in plural mode
-	 * @param {MongoDB.Collection|String} [config.collection=config.name+'s'] The MongoDB collection or
+	 * @param {MongoDB.Collection|String} [config.collection=config.name] The MongoDB collection or
 	 *         its name
 	 * @param {String|String[]} [config.fields] The document fields to retrieve
 	 *         (see {@link MongoDB#find})
@@ -295,7 +228,7 @@ Savory.REST = Savory.REST || function() {
 				this.name = String(config)
 			}
 			
-			this.collection = this.collection || this.name + 's'
+			this.collection = this.collection || this.name
 			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 
 			// Convert fields to MongoDB's inclusion notation

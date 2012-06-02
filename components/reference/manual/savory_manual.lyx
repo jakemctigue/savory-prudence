@@ -4613,6 +4613,81 @@ Reattempts are logged, to help you debug problems.
 REST Service
 \end_layout
 
+\begin_layout Standard
+The REST Service makes it easy to create a RESTful API layer over your MongoDB
+ database.
+ It's powerful enough that it may be in itself the primary reason why you
+ wish to use the Savory Framework.
+\end_layout
+
+\begin_layout Standard
+While there are tools to do this automatically---and the REST Service does
+ have an automatic mode, too---the true power of this service is in its
+ customizability.
+ You can insert your own code anywhere in the resources to do special processing
+, for anything from data validation, through constraint enforcement, to
+ security authorization and high-level business logic.
+\end_layout
+
+\begin_layout Standard
+Moreover, the Prudence platform lets you access this RESTful layer internally,
+ without any HTTP communication or serialization, so that you can use this
+ layer as your primary data access layer API, both internally and for other
+ services.
+ There's no reason to create a separate API for internal vs.
+ external use.
+\end_layout
+
+\begin_layout Standard
+Even without customization via code, out of the box you get the following
+ configurable features:
+\end_layout
+
+\begin_layout Itemize
+Support for all RESTful CRUD-like operations: GET, POST, PUT and DELETE,
+ with a simple flag for disabling any of these operations.
+\end_layout
+
+\begin_layout Itemize
+Automatic content negotiation with support for JSON and XML formats, as
+ well as a human-readable HTML format perfect for debugging via browsers.
+\end_layout
+
+\begin_layout Itemize
+Pagination for traversing collections of any size.
+\end_layout
+
+\begin_layout Itemize
+The default format immediately supports Ext JS's RESTful data stores.
+ Throw any MongoDB collection into an editable grid widget!
+\end_layout
+
+\begin_layout Itemize
+Choose which document fields you want to expose.
+\end_layout
+
+\begin_layout Itemize
+Straightforward filters that let you massage MongoDB's extended JSON format
+ into simpler primitives.
+ For example, 
+\begin_inset Quotes eld
+\end_inset
+
+{$date: 1234}
+\begin_inset Quotes erd
+\end_inset
+
+ would become 
+\begin_inset Quotes eld
+\end_inset
+
+1234
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsection
 Usage
 \end_layout
@@ -4627,6 +4702,18 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.REST"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Subsubsection
+Creating Resources
+\end_layout
+
+\begin_layout Subsubsection
+Accessing Your Resources
+\end_layout
+
+\begin_layout Subsubsection
+Accessing Your Resources with Curl
 \end_layout
 
 \begin_layout Section

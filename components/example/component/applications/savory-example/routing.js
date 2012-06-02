@@ -12,8 +12,8 @@ app.routes = {
 			{type: 'staticWeb', root: sincerity.container.getLibrariesFile('web')}
 		]
 	],
-	'/user/{id}/': {type: 'implicit', id: 'user'},
-	'/users/': {type: 'implicit', id: 'users'}
+	'/users/{id}/': {type: 'implicit', id: 'users'},
+	'/users/': {type: 'implicit', id: 'users.plural'}
 }
 
 app.dispatchers = {
