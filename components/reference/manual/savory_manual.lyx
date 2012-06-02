@@ -1140,22 +1140,37 @@ status open
 
 \begin_layout Plain Layout
 
-savory: {
+app.globals = {
 \end_layout
 
 \begin_layout Plain Layout
 
-	service: {
+	...
 \end_layout
 
 \begin_layout Plain Layout
 
-		documents: {
+	savory: {
 \end_layout
 
 \begin_layout Plain Layout
 
-			defaultLanguage: 'markdown'
+		service: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			documents: {
+\end_layout
+
+\begin_layout Plain Layout
+
+				defaultLanguage: 'markdown'
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
 \end_layout
 
 \begin_layout Plain Layout
@@ -1983,47 +1998,62 @@ status open
 
 \begin_layout Plain Layout
 
-savory: {
+app.globals = {
 \end_layout
 
 \begin_layout Plain Layout
 
-	service: {
+	...
 \end_layout
 
 \begin_layout Plain Layout
 
-		events: {
+	savory: {
 \end_layout
 
 \begin_layout Plain Layout
 
-			defaultAsync: true,
+		service: {
 \end_layout
 
 \begin_layout Plain Layout
 
-			defaultDistributed: true,
+			events: {
 \end_layout
 
 \begin_layout Plain Layout
 
-			defaultStores: [function() {
+				defaultAsync: true,
 \end_layout
 
 \begin_layout Plain Layout
 
-				document.executeOnce('/savory/service/events/')
+				defaultDistributed: true,
 \end_layout
 
 \begin_layout Plain Layout
 
-				return new Savory.Events.MongoDbCollectionStore()
+				defaultStores: [function() {
 \end_layout
 
 \begin_layout Plain Layout
 
-			}]
+					document.executeOnce('/savory/service/events/')
+\end_layout
+
+\begin_layout Plain Layout
+
+					return new Savory.Events.MongoDbCollectionStore()
+\end_layout
+
+\begin_layout Plain Layout
+
+				}]
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
 \end_layout
 
 \begin_layout Plain Layout
@@ -2349,33 +2379,48 @@ status open
 
 \begin_layout Plain Layout
 
-savory: {
+app.globals = {
 \end_layout
 
 \begin_layout Plain Layout
 
-	service: {
+	...
 \end_layout
 
 \begin_layout Plain Layout
 
-		internationalization: {
+	savory: {
 \end_layout
 
 \begin_layout Plain Layout
 
-			defaultLocale: 'en',
+		service: {
 \end_layout
 
 \begin_layout Plain Layout
 
-			cacheDuration: 10000, // in milliseconds; if 0 (the default) will never
+			internationalization: {
+\end_layout
+
+\begin_layout Plain Layout
+
+				defaultLocale: 'en',
+\end_layout
+
+\begin_layout Plain Layout
+
+				cacheDuration: 10000, // in milliseconds; if 0 (the default) will never
  cache
 \end_layout
 
 \begin_layout Plain Layout
 
-			path: Sincerity.Container.getFileFromHere('textpacks') // optional
+				path: Sincerity.Container.getFileFromHere('textpacks') // optional
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
 \end_layout
 
 \begin_layout Plain Layout
@@ -3670,57 +3715,72 @@ status open
 
 \begin_layout Plain Layout
 
-savory: {
+app.globals = {
 \end_layout
 
 \begin_layout Plain Layout
 
-	service: {
+	...
 \end_layout
 
 \begin_layout Plain Layout
 
-		notification: {
+	savory: {
 \end_layout
 
 \begin_layout Plain Layout
 
-			services: {
+		service: {
 \end_layout
 
 \begin_layout Plain Layout
 
-				'.': Prudence.Lazy.build({
+			notification: {
 \end_layout
 
 \begin_layout Plain Layout
 
-					Email: {
+				services: {
 \end_layout
 
 \begin_layout Plain Layout
 
-						dependencies: '/savory/service/notification/service/email/',
+					'.': Prudence.Lazy.build({
 \end_layout
 
 \begin_layout Plain Layout
 
-						name: 'Savory.Notification.EmailService',
+						Email: {
 \end_layout
 
 \begin_layout Plain Layout
 
-						config: {
+							dependencies: '/savory/service/notification/service/email/',
 \end_layout
 
 \begin_layout Plain Layout
 
-							from: 'myaddress@mymail.org',
+							name: 'Savory.Notification.EmailService',
 \end_layout
 
 \begin_layout Plain Layout
 
-							site: 'Savory Framework Example'
+							config: {
+\end_layout
+
+\begin_layout Plain Layout
+
+								from: 'myaddress@mymail.org',
+\end_layout
+
+\begin_layout Plain Layout
+
+								site: 'Savory Framework Example'
+\end_layout
+
+\begin_layout Plain Layout
+
+							}
 \end_layout
 
 \begin_layout Plain Layout
@@ -3730,12 +3790,12 @@ savory: {
 
 \begin_layout Plain Layout
 
-					}
+					})
 \end_layout
 
 \begin_layout Plain Layout
 
-				})
+				}
 \end_layout
 
 \begin_layout Plain Layout
@@ -4341,8 +4401,15 @@ Notes:
 \end_layout
 
 \begin_layout Itemize
-The Savory.Progress.getProcess() API works here only because we launched the
- task from within startProcess.
+The 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Progress.getProcess()
+\begin_inset Quotes erd
+\end_inset
+
+ API works here only because we launched the task from within startProcess.
  (It works by putting the process ID in the task context.)
 \end_layout
 
@@ -4387,8 +4454,16 @@ done
 \begin_layout Itemize
 You'll also see that we've handled each milestone as a new execution of
  the task.
- process.getTask() returns a copy of the arguments sent to the last Prudence.Tasks.
-task call, so we can simply call it again with the same arguments.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+process.getTask()
+\begin_inset Quotes erd
+\end_inset
+
+ returns a copy of the arguments sent to the last Prudence.Tasks.task call,
+ so we can simply call it again with the same arguments.
 \end_layout
 
 \begin_layout Itemize
@@ -4636,6 +4711,8 @@ Moreover, the Prudence platform lets you access this RESTful layer internally,
  services.
  There's no reason to create a separate API for internal vs.
  external use.
+ This architecture also makes it trivial to separate your data processing
+ nodes from your application logic nodes, should you ever want to do so.
 \end_layout
 
 \begin_layout Standard
@@ -4651,6 +4728,17 @@ Support for all RESTful CRUD-like operations: GET, POST, PUT and DELETE,
 \begin_layout Itemize
 Automatic content negotiation with support for JSON and XML formats, as
  well as a human-readable HTML format perfect for debugging via browsers.
+ The HTML format even allows simple editing of your content.
+ Note, though, that if you want a full-fledged web frontend for your MongoDB
+ data, you're better off with 
+\begin_inset CommandInset href
+LatexCommand href
+name "MongoVision"
+target "http://code.google.com/p/mongo-vision/"
+
+\end_inset
+
+, which is easily installable side-by-side with your Savory application.
 \end_layout
 
 \begin_layout Itemize
@@ -4667,8 +4755,8 @@ Choose which document fields you want to expose.
 \end_layout
 
 \begin_layout Itemize
-Straightforward filters that let you massage MongoDB's extended JSON format
- into simpler primitives.
+Apply straightforward filters that let you massage MongoDB's extended JSON
+ format into simpler primitives.
  For example, 
 \begin_inset Quotes eld
 \end_inset
@@ -4705,15 +4793,877 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.REST"
 \end_layout
 
 \begin_layout Subsubsection
-Creating Resources
+Manual Setup
+\end_layout
+
+\begin_layout Standard
+We'll start with manual configuration, because it will help you better understan
+d how the REST Service works.
+\end_layout
+
+\begin_layout Standard
+First, let's configure the URI-space in your application's 
+\begin_inset Quotes eld
+\end_inset
+
+routing.js
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Add the following to app.routes and app.dispatchers:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/data/users/{id}/': {type: 'implicit', id: 'users'},
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/data/users/': {type: 'implicit', id: 'users.plural'}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.dispatchers = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	javascript: {library: '/resources/'}
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can now configure our resources in 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resource.js
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/rest/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	users:  new Savory.REST.MongoDbResource({name: 'users'}),
+\end_layout
+
+\begin_layout Plain Layout
+
+	'users.plural': new Savory.REST.MongoDbResource({name: 'users', plural: true})
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
-Accessing Your Resources
+Automatic Setup
+\end_layout
+
+\begin_layout Standard
+The REST Service can do all the above automatically for you, which is especially
+ useful if you have lots of collections, or if you keep adding collections
+ and want resources for them to be added automatically.
+ Note that this automation does not occur dynamically while your application
+ is running: you have to restart for this to work.
+\end_layout
+
+\begin_layout Standard
+In your application's 
+\begin_inset Quotes eld
+\end_inset
+
+routing.js
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+delete MongoDB
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/rest/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Sincerity.Objects.merge(app.routes, Savory.REST.createMongoDbRoutes({prefix:
+ '/data/'}))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resource.js
+\begin_inset Quotes erd
+\end_inset
+
+, we just need this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/rest/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Sincerity.Objects.merge(resources, Savory.REST.createMongoDbResources())
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can also specify exactly which collections you want created:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Savory.REST.createMongoDbResources({collections: ['users','notices','documents']})
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
-Accessing Your Resources with Curl
+Overriding
+\end_layout
+
+\begin_layout Standard
+There are two ways to override the default behavior: 1) inherit the Savory.MongoD
+bResource class, or 2) monkey-patch the instances.
+ The former method is more reusable, but the latter method works just as
+ well and is easier if you just need to customize a single resource.
+\end_layout
+
+\begin_layout Subsubsection
+Filters
+\end_layout
+
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+Filters
+\begin_inset Quotes erd
+\end_inset
+
+ are simple functions that are applied to all documents in order to transform
+ them.
+ The REST Service comes with a few useful filters, but you can easily create
+ your own.
+\end_layout
+
+\begin_layout Subsubsection
+Accessing Your Resources over the Web
+\end_layout
+
+\begin_layout Standard
+All your resources support the HTML format, so you can easily access them
+ via a web browser.
+ For example, this link: 
+\begin_inset CommandInset href
+LatexCommand href
+target "http://localhost:8080/savory-example/users/4e057e94e799a23b0f581d7d/"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+This view supports simple editing of your resources: you can POST, PUT any
+ resource using JSON or XML payloads, or DELETE them.
+ It's a great way to test and debug your resources.
+\end_layout
+
+\begin_layout Standard
+You can customize this view as you please: just create 
+\begin_inset Quotes eld
+\end_inset
+
+/savory/service/rest/singular.html
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+/savory/service/rest/plural.html
+\begin_inset Quotes erd
+\end_inset
+
+ files in your 
+\begin_inset Quotes eld
+\end_inset
+
+/fragments/
+\begin_inset Quotes erd
+\end_inset
+
+ directory.
+ You can start with the default files under your container's 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/prudence/
+\begin_inset Quotes erd
+\end_inset
+
+ directory as a template.
+\end_layout
+
+\begin_layout Subsubsection
+Accessing Your Resources with the API
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset CommandInset href
+LatexCommand href
+name "Prudence.Resources API"
+target "http://threecrickets.com/javascript-api/?namespace=Prudence.Resources"
+
+\end_inset
+
+ makes it very easy to access your resources, whether internally or on a
+ different node.
+ See the APIdocumentation for full details, otherwise here we'll provide
+ you with a quick tutorial for using it with the REST Service.
+\end_layout
+
+\begin_layout Standard
+Let's start with the internal use case:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/prudence/resources/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var user = Prudence.Resources.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+	uri: '/data/users/4e057e94e799a23b0f581d7d/',
+\end_layout
+
+\begin_layout Plain Layout
+
+	internal: true
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+print(user.name)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Quote
+Again, we'll emphasize that when accessing the API internally neither HTTP
+ nor serialization are involved.
+ The data is never converted to JSON, instead it's extracted directly from
+ MongoDB's BSON to JavaScript's internal data structure, exactly as if you
+ were using the 
+\begin_inset CommandInset href
+LatexCommand href
+name "MongoDB API"
+target "http://threecrickets.com/javascript-api/?namespace=MongoDB"
+
+\end_inset
+
+ directly.
+ There's obviously some overhead added by the Prudence platform and the
+ REST Service, but it should be very minimal, especially when compared to
+ the network fetch from MongoDB.
+ In short, performance concerns should not stop you from using the REST
+ Service in this fashion.
+\end_layout
+
+\begin_layout Standard
+Accessing remote resources is almost identical, though obviously HTTP and
+ JSON (or XML) are involved.
+ As an example, we can try to access our local resource via HTTP:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var user = Prudence.Resources.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+	uri: 'http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/
+',
+\end_layout
+
+\begin_layout Plain Layout
+
+	mediaType: 'application/json'
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+print(user.name)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Of course, the URI can point to anywhere on the network, or the Internet.
+ Note that we had to explicitly specify our preferred media type, because
+ our resource supports several different formats.
+\end_layout
+
+\begin_layout Standard
+The API can be used for all REST methods:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var user = Prudence.Resources.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+	uri: '/data/users/4e057e94e799a23b0f581d7d/',
+\end_layout
+
+\begin_layout Plain Layout
+
+	internal: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+	method: 'post',
+\end_layout
+
+\begin_layout Plain Layout
+
+	payload: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		value: {email: 'newemail@mysite.org'}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Remotely, the REST methods are actual HTTP verbs:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var user = Prudence.Resources.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+	uri: 'http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/
+',
+\end_layout
+
+\begin_layout Plain Layout
+
+	mediaType: 'application/json'
+\end_layout
+
+\begin_layout Plain Layout
+
+	method: 'post',
+\end_layout
+
+\begin_layout Plain Layout
+
+	payload: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		type: 'json',
+\end_layout
+
+\begin_layout Plain Layout
+
+		value: {email: 'newemail@mysite.org'}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We'll finish off this short tutorial by showing you that for every request
+ you can also set query params:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var users = Prudence.Resources.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+	uri: '/data/users/',
+\end_layout
+
+\begin_layout Plain Layout
+
+	internal: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+	query: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		start: 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+		limit: 3
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+print(users[0].name)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Accessing Your Resources with cURL
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset href
+LatexCommand href
+name "cURL"
+target "http://curl.haxx.se/"
+
+\end_inset
+
+is an HTTP command line tool, available for a great many Unix-like operating
+ systems as well as Windows.
+ It's especially useful for testing RESTful APIs.
+ Here's a quick tutorial to get you started with using cURL with the REST
+ Service.
+\end_layout
+
+\begin_layout Standard
+First, a few GET commands to try:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl "http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/?
+human=true"
+\end_layout
+
+\begin_layout Plain Layout
+
+curl "http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/?
+format=xml&human=true"
+\end_layout
+
+\begin_layout Plain Layout
+
+curl "http://localhost:8080/savory-example/data/users/?limit=3&human=true"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can send a payload using the 
+\begin_inset Quotes eld
+\end_inset
+
+-d
+\begin_inset Quotes erd
+\end_inset
+
+ switch, which also sets the HTTP verb to POST.
+ For example, this will modify the email of a user:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl -d '{"email":"newemail@mysite.org"}' "http://localhost:8080/savory-example/d
+ata/users/4e057e94e799a23b0f581d7d/?human=true"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When using 
+\begin_inset Quotes eld
+\end_inset
+
+-d
+\begin_inset Quotes erd
+\end_inset
+
+, you can also start your payload with 
+\begin_inset Quotes eld
+\end_inset
+
+@
+\begin_inset Quotes erd
+\end_inset
+
+ to signify that you want to send the contents of a file, in this case 
+\begin_inset Quotes eld
+\end_inset
+
+data.json
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl -d @data.json "http://localhost:8080/savory-example/data/users/4e057e94e799a
+23b0f581d7d/?human=true"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To set the HTTP verb explicitly, use 
+\begin_inset Quotes eld
+\end_inset
+
+-X
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Here we'll create a new user:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl -X PUT -d @data.json "http://localhost:8080/savory-example/data/users/?human
+=true"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And now we'll delete a user:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl -X DELETE "http://localhost:8080/savory-example/data/users/4e057e94e799a23b
+0f581d7d/"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With the 
+\begin_inset Quotes eld
+\end_inset
+
+-h
+\begin_inset Quotes erd
+\end_inset
+
+ switch, you can also control the HTTP headers in raw form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl -H "Accept: application/xml" "http://localhost:8080/savory-example/data/use
+rs/4e057e94e799a23b0f581d7d/?human=true"
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section

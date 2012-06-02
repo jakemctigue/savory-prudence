@@ -17,7 +17,6 @@ document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/templates/')
 document.executeOnce('/sincerity/iterators/')
 document.executeOnce('/sincerity/jvm/')
-document.executeOnce('/prudence/lazy/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
@@ -41,7 +40,48 @@ Savory.REST = Savory.REST || function() {
 	 * @returns {Prudence.Logging.Logger}
 	 */
 	Public.logger = Prudence.Logging.getLogger('rest')
-	
+
+	Public.createMongoDbRoutes = function(params) {
+    	params = params || {}
+		var routes = {}
+
+		params.prefix = params.prefix || ''
+		params.prefix = String(params.prefix)
+		if (params.prefix.endsWith('/')) {
+			params.prefix = params.prefix.substring(0, params.prefix.length - 1)
+		}
+		params.dispatch = params.dispatch || 'javascript'
+
+		if (!Sincerity.Objects.exists(params.db)) {
+			params.db = MongoDB.defaultDb
+		}
+		
+		if (Sincerity.Objects.isString(params.db)) {
+			params.db = MongoDB.getDB(MongoDB.defaultConnection, params.db)
+		}
+
+		if (!Sincerity.Objects.exists(params.collections)) {
+			params.collections = Sincerity.JVM.fromCollection(params.db.collectionNames)
+		}
+
+		for (var c in params.collections) {
+			var collection = params.collections[c]
+
+			var name
+			if (Sincerity.Objects.isString(collection)) {
+				name = collection = String(collection)
+			}
+			else {
+				name = collection.collection.name
+			}
+			
+			routes[params.prefix + '/' + name + '/{id}/'] = {type: 'implicit', id: name}
+			routes[params.prefix + '/' + name + '/'] = {type: 'implicit', id: name + '.plural'}
+		}
+		
+		return routes
+    }
+
 	/**
 	 * Creates a dict of {@link Savory.REST.MongoDbResource} instances for all collections.
 	 * Note that two instances are created per collection: one singular and one plural.
