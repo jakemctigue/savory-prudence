@@ -7,6 +7,7 @@ document.executeOnce('/savory/service/cache/')
 document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/localization/')
 document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/sincerity/xml')
 
 var cache = new Savory.Cache({name: 'result', logLevel: 'info'})
 
@@ -29,7 +30,7 @@ var duration = Sincerity.Localization.formatDuration(java.lang.System.currentTim
 	Take a look at the "results" collection in MongoDB if you are curious as to how the cached data is stored.
 </p>
 <pre>
-<%= Sincerity.JSON.to(result, true) %>
+<%= Sincerity.JSON.to(result, true).escapeElements() %>
 </pre>
 <p>
 	It took <b><%= duration %></b> to fetch this data.

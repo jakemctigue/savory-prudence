@@ -98,5 +98,6 @@ manual.generate({
 	'Serials Service': ['component/applications/savory-example/fragments/manual/service/serials.html'],
 	'Events Service': ['component/applications/savory-example/fragments/manual/service/events.html'],
 	'Progress Service': ['component/applications/savory-example/fragments/manual/service/progress.html'],
-	'Documents Service': ['component/applications/savory-example/fragments/manual/service/documents.html']
+	'Documents Service': ['component/applications/savory-example/fragments/manual/service/documents.html'],
+	'REST Service': ['component/applications/savory-example/fragments/manual/service/rest.html']
 })

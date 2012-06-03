@@ -80,3 +80,8 @@ app.globals = {
 		}
 	}
 }
+
+try {
+	delete MongoDB
+	document.execute('/mongo-db/')
+} catch(x) {}

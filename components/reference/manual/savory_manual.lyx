@@ -4777,7 +4777,7 @@ Apply straightforward filters that let you massage MongoDB's extended JSON
 \end_layout
 
 \begin_layout Subsection
-Usage
+Setup
 \end_layout
 
 \begin_layout Standard
@@ -5124,6 +5124,10 @@ Filters
  them.
  The REST Service comes with a few useful filters, but you can easily create
  your own.
+\end_layout
+
+\begin_layout Subsection
+Usage
 \end_layout
 
 \begin_layout Subsubsection

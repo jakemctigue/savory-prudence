@@ -277,7 +277,7 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	//
 	
 	var textPacksCollection = new MongoDB.Collection('textpacks')
-	try { textPacksCollection.ensureIndex({locale: 1}, {unique: true}) } catch(x) {}
+	textPacksCollection.ensureIndex({locale: 1}, {unique: true})
 
 	var defaultLocale = application.globals.get('savory.service.internationalization.defaultLocale')
 	if (Sincerity.Objects.isString(defaultLocale)) {
