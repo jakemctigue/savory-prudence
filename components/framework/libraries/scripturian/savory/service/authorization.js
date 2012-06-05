@@ -17,9 +17,9 @@
 //
 
 document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
-document.executeOnce('/prudence/logging/')
 document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/mongo-db/')
 

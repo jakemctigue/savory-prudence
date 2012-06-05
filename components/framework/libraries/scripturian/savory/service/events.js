@@ -12,12 +12,12 @@
 //
 
 document.executeOnce('/savory/service/nonces/')
-document.executeOnce('/sincerity/classes/')
-document.executeOnce('/sincerity/objects/')
-document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/prudence/lazy/')
 document.executeOnce('/prudence/tasks/')
 document.executeOnce('/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}

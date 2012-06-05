@@ -4836,7 +4836,7 @@ app.routes = {
 
 \begin_layout Plain Layout
 
-	'/data/users/': {type: 'implicit', id: 'users.plural'}
+	'/data/users/':      {type: 'implicit', id: 'users.plural'}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5098,6 +5098,20 @@ Savory.REST.createMongoDbResources({collections: ['users','notices','documents']
 \end_layout
 
 \begin_layout Subsubsection
+Resources for Sub-sets of Collections
+\end_layout
+
+\begin_layout Standard
+Sometimes you may be using a single MongoDB collection as a container for
+ documents of several different types, and you would want them exposed as
+ a separate URI-space.
+\end_layout
+
+\begin_layout Subsubsection
+Resources for Sub-Documents
+\end_layout
+
+\begin_layout Subsubsection
 Overriding
 \end_layout
 
@@ -5108,11 +5122,93 @@ bResource class, or 2) monkey-patch the instances.
  well and is easier if you just need to customize a single resource.
 \end_layout
 
-\begin_layout Subsubsection
-Filters
+\begin_layout Subsection
+Usage
 \end_layout
 
 \begin_layout Standard
+There are a lot of details below, but you shouldn't be intimidated by them.
+ You do not have to know every single feature of the REST Service in order
+ to use it.
+\end_layout
+
+\begin_layout Subsubsection
+Common Query Parameters
+\end_layout
+
+\begin_layout Standard
+All resources support the following query parameters:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+format
+\series default
+: You can use this to specify the exact format you want, overriding any
+ HTTP content negotiation.
+ This is useful for testing and debugging, but can also help you in dealing
+ with HTTP clients that can't easily set headers.
+ Accepted values are 
+\begin_inset Quotes eld
+\end_inset
+
+json
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+xml
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+html
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Note that when accessing resources internally, no serialization happens,
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+format
+\begin_inset Quotes erd
+\end_inset
+
+ is unnecessary.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+human
+\series default
+: Setting this to 
+\begin_inset Quotes eld
+\end_inset
+
+true
+\begin_inset Quotes erd
+\end_inset
+
+ will further help your debugging, as it will return nicely indented, multiline
+ JSON or XML representations.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+filter:
+\series default
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5121,13 +5217,364 @@ Filters
 \end_inset
 
  are simple functions that are applied to all documents in order to transform
- them.
+ the final representation.
  The REST Service comes with a few useful filters, but you can easily create
- your own.
+ your own, just make sure to hook them to the Savory.REST.Filters dict.
+ The query parameter value will be mapped to a key in this dict.
+ Note that you can provide multiple 
+\begin_inset Quotes eld
+\end_inset
+
+filter
+\begin_inset Quotes erd
+\end_inset
+
+ values, in which case all filters functions will be called in order.
+ Provided filters:
 \end_layout
 
-\begin_layout Subsection
-Usage
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+primitivise:
+\series default
+ This converts MongoDB extended values into simpler JSON structures.
+ For example, 
+\begin_inset Quotes eld
+\end_inset
+
+{timestamp: {$date: 12345}}
+\begin_inset Quotes erd
+\end_inset
+
+ will become 
+\begin_inset Quotes eld
+\end_inset
+
+{timestamp: 12345}
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+stringify
+\series default
+: This converts all JSON values into strings.
+ It's a good way to overcome various number accuracy issues, especially
+ when dealing with PHP clients.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+An example URI with all the above parameters:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/data/users/4e057e94e799a23b0f581d7d/?format=json&human=true&filter=primitivize&
+filter=stringify
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Singular Resources
+\end_layout
+
+\begin_layout Standard
+The REST Service will by default extract the 
+\begin_inset Quotes eld
+\end_inset
+
+{id}
+\begin_inset Quotes erd
+\end_inset
+
+ pattern in the URI into a MongoDB ObjectID for the document 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ field.
+ For example, if your route is 
+\begin_inset Quotes eld
+\end_inset
+
+/data/users/{id}/
+\begin_inset Quotes erd
+\end_inset
+
+, then 
+\begin_inset Quotes eld
+\end_inset
+
+/data/users/4e057e94e799a23b0f581d7d/
+\begin_inset Quotes erd
+\end_inset
+
+ would refer to the user document with that 
+\begin_inset Quotes eld
+\end_inset
+
+_id.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Requests to the URI always return 404 if the document does not exist.
+ Further notes:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+POST:
+\series default
+ All keys of the payload will be used for a 
+\begin_inset Quotes eld
+\end_inset
+
+$set
+\begin_inset Quotes erd
+\end_inset
+
+ in a MongoDB findAndModify operation, and the modified document will be
+ returned.
+ If you include an 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ key in the payload it will be removed, because the ID in the URI takes
+ precedence.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+PUT:
+\series default
+ The payload will become a simple MongoDB save operation.
+ If you include an 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ key in the payload it will be removed, because the ID in the URI takes
+ precedence.
+\end_layout
+
+\begin_layout Subsubsection
+Plural Resources
+\end_layout
+
+\begin_layout Standard
+The plural resource is a bit more complex.
+ The returned representations include a 
+\begin_inset Quotes eld
+\end_inset
+
+total
+\begin_inset Quotes erd
+\end_inset
+
+ key, counting the size of the collection, and a 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+ key, containing an array of specific documents.
+ For example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"total": 1092,
+\end_layout
+
+\begin_layout Plain Layout
+
+	"documents": [
+\end_layout
+
+\begin_layout Plain Layout
+
+		{"_id": {"$oid": "4e057f2ae799a23b0f581d7f" }, ...
+ }
+\end_layout
+
+\begin_layout Plain Layout
+
+		...
+\end_layout
+
+\begin_layout Plain Layout
+
+	]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The following additional query parameters are supported for pagination,
+ controlling which documents are included in the 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+ array:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+start:
+\series default
+ The index from which to start collecting documents.
+ By default it will be 0.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+limit:
+\series default
+ The maximum number of documents to return.
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+ array can definitely be empty if your 
+\begin_inset Quotes eld
+\end_inset
+
+start
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+limit
+\begin_inset Quotes erd
+\end_inset
+
+ values are not satisfied.
+\end_layout
+
+\begin_layout Standard
+Further notes:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+POST:
+\series default
+ This lets you update many documents at once.
+ Your payload should be an array of values that would be sent via the singular
+ resource POST, as described above, 
+\emph on
+however
+\emph default
+ you must also include an 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ for each value.
+ The response will include all documents after their modification.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+PUT:
+\series default
+ This is how you add documents to your MongoDB collection.
+ Simply provide an array of values, and they will become MongoDB insert
+ operations.
+ The response will include 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ fields on all your documents, if you did not set them yourself.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+DELETE:
+\series default
+ This is a MongoDB remove operation, 
+\emph on
+not
+\emph default
+ a drop.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5508,8 +5955,8 @@ target "http://curl.haxx.se/"
 
 \end_inset
 
-is an HTTP command line tool, available for a great many Unix-like operating
- systems as well as Windows.
+ is an HTTP command line tool based on the cURL library, available for a
+ great many Unix-like operating systems as well as Windows.
  It's especially useful for testing RESTful APIs.
  Here's a quick tutorial to get you started with using cURL with the REST
  Service.

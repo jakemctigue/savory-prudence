@@ -11,13 +11,13 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/sincerity/templates/')
 document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/sincerity/files/')
 document.executeOnce('/sincerity/json/')
-document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}

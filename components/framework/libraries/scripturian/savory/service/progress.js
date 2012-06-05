@@ -29,9 +29,9 @@
 // can create a process (REST) on an external server
 
 document.executeOnce('/savory/service/events/')
-document.executeOnce('/sincerity/classes/')
 document.executeOnce('/prudence/tasks/')
 document.executeOnce('/prudence/logging/')
+document.executeOnce('/sincerity/classes/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}

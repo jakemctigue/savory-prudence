@@ -31,10 +31,10 @@
 //  
 
 document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/sincerity/objects/')
-document.executeOnce('/sincerity/classes/')
 document.executeOnce('/prudence/lazy/')
 document.executeOnce('/prudence/logging/')
+document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/classes/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}

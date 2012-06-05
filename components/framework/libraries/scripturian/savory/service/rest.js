@@ -11,14 +11,14 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/xml/')
 document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/templates/')
 document.executeOnce('/sincerity/iterators/')
 document.executeOnce('/sincerity/jvm/')
-document.executeOnce('/prudence/resources/')
-document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -410,7 +410,7 @@ Savory.REST = Savory.REST || function() {
 				delete update._id
 				var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
 				var doc = this.collection.findAndModify(q, {$set: update}, Sincerity.Objects.isEmpty(this.fields) ? {returnNew: true} : {returnNew: true, fields: this.fields})
-				if (doc) {
+				if (Sincerity.Objects.exists(doc)) {
 					docs.push(doc)
 				}
 			}
@@ -426,35 +426,42 @@ Savory.REST = Savory.REST || function() {
 
 			var query = getQuery(conversation)
 			
-			if (Sincerity.Objects.isArray(docs)) {
-				if (!this.plural) {
-					// Only plural resources can accept arrays
-					return Prudence.Resources.Status.ClientError.BadRequest
-				}
-			}
-			else {
-				docs = Sincerity.Objects.array(docs)
+			if (!this.plural && Sincerity.Objects.isArray(docs)) {
+				// Only plural resources can accept arrays
+				return Prudence.Resources.Status.ClientError.BadRequest
 			}
 			
 			var duplicates = false
 			var newDocs = []
-			for (var d in docs) {
-				var doc = docs[d]
-				try {
-					var result = this.collection.insert(doc, 1)
-					if (result && (result.n == 1)) {
-						newDocs.push(doc)
+			if (this.plural) {
+				docs = Sincerity.Objects.array(docs)
+				for (var d in docs) {
+					var doc = docs[d]
+					try {
+						var result = this.collection.insert(doc, 1)
+						if (result && result.ok) {
+							newDocs.push(doc)
+						}
+					}
+					catch (x) {
+						if (x.code == MongoDB.Error.DuplicateKey) {
+							duplicates = true
+						}
 					}
 				}
-				catch (x) {
-					if (x.code == MongoDB.Error.DuplicateKey) {
-						duplicates = true
-					}
+			}
+			else {
+				var doc = docs
+				delete doc._id
+				Sincerity.Objects.merge(doc, castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values))
+				var result = this.collection.save(doc, 1)
+				if (result && (result.n == 1)) {
+					newDocs.push(doc)
 				}
 			}
 
 			conversation.statusCode = duplicates ? Prudence.Resources.Status.ClientError.Conflict : Prudence.Resources.Status.Success.Created
-			return representIterator.call(this, conversation, query, new Sincerity.Iterators.Array(docs))
+			return representIterator.call(this, conversation, query, new Sincerity.Iterators.Array(newDocs))
 		}
 		
 	    Public.handleDelete = function(conversation) {
@@ -488,7 +495,7 @@ Savory.REST = Savory.REST || function() {
 				human: 'bool',
 				format: 'string',
 				filter: 'string[]',
-				mode: 'string',
+				mode: 'string', // ??
 				start: 'int',
 				limit: 'int'
 			})
@@ -528,6 +535,7 @@ Savory.REST = Savory.REST || function() {
 			}
 			else {
 				if (!iterator.hasNext()) {
+					iterator.close()
 					return Prudence.Resources.Status.ClientError.NotFound // this shouldn't happen, really
 				}
 				var doc = iterator.next()
@@ -556,7 +564,7 @@ Savory.REST = Savory.REST || function() {
 						query: conversation.query,
 						pathToBase: conversation.pathToBase
 					})
-					return html || '<html>Could not represent as HTML</html>'
+					return html || '<html><body>Could not represent as HTML</body></html>'
 			}
 			
 			return Sincerity.JSON.to(value, query.human || false)

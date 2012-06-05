@@ -11,27 +11,27 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/savory/foundation/html/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
-document.executeOnce('/savory/foundation/html/')
 document.executeOnce('/sincerity/validation/')
 
 var Savory = Savory || {}
 
 /**
- * @name Savory.HTML.Forms
+ * @name Savory.Forms
  * @namespace
  * 
  * @author Tal Liron
  * @version 1.1
  */
-Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
-	/** @exports Public as Savory.HTML */
+Savory.Forms = Savory.Forms || function() {
+	/** @exports Public as Savory.Forms */
     var Public = {}
 
 	/**
 	 * @param conversation The Prudence conversation
-	 * @returns {Prudence.Resources.Form} The current form or null
+	 * @returns {Savory.Forms.Form} The current form or null
 	 * @see #getCurrentFormResults
 	 */
 	Public.getCurrentForm = function(conversation) {
@@ -54,7 +54,7 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	 * See {@link Prudence.Resources#getForm} for a more rudimentary solution to handling forms.
 	 * 
 	 * @class
-	 * @name Prudence.Resources.Form
+	 * @name Savory.Forms.Form
 	 * 
 	 * @param config
 	 * @param config.fields A dict of field names mapped to this format:
@@ -77,7 +77,7 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	 *        handled directly by this class, but is defined and stored as a convenience for client implementations)
 	 */
     Public.Form = Sincerity.Classes.define(function(Module) {
-    	/** @exports Public as Prudence.Resources.Form */
+    	/** @exports Public as Savory.Forms.Form */
     	var Public = {}
     	
     	/** @ignore */
@@ -336,4 +336,4 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
     }(Public))
 	
 	return Public
-}())
+}()

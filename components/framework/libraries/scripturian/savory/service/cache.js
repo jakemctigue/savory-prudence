@@ -11,9 +11,9 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
-document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}

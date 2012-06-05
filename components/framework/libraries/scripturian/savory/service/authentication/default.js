@@ -20,13 +20,14 @@
 //
 
 document.executeOnce('/savory/service/internationalization/')
+document.executeOnce('/savory/foundation/forms/')
+document.executeOnce('/prudence/lazy/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/templates/')
 document.executeOnce('/sincerity/cryptography/')
 document.executeOnce('/sincerity/objects/')
-document.executeOnce('/prudence/lazy/')
-document.executeOnce('/prudence/resources/')
-document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -488,14 +489,14 @@ Savory.Authentication = Savory.Authentication || function() {
 	/**
 	 * @class
 	 * @name Savory.Authentication.Form
-     * @augments Prudence.Resources.Form
+     * @augments Savory.Forms.Form
 	 */
 	Public.Form = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.Authentication.Form */
 	    var Public = {}
 
 	    /** @ignore */
-	    Public._inherit = Prudence.Resources.Form
+	    Public._inherit = Savory.Forms.Form
 
 	    /** @ignore */
 	    Public._configure = ['conversation']
