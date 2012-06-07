@@ -4747,7 +4747,7 @@ Pagination for traversing collections of any size.
 
 \begin_layout Itemize
 The default format immediately supports Ext JS's RESTful data stores.
- Throw any MongoDB collection into an editable grid widget!
+ Attach any MongoDB collection to an editable grid widget in a web browser!
 \end_layout
 
 \begin_layout Itemize
@@ -4774,6 +4774,22 @@ Apply straightforward filters that let you massage MongoDB's extended JSON
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+There are a lot of details below, but you shouldn't be intimidated by them.
+ You do not have to learn every single feature of the REST Service in order
+ to use it.
+ In just a few lines of code, you can setup a whole RESTful layer automatically
+ that will 
+\begin_inset Quotes eld
+\end_inset
+
+just work
+\begin_inset Quotes erd
+\end_inset
+
+ for many use cases.
 \end_layout
 
 \begin_layout Subsection
@@ -4906,7 +4922,7 @@ resources = {
 
 \begin_layout Plain Layout
 
-	users:  new Savory.REST.MongoDbResource({name: 'users'}),
+	users:          new Savory.REST.MongoDbResource({name: 'users'}),
 \end_layout
 
 \begin_layout Plain Layout
@@ -4955,22 +4971,12 @@ status open
 
 \begin_layout Plain Layout
 
-try {
-\end_layout
-
-\begin_layout Plain Layout
-
-delete MongoDB
+MongoDB = null
 \end_layout
 
 \begin_layout Plain Layout
 
 document.execute('/mongo-db/')
-\end_layout
-
-\begin_layout Plain Layout
-
-} catch(x) {}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5017,9 +5023,9 @@ Sincerity.Objects.merge(app.routes, Savory.REST.createMongoDbRoutes({prefix:
 \end_layout
 
 \begin_layout Quote
-Important! The code in the initial try/catch block makes sure that MongoDB
- is re-initialized before proceeding, so that we can be sure to avoid using
- the default MongoDB initialization in other applications.
+Important! The first two lines of code make sure that MongoDB is re-initialized
+ before proceeding, so that we can be sure to avoid using the default MongoDB
+ initialization in other applications.
  This is good practice when using Savory in any initialization script.
 \end_layout
 
@@ -5098,7 +5104,7 @@ Savory.REST.createMongoDbResources({collections: ['users','notices','documents']
 \end_layout
 
 \begin_layout Subsubsection
-Resources for Sub-sets of Collections
+Custom Queries
 \end_layout
 
 \begin_layout Standard
@@ -5107,8 +5113,741 @@ Sometimes you may be using a single MongoDB collection as a container for
  a separate URI-space.
 \end_layout
 
+\begin_layout Standard
+The REST Service allows for this via a simple querying language.
+ To illustrate it, lets first look at what the default query is for singular
+ resources, if no query is provided by you:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	users: new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+		query: {_id: {$oid: '{id}'}}
+\end_layout
+
+\begin_layout Plain Layout
+
+	})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/data/users/{id}/': {type: 'implicit', id: 'users'}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+query
+\begin_inset Quotes erd
+\end_inset
+
+ key is in MongoDB's extended JSON format, and is used for the MongoDB 
+\begin_inset Quotes eld
+\end_inset
+
+find
+\begin_inset Quotes erd
+\end_inset
+
+ operation.
+ The values are all cast using the conversation.locals, which, if you remember
+ how to do Prudence routing, are extracted from the URI template.
+ Let's look at this slowly:
+\end_layout
+
+\begin_layout Enumerate
+If a 
+\begin_inset Quotes eld
+\end_inset
+
+/data/users/123/
+\begin_inset Quotes erd
+\end_inset
+
+ URI is accessed with a GET operation, the 
+\begin_inset Quotes eld
+\end_inset
+
+123
+\begin_inset Quotes erd
+\end_inset
+
+ will be extracted from the URI template.
+ The effect will be as if we called:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+conversation.locals.put('id', '123')
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+All the values in our resource's 
+\begin_inset Quotes eld
+\end_inset
+
+query
+\begin_inset Quotes erd
+\end_inset
+
+ value are cast using conversation.locals.
+ So, our final query will be:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{_id: {$oid: '123'}}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+The REST Service will use the above query for a 
+\begin_inset Quotes eld
+\end_inset
+
+find
+\begin_inset Quotes erd
+\end_inset
+
+ operation:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var data = collection.findOne({_id: {$oid: '123'}})
+\end_layout
+
+\end_inset
+
+(Note that the 
+\begin_inset Quotes eld
+\end_inset
+
+$oid
+\begin_inset Quotes erd
+\end_inset
+
+ in MongoDB's extended JSON becomes an ObjectId in BSON.)
+\end_layout
+
+\begin_layout Standard
+Knowing this, you can then set the 
+\begin_inset Quotes eld
+\end_inset
+
+query
+\begin_inset Quotes erd
+\end_inset
+
+ any way you like.
+ You can use values extracted from conversation.locals, or any literal value.
+ For example, let's create a URI-space for users of type 
+\begin_inset Quotes eld
+\end_inset
+
+admin
+\begin_inset Quotes erd
+\end_inset
+
+, to be accessed :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	admins: new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+		query: {name: '{name}'}, {type: 'admin'}}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}),
+\end_layout
+
+\begin_layout Plain Layout
+
+	'admins.plural': new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+		query: {type: 'admin'},
+\end_layout
+
+\begin_layout Plain Layout
+
+		plural: true
+\end_layout
+
+\begin_layout Plain Layout
+
+	})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/data/admins/{name}/': {type: 'implicit', id: 'admins'},
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/data/admins/':        {type: 'implicit', id: 'admins.plural'}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As a convenience, you can also add custom values to be cast using the 
+\begin_inset Quotes eld
+\end_inset
+
+values
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+ These will be merged with values from conversation.locals:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+	name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+	query: {name: '{name}'}, {type: '{type}'}},
+\end_layout
+
+\begin_layout Plain Layout
+
+	values: {type: 'admin'}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This allows for nice reusability when you create your own extended classes:
+ you can share one query among many subclasses.
+\end_layout
+
 \begin_layout Subsubsection
-Resources for Sub-Documents
+Custom Extraction
+\end_layout
+
+\begin_layout Standard
+By default, the REST Service will extract and return the entire MongoDB
+ document, but you can customize this quite powerfully, even to allow you
+ to access sub-documents inside a document.
+\end_layout
+
+\begin_layout Standard
+First off, you can simply choose the fields you want:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+	name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+	fields: ['name', 'email', 'address']
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+fields
+\begin_inset Quotes erd
+\end_inset
+
+ key will be used at the level of MongoDB's driver, so that unused data
+ won't even be retrieved from the database.
+\end_layout
+
+\begin_layout Standard
+You can go further and extract sub-fields:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'users.email': new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+		fields: 'email',
+\end_layout
+
+\begin_layout Plain Layout
+
+		extract: 'email'
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/data/users/{id}/email': {type: 'implicit', id: 'users.email'},
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The result of a GET would be only a string of the email address.
+ An example in JSON:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+"myemail@mail.org"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Without the 
+\begin_inset Quotes eld
+\end_inset
+
+extract
+\begin_inset Quotes erd
+\end_inset
+
+, the representation would be this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{"email": "myemail@mail.org"}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With 
+\begin_inset Quotes eld
+\end_inset
+
+extract
+\begin_inset Quotes erd
+\end_inset
+
+ you can go further and even provide an array that will be extracted in
+ order.
+ For example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'users.groups': new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+		fields: 'authorization',
+\end_layout
+
+\begin_layout Plain Layout
+
+		extract: ['authorization', 'entities']
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/data/users/{id}/groups': {type: 'implicit', id: 'users.groups'},
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The above actually uses the data structure used by Savory's Authorization
+ Service to retrieve the security groups.
+ The result of a GET would be an array.
+ An example in JSON:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+["users", "admins"]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Custom Filters
+\end_layout
+
+\begin_layout Standard
+You can set up your own custom filters like so:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+	name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+	filters: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		sanitize: function(data) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			...
+\end_layout
+
+\begin_layout Plain Layout
+
+			return data
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+See 
+\begin_inset Quotes eld
+\end_inset
+
+Usage
+\begin_inset Quotes erd
+\end_inset
+
+ below for information on how to use filters.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5117,27 +5856,92 @@ Overriding
 
 \begin_layout Standard
 There are two ways to override the default behavior: 1) inherit the Savory.MongoD
-bResource class, or 2) monkey-patch the instances.
+bResource class using the 
+\begin_inset CommandInset href
+LatexCommand href
+name "Sincerity.Classes API"
+target "http://threecrickets.com/javascript-api/?namespace=Sincerity.Classes"
+
+\end_inset
+
+, or 2) monkey-patch the instances.
  The former method is more reusable, but the latter method works just as
  well and is easier if you just need to customize a single resource.
+ Example of monkey-patching:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	users: new Savory.REST.MongoDbResource({name: 'users'})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources.users.handleDelete = function(conversation) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using this method you can even monkey-patch instances created automatically
+ after a call to 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.REST.createMongoDbResources()
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
 Usage
 \end_layout
 
-\begin_layout Standard
-There are a lot of details below, but you shouldn't be intimidated by them.
- You do not have to know every single feature of the REST Service in order
- to use it.
-\end_layout
-
 \begin_layout Subsubsection
-Common Query Parameters
+Resource Characteristics
 \end_layout
 
 \begin_layout Standard
-All resources support the following query parameters:
+All resources support the following URI query parameters:
 \end_layout
 
 \begin_layout Itemize
@@ -5219,7 +6023,15 @@ Filters
  are simple functions that are applied to all documents in order to transform
  the final representation.
  The REST Service comes with a few useful filters, but you can easily create
- your own, just make sure to hook them to the Savory.REST.Filters dict.
+ your own, just make sure to hook them to the instance using the 
+\begin_inset Quotes eld
+\end_inset
+
+filters
+\begin_inset Quotes erd
+\end_inset
+
+ key.
  The query parameter value will be mapped to a key in this dict.
  Note that you can provide multiple 
 \begin_inset Quotes eld
@@ -5290,6 +6102,30 @@ filter=stringify
 
 \end_layout
 
+\begin_layout Standard
+As for payloads, in POST and PUT operations, note that by default they must
+ be in JSON, even if you are representing the result in XML or HTML.
+ The reason is that there is no obvious way to translate XML to the final
+ JSON format needed by MongoDB.
+ If you do need to support XML payloads, you can override 
+\begin_inset Quotes eld
+\end_inset
+
+handlePost
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+handlePut
+\begin_inset Quotes erd
+\end_inset
+
+ to do this yourself according to your specifications.
+\end_layout
+
 \begin_layout Subsubsection
 Singular Resources
 \end_layout
@@ -5357,8 +6193,15 @@ $set
 \begin_inset Quotes erd
 \end_inset
 
- in a MongoDB findAndModify operation, and the modified document will be
- returned.
+ in a MongoDB 
+\begin_inset Quotes eld
+\end_inset
+
+findAndModify
+\begin_inset Quotes erd
+\end_inset
+
+ operation, and the modified document will be returned.
  If you include an 
 \begin_inset Quotes eld
 \end_inset
@@ -5376,7 +6219,16 @@ _id
 \series bold
 PUT:
 \series default
- The payload will become a simple MongoDB save operation.
+ The payload will become a simple MongoDB 
+\begin_inset Quotes eld
+\end_inset
+
+save
+\begin_inset Quotes erd
+\end_inset
+
+ operation, which is an upsert, meaning it would either create a new resource
+ or replace the existing one.
  If you include an 
 \begin_inset Quotes eld
 \end_inset
@@ -5387,6 +6239,22 @@ _id
 
  key in the payload it will be removed, because the ID in the URI takes
  precedence.
+ Note that if you want to create a new resource, it's up to you to make
+ sure the the id is unique, otherwise you will get an HTTP 409 error (conflict).
+ You can generate a unique ID by calling MongoDB.newId().
+ Example for generating a unique URI using templates:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+'/data/users/{0}/'.cast(MongoDB.newId())
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -5552,7 +6420,14 @@ _id
 PUT:
 \series default
  This is how you add documents to your MongoDB collection.
- Simply provide an array of values, and they will become MongoDB insert
+ Simply provide an array of values, and they will become MongoDB 
+\begin_inset Quotes eld
+\end_inset
+
+insert
+\begin_inset Quotes erd
+\end_inset
+
  operations.
  The response will include 
 \begin_inset Quotes eld
@@ -5570,11 +6445,27 @@ _id
 \series bold
 DELETE:
 \series default
- This is a MongoDB remove operation, 
+ This is a MongoDB 
+\begin_inset Quotes eld
+\end_inset
+
+remove
+\begin_inset Quotes erd
+\end_inset
+
+ operation, 
 \emph on
 not
 \emph default
- a drop.
+ a 
+\begin_inset Quotes eld
+\end_inset
+
+drop
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5587,7 +6478,7 @@ All your resources support the HTML format, so you can easily access them
  For example, this link: 
 \begin_inset CommandInset href
 LatexCommand href
-target "http://localhost:8080/savory-example/users/4e057e94e799a23b0f581d7d/"
+target "http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/"
 
 \end_inset
 

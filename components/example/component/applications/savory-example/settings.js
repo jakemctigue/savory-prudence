@@ -32,12 +32,6 @@ app.settings = {
 	
 	mediaTypes: {
 		php: 'text/html'
-	},
-
-	scriptletPlugins: {
-		/*'{{': '/savory/handlers/foundation/blocks/scriptlet-plugin/',
-		'}}': '/savory/handlers/foundation/blocks/scriptlet-plugin/',
-		'&&': '/savory/handlers/foundation/blocks/scriptlet-plugin/'*/
 	}
 }
 
@@ -81,7 +75,5 @@ app.globals = {
 	}
 }
 
-try {
-	delete MongoDB
-	document.execute('/mongo-db/')
-} catch(x) {}
+MongoDB = null
+document.execute('/mongo-db/')

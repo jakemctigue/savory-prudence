@@ -382,8 +382,6 @@ Savory.REST = Savory.REST || function() {
 		}*/
 		
 	    Public.handlePost = function(conversation) {
-			// TODO: must it be JSON?
-			
 			var updates = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			if (!updates) {
 				return Prudence.Resources.Status.ClientError.BadRequest
