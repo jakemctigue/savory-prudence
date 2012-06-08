@@ -7,3 +7,6 @@ document.executeOnce('/savory/service/rest/')
 }*/
 
 resources = Savory.REST.createMongoDbResources()
+
+resources.users.fields = {email: 1}
+resources.users.extract = ['email']

@@ -5657,12 +5657,44 @@ status open
 
 \begin_layout Plain Layout
 
-{"email": "myemail@mail.org"}
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"_id": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"$oid": "4e057e94e799a23b0f581d7d"
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	"email": "myemail@mail.org"
+\end_layout
+
+\begin_layout Plain Layout
+
+}
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Quote
+Important! Not all client JSON parsers can deal with JSON data that is not
+ a dict or an array.
+ If you are extracting data that is not a dict or an array, you may need
+ to implement your own special parsing.
 \end_layout
 
 \begin_layout Standard
@@ -5775,6 +5807,55 @@ status open
 
 \end_layout
 
+\begin_layout Standard
+Finally, you can do your own custom extraction, by providing a function:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+new Savory.REST.MongoDbResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+	name: 'users',
+\end_layout
+
+\begin_layout Plain Layout
+
+	fields: 'authorization',
+\end_layout
+
+\begin_layout Plain Layout
+
+	extract: function(doc) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return doc.authorization.entities.join(',')
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Custom Filters
 \end_layout
@@ -5805,17 +5886,12 @@ new Savory.REST.MongoDbResource({
 
 \begin_layout Plain Layout
 
-		sanitize: function(data) {
+		flatten: function(data) {
 \end_layout
 
 \begin_layout Plain Layout
 
-			...
-\end_layout
-
-\begin_layout Plain Layout
-
-			return data
+			return Sincerity.Objects.flatten(data)
 \end_layout
 
 \begin_layout Plain Layout

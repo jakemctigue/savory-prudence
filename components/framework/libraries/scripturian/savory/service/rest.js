@@ -282,7 +282,9 @@ Savory.REST = Savory.REST || function() {
 			this.fields = fields
 			
 			if (Sincerity.Objects.exists(this.extract)) {
-				this.extract = Sincerity.Objects.array(this.extract)
+				if (typeof this.extract != 'function') {
+					this.extract = Sincerity.Objects.array(this.extract)
+				}
 			}
 			
 			Savory.REST.MongoDbResource.prototype.superclass.call(this, this)
@@ -519,9 +521,12 @@ Savory.REST = Savory.REST || function() {
 		
 		function representIterator(conversation, query, iterator, total) {
 			if (iterator) {
-				iterator = new Sincerity.Iterators.Transformer(iterator, function(doc) {
-					return extract(doc, this)
-				}, this.extract)
+				if (typeof this.extract == 'function') {
+					iterator = new Sincerity.Iterators.Transformer(iterator, this.extract, this)
+				}
+				else {
+					iterator = new Sincerity.Iterators.Transformer(iterator, extract, this)
+				}
 				for (var f in query.filter) {
 					iterator = new Sincerity.Iterators.Transformer(iterator, query.filter[f])
 				}
@@ -586,14 +591,18 @@ Savory.REST = Savory.REST || function() {
 			return obj
 		}
 
-		function extract(doc, commands) {
-			if (!doc || !commands || !commands.length) {
-				return doc
+		function extract(doc) {
+			var newDoc = doc
+			
+			for (var i in this.extract) {
+				var e = this.extract[i]
+				newDoc = doc[e]
+				if (newDoc === undefined) {
+					return null
+				}
 			}
 			
-			commands = Sincerity.Objects.clone(commands)
-			var e = commands.shift()
-			return extract(doc[e], commands)
+			return newDoc
 		}
 
 		return Public
