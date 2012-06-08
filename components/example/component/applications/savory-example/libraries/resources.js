@@ -5,6 +5,9 @@ document.executeOnce('/savory/service/rpc/')
 var Math = {
 	multiply: {
 		fn: function(x, y) {
+			if ((x == 1) && (y == 2)) {
+				throw 'You\'re trying to multiply the magic numbers!'
+			}
 			return x * y
 		}
 	}

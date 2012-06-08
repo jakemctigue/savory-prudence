@@ -4,9 +4,6 @@
 <%
 
 document.executeOnce('/savory/service/rpc/')
-document.executeOnce('/prudence/resources/')
-document.executeOnce('/sincerity/json/')
-document.executeOnce('/sincerity/xml/')
 
 var value1 = 2
 var value2 = 6
@@ -18,70 +15,31 @@ if (conversation.request.method.name == 'POST') {
 	protocol = conversation.form.get('protocol')
 }
 
-var request = {
+var result = Savory.RPC.request({
 	uri: '/math/',
 	internal: true,
-	method: 'post',
-	mediaType: 'application/' + protocol
-}
-
-if (protocol == 'json') {
-	request.payload = {
-		type: 'json',
-		value: {
-			jsonrpc: '2.0',
-			method: 'Math.multiply',
-			params: [value1, value2],
-			id: 'abc'
-		}
-	} 
-}
-else {
-	request.payload = {
-		type: 'xml',
-		value: {
-			methodCall: {
-				methodName: 'Math.multiply',
-				params: {
-					param: [
-						{value: {'double': value1}},
-						{value: {'double': value2}}
-					]
-				}
-			}
-		}
-	} 
-}
-
-var result = Prudence.Resources.request(request)
-
-var value = 'ERROR'
-if (result) {
-	if (protocol == 'json') {
-		value = result.result
-	}
-	else {
-		// print('<pre>'+result.toXml(2).escapeElements()+'</pre>')
-		var values = result.gatherElements('methodResponse', 'params', 'param', 'value')
-		if (values.length == 1) {
-			value = Savory.RPC.fromXmlValue(values[0])
-		}
-	}
-}
+	name: 'Math.multiply',
+	params: [value1, value2],
+	id: 'abc',
+	protocol: protocol
+})
 
 %>
 
 <p>
 	We've exposed a simple multiplication function to the world. Let's call it using RPC.
 </p>
+<p>
+	Use the magic values "1" and "2" to see a fault code.
+</p>
 
 <form method="post">
 	<p>
-		Value 1:
+		Value #1:
 		<input name="value1" value=<%= value1 %> />
 	</p>
 	<p>
-		Value 2:
+		Value #2:
 		<input name="value2" value=<%= value2 %> />
 	</p>
 	<p>
@@ -95,10 +53,15 @@ if (result) {
 		<input type="submit" value="Multiply" />
 	</p>
 </form>
+<% if (result.error) { %>
 <p class="note">
-	Result: <b><%= value %></b>
+	Fault: <b><%= result.error.code %>: <%= result.error.message %></b> via <b><%= result.protocol %></b>
 </p>
-
+<% } else { %>
+<p class="note">
+	Result: <b><%= result.result %></b> via <b><%= result.protocol %></b>
+</p>
+<% } %>
 
 <% exampleFooter('RPC', 'Service'); %>
 <%& '/site/footer/' %>

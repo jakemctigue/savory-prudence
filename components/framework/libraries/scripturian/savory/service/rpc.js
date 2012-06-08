@@ -12,6 +12,7 @@
 //
 
 document.executeOnce('/savory/service/rest/')
+document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/sincerity/json/')
@@ -173,8 +174,12 @@ Savory.RPC = Savory.RPC || function() {
 	
 	/**
 	 * XML-RPC spec.
+	 * <p>
+	 * The special value {_: ...} will be sent as is.
+	 * 
+	 * TODO: Support explicit types.
 	 */
-	Public.toXmlValue = function(value) {
+	Public.toXmlValue = function(value, type) {
 		if (value === null) {
 			return {
 				value: {
@@ -248,6 +253,94 @@ Savory.RPC = Savory.RPC || function() {
 			}
 		}
 		return ''
+	}
+	
+	/**
+	 * Call remote functions using JSON-RPC or XML-RPC.
+	 * This function is essentially a wrapper over {@link Prudence.Resources#request} that
+	 * creates the payload for you and uniformly unpacks the result into JSON-RPC's format
+	 * (even if you're using XML-RPC). 
+	 * <p>
+	 * TODO: Add support for JSON-RPC batch calls.
+	 * 
+	 * @param params All params used in {@link Prudence.Resources#request} are applicable here
+	 * @param {String} params.name The method identifier
+	 * @param {String} [params.id] The call ID (for JSON-RPC); note that if you do not provide an ID, you will not get
+	 *                              any result!
+	 * @param {String} [params.protocol='json'] Available options are 'json2.0' (or 'json'), 'json1.1', 'json1.0' and 'xml'
+	 * @returns {Object} A JSON-RPC-style result, or null if the request did not go through
+	 */
+	Public.request = function(params) {
+		params = Sincerity.Objects.exists(params) ? Sincerity.Objects.clone(params) : {}
+		params.protocol = String(params.protocol || 'json')
+		params.method = params.method || 'post'
+		params.mediaType = params.mediaType || 'application/' + params.protocol
+		var isJson = params.protocol.substring(0, 4) == 'json'
+			
+		if (isJson) {
+			var version = params.protocol.substring(4) || '2.0'
+			params.payload = Sincerity.Objects.prune({
+				type: 'json',
+				value: {
+					id: params.id,
+					method: params.name,
+					params: params.params
+				}
+			})
+			if (version == '2.0') {
+				params.payload.value.jsonrpc = version
+			}
+			else if (version == '1.1') {
+				params.payload.value.version = version
+			}
+		}
+		else {
+			params.payload = Sincerity.Objects.prune({
+				type: 'xml',
+				value: {
+					methodCall: {
+						methodName: params.name,
+						params: {
+							param: []
+						}
+					}
+				}
+			})
+			
+			for (var p in params.params) {
+				params.payload.value.methodCall.params.param.push(Public.toXmlValue(params.params[p]))
+			}
+		}
+		
+		var result = Prudence.Resources.request(params)
+		if (!Sincerity.Objects.exists(result)) {
+			return null
+		}
+		
+		var r
+		if (isJson) {
+			r = result
+		}
+		else {
+			r = {}
+			var values = result.gatherElements('methodResponse', 'params', 'param', 'value')
+			if (values.length == 1) {
+				r.result = Savory.RPC.fromXmlValue(values[0])
+			}
+			var faults = result.gatherElements('methodResponse', 'fault', 'value')
+			if (faults.length == 1) {
+				var fault = Savory.RPC.fromXmlValue(faults[0])
+				if (fault) {
+					r.error = {
+						code: fault.faultCode,
+						message: fault.faultString
+					}
+				}
+			}
+		}
+		r.protocol = params.protocol
+		
+		return r
 	}
 
 	/**

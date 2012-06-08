@@ -7146,6 +7146,11 @@ In most cases, all you need to do is hookup your JavaScript functions to
  All error codes, system APIs and type conversions will be properly handled.
 \end_layout
 
+\begin_layout Standard
+As a bonus, the RPC Service also includes a nice client utility for calling
+ JSON-RPC and XML-RPC.
+\end_layout
+
 \begin_layout Quote
 Is RPC a good idea? We're inclined to say: no.
  REST is a much more scalable and robust pattern, all things considered.
@@ -7531,6 +7536,58 @@ arguments
 \end_layout
 
 \begin_layout Subsubsection
+System Namespace
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+system
+\begin_inset Quotes erd
+\end_inset
+
+ namespace is reserved for parts of the RPC protocols.
+ The RPC Service implements these for you:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+system.getCapabilities
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+system.listMethods
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+system.methodSignature
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+system.methodHelp:
+\series default
+ By default, this will just show the method name, but in the long form definitio
+n you can add a 
+\begin_inset Quotes eld
+\end_inset
+
+help
+\begin_inset Quotes erd
+\end_inset
+
+ key to set this as you need.
+\end_layout
+
+\begin_layout Subsubsection
 Scope
 \end_layout
 
@@ -7869,7 +7926,7 @@ Fault Codes
 
 \begin_layout Standard
 If your function throws an exception, the RPC Service will return a ServerError
- fault code with the exception as the message.
+ fault code with the exception string as the message.
 \end_layout
 
 \begin_layout Standard
@@ -7936,7 +7993,16 @@ Calling RPC with the API
 \end_layout
 
 \begin_layout Standard
-The 
+The RPC Service includes a useful RPC client function, 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.RPC.request
+\begin_inset Quotes erd
+\end_inset
+
+.
+ It's essentially a wrapper over the 
 \begin_inset CommandInset href
 LatexCommand href
 name "Prudence.Resources API"
@@ -7944,136 +8010,14 @@ target "http://threecrickets.com/javascript-api/?namespace=Prudence.Resources"
 
 \end_inset
 
- makes it very easy to access your resources, whether internally or on a
- different node.
- See the API documentation for full details, otherwise here we'll provide
- you with a quick tutorial for using it with the RPC Service.
+ that builds the payload for you and nicely unpacks the results.
+ The results will always be in JSON-RPC's format, even if you are using
+ XML-RPC.
+ This allows for uniform processing on your end.
 \end_layout
 
 \begin_layout Standard
 Here's an example of an internal call using JSON-RPC:
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-document.executeOnce('/prudence/resources/')
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-var result = Prudence.Resources.request({
-\end_layout
-
-\begin_layout Plain Layout
-
-	uri: '/math/',
-\end_layout
-
-\begin_layout Plain Layout
-
-	internal: true,
-\end_layout
-
-\begin_layout Plain Layout
-
-	method: 'post',
-\end_layout
-
-\begin_layout Plain Layout
-
-	mediaType: 'application/json',
-\end_layout
-
-\begin_layout Plain Layout
-
-	payload: {
-\end_layout
-
-\begin_layout Plain Layout
-
-		type: 'json',
-\end_layout
-
-\begin_layout Plain Layout
-
-		value: {
-\end_layout
-
-\begin_layout Plain Layout
-
-			jsonrpc: '2.0',
-\end_layout
-
-\begin_layout Plain Layout
-
-			method: 'Math.multiply',
-\end_layout
-
-\begin_layout Plain Layout
-
-			params: [2, 3],
-\end_layout
-
-\begin_layout Plain Layout
-
-			id: 'abc'
-\end_layout
-
-\begin_layout Plain Layout
-
-		}
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-})
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-var value = result.result
-\end_layout
-
-\begin_layout Plain Layout
-
-print(value)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-XML-RPC is a bit more complicated to use from JavaScript, and less efficient,
- but here's an example of how to do so if you must.
- Note that we're relying on the powerful 
-\begin_inset CommandInset href
-LatexCommand href
-name "Sincerity.XML API"
-target "http://threecrickets.com/javascript-api/?namespace=Sincerity.XML"
-
-\end_inset
-
-:
 \end_layout
 
 \begin_layout Standard
@@ -8088,16 +8032,11 @@ document.executeOnce('/savory/service/rpc/')
 
 \begin_layout Plain Layout
 
-document.executeOnce('/prudence/resources/')
 \end_layout
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\begin_layout Plain Layout
-
-var result = Prudence.Resources.request({
+var result = Savory.RPC.request({
 \end_layout
 
 \begin_layout Plain Layout
@@ -8112,82 +8051,22 @@ var result = Prudence.Resources.request({
 
 \begin_layout Plain Layout
 
-	method: 'post',
+	name: 'Math.multiply',
 \end_layout
 
 \begin_layout Plain Layout
 
-	mediaType: 'application/xml',
+	params: [5, 6],
 \end_layout
 
 \begin_layout Plain Layout
 
-	payload: {
+	id: 'abc',
 \end_layout
 
 \begin_layout Plain Layout
 
-		type: 'xml',
-\end_layout
-
-\begin_layout Plain Layout
-
-		value: {
-\end_layout
-
-\begin_layout Plain Layout
-
-			methodCall: {
-\end_layout
-
-\begin_layout Plain Layout
-
-				methodName: 'Math.multiply',
-\end_layout
-
-\begin_layout Plain Layout
-
-				params: {
-\end_layout
-
-\begin_layout Plain Layout
-
-					param: [
-\end_layout
-
-\begin_layout Plain Layout
-
-						{value: {'double': value1}},
-\end_layout
-
-\begin_layout Plain Layout
-
-						{value: {'double': value2}}
-\end_layout
-
-\begin_layout Plain Layout
-
-					]
-\end_layout
-
-\begin_layout Plain Layout
-
-				}
-\end_layout
-
-\begin_layout Plain Layout
-
-			}
-\end_layout
-
-\begin_layout Plain Layout
-
-		}
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
+	protocol: 'json'
 \end_layout
 
 \begin_layout Plain Layout
@@ -8201,22 +8080,80 @@ var result = Prudence.Resources.request({
 
 \begin_layout Plain Layout
 
-var values = result.gatherElements('methodResponse', 'params', 'param', 'value')
+if (result.error) {
 \end_layout
 
 \begin_layout Plain Layout
 
-value = Savory.RPC.fromXmlValue(values[0])
+	print('Error: ' + result.error.message)
 \end_layout
 
 \begin_layout Plain Layout
 
-print(value)
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+else {
+\end_layout
+
+\begin_layout Plain Layout
+
+	print(result.result)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+For XML-RPC, simply set 
+\begin_inset Quotes eld
+\end_inset
+
+protocol
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+xml
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If not provided, it defaults to 
+\begin_inset Quotes eld
+\end_inset
+
+json
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Note that the result will also include that 
+\begin_inset Quotes eld
+\end_inset
+
+protocol
+\begin_inset Quotes erd
+\end_inset
+
+ key you provided, in case you need to know which protocol was used.
+\end_layout
+
+\begin_layout Standard
+Generally, if you have the option to use JSON-RPC, you should prefer it.
+ XML serialization incurs an extra overhead in JavaScript.
 \end_layout
 
 \begin_layout Subsubsection
