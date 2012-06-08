@@ -7138,6 +7138,8 @@ target "http://www.xmlrpc.com/spec"
 \end_inset
 
  specifications, including support for batch processing for JSON-RPC 2.0.
+ It's powerful enough that it may be in itself the primary reason why you
+ wish to use the Savory Framework.
 \end_layout
 
 \begin_layout Standard
@@ -7989,6 +7991,56 @@ Usage
 \end_layout
 
 \begin_layout Subsubsection
+URI Query Parameters
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+type:
+\series default
+ The resource will automatically determine whether it should work in JSON-RPC
+ or XML-RPC according to the media type of the incoming payload, or if that's
+ not available, the preferred media type for the returned representation.
+ Unfortunately, some clients don't or can't set either.
+ In that case, you can set the type explicitly in the URI, with either 
+\begin_inset Quotes eld
+\end_inset
+
+json
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+xml
+\begin_inset Quotes erd
+\end_inset
+
+ as values.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+human:
+\series default
+ Set this to 
+\begin_inset Quotes eld
+\end_inset
+
+true
+\begin_inset Quotes erd
+\end_inset
+
+ to generate multiline, indented human-readable results (both for JSON and
+ XML).
+ Great for debugging.
+\end_layout
+
+\begin_layout Subsubsection
 Calling RPC with the API
 \end_layout
 
@@ -8264,7 +8316,8 @@ status open
 
 \begin_layout Plain Layout
 
-curl -d @rpc.json "http://localhost:8080/savory-example/math/?human=true"
+curl -d @rpc.json "http://localhost:8080/savory-example/math/?type=json&human=tru
+e"
 \end_layout
 
 \end_inset
@@ -8314,6 +8367,23 @@ status open
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+Calling RPC from Web Browsers
+\end_layout
+
+\begin_layout Standard
+Many client-side JavaScript frameworks include support for RPC, but if all
+ you need is a straightforward, self-contained library, we recommend 
+\begin_inset CommandInset href
+LatexCommand href
+name "jsonrpcjs"
+target "https://github.com/gimmi/jsonrpcjs"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section

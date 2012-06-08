@@ -429,8 +429,16 @@ Savory.RPC = Savory.RPC || function() {
 	    	var value = null
 	    	
 	    	var type = conversation.query.get('type') || conversation.locals.get('type')
-	    	var mediaType = conversation.entity ? conversation.entity.mediaType : conversation.mediaTypeName
-	    	var isXml = (mediaType == 'application/xml') || (mediaType == 'text/xml') || (type == 'xml')
+	    	if (type == 'xml') {
+	    		isXml = true
+	    	}
+	    	else if (type == 'json') {
+	    		isXml = false
+	    	}
+	    	else {
+		    	var mediaType = conversation.entity ? conversation.entity.mediaType : conversation.mediaTypeName
+	    		isXml = (mediaType == 'application/xml') || (mediaType == 'text/xml')
+	    	}
 	    	if (isXml) {
 	    		// Try XML-RPC
 	    		var doc
