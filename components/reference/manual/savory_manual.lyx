@@ -7142,17 +7142,21 @@ target "http://www.xmlrpc.com/spec"
 
 \begin_layout Standard
 In most cases, all you need to do is hookup your JavaScript functions to
- a URI, and let the RPC Service do the rest!
+ a URI, and let the RPC Service do the rest.
+ All error codes, system APIs and type conversions will be properly handled.
 \end_layout
 
 \begin_layout Quote
 Is RPC a good idea? We're inclined to say: no.
  REST is a much more scalable and robust pattern, all things considered.
  REST uses all the power of HTTP to provide client-cacheable representations.
- RPC, on the other hand, supports only HTTP POST, the only non-idempotent
- HTTP operation.
- However, RPC may be necessary to for communication with other services
- and clients, so you might not have a choice.
+ RPC, on the other hand, supports only HTTP POST, the only 
+\emph on
+non
+\emph default
+-idempotent HTTP operation, which can never be cached.
+ However, RPC may be necessary for communication with other services and
+ clients, so you might not have a choice.
  And, sometimes, it's just the most straightforward, quick-and-dirty solution
  to a problem.
  Especially with the Savory RPC Service, it's so easy to just allow clients
@@ -7857,6 +7861,70 @@ namespace
 \end_inset
 
  (singular).
+\end_layout
+
+\begin_layout Subsubsection
+Fault Codes
+\end_layout
+
+\begin_layout Standard
+If your function throws an exception, the RPC Service will return a ServerError
+ fault code with the exception as the message.
+\end_layout
+
+\begin_layout Standard
+However, you can also return specific 
+\begin_inset CommandInset href
+LatexCommand href
+name "XML-RPC fault codes"
+target "http://xmlrpc-epi.sourceforge.net/specs/rfc.fault_codes.php"
+
+\end_inset
+
+ (the same code numbers are used by JSON-RPC):
+\end_layout
+
+\begin_layout Itemize
+By throwing a number (all fault codes are negative numbers).
+ You can use the convenient constants in 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Fault
+\begin_inset Quotes erd
+\end_inset
+
+.
+ For example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+throw Savory.Fault.InvalidParams
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+By throwing a dict with both the fault code and the message.
+ For example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+throw {code: Savory.Fault.InvalidParams, message: 'Cannot divide by 0!'}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
