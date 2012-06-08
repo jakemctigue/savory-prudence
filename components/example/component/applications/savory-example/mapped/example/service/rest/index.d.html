@@ -25,7 +25,7 @@ else {
 }
 
 var user = Prudence.Resources.request(params)
-var output = params.mediaType == 'application/xml' ? user.toXML(2) : Sincerity.JSON.to(user, true)
+var output = params.mediaType == 'application/xml' ? user.toXml(2) : Sincerity.JSON.to(user, true)
 
 %>
 

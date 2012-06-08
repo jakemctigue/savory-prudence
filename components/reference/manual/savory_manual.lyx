@@ -7883,7 +7883,7 @@ target "http://threecrickets.com/javascript-api/?namespace=Prudence.Resources"
 \end_layout
 
 \begin_layout Standard
-Here's an example of an internal call:
+Here's an example of an internal call using JSON-RPC:
 \end_layout
 
 \begin_layout Standard
@@ -7894,6 +7894,10 @@ status open
 \begin_layout Plain Layout
 
 document.executeOnce('/prudence/resources/')
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -7973,7 +7977,173 @@ var result = Prudence.Resources.request({
 
 \begin_layout Plain Layout
 
-print(result.result)
+\end_layout
+
+\begin_layout Plain Layout
+
+var value = result.result
+\end_layout
+
+\begin_layout Plain Layout
+
+print(value)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+XML-RPC is a bit more complicated to use from JavaScript, and less efficient,
+ but here's an example of how to do so if you must.
+ Note that we're relying on the powerful 
+\begin_inset CommandInset href
+LatexCommand href
+name "Sincerity.XML API"
+target "http://threecrickets.com/javascript-api/?namespace=Sincerity.XML"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/rpc/')
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/prudence/resources/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var result = Prudence.Resources.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+	uri: '/math/',
+\end_layout
+
+\begin_layout Plain Layout
+
+	internal: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+	method: 'post',
+\end_layout
+
+\begin_layout Plain Layout
+
+	mediaType: 'application/xml',
+\end_layout
+
+\begin_layout Plain Layout
+
+	payload: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		type: 'xml',
+\end_layout
+
+\begin_layout Plain Layout
+
+		value: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			methodCall: {
+\end_layout
+
+\begin_layout Plain Layout
+
+				methodName: 'Math.multiply',
+\end_layout
+
+\begin_layout Plain Layout
+
+				params: {
+\end_layout
+
+\begin_layout Plain Layout
+
+					param: [
+\end_layout
+
+\begin_layout Plain Layout
+
+						{value: {'double': value1}},
+\end_layout
+
+\begin_layout Plain Layout
+
+						{value: {'double': value2}}
+\end_layout
+
+\begin_layout Plain Layout
+
+					]
+\end_layout
+
+\begin_layout Plain Layout
+
+				}
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var values = result.gatherElements('methodResponse', 'params', 'param', 'value')
+\end_layout
+
+\begin_layout Plain Layout
+
+value = Savory.RPC.fromXmlValue(values[0])
+\end_layout
+
+\begin_layout Plain Layout
+
+print(value)
 \end_layout
 
 \end_inset

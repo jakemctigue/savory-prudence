@@ -323,6 +323,7 @@ Savory.RPC = Savory.RPC || function() {
 			'application/json',
 			'application/xml',
 			'application/java',
+			'text/xml',
 			'text/plain',
 			'text/html'
 		]

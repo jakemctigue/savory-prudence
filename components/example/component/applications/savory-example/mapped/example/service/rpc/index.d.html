@@ -3,24 +3,30 @@
 
 <%
 
+document.executeOnce('/savory/service/rpc/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/xml/')
 
 var value1 = 2
 var value2 = 6
+var protocol = 'json'
 
 if (conversation.request.method.name == 'POST') {
 	value1 = parseFloat(conversation.form.get('value1'))
 	value2 = parseFloat(conversation.form.get('value2'))
+	protocol = conversation.form.get('protocol')
 }
 
-var result = Prudence.Resources.request({
+var request = {
 	uri: '/math/',
 	internal: true,
 	method: 'post',
-	mediaType: 'application/json',
-	payload: {
+	mediaType: 'application/' + protocol
+}
+
+if (protocol == 'json') {
+	request.payload = {
 		type: 'json',
 		value: {
 			jsonrpc: '2.0',
@@ -28,13 +34,45 @@ var result = Prudence.Resources.request({
 			params: [value1, value2],
 			id: 'abc'
 		}
+	} 
+}
+else {
+	request.payload = {
+		type: 'xml',
+		value: {
+			methodCall: {
+				methodName: 'Math.multiply',
+				params: {
+					param: [
+						{value: {'double': value1}},
+						{value: {'double': value2}}
+					]
+				}
+			}
+		}
+	} 
+}
+
+var result = Prudence.Resources.request(request)
+
+var value = 'ERROR'
+if (result) {
+	if (protocol == 'json') {
+		value = result.result
 	}
-})
+	else {
+		// print('<pre>'+result.toXml(2).escapeElements()+'</pre>')
+		var values = result.gatherElements('methodResponse', 'params', 'param', 'value')
+		if (values.length == 1) {
+			value = Savory.RPC.fromXmlValue(values[0])
+		}
+	}
+}
 
 %>
 
 <p>
-	We've exposed a simple multiplication function to the world. Let's call it using JSON-RPC!
+	We've exposed a simple multiplication function to the world. Let's call it using RPC.
 </p>
 
 <form method="post">
@@ -47,11 +85,18 @@ var result = Prudence.Resources.request({
 		<input name="value2" value=<%= value2 %> />
 	</p>
 	<p>
+		Protocol:
+		<select name="protocol">
+			<option value="json" <%= protocol == 'json' ? 'selected="true"' : '' %>>JSON-RPC</option>
+			<option value="xml" <%= protocol == 'xml' ? 'selected="true"' : '' %>>XML-RPC</option>
+		</select>
+	</p>
+	<p>
 		<input type="submit" value="Multiply" />
 	</p>
 </form>
 <p class="note">
-	Result: <%= result.result %>
+	Result: <b><%= value %></b>
 </p>
 
 
