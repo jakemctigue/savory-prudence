@@ -3,22 +3,30 @@
 
 <%
 
-document.executeOnce('/savory/service/documents/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/sincerity/json/')
+document.executeOnce('/sincerity/xml/')
 
-var draft = Savory.Documents.getDraft('4fc4457ae4b030c6611c072f')
+var value1 = 2
+var value2 = 6
 
 if (conversation.request.method.name == 'POST') {
-	var source = conversation.form.get('source')
-	var language = conversation.form.get('language')
-	draft.revise(source, language)
+	value1 = parseFloat(conversation.form.get('value1'))
+	value2 = parseFloat(conversation.form.get('value2'))
 }
 
-var rendered = draft.render({
-	codes: {
-		start: '{{',
-		end: '}}',
-		fn: function(text) {
-			return '<a href="/wiki/{0}">{0}</a>'.cast(text)
+var result = Prudence.Resources.request({
+	uri: '/math/',
+	internal: true,
+	method: 'post',
+	mediaType: 'application/json',
+	payload: {
+		type: 'json',
+		value: {
+			jsonrpc: '2.0',
+			method: 'Math.multiply',
+			params: [value1, value2],
+			id: 'abc'
 		}
 	}
 })
@@ -26,32 +34,26 @@ var rendered = draft.render({
 %>
 
 <p>
-	In this example, we'll let you revise one document. We've enabled support for a custom code
-	delimited by "{{" and "}}", in order to support wiki topic links. They do not point anywhere in
-	this example, but provide you with an example of what is possible. Try it and see! 
+	We've exposed a simple multiplication function to the world. Let's call it using JSON-RPC!
 </p>
-<div class="note">
-<p>
-	Showing document: <b><%= draft.document._id %></b>, revision: <b><%= draft.revision %></b>
-</p>
-<%= rendered %>
-</div>
 
 <form method="post">
 	<p>
-		Language:
-		<select name="language">
-			<option value="markdown" <%= draft.getLanguage() == 'markdown' ? 'selected="true"' : '' %>>Markdown</option>
-			<option value="textile" <%= draft.getLanguage() == 'textile' ? 'selected="true"' : '' %>>Textile</option>
-			<option value="confluence" <%= draft.getLanguage() == 'confluence' ? 'selected="true"' : '' %>>Confluence</option>
-			<option value="mediawiki" <%= draft.getLanguage() == 'mediaWiki' ? 'selected="true"' : '' %>>MediaWiki</option>
-			<option value="trac" <%= draft.getLanguage() == 'trac' ? 'selected="true"' : '' %>>Trac</option>
-			<option value="twiki" <%= draft.getLanguage() == 'twiki' ? 'selected="true"' : '' %>>TWiki</option>
-		</select><br />
-		<textarea name="source" cols="80" rows="25"><%= draft.getSource() %></textarea><br />
-		<input type="submit" value="Revise" />
+		Value 1:
+		<input name="value1" value=<%= value1 %> />
+	</p>
+	<p>
+		Value 2:
+		<input name="value2" value=<%= value2 %> />
+	</p>
+	<p>
+		<input type="submit" value="Multiply" />
 	</p>
 </form>
+<p class="note">
+	Result: <%= result.result %>
+</p>
+
 
 <% exampleFooter('RPC', 'Service'); %>
 <%& '/site/footer/' %>

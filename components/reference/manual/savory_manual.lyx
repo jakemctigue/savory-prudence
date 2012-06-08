@@ -4894,7 +4894,7 @@ We can now configure our resources in
 \begin_inset Quotes eld
 \end_inset
 
-/libraries/resource.js
+/libraries/resources.js
 \begin_inset Quotes erd
 \end_inset
 
@@ -4918,6 +4918,11 @@ document.executeOnce('/savory/service/rest/')
 \begin_layout Plain Layout
 
 resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
 \end_layout
 
 \begin_layout Plain Layout
@@ -5034,7 +5039,7 @@ In
 \begin_inset Quotes eld
 \end_inset
 
-/libraries/resource.js
+/libraries/resources.js
 \begin_inset Quotes erd
 \end_inset
 
@@ -6619,7 +6624,7 @@ target "http://threecrickets.com/javascript-api/?namespace=Prudence.Resources"
 
  makes it very easy to access your resources, whether internally or on a
  different node.
- See the APIdocumentation for full details, otherwise here we'll provide
+ See the API documentation for full details, otherwise here we'll provide
  you with a quick tutorial for using it with the REST Service.
 \end_layout
 
@@ -7114,8 +7119,50 @@ rs/4e057e94e799a23b0f581d7d/?human=true"
 RPC Service
 \end_layout
 
+\begin_layout Standard
+The RPC (Remote Procedure Call) Service provides robust, elegant support
+ for various versions of the 
+\begin_inset CommandInset href
+LatexCommand href
+name "JSON-RPC"
+target "http://groups.google.com/group/json-rpc/web/json-rpc-2-0"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset href
+LatexCommand href
+name "XML-RPC"
+target "http://www.xmlrpc.com/spec"
+
+\end_inset
+
+ specifications, including support for batch processing for JSON-RPC 2.0.
+\end_layout
+
+\begin_layout Standard
+In most cases, all you need to do is hookup your JavaScript functions to
+ a URI, and let the RPC Service do the rest!
+\end_layout
+
+\begin_layout Quote
+Is RPC a good idea? We're inclined to say: no.
+ REST is a much more scalable and robust pattern, all things considered.
+ REST uses all the power of HTTP to provide client-cacheable representations.
+ RPC, on the other hand, supports only HTTP POST, the only non-idempotent
+ HTTP operation.
+ However, RPC may be necessary to for communication with other services
+ and clients, so you might not have a choice.
+ And, sometimes, it's just the most straightforward, quick-and-dirty solution
+ to a problem.
+ Especially with the Savory RPC Service, it's so easy to just allow clients
+ to call functions on the server, that sometimes you might prefer it to
+ designing a RESTful URI-space.
+ So be it! Just make sure you understand the pros and cons of you choice.
+\end_layout
+
 \begin_layout Subsection
-Usage
+Setup
 \end_layout
 
 \begin_layout Standard
@@ -7128,6 +7175,970 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.RPC"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+First, let's configure the URI-space in your application's 
+\begin_inset Quotes eld
+\end_inset
+
+routing.js
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Add the following to app.routes and app.dispatchers:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/math/': {type: 'implicit', id: math'}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.dispatchers = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	javascript: {library: '/resources/'}
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can now configure our resources in 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resources.js
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/rpc/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var Math = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: function(x, y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return x * y
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	math: new Savory.RPC.Resource({namespaces: {Math: Math}})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And\SpecialChar \ldots{}
+ that's pretty much it! You can now call your methods using JSON-RPC
+ or XML-RPC.
+\end_layout
+
+\begin_layout Subsubsection
+Namespaces
+\end_layout
+
+\begin_layout Standard
+The key of the namespace is prefixed with a period before all method identifiers.
+ So, our method above would be identified as 
+\begin_inset Quotes eld
+\end_inset
+
+Math.multiply
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+However, if you do not want this prefix, you can use the special 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ key, which here means the root namespace:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	math: new Savory.RPC.Resource({'.': Math})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The method would now be identified simply as 
+\begin_inset Quotes eld
+\end_inset
+
+multiply
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+If you don't need the namespaces feature at all, you can use the following
+ shortcut (note the 
+\begin_inset Quotes eld
+\end_inset
+
+namespace
+\begin_inset Quotes erd
+\end_inset
+
+ key, singular):
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	math: new Savory.RPC.Resource({namespace: Math})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Long Form
+\end_layout
+
+\begin_layout Standard
+You have some more control over the exported functions, should you need
+ it.
+ The long form of creating namespaces is like so:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var Math = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		fn: function(x, y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			return x * y
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		arity: 2
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+artity
+\begin_inset Quotes erd
+\end_inset
+
+ key counts how many arguments the function requires.
+ If it's not there, the RPC Service will count them from the function spec.
+ However, this won't work if you access JavaScript 
+\begin_inset Quotes eld
+\end_inset
+
+arguments
+\begin_inset Quotes erd
+\end_inset
+
+ directly, hence this long form exists.
+\end_layout
+
+\begin_layout Subsubsection
+Scope
+\end_layout
+
+\begin_layout Standard
+When your function is called, the 
+\begin_inset Quotes eld
+\end_inset
+
+this
+\begin_inset Quotes erd
+\end_inset
+
+ will be automatically populated with the following keys:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+definition:
+\series default
+ Your long-form function definition (short-form function definitions will
+ be expanded into the long form)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+namespace:
+\series default
+ The original namespace object you supplied
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+resource:
+\series default
+ The Savory.RPC.Resource instance
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+conversation:
+\series default
+ The Prudence conversation of the call
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+call:
+\series default
+ The RPC call object, as sent from the client
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+method
+\begin_inset Quotes erd
+\end_inset
+
+ key is useful in that you can add anything you want to the method object.
+ For a rather silly example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var Math = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		fn: function(x, y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			return x * y * this.definition.multiplyAll
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		multiplyAll: 100
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+One special key is reserved: 
+\begin_inset Quotes eld
+\end_inset
+
+scope
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Use it to override 
+\begin_inset Quotes eld
+\end_inset
+
+this
+\begin_inset Quotes erd
+\end_inset
+
+ to be any value you desire:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var Math = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		fn: function(x, y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			return x * y * this
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		scope: 100
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If you are using JavaScript object oriented programming, you might want
+ 
+\begin_inset Quotes eld
+\end_inset
+
+this
+\begin_inset Quotes erd
+\end_inset
+
+ to always just be the namespace object itself.
+ In that case, you can use the 
+\begin_inset Quotes eld
+\end_inset
+
+objects
+\begin_inset Quotes erd
+\end_inset
+
+ key instead of the 
+\begin_inset Quotes eld
+\end_inset
+
+namespaces
+\begin_inset Quotes erd
+\end_inset
+
+ key when creating your Savory.RPC.Resource constructor.
+ It works the same way as a namespace except that the scope will be the
+ object itself for all method calls:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// This is a class
+\end_layout
+
+\begin_layout Plain Layout
+
+var Math = function(multiplyAll) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	this.multiplyAll = multiplyAll
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	this.multiply = function(x, y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return x * y * this.multiplyAll
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	math: new Savory.RPC.Resource({objects: {Math: new Math(100)}})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can mix 
+\begin_inset Quotes eld
+\end_inset
+
+namespaces
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+objects
+\begin_inset Quotes erd
+\end_inset
+
+ in the same constructor.
+ Also note that you can also use 
+\begin_inset Quotes eld
+\end_inset
+
+object
+\begin_inset Quotes erd
+\end_inset
+
+ (singular) in the same way as 
+\begin_inset Quotes eld
+\end_inset
+
+namespace
+\begin_inset Quotes erd
+\end_inset
+
+ (singular).
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Subsubsection
+Calling RPC with the API
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset CommandInset href
+LatexCommand href
+name "Prudence.Resources API"
+target "http://threecrickets.com/javascript-api/?namespace=Prudence.Resources"
+
+\end_inset
+
+ makes it very easy to access your resources, whether internally or on a
+ different node.
+ See the API documentation for full details, otherwise here we'll provide
+ you with a quick tutorial for using it with the RPC Service.
+\end_layout
+
+\begin_layout Standard
+Here's an example of an internal call:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/prudence/resources/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var result = Prudence.Resources.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+	uri: '/math/',
+\end_layout
+
+\begin_layout Plain Layout
+
+	internal: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+	method: 'post',
+\end_layout
+
+\begin_layout Plain Layout
+
+	mediaType: 'application/json',
+\end_layout
+
+\begin_layout Plain Layout
+
+	payload: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		type: 'json',
+\end_layout
+
+\begin_layout Plain Layout
+
+		value: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			jsonrpc: '2.0',
+\end_layout
+
+\begin_layout Plain Layout
+
+			method: 'Math.multiply',
+\end_layout
+
+\begin_layout Plain Layout
+
+			params: [2, 3],
+\end_layout
+
+\begin_layout Plain Layout
+
+			id: 'abc'
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+print(result.result)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Calling RPC with cURL
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset href
+LatexCommand href
+name "cURL"
+target "http://curl.haxx.se/"
+
+\end_inset
+
+ is an HTTP command line tool based on the cURL library, available for a
+ great many Unix-like operating systems as well as Windows.
+ It's especially useful for testing RESTful APIs.
+ Here's a quick tutorial to get you started with using cURL with the RPC
+ Service.
+\end_layout
+
+\begin_layout Standard
+First, let's create our payload.
+ With a text editor, create a file named 
+\begin_inset Quotes eld
+\end_inset
+
+rpc.json
+\begin_inset Quotes erd
+\end_inset
+
+ and paste this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"jsonrpc": "2.0",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"method": "Math.multiply",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"params": [2, 3],
+\end_layout
+
+\begin_layout Plain Layout
+
+	"id": "abc"
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can send a payload using the 
+\begin_inset Quotes eld
+\end_inset
+
+-d
+\begin_inset Quotes erd
+\end_inset
+
+ switch, which also sets the HTTP verb to POST.
+ When using 
+\begin_inset Quotes eld
+\end_inset
+
+-d
+\begin_inset Quotes erd
+\end_inset
+
+, you can also start your payload with 
+\begin_inset Quotes eld
+\end_inset
+
+@
+\begin_inset Quotes erd
+\end_inset
+
+ to signify that you want to send the contents of a file:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl -d @rpc.json "http://localhost:8080/savory-example/math/?human=true"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You should get this result:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"id": "abc",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"result": "6",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"error": null,
+\end_layout
+
+\begin_layout Plain Layout
+
+	"jsonrpc": "2.0"
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
