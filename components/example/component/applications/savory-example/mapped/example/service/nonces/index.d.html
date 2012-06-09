@@ -4,15 +4,16 @@
 <%
 
 document.executeOnce('/savory/service/nonces/')
+document.executeOnce('/prudence/resources/')
 
 if (conversation.request.method.name == 'POST') {
-	var nonce = conversation.form.get('nonce')
-	var valid = Savory.Nonces.check(nonce)
+	var form = Prudence.Resources.getForm(conversation, {nonce: 'string'})
+	var valid = Savory.Nonces.check(form.nonce)
 	if (valid) {
-		print('<p class="note">The nonce <b>{0}</b> was checked successfully. You will not be able to check it again.</p>'.cast(nonce))
+		print('<p class="note">The nonce <b>{0}</b> was checked successfully. You will not be able to check it again.</p>'.cast(form.nonce))
 	}
 	else {
-		print('<p class="note">The nonce <b>{0}</b> is invalid.</p>'.cast(nonce))
+		print('<p class="note">The nonce <b>{0}</b> is invalid.</p>'.cast(form.nonce))
 	}
 }
 

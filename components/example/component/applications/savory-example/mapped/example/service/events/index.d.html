@@ -4,6 +4,7 @@
 <%
 
 document.executeOnce('/savory/service/events/')
+document.executeOnce('/prudence/resources/')
 document.executeOnce('/prudence/logging/')
 
 Savory.Events.subscribe({
@@ -16,19 +17,23 @@ Savory.Events.subscribe({
 })
 
 if (conversation.request.method.name == 'POST') {
-	var async = conversation.form.get('async') == 'async' ? true : false
-	var distributed = conversation.form.get('distributed') == 'distributed' ? true : false
-	Prudence.Logging.getLogger().info('Firing event: async={0}, distributed={1}', async, distributed)
+	var form = Prudence.Resources.getForm(conversation, {
+		async: 'bool',
+		distributed: 'bool'
+	})
+	form.async = form.async || false
+	form.distributed = form.distributed || false 
+	Prudence.Logging.getLogger().info('Firing event: async={async}, distributed={distributed}', form)
 	Savory.Events.fire({
 		name: 'payments.successful',
-		async: async,
-		distributed: distributed,
+		async: form.async,
+		distributed: form.distributed,
 		context: {
 			username: 'Isaac Newton',
 			amount: '$123.45'
 		}
 	})
-	print('<p class="note">The event was fired, with <b>async={0}</b> and <b>distributed={1}</b>! Check the logs to see it in action.</p>'.cast(async, distributed))
+	print('<p class="note">The event was fired, with <b>async={async}</b> and <b>distributed={distributed}</b>! Check the logs to see it in action.</p>'.cast(form))
 }
 
 %>
@@ -46,10 +51,10 @@ if (conversation.request.method.name == 'POST') {
 
 <form method="post">
 	<p>
-		<input type="checkbox" name="async" value="async" /> Asynchronous
+		<input type="checkbox" name="async" value="true" /> Asynchronous
 	</p>
 	<p>
-		<input type="checkbox" name="distributed" value="distributed" /> Distributed (implies asynchronous, too)
+		<input type="checkbox" name="distributed" value="true" /> Distributed (implies asynchronous, too)
 	</p>
 	<p>
 		<input type="submit" value="Fire the event" />

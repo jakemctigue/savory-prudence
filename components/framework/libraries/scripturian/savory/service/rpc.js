@@ -19,6 +19,8 @@ document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/xml/')
 document.executeOnce('/sincerity/cryptography/')
 
+var Savory = Savory || {}
+
 /**
  * Export plain-old JavaScript methods to be called via XML-RPC, JSON-RPC and other
  * Remote Procedure Call standards. Also provides a client for very calling XML-RPC and
@@ -344,13 +346,16 @@ Savory.RPC = Savory.RPC || function() {
 	}
 
 	/**
-	 * 
+	 * An implementation of both JSON-RPC and XML-RPC.
+	 * Only supports HTTP POST, as per the spec.
+	 *
 	 * @class
 	 * @name Savory.RPC.Resource
 	 * @augments Savory.REST.Resource
 	 * 
 	 * @param config
-	 * @param {Object[]} config.namespaces
+	 * @param {Object[]} [config.namespaces] A dict of namespaces
+	 * @param {Object[]} [config.objects] A dict of objects
 	 */
 	Public.Resource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.RPC.Resource */

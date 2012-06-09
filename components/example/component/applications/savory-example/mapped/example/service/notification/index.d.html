@@ -4,19 +4,22 @@
 <%
 
 document.executeOnce('/savory/service/notification/')
+document.executeOnce('/prudence/resources/')
 
 if (conversation.request.method.name == 'POST') {
-	var notice = conversation.form.get('notice')
-	if (notice) {
-		var type = String(conversation.form.get('type'))
-		switch (type) {
+	var form = Prudence.Resources.getForm(conversation, {
+		notice: 'string',
+		type: 'string',
+		email: 'string',
+		channel: 'string'
+	}) 
+	if (form.notice) {
+		switch (form.type) {
 			case 'email':
-				var email = conversation.form.get('email')
-				Savory.Notification.queueForAddress('Email', 'tal.liron@gmail.com', {subject: 'A Test Message from the Savory Example Application', text: notice})
+				Savory.Notification.queueForAddress('Email', form.email, {subject: 'A Test Message from the Savory Example Application', text: form.notice})
 				break
 			case 'channel':
-				var channel = conversation.form.get('channel')
-				Savory.Notification.queueForChannel(channel, {subject: 'A Test Message from the Savory Example Application', text: notice})
+				Savory.Notification.queueForChannel(form.channel, {subject: 'A Test Message from the Savory Example Application', text: form.notice})
 				break
 		}
 		print('<p class="note">Queued!</p>')

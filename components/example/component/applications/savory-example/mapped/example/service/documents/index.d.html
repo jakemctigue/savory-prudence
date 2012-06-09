@@ -4,13 +4,16 @@
 <%
 
 document.executeOnce('/savory/service/documents/')
+document.executeOnce('/prudence/resources/')
 
 var draft = Savory.Documents.getDraft('4fc4457ae4b030c6611c072f')
 
 if (conversation.request.method.name == 'POST') {
-	var source = conversation.form.get('source')
-	var language = conversation.form.get('language')
-	draft.revise(source, language)
+	var form = Prudence.Resources.getForm(conversation, {
+		source: 'string',
+		language: 'string'
+	})
+	draft.revise(form.source, form.language)
 }
 
 var rendered = draft.render({

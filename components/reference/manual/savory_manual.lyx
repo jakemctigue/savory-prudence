@@ -2900,7 +2900,12 @@ var getResult = function(userId) {
 
 \begin_layout Plain Layout
 
-}.cache(cache, 10000, 'result.')
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+.cache(cache, 10000, 'result.')
 \end_layout
 
 \begin_layout Plain Layout

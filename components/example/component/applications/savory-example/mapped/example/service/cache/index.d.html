@@ -14,7 +14,8 @@ var cache = new Savory.Cache({name: 'result', logLevel: 'info'})
 var getResult = function(userId) {
 	Sincerity.JVM.sleep(1000)
 	return {userId: userId, randomValue: Math.random()}
-}.cache(cache, 10000, 'result.')
+}
+.cache(cache, 10000, 'result.')
 
 var start = java.lang.System.currentTimeMillis()
 var result = getResult(123)

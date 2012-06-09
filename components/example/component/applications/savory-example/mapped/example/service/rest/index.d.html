@@ -6,18 +6,22 @@
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/xml/')
+document.executeOnce('/sincerity/objects/')
 
 var params = {}
 
 var httpUri = conversation.reference.baseRef + 'data/users/4e057e94e799a23b0f581d7d/'
 
 if (conversation.request.method.name == 'POST') {
-	params.internal = conversation.form.get('internal') == 'true'
-	params.mediaType = params.internal ? 'application/java' : conversation.form.get('media')
+	Sincerity.Objects.merge(params, Prudence.Resources.getForm(conversation, {
+		internal: 'bool',
+		mediaType: 'string'
+	}))
 }
 
 if (params.internal) {
 	params.uri = '/data/users/4e057e94e799a23b0f581d7d/'
+	params.mediaType = 'application/java'
 }
 else {
 	params.uri = httpUri
@@ -56,7 +60,7 @@ var output = params.mediaType == 'application/xml' ? user.toXml(2) : Sincerity.J
 	</p>
 	<p>
 		Media type: (ignored if internal)
-		<select name="media">
+		<select name="mediaType">
 			<option value="application/json" <%= params.mediaType == 'application/json' ? 'selected="true"' : '' %>>application/json</option>
 			<option value="application/xml" <%= params.mediaType == 'application/xml' ? 'selected="true"' : '' %>>application/xml</option>
 		</select>
