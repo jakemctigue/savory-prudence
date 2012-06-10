@@ -14,6 +14,7 @@ app.routes = {
 			{type: 'staticWeb', root: sincerity.container.getLibrariesFile('web')}]}
 	],
 	'/math/': {type: 'implicit', id: 'math'},
+	'/shoppingcart/': {type: 'implicit', id: 'shoppingcart'},
 	'/data/users/{id}/': {type: 'implicit', id: 'users'},
 	'/data/users/': {type: 'implicit', id: 'users.plural'}
 }

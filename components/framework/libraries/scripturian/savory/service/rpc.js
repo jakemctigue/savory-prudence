@@ -432,8 +432,14 @@ Savory.RPC = Savory.RPC || function() {
 	    	var isBatch = false
 	    	var faultCode = null
 	    	var value = null
-	    	
-	    	var type = conversation.query.get('type') || conversation.locals.get('type')
+
+	    	var query = Prudence.Resources.getQuery(conversation, {
+	    		type: 'string',
+	    		human: 'bool'
+	    	})
+	    	query.human = query.human || false
+
+	    	var type = query.type || conversation.locals.get('type')
 	    	if (type == 'xml') {
 	    		isXml = true
 	    	}
@@ -697,12 +703,12 @@ Savory.RPC = Savory.RPC || function() {
 	    	    	results.push(result)
 	    		}
 	    	}
-	    	
+
 	    	if (isXml) {
 	    		if (results.length) {
 	    			// XML-RPC does not have a batch mode
 	    			var xml = Sincerity.XML.to({methodResponse: results[0]})
-	    			if (conversation.query.get('human') == 'true') {
+	    			if (query.human) {
 	    				xml = Sincerity.XML.humanize(xml)
 	    			}
 	    			return xml
@@ -711,10 +717,10 @@ Savory.RPC = Savory.RPC || function() {
 	    	else {
 	    		if (results.length) {
 	    			if (isBatch) {
-	    				return Sincerity.JSON.to(results, conversation.query.get('human') == 'true')
+	    				return Sincerity.JSON.to(results, query.human)
 	    			}
 	    			else {
-	    				return Sincerity.JSON.to(results[0], conversation.query.get('human') == 'true')
+	    				return Sincerity.JSON.to(results[0], query.human)
 	    			}
 	    		}
 	    	}

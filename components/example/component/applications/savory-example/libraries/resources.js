@@ -1,6 +1,8 @@
 
 document.executeOnce('/savory/service/rest/')
 document.executeOnce('/savory/service/rpc/')
+document.executeOnce('/savory/integration/frontend/sencha/')
+document.executeOnce('/sincerity/jvm/')
 
 var Math = {
 	multiply: {
@@ -11,6 +13,18 @@ var Math = {
 			return x * y
 		}
 	}
+}
+
+var ShoppingCart = function() {
+	this.addItem = function(item) {
+		return this.items.add(item)
+	}
+
+	this.getItems = function() {
+		return Sincerity.JVM.fromCollection(this.items)
+	}
+	
+	this.items = Sincerity.JVM.newSet()
 }
 
 /*
@@ -26,15 +40,8 @@ var Math = new MathClass(100)
 */
 
 resources = {
-	hello: {
-		handleInit: function(conversation) {
-		    conversation.addMediaTypeByName('text/plain')
-		},
-		handleGet: function(conversation) {
-			return 'hello'
-		}
-	},
 	math: new Savory.RPC.Resource({namespaces: {Math: Math}}),
+	shoppingcart: new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
 	users: new Savory.REST.MongoDbResource({name: 'users'}),
 	'users.plural': new Savory.REST.MongoDbResource({name: 'users', plural: true})
 }

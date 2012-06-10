@@ -1,0 +1,101 @@
+<%{{ head %>
+	<!-- Ext JS Debug -->
+	<link rel="stylesheet" type="text/css" href="<%= conversation.pathTobase %>/style/ext-js/style/css/ext-all-gray.css" id="ext-theme" />
+	<script type="text/javascript" src="<%= conversation.pathTobase %>/scripts/ext-js/ext-all.js"></script>
+<%}}%>
+<%& '/site/header/' %>
+<% exampleHeader('Sencha', 'Integration'); %>
+
+<h1>Sencha Integration: Ext Direct</h1>
+
+<%
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+
+%>
+
+<p>
+	We've implemented a server-side stored shopping cart. Nothing is stored on the client here,
+	and it's accessed with a very convenient client-side API. The server uses a hashset to make
+	sure items cannot be added more than once.
+</p>
+<h4>Current Shopping Cart Contents</h4>
+<p id="shopping-cart">
+</p>
+<p>
+	New item: <input id="item" value="elephant" />
+	<button id="add-item" disabled="true">Add to shopping cart</button>
+	<button id="get-items" disabled="true">Refresh shopping cart</button>
+</p>
+<p>
+	Try using Firebug to see all the communication with the server. It's neat!
+</p>
+
+<% exampleFooter('Sencha', 'Integration'); %>
+<%{{ foot %>
+<script type="text/javascript">
+Ext.onReady(function() {
+	function refresh() {
+		Savory.ShoppingCart.getItems(function(provider, response) {
+			if (response.type == 'exception') {
+				Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
+			}
+			else {
+				var items = response.result;
+				Ext.fly('shopping-cart').update(items.join('; '));
+			}
+		});
+	}
+
+	function init() {
+		refresh();
+		
+		Ext.fly('add-item')
+		.set({disabled: null}, false)
+		.on('click', function() {
+			var item = Ext.fly('item').getValue();
+			if (!item) {
+				Ext.Msg.alert('Shopping Cart', 'Enter an item first!');
+				return;
+			}
+			Savory.ShoppingCart.addItem(item, Ext.bind(function(provider, response) {
+				if (response.type == 'exception') {
+					Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
+				}
+				else {
+					if (response.result) {
+						Ext.Msg.alert('Shopping Cart', 'Added "' + this + '" to your cart!');
+						refresh();
+					}
+					else {
+						Ext.Msg.alert('Shopping Cart', 'You already have "' + this + '" in your cart!');
+					}
+				}
+			}, item));
+		});
+		
+		Ext.fly('get-items')
+		.set({disabled: null}, false)
+		.on('click', refresh);
+	}
+
+	var url = '<%= conversation.pathToBase %>/shoppingcart/';
+	Ext.Ajax.request({
+		url: url,
+		method: 'GET',
+		disableCaching: false,
+		success: function(response) {
+			var provider = Ext.decode(response.responseText);
+			provider.type = 'remoting';
+			provider.url = url;
+			Ext.Direct.addProvider(provider);
+			init(provider);
+		},
+		failure: function(response) {
+			console.log(response)
+		}
+	});
+});
+</script>
+<%}}%>
+<%& '/site/footer/' %>

@@ -10,8 +10,9 @@ document.include('/example/footer/')
 	<meta name="description" content="A scalable Prudence/MongoDB web development framework for JavaScript." />
 	<meta name="keywords" content="Savory, Prudence, MongoDB, Three Crickets, Scalable, Scalability, REST, RESTful, Restlet, JVM, Java Virtual Machine, Java, JavaScript, Rhino, No-SQL, NoSQL" />
 	<link rel="shortcut icon" href="http://threecrickets.com/media/three-crickets/savory.ico" />
-
+	<%== head %>
 	<% if(null !== conversation.locals.get('extJs')) { document.executeOnce('/savory/integration/frontend/sencha/'); print(Savory.Sencha.extJsHead(conversation)); } %>
+	<!--  Soft Crickets (needs to be *after* Ext JS CSS, if you're using it) -->
 	<link rel="stylesheet" type="text/css" href="<%= conversation.pathToBase %>/style/three-crickets/soft-cricket.css" />
 
 	<!-- Ubuntu font -->
