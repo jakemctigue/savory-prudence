@@ -732,7 +732,7 @@ Savory.RPC = Savory.RPC || function() {
 		//
 
 		function findMethod(methodName) {
-			var namespace, methods, name
+			var namespace, name
 			var split = methodName.split('.', 2)
 			if (split.length == 2) {
 				namespace = this.namespaces[split[0]]

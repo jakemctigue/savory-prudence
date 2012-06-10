@@ -53,7 +53,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	    Public._inherit = Savory.RPC.Resource
 
 	    /** @ignore */
-	    Public._configure = ['name', 'namespace', 'namespaces', 'object', 'objects']
+	    Public._configure = ['name', 'namespaces', 'objects']
 
 	    /** @ignore */
 	    Public._construct = function(config) {
@@ -148,80 +148,62 @@ Savory.Sencha = Savory.Sencha || function() {
 	    		var call = calls[c]
 
 	    		var result
-	    		for (var n in this.namespaces) {
-	    			if (call.action == n) {
-	    				var methods = this.namespaces[n]
-	    				for (var m in methods) {
-	    					var method = methods[m]
-	    					if (call.method == m) {
-	    						if (call.data && (call.data.length > method.arity)) {
-	    							result = {
-	    								type: 'exception',
-	    								tid: call.tid,
-	    								action: call.action,
-	    								method: call.method,
-	    								message: 'Too many arguments for method: {action}.{method}'.cast(call)
-	    							}
-	    						}
-	    						else {
-	    							var fn = method.fn
-	    							if (fn) {
-	    								try {
-		    								var context = method.scope ? method.scope : {
-		    									namespace: n,
-		    									definition: method,
-		    									resource: this,
-		    									conversation: conversation,
-		    									call: call
-		    								}
-	    									result = fn.apply(context, call.data)
-	    									result = {
-	    										type: 'rpc',
-	    										tid: call.tid,
-	    										action: call.action,
-	    										method: call.method,
-	    										result: result
-	    									}
-	    								}
-	    								catch (x) {
-	    									var details = Sincerity.Rhino.getExceptionDetails(x)
-	    									result = {
-	    										type: 'exception',
-	    										tid: call.tid,
-	    										action: call.action,
-	    										method: call.method,
-	    										message: details.message,
-	    										where: details.stackTrace
-	    									}
-	    								}
-	    							}
-	    							else {
-	    								result = {
-	    									type: 'exception',
-	    									tid: call.tid,
-	    									action: call.action,
-	    									method: call.method,
-	    									message: 'No function for: {action}.{method}'.cast(call)
-	    								}
-	    							}
-	    						}
-	    						
-	    						break
-	    					}
-	    				}
-	    	
-	    				if (!result) {
-	    					result = {
-	    						type: 'exception',
-	    						tid: call.tid,
-	    						action: call.action,
-	    						method: call.method,
-	    						message: 'Unsupported method: {action}.{method}'.cast(call)
-	    					}
-	    				}
-	    				
-	    				break
-	    			}
+	    		var namespace = this.namespaces[call.action]
+	    		if (namespace) {
+	    			var method = namespace[call.method]
+	    			if (method) {
+						if (call.data && (call.data.length > method.arity)) {
+							result = {
+								type: 'exception',
+								tid: call.tid,
+								action: call.action,
+								method: call.method,
+								message: 'Too many arguments for method: {action}.{method}'.cast(call)
+							}
+						}
+						else {
+							var fn = method.fn
+							if (fn) {
+								try {
+    								var context = method.scope ? method.scope : {
+    									namespace: n,
+    									definition: method,
+    									resource: this,
+    									conversation: conversation,
+    									call: call
+    								}
+									result = fn.apply(context, call.data)
+									result = {
+										type: 'rpc',
+										tid: call.tid,
+										action: call.action,
+										method: call.method,
+										result: result
+									}
+								}
+								catch (x) {
+									var details = Sincerity.Rhino.getExceptionDetails(x)
+									result = {
+										type: 'exception',
+										tid: call.tid,
+										action: call.action,
+										method: call.method,
+										message: details.message,
+										where: details.stackTrace
+									}
+								}
+							}
+							else {
+								result = {
+									type: 'exception',
+									tid: call.tid,
+									action: call.action,
+									method: call.method,
+									message: 'No function for: {action}.{method}'.cast(call)
+								}
+							}
+						}
+    				}
 	    		}
 	    		
 	    		if (!result) {
