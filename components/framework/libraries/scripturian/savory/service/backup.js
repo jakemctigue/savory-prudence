@@ -17,6 +17,7 @@ document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/files/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/sincerity/localization/')
+document.executeOnce('/sincerity/templates/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}

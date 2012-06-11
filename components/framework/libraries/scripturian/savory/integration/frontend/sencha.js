@@ -13,6 +13,7 @@
 
 document.executeOnce('/savory/service/rpc/')
 document.executeOnce('/prudence/resources/')
+document.executeOnce('/sincerity/templates/')
 
 var Savory = Savory || {}
 
@@ -31,11 +32,22 @@ var Savory = Savory || {}
  * @version 1.0
  */
 Savory.Sencha = Savory.Sencha || function() {
-	/** @exports Public as Savory.Sencha */
+	/** @result Public as Savory.Sencha */
     var Public = {}
+    
+    Public.extJsHead = function(conversation, theme) {
+    	var filler = {
+    		pathToBase: conversation.pathToBase,
+    		theme: theme || 'ext-all-gray'
+    	}
+    	println('<!-- Ext JS -->');
+    	println('<link rel="stylesheet" type="text/css" href="{pathToBase}/style/ext-js/style/css/{theme}.css" id="ext-theme" />'.cast(filler));
+    	println('<script type="text/javascript" src="{pathToBase}/scripts/ext-js/ext-all.js"></script>'.cast(filler));
+    }
 
 	/**
-	 * An implementation of Ext Direct.
+	 * An implementation of Ext Direct, an RPC protocol supported by Ext JS
+	 * and Sencha Touch.
 	 *
 	 * @class
 	 * @name Savory.Sencha.DirectResource
@@ -46,7 +58,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param {Object[]} [config.objects] A dict of objects
 	 */
 	Public.DirectResource = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.Sencha.DirectResource */
+		/** @result Public as Savory.Sencha.DirectResource */
 	    var Public = {}
 
 	    /** @ignore */
@@ -71,27 +83,34 @@ Savory.Sencha = Savory.Sencha || function() {
 	    		namespace: 'string',
 	    		human: 'bool'
 	    	})
-
-	    	var exports = {actions: {}}
+	    	
+	    	// Remove query from reference
+	    	var reference = new org.restlet.data.Reference(conversation.reference)
+	    	reference.query = null
+	    	
+	    	var result = {
+	    		type: 'remoting',
+	    		url: String(reference),
+	    		actions: {}
+	    	}
 	    	if (this.name) {
-	    		exports.namespace = this.name
+	    		result.namespace = this.name
 	    	}
 	    	
 	    	for (var n in this.namespaces) {
 	    		var methods = this.namespaces[n]
-	    		var action = exports.actions[n] = []
+	    		var action = result.actions[n] = []
 	    		for (var m in methods) {
 	    			var method = methods[m]
 	    			var directMethod = {
 	    				name: m,
 	    				len: method.arity
 	    			}
-	    			Sincerity.Objects.merge(directMethod, method)
 	    			action.push(directMethod)
 	    		}
 	    	}
 	    	
-	    	return Sincerity.JSON.to(exports, query.human || false)
+	    	return Sincerity.JSON.to(result, query.human || false)
 	    }
 	    
 	    Public.handlePost = function(conversation) {
@@ -132,8 +151,6 @@ Savory.Sencha = Savory.Sencha || function() {
 	    		calls = Prudence.Resources.getEntity(conversation, 'json')
 	    	}
 
-	    	//application.logger.info(Sincerity.JSON.to(calls))
-	    	
 	    	calls = Sincerity.Objects.array(calls)
 	    	for (var c in calls) {
 	    		var call = calls[c]

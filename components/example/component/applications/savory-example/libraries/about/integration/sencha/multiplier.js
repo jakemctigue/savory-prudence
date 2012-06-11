@@ -12,8 +12,9 @@
 //
 
 document.executeOnce('/savory/service/internationalization/')
-document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/prudence/resources/')
+document.executeOnce('/sincerity/jvm/')
+document.executeOnce('/sincerity/templates/')
 
 var multiplierForm = multiplierForm || new Prudence.Resources.Form({fields: {
 	first: {type: 'number', label: 'A number', required: true},

@@ -1,37 +1,34 @@
 <%{{ head %>
-	<!-- Ext JS Debug -->
-	<link rel="stylesheet" type="text/css" href="<%= conversation.pathTobase %>/style/ext-js/style/css/ext-all-gray.css" id="ext-theme" />
-	<script type="text/javascript" src="<%= conversation.pathTobase %>/scripts/ext-js/ext-all.js"></script>
+<%
+document.executeOnce('/savory/integration/frontend/sencha/')
+Savory.Sencha.extJsHead(conversation)
+%>
 <%}}%>
 <%& '/site/header/' %>
-<% exampleHeader('Sencha', 'Integration'); %>
-
-<h1>Sencha Integration: Ext Direct</h1>
-
-<%
-
-document.executeOnce('/savory/integration/frontend/sencha/')
-
-%>
+<% exampleHeader('Sencha', 'Integration', 'Ext Direct'); %>
 
 <p>
-	We've implemented a server-side stored shopping cart. Nothing is stored on the client here,
-	and it's accessed with a very convenient client-side API. The server uses a hashset to make
-	sure items cannot be added more than once.
+	We've implemented a server-side stored shopping cart, that is thread-safe for concurrent access from
+	multiple users. The shopping cart is updated using JavaScript calls, <i>not</i> HTML forms (though note
+	that Ext Direct will also handle HTML forms). To appreciate what's going on in this demo, We recommend
+	using <a href="http://getfirebug.com/">Firebug</a> to see all the communication with the server.
 </p>
-<h4>Current Shopping Cart Contents</h4>
-<p id="shopping-cart">
+<p>
+	Add the magic item "magic" in order to see an exception thrown. Also try adding the same item twice:
+	you will get an error message.
+</p>
+<p>
+	A nice little Ext JS trick used in this example is that we actually disable the buttons until we
+	properly initialize communication with the server. This allows for some more robustness.
+</p>
+<p id="shopping-cart" class="note">
+	<i>Loading...</i>
 </p>
 <p>
 	New item: <input id="item" value="elephant" />
 	<button id="add-item" disabled="true">Add to shopping cart</button>
 	<button id="get-items" disabled="true">Refresh shopping cart</button>
 </p>
-<p>
-	Try using Firebug to see all the communication with the server. It's neat!
-</p>
-
-<% exampleFooter('Sencha', 'Integration'); %>
 <%{{ foot %>
 <script type="text/javascript">
 Ext.onReady(function() {
@@ -42,7 +39,7 @@ Ext.onReady(function() {
 			}
 			else {
 				var items = response.result;
-				Ext.fly('shopping-cart').update(items.join('; '));
+				Ext.fly('shopping-cart').update('<b>Contents:</b> ' + items.join('; '));
 			}
 		});
 	}
@@ -79,23 +76,22 @@ Ext.onReady(function() {
 		.on('click', refresh);
 	}
 
-	var url = '<%= conversation.pathToBase %>/shoppingcart/';
 	Ext.Ajax.request({
-		url: url,
+		url: '<%= conversation.pathToBase %>/shoppingcart/',
 		method: 'GET',
 		disableCaching: false,
 		success: function(response) {
 			var provider = Ext.decode(response.responseText);
-			provider.type = 'remoting';
-			provider.url = url;
 			Ext.Direct.addProvider(provider);
-			init(provider);
+			init();
 		},
 		failure: function(response) {
-			console.log(response)
+			console.log(response);
 		}
 	});
 });
 </script>
 <%}}%>
+
+<% exampleFooter('Sencha', 'Integration', 'Ext Direct'); %>
 <%& '/site/footer/' %>

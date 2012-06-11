@@ -8615,11 +8615,66 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.PayPal"
 \end_layout
 
 \begin_layout Section
-Ext JS and Sencha Touch Integration
+Sencha Integration: Ext Direct
+\end_layout
+
+\begin_layout Standard
+Savory makes it trivial to support 
+\begin_inset CommandInset href
+LatexCommand href
+name "Ext Direct"
+target "http://www.sencha.com/products/extjs/extdirect"
+
+\end_inset
+
+, Sencha's straightforward RPC protocol.
+ Ext Direct it has excellent support in Ext JS and Sencha Touch: the frameworks
+ generate a client-side namespace for you with asynchronous methods equivalent
+ to those on the server.
+ All you have to do is call them! Operations are batched for maximum efficiency,
+ and errors are handled as elegantly as can be.
+\end_layout
+
+\begin_layout Standard
+Savory actually takes Ext Direct one step ahead in letting you automatically
+ generate the API configuration on the server.
+ A 
+\begin_inset Quotes eld
+\end_inset
+
+GET
+\begin_inset Quotes erd
+\end_inset
+
+ to the resource will retrieve the JSON needed to configure the client-side
+ provider.
+ We show this in detail under 
+\begin_inset Quotes eld
+\end_inset
+
+Usage,
+\begin_inset Quotes erd
+\end_inset
+
+ below.
+\end_layout
+
+\begin_layout Standard
+Ext Direct's functionality is practically identical to that 
+\begin_inset CommandInset href
+LatexCommand href
+name "JSON-RPC"
+target "http://groups.google.com/group/json-rpc/web/json-rpc-2-0"
+
+\end_inset
+
+, but the protocol is incompatible.
+ It may be unfortunate that Sencha decided not to use that better-known
+ protocol, but in any case Savory supports both.
 \end_layout
 
 \begin_layout Subsection
-Usage
+Setup
 \end_layout
 
 \begin_layout Standard
@@ -8631,56 +8686,518 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.Sencha"
 
 \end_inset
 
+ and also for 
+\begin_inset CommandInset href
+LatexCommand href
+name "Savory.RPC"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.RPC"
+
+\end_inset
+
 .
 \end_layout
 
+\begin_layout Standard
+Ext Direct setup is almost identical to RPC Service setup, so make sure
+ you read the section there.
+\end_layout
+
+\begin_layout Standard
+One small difference is in how Ext Direct handles namespaces.
+ First of all, you cannot have an empty namespace (the 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ namespace in JSON-RPC).
+ And, second, you can optionally set up a client-side namespace, using the
+ 
+\begin_inset Quotes eld
+\end_inset
+
+name
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+ Here's an example, similar to the one for the RPC Service:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var Math = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: function(x, y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return x * y
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	math: new Savory.Sencha.DirectResource({name: 'MyApp', namespaces: {Math:
+ Math}})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
-Ext Direct
+Usage
+\end_layout
+
+\begin_layout Subsubsection
+Calling from Ext JS
 \end_layout
 
 \begin_layout Standard
-<a href="http://www.sencha.com/products/extjs/extdirect">Ext Direct</a> is
- Ext JS's super straightforward RPC mechanism.
- It generates a client-side namespace for you full of asynchronous methods,
- and all you have to do is call them.
- Operations are batched for maximum efficiency, and errors are handled as
- elegantly as can be.
+See the Ext JS documentation for full details on the client-side API.
+ Otherwise, here's a quick tutorial, which also shows you how to fetch the
+ provider configuration from the resource.
 \end_layout
 
 \begin_layout Standard
-With Savory, you get a seamless flow from client to server and back again,
- because you're always in JavaScript: the client call and the server function
- definition match exactly.
- If you close your eyes, you can even imagine that the client is calling
- the server function directly.
+Here's an example of a dynamic web page, say 
+\begin_inset Quotes eld
+\end_inset
+
+direct.d.html
+\begin_inset Quotes erd
+\end_inset
+
+:
 \end_layout
 
-\begin_layout Quote
-Ext Direct is convenient and elegant but, like all web RPC mechanisms, it
- works by tunneling through HTTP, instead of working fully with it.
- That means that you don't get the advantages of conditional HTTP: if you
- call the same Ext Direct method twice, you will generate an action on the
- server.
- Logically, it's what you want happening with a method call: such calls
- are always 
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+Savory.Sencha.extJsHead(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+%> 
+\end_layout
+
+\begin_layout Plain Layout
+
+</head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<script>
+\end_layout
+
+\begin_layout Plain Layout
+
+function init() {
+\end_layout
+
+\begin_layout Plain Layout
+
+	MyApp.Math.multiply(2, 3, function(provider, response) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (response.type == 'exception') {
+\end_layout
+
+\begin_layout Plain Layout
+
+			Ext.Msg.alert('Multiplication', 'Exception: ' + response.message);
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		else {
+\end_layout
+
+\begin_layout Plain Layout
+
+			Ext.Msg.alert('Multiplication', response.result);
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	});	
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Ext.Ajax.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+	url: '<%= conversation.pathToBase %>/math/',
+\end_layout
+
+\begin_layout Plain Layout
+
+	method: 'GET',
+\end_layout
+
+\begin_layout Plain Layout
+
+	disableCaching: false,
+\end_layout
+
+\begin_layout Plain Layout
+
+	success: function(response) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		var provider = Ext.decode(response.responseText);
+\end_layout
+
+\begin_layout Plain Layout
+
+		Ext.Direct.addProvider(provider);
+\end_layout
+
+\begin_layout Plain Layout
+
+		init();
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	failure: function(response) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		console.log(response);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+});
+\end_layout
+
+\begin_layout Plain Layout
+
+</script>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Some notes:
+\end_layout
+
+\begin_layout Itemize
+Make sure you understand the difference between the 
+\emph on
+server
+\emph default
+-side JavaScript (between the 
 \begin_inset Quotes eld
 \end_inset
 
-non-idempotent.
+<%
 \begin_inset Quotes erd
 \end_inset
 
- However, if your intention is to use Ext Direct in order to access data,
- it is strongly recommended that you use REST instead: even a simple Ext.Ajax.requ
-est call (with cache override disabled: 
+ and 
 \begin_inset Quotes eld
 \end_inset
 
-disableCaching: false
+%>
 \begin_inset Quotes erd
 \end_inset
 
-) may scale better.
+ delimiters) and the 
+\emph on
+client
+\emph default
+-side JavaScript (between the 
+\begin_inset Quotes eld
+\end_inset
+
+<script>
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+</script>
+\begin_inset Quotes erd
+\end_inset
+
+ delimiters)!
+\end_layout
+
+\begin_layout Itemize
+We are using 
+\begin_inset Quotes eld
+\end_inset
+
+Ext.Ajax.request
+\begin_inset Quotes erd
+\end_inset
+
+ to do a 
+\begin_inset Quotes eld
+\end_inset
+
+GET
+\begin_inset Quotes erd
+\end_inset
+
+ on our resource.
+ It will return the JSON needed for the call to 
+\begin_inset Quotes eld
+\end_inset
+
+Ext.Direct.addProvider
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Here's how it would look in our example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"actions": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"Math": [{
+\end_layout
+
+\begin_layout Plain Layout
+
+			"name": "multiply",
+\end_layout
+
+\begin_layout Plain Layout
+
+			"len": 2
+\end_layout
+
+\begin_layout Plain Layout
+
+		}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	"namespace": "MyApp"
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+You can avoid that 
+\begin_inset Quotes eld
+\end_inset
+
+Ext.Ajax.request
+\begin_inset Quotes erd
+\end_inset
+
+ call by simply copying and pasting that JSON into your client-side source
+ code.
+ This extra call is simply a convenience allowing you to modify the server-side
+ code without worrying about also having to update the client-side code
+ accordingly.
+ You might prefer to keep this extra call during development, and then freeze
+ it for production code.
+\end_layout
+
+\begin_layout Itemize
+We are disabling the default 
+\begin_inset Quotes eld
+\end_inset
+
+disableCaching
+\begin_inset Quotes erd
+\end_inset
+
+ mode in 
+\begin_inset Quotes eld
+\end_inset
+
+Ext.Ajax.request
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Ext JS disabled caching by default in order to better deal with servers
+ that do not handle REST properly.
+ Since Prudence does this for us, there's no reason to avoid client-side
+ caching if it's possible.
+\end_layout
+
+\begin_layout Itemize
+The last argument for any Ext Direct method is a callback that is called
+ when the server returns a response.
+ It's cumbersome, but that's the price you pay for asynchronous remote calls!
+ Also note that you want to properly handle server and network failures.
+\end_layout
+
+\begin_layout Subsubsection
+Calling by HTML Forms
+\end_layout
+
+\begin_layout Standard
+Ext Direct is easiest to use via Ext JS's or Sencha Toucher's provider API,
+ as in the example above.
+ However, the Ext Direct specification supports regular HTML forms, likely
+ in order to make it easier to call your server from other frameworks.
+\end_layout
+
+\begin_layout Standard
+TODO: example
 \end_layout
 
 \begin_layout Section

@@ -5,6 +5,7 @@
 
 document.executeOnce('/savory/service/nonces/')
 document.executeOnce('/prudence/resources/')
+document.executeOnce('/sincerity/templates/')
 
 if (conversation.request.method.name == 'POST') {
 	var form = Prudence.Resources.getForm(conversation, {nonce: 'string'})

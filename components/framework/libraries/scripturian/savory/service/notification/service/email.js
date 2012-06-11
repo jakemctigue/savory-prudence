@@ -15,6 +15,7 @@ document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/mail/')
 document.executeOnce('/sincerity/localization/')
 document.executeOnce('/sincerity/objects/')
+document.executeOnce('/sincerity/templates/')
 
 Savory = Savory || {Notification: {}}
 

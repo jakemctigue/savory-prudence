@@ -14,6 +14,7 @@
 document.executeOnce('/savory/service/linkback/')
 document.executeOnce('/sincerity/xml/')
 document.executeOnce('/sincerity/rhino/')
+document.executeOnce('/sincerity/templates/')
 document.executeOnce('/prudence/resources/')
 
 var trackbackSuccessResponse = '' +

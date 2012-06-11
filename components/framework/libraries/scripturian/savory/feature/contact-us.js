@@ -17,10 +17,10 @@ document.executeOnce('/savory/service/notification/')
 document.executeOnce('/savory/service/authentication/')
 document.executeOnce('/savory/service/nonces/')
 document.executeOnce('/savory/integration/backend/re-captcha/')
+document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/mail/')
 document.executeOnce('/sincerity/objects/')
-document.executeOnce('/prudence/resources/')
 
 var Savory = Savory || {}
 

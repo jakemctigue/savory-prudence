@@ -17,6 +17,9 @@ var Math = {
 
 var ShoppingCart = function() {
 	this.addItem = function(item) {
+		if (item == 'magic') {
+			throw 'You\'re trying to add the \'magic\' item!'
+		}
 		return this.items.add(item)
 	}
 
@@ -24,7 +27,7 @@ var ShoppingCart = function() {
 		return Sincerity.JVM.fromCollection(this.items)
 	}
 	
-	this.items = Sincerity.JVM.newSet()
+	this.items = Sincerity.JVM.newSet(true)
 }
 
 /*

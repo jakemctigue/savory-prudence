@@ -13,6 +13,7 @@
 
 document.executeOnce('/savory/integration/backend/open-id/')
 document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/templates/')
 document.executeOnce('/prudence/resources/')
 
 Savory = Savory || {Authentication: {}}
