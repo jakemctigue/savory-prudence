@@ -1,7 +1,7 @@
 //
-// This file is part of the Savory Framework for Prudence
+// This file is part of the Savory Framework
 //
-// Copyright 2011 Three Crickets LLC.
+// Copyright 2011-2012 Three Crickets LLC.
 //
 // The contents of this file are subject to the terms of the LGPL version 3.0:
 // http://www.gnu.org/copyleft/lesser.html
@@ -201,7 +201,7 @@ Ext.define('Savory.data.writer.ExtendedJson', {
  */
 Ext.define('Savory.data.proxy.Rest', {
 	alias: 'proxy.savory',
-	extend: 'Ext.data.proxy.Rest',
+	extend: 'Ext.data.proxy.Ajax',
 
 	constructor: function(config) {
 		config = Ext.apply({
@@ -214,14 +214,18 @@ Ext.define('Savory.data.proxy.Rest', {
 			reader: 'extended-json',
 			writer: 'extended-json',
 			noCache: false,
-			appendId: false,
+			//appendId: false,
 			headers: {
 				Accept: 'application/json'
+			},
+			extraParams: {
+				filter: 'stringid'
 			}
 		}, config);
 		
 		this.callParent([config]);
 		
+		/*
 		this.on('exception', function(proxy, response, operation) {
 			// Ext JS 4.0.0 does not handle this exception!
 			switch (operation.action) {
@@ -240,12 +244,34 @@ Ext.define('Savory.data.proxy.Rest', {
 					break;
 			}
 		});
+		*/
 		
 		// We need to call these explicitly for when there is no model
 		this.setReader(this.reader);
 		this.setWriter(this.writer);
 	},
-	
+
+	buildUrl: function(request) {
+		var
+		me        = this,
+		operation = request.operation,
+		records   = operation.records || [],
+		record    = records[0],
+		format    = me.format,
+		url       = me.getUrl(request),
+		id        = record ? record.getId() : operation.id;
+		
+		if (id) {
+			if (!url.match(/\/$/)) {
+				url += '/';
+			}
+			url += id + '/';
+        }
+		request.url = url;
+		return me.callParent(arguments);
+	}
+
+	/*
 	setModel: function(model, setOnStore) {
 		this.callParent([model, setOnStore]);
 		
@@ -255,6 +281,7 @@ Ext.define('Savory.data.proxy.Rest', {
 			this.metaStore.model = model;
 		}
 	}
+	*/
 });
 
 /**

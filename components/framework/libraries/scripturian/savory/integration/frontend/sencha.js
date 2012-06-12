@@ -1,7 +1,7 @@
 //
-// This file is part of the Savory Framework for Prudence
+// This file is part of the Savory Framework
 //
-// Copyright 2011 Three Crickets LLC.
+// Copyright 2011-2012 Three Crickets LLC.
 //
 // The contents of this file are subject to the terms of the LGPL version 3.0:
 // http://www.gnu.org/copyleft/lesser.html
@@ -43,6 +43,7 @@ Savory.Sencha = Savory.Sencha || function() {
     	println('<!-- Ext JS -->');
     	println('<link rel="stylesheet" type="text/css" href="{pathToBase}/style/ext-js/style/css/{theme}.css" id="ext-theme" />'.cast(filler));
     	println('<script type="text/javascript" src="{pathToBase}/scripts/ext-js/ext-all.js"></script>'.cast(filler));
+    	println('<script type="text/javascript" src="{pathToBase}/scripts/savory/integration/ext-js.js"></script>'.cast(filler));
     }
 
 	/**
@@ -65,7 +66,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	    Public._inherit = Savory.RPC.Resource
 
 	    /** @ignore */
-	    Public._configure = ['name', 'namespaces', 'objects']
+	    Public._configureOnly = ['name', 'namespaces', 'objects']
 
 	    /** @ignore */
 	    Public._construct = function(config) {
@@ -84,13 +85,14 @@ Savory.Sencha = Savory.Sencha || function() {
 	    		human: 'bool'
 	    	})
 	    	
-	    	// Remove query from reference
-	    	var reference = new org.restlet.data.Reference(conversation.reference)
-	    	reference.query = null
+	    	// Remove query from URL
+	    	var url = new org.restlet.data.Reference(conversation.reference)
+	    	url.query = null
+	    	url = String(url)
 	    	
 	    	var result = {
 	    		type: 'remoting',
-	    		url: String(reference),
+	    		url: url,
 	    		actions: {}
 	    	}
 	    	if (this.name) {

@@ -8615,6 +8615,34 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.PayPal"
 \end_layout
 
 \begin_layout Section
+Sencha Integration: Grids
+\end_layout
+
+\begin_layout Standard
+Hola!
+\end_layout
+
+\begin_layout Standard
+This is good.
+\end_layout
+
+\begin_layout Subsection
+Setup
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Sencha"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Sencha"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
 Sencha Integration: Ext Direct
 \end_layout
 

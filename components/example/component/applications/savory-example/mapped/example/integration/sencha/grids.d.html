@@ -1,0 +1,72 @@
+<%{{ head %>
+<%
+document.executeOnce('/savory/integration/frontend/sencha/')
+Savory.Sencha.extJsHead(conversation)
+%>
+<%}}%>
+<%& '/site/header/' %>
+<% exampleHeader('Sencha', 'Integration', 'Grids'); %>
+
+<p>
+	Grids!
+</p>
+<div id="grid-mongo-db">
+</div>
+
+<%{{ foot %>
+<script type="text/javascript">
+Ext.onReady(function() {
+	var pageSize = 15;
+	
+	Ext.define('User', {
+		extend: 'Ext.data.Model',
+		fields: [
+			'_id',
+			'name'
+		],
+		idProperty: '_id',
+		proxy: {
+			type: 'savory',
+			url: '<%= conversation.pathToBase %>/data/users/',
+			reader: {
+				root: 'documents'
+			}
+		}
+	});
+	
+	var store = Ext.create('Ext.data.Store', {
+		model: 'User',
+		pageSize: pageSize,
+		autoSync: true,
+		autoLoad: true
+	});
+	
+	Ext.create('Ext.grid.Panel', {
+		store: store,
+		columns: [{
+			dataIndex: 'name',
+			editor: 'textfield',
+			header: 'Name'
+		}],
+		forceFit: true,
+		selType: 'cellmodel',
+		plugins: [
+			Ext.create('Ext.grid.plugin.CellEditing', {clicksToEdit: 1})
+		],
+		bbar: {
+			xtype: 'pagingtoolbar',
+			store: store
+		},
+		renderTo: 'grid-mongo-db',
+		style: {
+			margin: 'auto'
+		},
+		width: 500,
+		height: 500
+	});
+});
+</script>
+<%}}%>
+
+<% exampleFooter('Sencha', 'Integration', 'Grids'); %>
+<%& '/site/footer/' %>

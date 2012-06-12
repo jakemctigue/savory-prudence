@@ -1,5 +1,6 @@
 
 document.executeOnce('/sincerity/files/')
+document.executeOnce('/sincerity/objects/')
 
 var Section = function(name, content) {
 	this.printTOC = function(out) {
@@ -56,7 +57,7 @@ var Manual = function(file) {
 	}
 	
 	this.getSection = function(name) {
-		var headingRE = new RegExp('<a class="toc" name="toc-Section-\\d+"></a>' + name)
+		var headingRE = new RegExp('<a class="toc" name="toc-Section-\\d+"></a>' + name.escapeRegExp())
 		var start = this.content.search(headingRE)
 		if (start != -1) {
 			start = this.content.indexOf('</h1>', start) + 5
@@ -101,5 +102,6 @@ manual.generate({
 	'Documents Service': ['component/applications/savory-example/fragments/manual/service/documents.html'],
 	'REST Service': ['component/applications/savory-example/fragments/manual/service/rest.html'],
 	'RPC Service': ['component/applications/savory-example/fragments/manual/service/rpc.html'],
+	'Sencha Integration: Grids': ['component/applications/savory-example/fragments/manual/integration/sencha-grids.html'],
 	'Sencha Integration: Ext Direct': ['component/applications/savory-example/fragments/manual/integration/sencha-ext-direct.html']
 })

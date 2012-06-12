@@ -1,7 +1,7 @@
 //
-// This file is part of the Savory Framework for Prudence
+// This file is part of the Savory Framework
 //
-// Copyright 2011 Three Crickets LLC.
+// Copyright 2011-2012 Three Crickets LLC.
 //
 // The contents of this file are subject to the terms of the LGPL version 3.0:
 // http://www.gnu.org/copyleft/lesser.html
@@ -162,6 +162,13 @@ Savory.REST = Savory.REST || function() {
 			else {
 				return String(doc)
 			}
+		},
+		
+		stringid: function(doc) {
+			if (Sincerity.Objects.exists(doc._id)) {
+				doc._id = String(doc._id)
+			}
+			return doc
 		}
 	}
 
@@ -176,10 +183,11 @@ Savory.REST = Savory.REST || function() {
 	    var Public = {}
 	    
 	    /** @ignore */
-	    Public._configure = ['allowPost', 'allowPut', 'allowDelete']
+	    Public._configure = ['allowGet', 'allowPost', 'allowPut', 'allowDelete']
 	    
 	    /** @ignore */
 	    Public._construct = function(config) {
+        	this.allowGet = Sincerity.Objects.ensure(this.allowGet, true)
         	this.allowPost = Sincerity.Objects.ensure(this.allowPost, true)
 			this.allowPut = Sincerity.Objects.ensure(this.allowPut, true)
 			this.allowDelete = Sincerity.Objects.ensure(this.allowDelete, true)
@@ -203,6 +211,9 @@ Savory.REST = Savory.REST || function() {
 	    }
 	    
 	    Public.handleGet = function(conversation) {
+	    	if (this.allowGet && this.doGet) {
+	    		return this.doGet(conversation)
+	    	}
 			return Prudence.Resources.Status.ServerError.NotImplemented
 	    }
 	    
@@ -211,22 +222,32 @@ Savory.REST = Savory.REST || function() {
 	    }
 	    
 		Public.handlePost = function(conversation) {
+	    	if (this.allowPost && this.doPost) {
+	    		return this.doPost(conversation)
+	    	}
 			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		Public.handlePut = function(conversation) {
+	    	if (this.allowPut && this.doPut) {
+	    		return this.doPut(conversation)
+	    	}
 			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		Public.handleDelete = function(conversation) {
+	    	if (this.allowDelete && this.doDelete) {
+	    		return this.doDelete(conversation)
+	    	}
 			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		return Public
 	}())
+
 	
 	/**
-	 * A RESTful resource for a MongoDB document or collection.
+	 * A RESTful resource for any iterable data.
 	 * Supports representation in JSON, XML, plain JavaScript (for
 	 * internal requests) and human-friendly HTML representation
 	 * that can be opened in a web browser.
@@ -238,29 +259,24 @@ Savory.REST = Savory.REST || function() {
 	 * document (as in non-plural mode).
 	 * 
 	 * @class
-	 * @name Savory.REST.MongoDbResource
+	 * @name Savory.REST.IteratorResource
 	 * @augments Savory.REST.Resource
 	 * 
 	 * @param {Object|String} config
 	 * @param {String} [config.name]
 	 * @param {Boolean} [config.plural=false] If true the RESTful resource will work in plural mode
-	 * @param {MongoDB.Collection|String} [config.collection=config.name] The MongoDB collection or
-	 *         its name
-	 * @param {String|String[]} [config.fields] The document fields to retrieve
-	 *         (see {@link MongoDB#find})
-	 * @param [config.values] TODO
 	 * @param [config.extract] TODO
 	 * @param [config.filters] TODO
 	 */
-	Public.MongoDbResource = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.REST.MongoDbResource */
+	Public.IteratorResource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.REST.IteratorResource */
 	    var Public = {}
 
 	    /** @ignore */
 	    Public._inherit = Module.Resource
 
 	    /** @ignore */
-	    Public._configure = ['name', 'plural', 'collection', 'fields', 'values', 'extract', 'filters', 'allowPost', 'allowPut', 'allowDelete']
+	    Public._configure = ['name', 'plural', 'extract', 'filters']
 
 	    /** @ignore */
 	    Public._construct = function(config) {
@@ -268,26 +284,13 @@ Savory.REST = Savory.REST || function() {
 				this.name = String(config)
 			}
 			
-			this.collection = this.collection || this.name
-			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
-
-			// Convert fields to MongoDB's inclusion notation
-			var fields = {}
-			if (Sincerity.Objects.exists(this.fields)) {
-				this.fields = Sincerity.Objects.array(this.fields)
-				for (var f in this.fields) {
-					fields[this.fields[f]] = 1
-				}
-			}
-			this.fields = fields
-			
 			if (Sincerity.Objects.exists(this.extract)) {
 				if (typeof this.extract != 'function') {
 					this.extract = Sincerity.Objects.array(this.extract)
 				}
 			}
 			
-			Savory.REST.MongoDbResource.prototype.superclass.call(this, this)
+			Savory.REST.IteratorResource.prototype.superclass.call(this, this)
 	    }
 	    
 	    Public.mediaTypes = [
@@ -298,7 +301,7 @@ Savory.REST = Savory.REST || function() {
 			'text/html'
 		]
 
-	    Public.handleGet = function(conversation) {
+	    Public.doGet = function(conversation) {
 			var query = getQuery(conversation)
 
 			// TODO: reconsider this, do we need this support built in here?
@@ -343,8 +346,7 @@ Savory.REST = Savory.REST || function() {
 
 			var iterator, total
 			if (this.plural) {
-				var q = this.query ? castQuery(conversation, Sincerity.Objects.clone(this.query), this.values) : {}
-				iterator = this.collection.find(q, this.fields)
+				iterator = this.getPlural(conversation)
 				total = iterator.count()
 				
 				if (!total) {
@@ -366,8 +368,7 @@ Savory.REST = Savory.REST || function() {
 				}
 			}
 			else {
-				var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
-				var doc = this.collection.findOne(q, this.fields)
+				var doc = this.getSingular(conversation)
 				if (doc) {
 					iterator = new Sincerity.Iterators.Array([doc])
 				}
@@ -383,7 +384,7 @@ Savory.REST = Savory.REST || function() {
 			// TODO:
 		}*/
 		
-	    Public.handlePost = function(conversation) {
+	    Public.doPost = function(conversation) {
 			var updates = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			if (!updates) {
 				return Prudence.Resources.Status.ClientError.BadRequest
@@ -404,12 +405,7 @@ Savory.REST = Savory.REST || function() {
 			var docs = []
 			for (var u in updates) {
 				var update = updates[u]
-				if (!Sincerity.Objects.exists(conversation.locals.get('id')) && Sincerity.Objects.exists(update._id)) {
-					conversation.locals.put('id', String(update._id))
-				}
-				delete update._id
-				var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
-				var doc = this.collection.findAndModify(q, {$set: update}, Sincerity.Objects.isEmpty(this.fields) ? {returnNew: true} : {returnNew: true, fields: this.fields})
+				var doc = this.doUpdate(update, conversation)
 				if (Sincerity.Objects.exists(doc)) {
 					docs.push(doc)
 				}
@@ -418,7 +414,7 @@ Savory.REST = Savory.REST || function() {
 			return representIterator.call(this, conversation, query, new Sincerity.Iterators.Array(docs))
 		}
 		
-	    Public.handlePut = function(conversation) {
+	    Public.doPut = function(conversation) {
 			var docs = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			if (!docs) {
 				return Prudence.Resources.Status.ClientError.BadRequest
@@ -430,60 +426,23 @@ Savory.REST = Savory.REST || function() {
 				// Only plural resources can accept arrays
 				return Prudence.Resources.Status.ClientError.BadRequest
 			}
+			docs = Sincerity.Objects.array(docs)
 			
 			var duplicates = false
 			var newDocs = []
-			if (this.plural) {
-				docs = Sincerity.Objects.array(docs)
-				for (var d in docs) {
-					var doc = docs[d]
-					try {
-						var result = this.collection.insert(doc, 1)
-						if (result && result.ok) {
-							newDocs.push(doc)
-						}
-					}
-					catch (x) {
-						if (x.code == MongoDB.Error.DuplicateKey) {
-							duplicates = true
-						}
-					}
+			for (var d in docs) {
+				var doc = docs[d]
+				var created = this.doCreate(doc, conversation)
+				if (created === true) {
+					duplicates = true
 				}
-			}
-			else {
-				var doc = docs
-				delete doc._id
-				Sincerity.Objects.merge(doc, castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values))
-				var result = this.collection.save(doc, 1)
-				if (result && (result.n == 1)) {
-					newDocs.push(doc)
+				else if (Sincerity.Objects.exists(created)) {
+					newDocs.push(created)
 				}
 			}
 
 			conversation.statusCode = duplicates ? Prudence.Resources.Status.ClientError.Conflict : Prudence.Resources.Status.Success.Created
 			return representIterator.call(this, conversation, query, new Sincerity.Iterators.Array(newDocs))
-		}
-		
-	    Public.handleDelete = function(conversation) {
-			var q
-			if (this.plural) {
-				q = {}
-			}
-			else {
-				q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
-			}
-			
-			var result = this.collection.remove(q, 1)
-			if (result) {
-				if (result.ok == 0) {
-					return Prudence.Resources.ServerError.Internal
-				}
-				if (result.n == 0) {
-					return Prudence.Resources.Status.ClientError.NotFound
-				}
-			}
-
-			return Prudence.Resources.Status.Success.NoContent
 		}
 		
 		//
@@ -495,7 +454,6 @@ Savory.REST = Savory.REST || function() {
 				human: 'bool',
 				format: 'string',
 				filter: 'string[]',
-				mode: 'string', // ??
 				start: 'int',
 				limit: 'int'
 			})
@@ -510,7 +468,7 @@ Savory.REST = Savory.REST || function() {
 				var name = names[n].toLowerCase()
 				var filter = this.filters ? this.filters[name] : null
 				if (!filter) {
-					filter = Public.Filters[name]
+					filter = Module.Filters[name]
 				}
 				if (filter) {
 					filters.push(filter)
@@ -573,6 +531,141 @@ Savory.REST = Savory.REST || function() {
 			return Sincerity.JSON.to(value, query.human || false)
 		}
 
+		function extract(doc) {
+			var newDoc = doc
+			
+			for (var i in this.extract) {
+				var e = this.extract[i]
+				newDoc = doc[e]
+				if (newDoc === undefined) {
+					return null
+				}
+			}
+			
+			return newDoc
+		}
+
+		return Public
+	}(Public))
+
+	/**
+	 * A RESTful resource for a MongoDB document or collection.
+	 * 
+	 * @class
+	 * @name Savory.REST.MongoDbResource
+	 * @augments Savory.REST.IteratorResource
+	 * 
+	 * @param {Object|String} config
+	 * @param {String} [config.name]
+	 * @param {Boolean} [config.plural=false] If true the RESTful resource will work in plural mode
+	 * @param {MongoDB.Collection|String} [config.collection=config.name] The MongoDB collection or
+	 *         its name
+	 * @param {String|String[]} [config.fields] The document fields to retrieve
+	 *         (see {@link MongoDB#find})
+	 * @param [config.values] TODO
+	 * @param [config.extract] TODO
+	 * @param [config.filters] TODO
+	 */
+	Public.MongoDbResource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.REST.MongoDbResource */
+	    var Public = {}
+
+	    /** @ignore */
+	    Public._inherit = Module.IteratorResource
+
+	    /** @ignore */
+	    Public._configure = ['name', 'plural', 'collection', 'fields', 'values', 'extract', 'filters']
+
+	    /** @ignore */
+	    Public._construct = function(config) {
+			Savory.REST.MongoDbResource.prototype.superclass.call(this, this)
+			
+			this.collection = this.collection || this.name
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+
+			// Convert fields to MongoDB's inclusion notation
+			var fields = {}
+			if (Sincerity.Objects.exists(this.fields)) {
+				this.fields = Sincerity.Objects.array(this.fields)
+				for (var f in this.fields) {
+					fields[this.fields[f]] = 1
+				}
+			}
+			this.fields = fields
+	    }
+
+	    Public.getPlural = function(conversation) {
+			var q = this.query ? castQuery(conversation, Sincerity.Objects.clone(this.query), this.values) : {}
+			return this.collection.find(q, this.fields)
+	    }
+
+	    Public.getSingular = function(conversation) {
+			var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
+			return this.collection.findOne(q, this.fields)
+	    }
+	    
+	    Public.doUpdate = function(update, conversation) {
+			if (!Sincerity.Objects.exists(conversation.locals.get('id')) && Sincerity.Objects.exists(update._id)) {
+				conversation.locals.put('id', String(update._id))
+			}
+			delete update._id
+			var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
+			var doc = this.collection.findAndModify(q, {$set: update}, Sincerity.Objects.isEmpty(this.fields) ? {returnNew: true} : {returnNew: true, fields: this.fields})
+			return doc
+	    }
+
+	    Public.doCreate = function(doc, conversation) {
+			if (this.plural) {
+				try {
+					var result = this.collection.insert(doc, 1)
+					if (result && result.ok) {
+						return doc
+					}
+				}
+				catch (x) {
+					if (x.code == MongoDB.Error.DuplicateKey) {
+						return true
+					}
+				}
+			}
+			else {
+				delete doc._id
+				Sincerity.Objects.merge(doc, castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values))
+				var result = this.collection.save(doc, 1)
+				if (result && (result.n == 1)) {
+					return doc
+				}
+			}
+			
+			return null
+	    }
+		
+	    Public.doDelete = function(conversation) {
+			var q
+			if (this.plural) {
+				q = {}
+			}
+			else {
+				q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
+			}
+			
+			var result = this.collection.remove(q, 1)
+			if (result) {
+				if (result.ok == 0) {
+					return Prudence.Resources.ServerError.Internal
+				}
+				if (result.n == 0) {
+					return Prudence.Resources.Status.ClientError.NotFound
+				}
+			}
+
+			return Prudence.Resources.Status.Success.NoContent
+		}
+		
+		//
+		// Private
+		//
+		
 		function castQuery(conversation, obj, values) {
 			if (Sincerity.Objects.isObject(obj, true)) {
 				for (var k in obj) {
@@ -591,23 +684,9 @@ Savory.REST = Savory.REST || function() {
 			return obj
 		}
 
-		function extract(doc) {
-			var newDoc = doc
-			
-			for (var i in this.extract) {
-				var e = this.extract[i]
-				newDoc = doc[e]
-				if (newDoc === undefined) {
-					return null
-				}
-			}
-			
-			return newDoc
-		}
-
 		return Public
 	}(Public))
-
+	
 	//
 	// Initialization
 	//
