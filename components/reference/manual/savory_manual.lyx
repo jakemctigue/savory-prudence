@@ -4724,12 +4724,12 @@ Moreover, the Prudence platform lets you access this RESTful layer internally,
 
 \begin_layout Standard
 Even without customization via code, out of the box you get the following
- configurable features:
+ features:
 \end_layout
 
 \begin_layout Itemize
-Support for all RESTful CRUD-like operations: GET, POST, PUT and DELETE,
- with a simple flag for disabling any of these operations.
+The default format immediately supports Ext JS's RESTful data stores.
+ Attach any MongoDB collection to an editable grid widget in a web browser!
 \end_layout
 
 \begin_layout Itemize
@@ -4753,17 +4753,12 @@ Pagination for traversing collections of any size.
 \end_layout
 
 \begin_layout Itemize
-The default format immediately supports Ext JS's RESTful data stores.
- Attach any MongoDB collection to an editable grid widget in a web browser!
-\end_layout
-
-\begin_layout Itemize
 Choose which document fields you want to expose.
 \end_layout
 
 \begin_layout Itemize
-Apply straightforward filters that let you massage MongoDB's extended JSON
- format into simpler primitives.
+Apply straightforward transformers that let you massage MongoDB's extended
+ JSON format into simpler primitives.
  For example, 
 \begin_inset Quotes eld
 \end_inset
@@ -5869,11 +5864,11 @@ new Savory.REST.MongoDbResource({
 \end_layout
 
 \begin_layout Subsubsection
-Custom Filters
+Custom Modes
 \end_layout
 
 \begin_layout Standard
-You can set up your own custom filters like so:
+You can set up your own custom modes like so:
 \end_layout
 
 \begin_layout Standard
@@ -5893,12 +5888,12 @@ new Savory.REST.MongoDbResource({
 
 \begin_layout Plain Layout
 
-	filters: {
+	modes: {
 \end_layout
 
 \begin_layout Plain Layout
 
-		flatten: function(data) {
+		flat: function(data) {
 \end_layout
 
 \begin_layout Plain Layout
@@ -5935,7 +5930,7 @@ Usage
 \begin_inset Quotes erd
 \end_inset
 
- below for information on how to use filters.
+ below for information on how to use modes.
 \end_layout
 
 \begin_layout Subsubsection
@@ -6098,24 +6093,24 @@ true
 \begin_layout Itemize
 
 \series bold
-filter:
+mode:
 \series default
  
 \begin_inset Quotes eld
 \end_inset
 
-Filters
+Modes
 \begin_inset Quotes erd
 \end_inset
 
  are simple functions that are applied to all documents in order to transform
  the final representation.
- The REST Service comes with a few useful filters, but you can easily create
+ The REST Service comes with a few useful modes, but you can easily create
  your own, just make sure to hook them to the instance using the 
 \begin_inset Quotes eld
 \end_inset
 
-filters
+modes
 \begin_inset Quotes erd
 \end_inset
 
@@ -6125,19 +6120,19 @@ filters
 \begin_inset Quotes eld
 \end_inset
 
-filter
+mode
 \begin_inset Quotes erd
 \end_inset
 
- values, in which case all filters functions will be called in order.
- Provided filters:
+ values, in which case all mode functions will be called in order.
+ Provided modes:
 \end_layout
 
 \begin_deeper
 \begin_layout Itemize
 
 \series bold
-primitivise:
+primitive:
 \series default
  This converts MongoDB extended values into simpler JSON structures.
  For example, 
@@ -6162,11 +6157,28 @@ primitivise:
 \begin_layout Itemize
 
 \series bold
-stringify
+string
 \series default
 : This converts all JSON values into strings.
  It's a good way to overcome various number accuracy issues, especially
  when dealing with PHP clients.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+stringid:
+\series default
+ Converts only the 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ field to a string, in case it's a BSON ObjectId.
+ Some clients, such as Ext JS, cannot deal with ID values that are dicts.
 \end_layout
 
 \end_deeper
@@ -6181,8 +6193,8 @@ status open
 
 \begin_layout Plain Layout
 
-/data/users/4e057e94e799a23b0f581d7d/?format=json&human=true&filter=primitivize&
-filter=stringify
+/data/users/4e057e94e799a23b0f581d7d/?format=json&human=true&mode=primitive&mode
+=string
 \end_layout
 
 \end_inset
@@ -7120,6 +7132,22 @@ rs/4e057e94e799a23b0f581d7d/?human=true"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Extension
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Subsubsection
+Extended MongoDbResource
+\end_layout
+
+\begin_layout Subsubsection
+Extending IterableResource
 \end_layout
 
 \begin_layout Section

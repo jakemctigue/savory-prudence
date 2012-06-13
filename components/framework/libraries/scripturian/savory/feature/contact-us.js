@@ -152,7 +152,7 @@ Savory.ContactUs = Savory.ContactUs || function() {
 			this.includeDocumentName = this.includeDocumentName || '/savory/feature/contact-us/form/'
 			this.includeSuccessDocumentName = this.includeSuccessDocumentName || '/savory/feature/contact-us/form/success/'
 			
-			Module.Form.prototype.superclass.call(this, this)
+			arguments.callee.overridden.call(this, this)
 		}
 
     	Public.process = function(results, conversation) {

@@ -70,7 +70,7 @@ Savory.Sencha = Savory.Sencha || function() {
 
 	    /** @ignore */
 	    Public._construct = function(config) {
-			Savory.Sencha.DirectResource.prototype.superclass.call(this, this)
+	    	arguments.callee.overridden.call(this, this)
 	    }
 
 	    Public.mediaTypes = [

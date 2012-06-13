@@ -211,15 +211,17 @@ Ext.define('Savory.data.proxy.Rest', {
 				update : 'POST',
 				destroy: 'DELETE'
 			},
-			reader: 'extended-json',
+			reader: {
+				type: 'extended-json',
+				root: 'documents'
+			},
 			writer: 'extended-json',
 			noCache: false,
-			//appendId: false,
 			headers: {
 				Accept: 'application/json'
 			},
 			extraParams: {
-				filter: 'stringid'
+				mode: 'stringid'
 			}
 		}, config);
 		

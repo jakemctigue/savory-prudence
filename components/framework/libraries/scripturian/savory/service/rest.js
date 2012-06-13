@@ -31,7 +31,7 @@ var Savory = Savory || {}
  */
 Savory.REST = Savory.REST || function() {
 	/** @exports Public as Savory.REST */
-    var Public = {}
+	var Public = {}
 
 	/**
 	 * The library's logger.
@@ -42,7 +42,7 @@ Savory.REST = Savory.REST || function() {
 	Public.logger = Prudence.Logging.getLogger('rest')
 
 	Public.createMongoDbRoutes = function(params) {
-    	params = params || {}
+		params = params || {}
 		var routes = {}
 
 		params.prefix = params.prefix || ''
@@ -80,7 +80,7 @@ Savory.REST = Savory.REST || function() {
 		}
 		
 		return routes
-    }
+	}
 
 	/**
 	 * Creates a dict of {@link Savory.REST.MongoDbResource} instances for all collections.
@@ -89,11 +89,11 @@ Savory.REST = Savory.REST || function() {
 	 * @param params
 	 * @param {String|com.mongodb.DB} [params.db=MongoDB.defaultDb] The MongoDB database to use
 	 * @param {String[]} [params.collections] The collections for which we will create instances,
-	 *                    otherwise queries the database for a list of all collections
+	 *					otherwise queries the database for a list of all collections
 	 * @returns {Object} A dict of resources
 	 */
 	Public.createMongoDbResources = function(params) {
-    	params = params || {}
+		params = params || {}
 		var resources = {}
 
 		if (!Sincerity.Objects.exists(params.db)) {
@@ -124,22 +124,22 @@ Savory.REST = Savory.REST || function() {
 		}
 		
 		return resources
-    }
+	}
 	
 	/**
-	 * A few useful filters.
+	 * A few useful modes.
 	 * 
 	 * @namespace
 	 */
-	Public.Filters = {
-		primitivize: function(doc) {
+	Public.Modes = {
+		primitive: function(doc) {
 			if (Sincerity.Objects.isObject(doc)) {
 				if (Sincerity.Objects.isDate(doc)) {
 					return doc.getTime()
 				}
 				
 				for (var k in doc) {
-					doc[k] = Public.Filters.primitivize(doc[k])
+					doc[k] = Public.Modes.primitive(doc[k])
 				}
 				return doc
 			}
@@ -148,14 +148,14 @@ Savory.REST = Savory.REST || function() {
 			}
 		},
 		
-		stringify: function(doc) {
+		string: function(doc) {
 			if (Sincerity.Objects.isObject(doc)) {
 				if (Sincerity.Objects.isDate(doc)) {
 					return String(doc.getTime())
 				}
 				
 				for (var k in doc) {
-					doc[k] = Public.Filters.stringify(doc[k])
+					doc[k] = Public.Modes.string(doc[k])
 				}
 				return doc
 			}
@@ -180,72 +180,71 @@ Savory.REST = Savory.REST || function() {
 	 */
 	Public.Resource = Sincerity.Classes.define(function() {
 		/** @exports Public as Savory.REST.Resource */
-	    var Public = {}
-	    
-	    /** @ignore */
-	    Public._configure = ['allowGet', 'allowPost', 'allowPut', 'allowDelete']
-	    
-	    /** @ignore */
-	    Public._construct = function(config) {
-        	this.allowGet = Sincerity.Objects.ensure(this.allowGet, true)
-        	this.allowPost = Sincerity.Objects.ensure(this.allowPost, true)
+		var Public = {}
+		
+		/** @ignore */
+		Public._configure = ['allowGet', 'allowPost', 'allowPut', 'allowDelete']
+		
+		/** @ignore */
+		Public._construct = function(config) {
+			this.allowGet = Sincerity.Objects.ensure(this.allowGet, true)
+			this.allowPost = Sincerity.Objects.ensure(this.allowPost, true)
 			this.allowPut = Sincerity.Objects.ensure(this.allowPut, true)
 			this.allowDelete = Sincerity.Objects.ensure(this.allowDelete, true)
-	    }
+		}
 
-	    Public.handleInit = function(conversation) {
-	    	if (Sincerity.Objects.exists(this.mediaTypes)) {
-	    		for (var m in this.mediaTypes) {
-	    			var mediaType = this.mediaTypes[m]
-	    			if (Sincerity.Objects.isString(mediaType)) {
-	    				conversation.addMediaTypeByName(mediaType)
-	    			}
-	    			else {
-	    				conversation.addMediaType(mediaType)
-	    			}
-	    		}
-	    	}
-	    	else {
-	    		// TODO: default to something?
-	    	}
-	    }
-	    
-	    Public.handleGet = function(conversation) {
-	    	if (this.allowGet && this.doGet) {
-	    		return this.doGet(conversation)
-	    	}
+		Public.handleInit = function(conversation) {
+			if (Sincerity.Objects.exists(this.mediaTypes)) {
+				for (var m in this.mediaTypes) {
+					var mediaType = this.mediaTypes[m]
+					if (Sincerity.Objects.isString(mediaType)) {
+						conversation.addMediaTypeByName(mediaType)
+					}
+					else {
+						conversation.addMediaType(mediaType)
+					}
+				}
+			}
+			else {
+				// TODO: default to something?
+			}
+		}
+		
+		Public.handleGet = function(conversation) {
+			if (this.allowGet && this.doGet) {
+				return this.doGet(conversation)
+			}
 			return Prudence.Resources.Status.ServerError.NotImplemented
-	    }
-	    
-	    Public.handleGetInfo = function(conversation) {
+		}
+		
+		Public.handleGetInfo = function(conversation) {
 			return Prudence.Resources.Status.ServerError.NotImplemented
-	    }
-	    
+		}
+		
 		Public.handlePost = function(conversation) {
-	    	if (this.allowPost && this.doPost) {
-	    		return this.doPost(conversation)
-	    	}
+			if (this.allowPost && this.doPost) {
+				return this.doPost(conversation)
+			}
 			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		Public.handlePut = function(conversation) {
-	    	if (this.allowPut && this.doPut) {
-	    		return this.doPut(conversation)
-	    	}
+			if (this.allowPut && this.doPut) {
+				return this.doPut(conversation)
+			}
 			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		Public.handleDelete = function(conversation) {
-	    	if (this.allowDelete && this.doDelete) {
-	    		return this.doDelete(conversation)
-	    	}
+			if (this.allowDelete && this.doDelete) {
+				return this.doDelete(conversation)
+			}
 			return Prudence.Resources.Status.ServerError.NotImplemented
 		}
 		
 		return Public
 	}())
 
-	
 	/**
 	 * A RESTful resource for any iterable data.
 	 * Supports representation in JSON, XML, plain JavaScript (for
@@ -266,21 +265,21 @@ Savory.REST = Savory.REST || function() {
 	 * @param {String} [config.name]
 	 * @param {Boolean} [config.plural=false] If true the RESTful resource will work in plural mode
 	 * @param [config.extract] TODO
-	 * @param [config.filters] TODO
+	 * @param [config.modes] TODO
 	 */
 	Public.IteratorResource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.REST.IteratorResource */
-	    var Public = {}
+		var Public = {}
 
-	    /** @ignore */
-	    Public._inherit = Module.Resource
+		/** @ignore */
+		Public._inherit = Module.Resource
 
-	    /** @ignore */
-	    Public._configure = ['name', 'plural', 'extract', 'filters']
+		/** @ignore */
+		Public._configure = ['name', 'plural', 'extract', 'modes']
 
-	    /** @ignore */
-	    Public._construct = function(config) {
-	    	if (Sincerity.Objects.isString(config)) {
+		/** @ignore */
+		Public._construct = function(config) {
+			if (Sincerity.Objects.isString(config)) {
 				this.name = String(config)
 			}
 			
@@ -290,10 +289,10 @@ Savory.REST = Savory.REST || function() {
 				}
 			}
 			
-			Savory.REST.IteratorResource.prototype.superclass.call(this, this)
-	    }
-	    
-	    Public.mediaTypes = [
+			arguments.callee.overridden.call(this, this)
+		}
+		
+		Public.mediaTypes = [
 			'application/json',
 			'application/xml',
 			'application/java',
@@ -301,7 +300,7 @@ Savory.REST = Savory.REST || function() {
 			'text/html'
 		]
 
-	    Public.doGet = function(conversation) {
+		Public.doGet = function(conversation) {
 			var query = getQuery(conversation)
 
 			// TODO: reconsider this, do we need this support built in here?
@@ -380,11 +379,11 @@ Savory.REST = Savory.REST || function() {
 			return representIterator.call(this, conversation, query, iterator, total)
 		}
 		
-	    /*Public.handleGetInfo = function(conversation) {
+		/*Public.handleGetInfo = function(conversation) {
 			// TODO:
 		}*/
 		
-	    Public.doPost = function(conversation) {
+		Public.doPost = function(conversation) {
 			var updates = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			if (!updates) {
 				return Prudence.Resources.Status.ClientError.BadRequest
@@ -414,7 +413,7 @@ Savory.REST = Savory.REST || function() {
 			return representIterator.call(this, conversation, query, new Sincerity.Iterators.Array(docs))
 		}
 		
-	    Public.doPut = function(conversation) {
+		Public.doPut = function(conversation) {
 			var docs = Prudence.Resources.getEntity(conversation, 'extendedJson')
 			if (!docs) {
 				return Prudence.Resources.Status.ClientError.BadRequest
@@ -453,28 +452,29 @@ Savory.REST = Savory.REST || function() {
 			var query = Prudence.Resources.getQuery(conversation, {
 				human: 'bool',
 				format: 'string',
-				filter: 'string[]',
+				mode: 'string[]',
 				start: 'int',
 				limit: 'int'
 			})
+			query.human = query.human || false
 			query.limit = query.limit || minLimit
-			query.filter = getFilters.call(this, query.filter)
+			query.mode = getModes.call(this, query.mode)
 			return query
 		}
 
-		function getFilters(names) {
-			var filters = []
+		function getModes(names) {
+			var modes = []
 			for (var n in names) {
 				var name = names[n].toLowerCase()
-				var filter = this.filters ? this.filters[name] : null
-				if (!filter) {
-					filter = Module.Filters[name]
+				var mode = this.modes ? this.modes[name] : null
+				if (!mode) {
+					mode = Module.Modes[name]
 				}
-				if (filter) {
-					filters.push(filter)
+				if (mode) {
+					modes.push(mode)
 				}
 			}
-			return filters
+			return modes
 		}
 		
 		function representIterator(conversation, query, iterator, total) {
@@ -485,8 +485,8 @@ Savory.REST = Savory.REST || function() {
 				else {
 					iterator = new Sincerity.Iterators.Transformer(iterator, extract, this)
 				}
-				for (var f in query.filter) {
-					iterator = new Sincerity.Iterators.Transformer(iterator, query.filter[f])
+				for (var f in query.mode) {
+					iterator = new Sincerity.Iterators.Transformer(iterator, query.mode[f])
 				}
 			}
 				
@@ -528,7 +528,7 @@ Savory.REST = Savory.REST || function() {
 					return html || '<html><body>Could not represent as HTML</body></html>'
 			}
 			
-			return Sincerity.JSON.to(value, query.human || false)
+			return Sincerity.JSON.to(value, query.human)
 		}
 
 		function extract(doc) {
@@ -549,6 +549,74 @@ Savory.REST = Savory.REST || function() {
 	}(Public))
 
 	/**
+	 * A RESTful resource for an in-memory data structure.
+	 * 
+	 * @class
+	 * @name Savory.REST.InMemoryResource
+	 * @augments Savory.REST.IteratorResource
+	 * 
+	 * @param {Object|String} config
+	 * @param {Object} config.data
+	 * @param {String} [config.name]
+	 * @param [config.values] TODO
+	 * @param [config.extract] TODO
+	 * @param [config.modes] TODO
+	 */
+	Public.InMemoryResource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.REST.InMemoryResource */
+		var Public = {}
+
+		/** @ignore */
+		Public._inherit = Module.IteratorResource
+
+		/** @ignore */
+		Public._configure = ['data']
+
+		/** @ignore */
+		Public._construct = function(config) {
+			arguments.callee.overridden.call(this, this)
+			
+			this.lock = Sincerity.JVM.newLock(true)
+		}
+
+		Public.getSingular = function(conversation) {
+	    	this.lock.readLock().lock()
+			try {
+				return Sincerity.Objects.clone(this.data)
+			}
+	    	finally {
+	    		this.lock.readLock().unlock()
+	    	}
+		}
+
+		Public.getPlural = function(conversation) {
+			return this.getPlural(conversation)
+		}
+
+		Public.doUpdate = function(update, conversation) {
+	    	this.lock.writeLock().lock()
+			try {
+				Sincerity.Objects.merge(this.data, update)
+			}
+	    	finally {
+	    		this.lock.writeLock().unlock()
+	    	}
+		}
+
+		Public.doCreate = function(doc, conversation) {
+	    	this.lock.writeLock().lock()
+			try {
+				this.data = doc
+			}
+	    	finally {
+	    		this.lock.writeLock().unlock()
+	    	}
+		}
+		
+		return Public
+	}(Public))
+
+	/**
 	 * A RESTful resource for a MongoDB document or collection.
 	 * 
 	 * @class
@@ -559,26 +627,26 @@ Savory.REST = Savory.REST || function() {
 	 * @param {String} [config.name]
 	 * @param {Boolean} [config.plural=false] If true the RESTful resource will work in plural mode
 	 * @param {MongoDB.Collection|String} [config.collection=config.name] The MongoDB collection or
-	 *         its name
+	 *		 its name
 	 * @param {String|String[]} [config.fields] The document fields to retrieve
-	 *         (see {@link MongoDB#find})
+	 *		 (see {@link MongoDB#find})
 	 * @param [config.values] TODO
 	 * @param [config.extract] TODO
-	 * @param [config.filters] TODO
+	 * @param [config.modes] TODO
 	 */
 	Public.MongoDbResource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.REST.MongoDbResource */
-	    var Public = {}
+		var Public = {}
 
-	    /** @ignore */
-	    Public._inherit = Module.IteratorResource
+		/** @ignore */
+		Public._inherit = Module.IteratorResource
 
-	    /** @ignore */
-	    Public._configure = ['name', 'plural', 'collection', 'fields', 'values', 'extract', 'filters']
+		/** @ignore */
+		Public._configure = ['collection', 'fields']
 
-	    /** @ignore */
-	    Public._construct = function(config) {
-			Savory.REST.MongoDbResource.prototype.superclass.call(this, this)
+		/** @ignore */
+		Public._construct = function(config) {
+			arguments.callee.overridden.call(this, this)
 			
 			this.collection = this.collection || this.name
 			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
@@ -592,19 +660,19 @@ Savory.REST = Savory.REST || function() {
 				}
 			}
 			this.fields = fields
-	    }
+		}
 
-	    Public.getPlural = function(conversation) {
+		Public.getPlural = function(conversation) {
 			var q = this.query ? castQuery(conversation, Sincerity.Objects.clone(this.query), this.values) : {}
 			return this.collection.find(q, this.fields)
-	    }
+		}
 
-	    Public.getSingular = function(conversation) {
+		Public.getSingular = function(conversation) {
 			var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
 			return this.collection.findOne(q, this.fields)
-	    }
-	    
-	    Public.doUpdate = function(update, conversation) {
+		}
+		
+		Public.doUpdate = function(update, conversation) {
 			if (!Sincerity.Objects.exists(conversation.locals.get('id')) && Sincerity.Objects.exists(update._id)) {
 				conversation.locals.put('id', String(update._id))
 			}
@@ -612,9 +680,9 @@ Savory.REST = Savory.REST || function() {
 			var q = castQuery(conversation, this.query ? Sincerity.Objects.clone(this.query) : {_id: {$oid: '{id}'}}, this.values)
 			var doc = this.collection.findAndModify(q, {$set: update}, Sincerity.Objects.isEmpty(this.fields) ? {returnNew: true} : {returnNew: true, fields: this.fields})
 			return doc
-	    }
+		}
 
-	    Public.doCreate = function(doc, conversation) {
+		Public.doCreate = function(doc, conversation) {
 			if (this.plural) {
 				try {
 					var result = this.collection.insert(doc, 1)
@@ -638,9 +706,9 @@ Savory.REST = Savory.REST || function() {
 			}
 			
 			return null
-	    }
+		}
 		
-	    Public.doDelete = function(conversation) {
+		Public.doDelete = function(conversation) {
 			var q
 			if (this.plural) {
 				q = {}
@@ -693,5 +761,5 @@ Savory.REST = Savory.REST || function() {
 
 	var minLimit = application.globals.get('savory.service.rest.minLimit') || 100
 
-    return Public
+	return Public
 }()

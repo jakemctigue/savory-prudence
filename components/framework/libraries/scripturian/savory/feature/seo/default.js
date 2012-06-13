@@ -875,7 +875,7 @@ Savory.SEO = Savory.SEO || function() {
 		    this.inclusions = this.inclusions || []
 		    this.defaultFrequency = this.defaultFrequency || 'weekly'
 		    this.defaultPriority = this.defaultPriority || 0.5
-		    Savory.SEO.ExplicitProvider.prototype.superclass.call(this, this)
+		    arguments.callee.overridden.call(this, this)
 		}
 		
 		Public.getLocations = function() {

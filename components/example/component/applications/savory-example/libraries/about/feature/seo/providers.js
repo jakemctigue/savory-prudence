@@ -24,7 +24,7 @@ var FakeProvider = FakeProvider || Sincerity.Classes.define(function() {
 	
 	Public._construct = function(config) {
 		Sincerity.Objects.merge(this, config, ['name', 'domains'])
-		FakeProvider.prototype.superclass.call(this, this)
+		arguments.callee.overridden.call(this, this)
 	}
 	
 	Public.getLocations = function() {
@@ -329,7 +329,7 @@ var SavoryProvider = SavoryProvider || Sincerity.Classes.define(function() {
 			frequency: 'monthly'
 		}]
 		
-		SavoryProvider.prototype.superclass.call(this, this)
+		arguments.callee.overridden.call(this, this)
 	}
 	
 	return Public

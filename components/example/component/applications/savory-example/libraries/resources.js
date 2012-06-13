@@ -46,7 +46,8 @@ resources = {
 	math: new Savory.RPC.Resource({namespaces: {Math: Math}}),
 	shoppingcart: new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
 	users: new Savory.REST.MongoDbResource({name: 'users'}),
-	'users.plural': new Savory.REST.MongoDbResource({name: 'users', plural: true})
+	'users.plural': new Savory.REST.MongoDbResource({name: 'users', plural: true}),
+	'users.model': new Savory.REST.InMemoryResource({name: 'users.model', data: {test: 1}})
 }
 
 //resources = Savory.REST.createMongoDbResources()

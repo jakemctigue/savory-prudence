@@ -36,7 +36,7 @@ Savory.Notification.EmailService = Savory.Notification.EmailService || Sincerity
     Public._construct = function(config) {
     	this.name = this.name || 'Email'
     	this.smtp = new Sincerity.Mail.SMTP()
-    	Savory.Notification.EmailService.prototype.superclass.call(this, this)
+    	arguments.callee.overridden.call(this, this)
     }
 
     Public.send = function(from, to, notice) {

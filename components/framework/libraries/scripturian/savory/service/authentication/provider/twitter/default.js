@@ -40,7 +40,7 @@ Savory.Authentication.TwitterProvider = Savory.Authentication.TwitterProvider ||
 		// Icon is from Aquaticus.Social:
 		// http://jwloh.deviantart.com/art/Aquaticus-Social-91014249
 
-    	Savory.Authentication.TwitterProvider.prototype.superclass.call(this, this)
+    	arguments.callee.overridden.call(this, this)
     }
 
     Public.getUri = function(conversation) {

@@ -8,7 +8,7 @@ Savory.Sencha.extJsHead(conversation)
 <% exampleHeader('Sencha', 'Integration', 'Grids'); %>
 
 <p>
-	Grids!
+	Double click on any cell to edit it. Your changes will be saved when you leave the cell.
 </p>
 <div id="grid-mongo-db">
 </div>
@@ -22,15 +22,13 @@ Ext.onReady(function() {
 		extend: 'Ext.data.Model',
 		fields: [
 			'_id',
-			'name'
+			'name',
+			'lastSeen'
 		],
 		idProperty: '_id',
 		proxy: {
 			type: 'savory',
-			url: '<%= conversation.pathToBase %>/data/users/',
-			reader: {
-				root: 'documents'
-			}
+			url: '<%= conversation.pathToBase %>/data/users/'
 		}
 	});
 	
@@ -45,24 +43,34 @@ Ext.onReady(function() {
 		store: store,
 		columns: [{
 			dataIndex: 'name',
-			editor: 'textfield',
-			header: 'Name'
+			header: 'Name',
+			editor: 'textfield'
+		}, {
+			dataIndex: 'lastSeen',
+			xtype: 'datecolumn',
+			format: 'm/d/y, H:i',
+			header: 'Last Seen',
+			editor: {
+				xtype: 'datefield',
+				format: 'm/d/y, H:i'
+			}
 		}],
 		forceFit: true,
 		selType: 'cellmodel',
 		plugins: [
-			Ext.create('Ext.grid.plugin.CellEditing', {clicksToEdit: 1})
+			Ext.create('Ext.grid.plugin.CellEditing', {clicksToEdit: 2})
 		],
-		bbar: {
+		dockedItems: [{
+			dock: 'bottom',
 			xtype: 'pagingtoolbar',
 			store: store
-		},
+		}],
 		renderTo: 'grid-mongo-db',
 		style: {
 			margin: 'auto'
 		},
 		width: 500,
-		height: 500
+		height: 370
 	});
 });
 </script>

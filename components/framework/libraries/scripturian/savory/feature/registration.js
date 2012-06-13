@@ -295,7 +295,7 @@ Savory.Registration = Savory.Registration || function() {
 			this.includeDocumentName = this.includeDocumentName || '/savory/feature/registration/form/'
 			this.includeSuccessDocumentName = this.includeSuccessDocumentName || '/savory/feature/registration/form/success/'
 			
-			Module.Form.prototype.superclass.call(this, this)
+			arguments.callee.overridden.call(this, this)
         }
 
     	Public.process = function(results, conversation) {

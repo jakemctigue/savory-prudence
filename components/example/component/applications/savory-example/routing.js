@@ -16,7 +16,8 @@ app.routes = {
 	'/math/': {type: 'implicit', id: 'math'},
 	'/shoppingcart/': {type: 'implicit', id: 'shoppingcart'},
 	'/data/users/{id}/': {type: 'implicit', id: 'users'},
-	'/data/users/': {type: 'implicit', id: 'users.plural'}
+	'/data/users/': {type: 'implicit', id: 'users.plural'},
+	'/model/users/': {type: 'implicit', id: 'users.model'}
 }
 
 //Sincerity.Objects.merge(app.routes, Savory.REST.createMongoDbRoutes({prefix: '/data/'}))

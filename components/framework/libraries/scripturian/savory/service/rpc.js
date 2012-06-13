@@ -414,7 +414,7 @@ Savory.RPC = Savory.RPC || function() {
 		    	}
 	    	}
 
-			Savory.RPC.Resource.prototype.superclass.call(this, this)
+	    	arguments.callee.overridden.call(this, this)	    	
 	    }
 
 	    Public.mediaTypes = [

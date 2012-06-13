@@ -523,7 +523,7 @@ Savory.Authentication = Savory.Authentication || function() {
 
 			this.includeDocumentName = this.includeDocumentName || '/savory/service/authentication/form/'
 			
-			Module.Form.prototype.superclass.call(this, this)
+			arguments.callee.overridden.call(this, this)
 	    }
 
     	Public.process = function(results, conversation) {

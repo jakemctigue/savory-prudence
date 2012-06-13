@@ -43,7 +43,7 @@ Savory.Authentication.OpenIdProvider = Savory.Authentication.Provider.OpenIdProv
 		// Other icons are from Aquaticus.Social:
 		// http://jwloh.deviantart.com/art/Aquaticus-Social-91014249
     	
-    	Savory.Authentication.OpenIdProvider.prototype.superclass.call(this, this)
+    	arguments.callee.overridden.call(this, this)
     }
 
     Public.getSlug = function() {
@@ -157,7 +157,7 @@ Savory.Authentication.OpenIdProviderForm = Savory.Authentication.OpenIdProviderF
 		
 		this.includeDocumentName = this.includeDocumentName || '/savory/service/authentication/form/open-id/'
 		
-		Savory.Authentication.OpenIdProviderForm.prototype.superclass.call(this, this)
+		arguments.callee.overridden.call(this, this)
     }
 
 	Public.process = function(results, conversation) {
