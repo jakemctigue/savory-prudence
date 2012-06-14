@@ -42,12 +42,23 @@ var MathClass = function(multiplyAll) {
 var Math = new MathClass(100)
 */
 
+var data = {
+	1: {_id: 1, name: 'tal', lastSeen: new Date()},
+	2: {_id: 2, name: 'fish', lastSeen: new Date()}
+}
+
+//data = Sincerity.JVM.toMap(data, true)
+
 resources = {
-	math: new Savory.RPC.Resource({namespaces: {Math: Math}}),
-	shoppingcart: new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
-	users: new Savory.REST.MongoDbResource({name: 'users'}),
-	'users.plural': new Savory.REST.MongoDbResource({name: 'users', plural: true}),
-	'users.model': new Savory.REST.InMemoryResource({name: 'users.model', data: {test: 1}})
+	math:                       new Savory.RPC.Resource({namespaces: {Math: Math}}),
+	shoppingcart:               new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
+	'mongo.users':              new Savory.REST.MongoDbResource({name: 'users'}),
+	'mongo.users.plural':       new Savory.REST.MongoDbResource({name: 'users', plural: true}),
+	'memory.users':             new Savory.REST.InMemoryResource({name: 'users', documents: data}),
+	'memory.users.plural':      new Savory.REST.InMemoryResource({name: 'users', documents: data, plural: true}),
+	'distributed.users':        new Savory.REST.DistributedResource({name: 'users', documents: data}),
+	'distributed.users.plural': new Savory.REST.DistributedResource({name: 'users', documents: data, plural: true}),
+	'users.model':              new Savory.REST.InMemoryResource({name: 'users.model', document: data})
 }
 
 //resources = Savory.REST.createMongoDbResources()

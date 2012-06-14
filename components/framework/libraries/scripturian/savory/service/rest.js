@@ -345,8 +345,9 @@ Savory.REST = Savory.REST || function() {
 
 			var iterator, total
 			if (this.plural) {
-				iterator = this.getPlural(conversation)
-				total = iterator.count()
+				var plural = this.getPlural(conversation)
+				iterator = plural.iterator
+				total = plural.total
 				
 				if (!total) {
 					iterator.close()
@@ -361,7 +362,7 @@ Savory.REST = Savory.REST || function() {
 					if (query.start) {
 						iterator.skip(query.start)
 					}
-					if (query.limit) {
+					if (query.limit && iterator.limit) {
 						iterator.limit(query.limit)
 					}
 				}
@@ -491,7 +492,7 @@ Savory.REST = Savory.REST || function() {
 			}
 				
 			if (this.plural) {
-				var docs = iterator ? Sincerity.Iterators.toArray(iterator) : []
+				var docs = iterator ? Sincerity.Iterators.toArray(iterator, 0, query.limit) : []
 				return represent.call(this, conversation, query, total ? {total: total, documents: docs} : {documents: docs}, '/savory/service/rest/plural/')
 			}
 			else {
@@ -570,52 +571,231 @@ Savory.REST = Savory.REST || function() {
 		Public._inherit = Module.IteratorResource
 
 		/** @ignore */
-		Public._configure = ['data']
+		Public._configure = ['document', 'documents']
 
 		/** @ignore */
 		Public._construct = function(config) {
-			arguments.callee.overridden.call(this, this)
+			if (Sincerity.Objects.exists(this.documents)) {
+				if (!(this.documents instanceof java.util.Map)) {
+					this.documents = Sincerity.JVM.toMap(this.documents, true)
+				}
+			}
+			else {
+				this.lock = Sincerity.JVM.newLock(true)
+			}
 			
-			this.lock = Sincerity.JVM.newLock(true)
+			arguments.callee.overridden.call(this, this)
 		}
 
 		Public.getSingular = function(conversation) {
-	    	this.lock.readLock().lock()
-			try {
-				return Sincerity.Objects.clone(this.data)
+			if (Sincerity.Objects.exists(this.documents)) {
+				var id = conversation.locals.get('id')
+				if (Sincerity.Objects.exists(id)) {
+					var doc = this.documents.get(id)
+					if (Sincerity.Objects.exists(doc)) {
+						return doc
+					}
+				}
+				return null
 			}
-	    	finally {
-	    		this.lock.readLock().unlock()
-	    	}
+			else {
+		    	this.lock.readLock().lock()
+				try {
+					return Sincerity.Objects.clone(this.document)
+				}
+		    	finally {
+		    		this.lock.readLock().unlock()
+		    	}
+			}
 		}
 
 		Public.getPlural = function(conversation) {
-			return this.getPlural(conversation)
+			if (Sincerity.Objects.exists(this.documents)) {
+				var values = this.documents.values()
+				return {
+					iterator: new Sincerity.Iterators.JVM(values.iterator()),
+					total: values.size()
+				}
+			}
+			else {
+		    	this.lock.readLock().lock()
+				try {
+					return Sincerity.Objects.clone(this.document)
+				}
+		    	finally {
+		    		this.lock.readLock().unlock()
+		    	}
+			}
 		}
 
 		Public.doUpdate = function(update, conversation) {
-	    	this.lock.writeLock().lock()
-			try {
-				Sincerity.Objects.merge(this.data, update)
+			if (Sincerity.Objects.exists(this.documents)) {
+				var id
+				if (this.plural) {
+					id = update._id
+				}
+				else {
+					id = conversation.locals.get('id')
+				}
+				if (Sincerity.Objects.exists(id)) {
+					id = String(id)
+					var doc = this.documents.get(id)
+					if (Sincerity.Objects.exists(doc)) {
+						doc = Sincerity.Objects.clone(doc)
+						Sincerity.Objects.merge(doc, update)
+						this.documents.put(id, doc)
+						return doc
+					}
+				}
 			}
-	    	finally {
-	    		this.lock.writeLock().unlock()
-	    	}
+			else {
+		    	this.lock.writeLock().lock()
+				try {
+					Sincerity.Objects.merge(this.document, update)
+					return Sincerity.Objects.clone(this.document)
+				}
+		    	finally {
+		    		this.lock.writeLock().unlock()
+		    	}
+			}
+			return null
 		}
 
 		Public.doCreate = function(doc, conversation) {
-	    	this.lock.writeLock().lock()
-			try {
-				this.data = doc
+			if (Sincerity.Objects.exists(this.documents)) {
+				if (this.plural) {
+					if (!Sincerity.Objects.exists(doc._id)) {
+						doc._id = String(MongoDB.newId())
+					}
+					this.documents.put(String(doc._id), doc)
+					return doc
+				}
+				else {
+					var id = conversation.locals.get('id')
+					if (Sincerity.Objects.exists(id)) {
+						this.documents.put(id, doc)
+						return doc
+					}
+				}
 			}
-	    	finally {
-	    		this.lock.writeLock().unlock()
-	    	}
+			else {
+		    	this.lock.writeLock().lock()
+				try {
+					this.document = doc
+					return doc
+				}
+		    	finally {
+		    		this.lock.writeLock().unlock()
+		    	}
+			}
+			return null
 		}
 		
 		return Public
 	}(Public))
 
+	/**
+	 * A RESTful resource for a distributed Hazelcast map.
+	 * 
+	 * @class
+	 * @name Savory.REST.DistributesResource
+	 * @augments Savory.REST.IteratorResource
+	 * 
+	 * @param {Object|String} config
+	 * @param {String} [config.name]
+	 * @param {java.util.Map} [config.map]
+	 * @param {Object} [config.documents]
+	 * @param [config.values] TODO
+	 * @param [config.extract] TODO
+	 * @param [config.modes] TODO
+	 */
+	Public.DistributedResource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.REST.DistributedResource */
+		var Public = {}
+
+		/** @ignore */
+		Public._inherit = Module.IteratorResource
+
+		/** @ignore */
+		Public._configure = ['documents', 'map']
+
+		/** @ignore */
+		Public._construct = function(config) {
+			if (!Sincerity.Objects.exists(this.map)) {
+				this.map = com.hazelcast.core.Hazelcast.getMap(this.name)
+				if (this.map.empty && Sincerity.Objects.exists(this.documents)) {
+					for (var k in this.documents) {
+						this.map.put(k, Sincerity.JSON.to(this.documents[k]))
+					}
+				}
+			}
+			
+			arguments.callee.overridden.call(this, this)
+		}
+
+		Public.getSingular = function(conversation) {
+			var id = conversation.locals.get('id')
+			if (Sincerity.Objects.exists(id)) {
+				var doc = this.map.get(id)
+				if (Sincerity.Objects.exists(doc)) {
+					return Sincerity.JSON.from(doc, true)
+				}
+			}
+			return null
+		}
+
+		Public.getPlural = function(conversation) {
+			var values = this.map.values()
+			return {
+				iterator: new Sincerity.Iterators.Transformer(new Sincerity.Iterators.JVM(values.iterator()), function(doc) {
+					return Sincerity.JSON.from(doc, true)
+				}),
+				total: values.size()
+			}
+		}
+
+		Public.doUpdate = function(update, conversation) {
+			var id
+			if (this.plural) {
+				id = update._id
+			}
+			else {
+				id = conversation.locals.get('id')
+			}
+			if (Sincerity.Objects.exists(id)) {
+				id = String(id)
+				var doc = this.map.get(id)
+				if (Sincerity.Objects.exists(doc)) {
+					doc = Sincerity.JSON.from(doc, true)
+					Sincerity.Objects.merge(doc, update)
+					this.map.put(id, Sincerity.JSON.to(doc))
+					return doc
+				}
+			}
+			return null
+		}
+
+		Public.doCreate = function(doc, conversation) {
+			if (this.plural) {
+				if (!Sincerity.Objects.exists(doc._id)) {
+					doc._id = String(MongoDB.newId())
+				}
+				this.map.put(String(doc._id), Sincerity.JSON.to(doc))
+				return doc
+			}
+			else {
+				var id = conversation.locals.get('id')
+				if (Sincerity.Objects.exists(id)) {
+					this.map.put(id, Sincerity.JSON.to(doc))
+					return doc
+				}
+			}
+			return null
+		}
+		
+		return Public
+	}(Public))
+	
 	/**
 	 * A RESTful resource for a MongoDB document or collection.
 	 * 
@@ -664,7 +844,11 @@ Savory.REST = Savory.REST || function() {
 
 		Public.getPlural = function(conversation) {
 			var q = this.query ? castQuery(conversation, Sincerity.Objects.clone(this.query), this.values) : {}
-			return this.collection.find(q, this.fields)
+			var cursor = this.collection.find(q, this.fields)
+			return {
+				iterator: cursor,
+				total: cursor.count()
+			}
 		}
 
 		Public.getSingular = function(conversation) {

@@ -10,7 +10,7 @@ document.executeOnce('/sincerity/objects/')
 
 var params = {}
 
-var httpUri = conversation.reference.baseRef + 'data/users/4e057e94e799a23b0f581d7d/'
+var httpUri = conversation.reference.baseRef + 'mongo/users/4e057e94e799a23b0f581d7d/'
 
 if (conversation.request.method.name == 'POST') {
 	Sincerity.Objects.merge(params, Prudence.Resources.getForm(conversation, {
