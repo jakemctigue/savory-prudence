@@ -102,6 +102,8 @@ manual.generate({
 	'Documents Service': ['component/applications/savory-example/fragments/manual/service/documents.html'],
 	'REST Service': ['component/applications/savory-example/fragments/manual/service/rest.html'],
 	'RPC Service': ['component/applications/savory-example/fragments/manual/service/rpc.html'],
+	'Sencha Integration': ['component/applications/savory-example/fragments/manual/integration/sencha.html'],
 	'Sencha Integration: Grids': ['component/applications/savory-example/fragments/manual/integration/sencha-grids.html'],
+	'Sencha Integration: Trees': ['component/applications/savory-example/fragments/manual/integration/sencha-trees.html'],
 	'Sencha Integration: Ext Direct': ['component/applications/savory-example/fragments/manual/integration/sencha-ext-direct.html']
 })

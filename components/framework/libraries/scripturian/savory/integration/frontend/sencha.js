@@ -14,6 +14,7 @@
 document.executeOnce('/savory/service/rpc/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/templates/')
+document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
 
@@ -46,6 +47,86 @@ Savory.Sencha = Savory.Sencha || function() {
     	println('<script type="text/javascript" src="{pathToBase}/scripts/savory/integration/ext-js.js"></script>'.cast(filler));
     }
 
+	/**
+	 * @class
+	 * @name Savory.Sencha.TreeResource
+	 * @augments Savory.REST.Resource
+	 * 
+	 * @param config
+	 */
+	Public.TreeResource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.Sencha.TreeResource */
+		var Public = {}
+
+		/** @ignore */
+		Public._inherit = Savory.REST.Resource
+
+		/** @ignore */
+		Public._configure = ['name', 'plural', 'extract', 'modes']
+
+		/** @ignore */
+		Public._construct = function(config) {
+			if (Sincerity.Objects.isString(config)) {
+				this.name = String(config)
+			}
+			
+			arguments.callee.overridden.call(this, this)
+		}
+		
+		Public.mediaTypes = [
+			'application/json',
+			'application/java',
+			'text/plain',
+			'text/html'
+		]
+
+		Public.getChildren = function() {}
+
+		Public.doGet = function(conversation) {
+			var query = Prudence.Resources.getQuery(conversation, {
+				node: 'string',
+				human: 'bool'
+			})
+			query.human = query.human || false
+			
+			var node = this.getChildren(query.node)
+			
+			if (!Sincerity.Objects.exists(node)) {
+				return Prudence.Resources.Status.ClientError.NotFound
+			}
+			
+			if (conversation.mediaTypeName = 'application/java') {
+				return node
+			}
+			else if (conversation.mediaTypeName = 'text/html') {
+				// TODO
+				return ''
+			}
+			else {
+				return Sincerity.JSON.to(node, query.human)
+			}
+		}
+
+		return Public
+	}(Public))
+    
+	/**
+	 * @class
+	 * @name Savory.Sencha.MongoDbTreeResource
+	 * @augments Savory.Sencha.TreeResource
+	 * 
+	 * @param config
+	 */
+	Public.MongoDbTreeResource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.Sencha.MongoDbTreeResource */
+		var Public = {}
+
+		/** @ignore */
+		Public._inherit = Module.TreeResource
+
+		return Public
+	}(Public))
+	
 	/**
 	 * An implementation of Ext Direct, an RPC protocol supported by Ext JS
 	 * and Sencha Touch.

@@ -202,6 +202,23 @@ Ext.define('Savory.data.proxy.Rest', {
 	extend: 'Ext.data.proxy.Ajax',
 
 	constructor: function(config) {
+		config.reader = Ext.apply({
+			type: 'extended-json',
+			root: 'documents'
+		}, config.reader);
+
+		config.writer = Ext.apply({
+			type: 'extended-json'
+		}, config.writer);
+
+		config.headers = Ext.apply({
+			Accept: 'application/json'
+		}, config.headers);
+
+		config.extraParams = Ext.apply({
+			mode: 'stringid'
+		}, config.extraParams);
+		
 		config = Ext.apply({
 			actionMethods: {
 				create : 'PUT',
@@ -209,21 +226,7 @@ Ext.define('Savory.data.proxy.Rest', {
 				update : 'POST',
 				destroy: 'DELETE'
 			},
-			reader: {
-				type: 'extended-json',
-				root: 'documents'
-			},
-			writer: {
-				type: 'extended-json'
-			},
-			writer: 'extended-json',
-			noCache: false,
-			headers: {
-				Accept: 'application/json'
-			},
-			extraParams: {
-				mode: 'stringid'
-			}
+			noCache: false
 		}, config);
 		
 		this.callParent([config]);

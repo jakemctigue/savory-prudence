@@ -9215,8 +9215,16 @@ Usage
 Make sure to check out the 
 \begin_inset CommandInset href
 LatexCommand href
-name "API documentation for Savory.Sencha"
+name "server-side API documentation for Savory.Sencha"
 target "http://threecrickets.com/javascript-api/?namespace=Savory.Sencha"
+
+\end_inset
+
+ and the 
+\begin_inset CommandInset href
+LatexCommand href
+name "client-side API documentation for Ext JS"
+target "http://docs.sencha.com/ext-js/4-1/"
 
 \end_inset
 
@@ -9230,14 +9238,14 @@ A full tutorial of Ext JS grids is beyond what we can do in this Manual,
 
 \begin_layout Itemize
 You start by creating a 
-\begin_inset Quotes eld
+\begin_inset CommandInset href
+LatexCommand href
+name "“Model” class"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.data.Model"
+
 \end_inset
 
-Model
-\begin_inset Quotes erd
-\end_inset
-
- class, which is a template for your 
+, which is a template for your 
 \begin_inset Quotes eld
 \end_inset
 
@@ -9290,11 +9298,11 @@ stringid
 
 \begin_layout Itemize
 The model also defines a 
-\begin_inset Quotes eld
-\end_inset
+\begin_inset CommandInset href
+LatexCommand href
+name "“Proxy,”"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.data.proxy.Proxy"
 
-Proxy,
-\begin_inset Quotes erd
 \end_inset
 
  which is Ext JS's extensible connector class.
@@ -9332,11 +9340,11 @@ savory
 
 \begin_layout Itemize
 The 
-\begin_inset Quotes eld
-\end_inset
+\begin_inset CommandInset href
+LatexCommand href
+name "“Store”"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.data.Store"
 
-Store
-\begin_inset Quotes erd
 \end_inset
 
  is an intermediary class between the model and the grid.
@@ -9353,7 +9361,15 @@ records
 \end_layout
 
 \begin_layout Itemize
-Finally, there's the grid panel.
+Finally, there's the 
+\begin_inset CommandInset href
+LatexCommand href
+name "grid panel"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.grid.Panel"
+
+\end_inset
+
+.
  Though we've defined 
 \begin_inset Quotes eld
 \end_inset
@@ -9389,11 +9405,11 @@ _id
 
 \begin_layout Itemize
 By default, the grid is not editable, but we can add the 
-\begin_inset Quotes eld
-\end_inset
+\begin_inset CommandInset href
+LatexCommand href
+name "“CellEditing”"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.grid.plugin.CellEditing"
 
-CellEditing
-\begin_inset Quotes erd
 \end_inset
 
  plugin to handle that.
@@ -9404,10 +9420,17 @@ CellEditing
 \end_layout
 
 \begin_layout Itemize
-In this example, we've also added a paging toolbar to the grid, and hooked
- it up to use the same store as the grid.
- As the store is paged by the toolbar, it fires events that update the visual
- grid.
+In this example, we've also added a 
+\begin_inset CommandInset href
+LatexCommand href
+name "paging toolbar"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.toolbar.Paging"
+
+\end_inset
+
+ to the grid, and hooked it up to use the same store as the grid.
+ As the store is paged by the toolbar, it fires events that update the current
+ grid view.
 \end_layout
 
 \begin_layout Standard
@@ -9416,7 +9439,6 @@ That should be enough to get you started.
 \end_layout
 
 \begin_layout Standard
-
 \begin_inset listings
 inline false
 status open
@@ -9779,6 +9801,38 @@ Ext.onReady(function() {
 \end_layout
 
 \begin_layout Section
+Sencha Integration: Trees
+\end_layout
+
+\begin_layout Standard
+hi!
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "server-side API documentation for Savory.Sencha"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Sencha"
+
+\end_inset
+
+ and the 
+\begin_inset CommandInset href
+LatexCommand href
+name "client-side API documentation for Ext JS"
+target "http://docs.sencha.com/ext-js/4-1/"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
 Sencha Integration: Ext Direct
 \end_layout
 
@@ -9845,16 +9899,24 @@ Setup
 Make sure to check out the 
 \begin_inset CommandInset href
 LatexCommand href
-name "API documentation for Savory.Sencha"
+name "server-side API documentation for Savory.Sencha"
 target "http://threecrickets.com/javascript-api/?namespace=Savory.Sencha"
 
 \end_inset
 
- and also for 
+ and 
 \begin_inset CommandInset href
 LatexCommand href
 name "Savory.RPC"
 target "http://threecrickets.com/javascript-api/?namespace=Savory.RPC"
+
+\end_inset
+
+, as well as the 
+\begin_inset CommandInset href
+LatexCommand href
+name "client-side API documentation for Ext Direct"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.direct.Manager"
 
 \end_inset
 
