@@ -38,7 +38,7 @@ Savory.Sencha = Savory.Sencha || function() {
     Public.extJsHead = function(conversation, theme) {
     	var filler = {
     		pathToBase: conversation.pathToBase,
-    		theme: theme || 'ext-all-gray'
+    		theme: theme || 'ext-all'
     	}
     	println('<!-- Ext JS -->');
     	println('<link rel="stylesheet" type="text/css" href="{pathToBase}/style/ext-js/style/css/{theme}.css" id="ext-theme" />'.cast(filler));

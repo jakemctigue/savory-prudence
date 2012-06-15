@@ -66,25 +66,23 @@ Savory.ExtendedJSON.pack = function(data) {
 			data[d] = Savory.ExtendedJSON.pack(data[d]);
 		}
 	}
-	else if (Ext.isObject(data)) {
-		if (Ext.isDate(data)) {
-			return {$date: data.getTime()};
-		}	
-		
-		if (data instanceof RegExp) {
-			var options = '';
-			if (data.global) {
-				options += 'g'
-			}
-			if (data.ignoreCase) {
-				options += 'i'
-			}
-			if (data.multiline) {
-				options += 'm'
-			}
-			return options.length ? {$regex: data.source, $options: options} : {$regex: data.source};
+	else if (Ext.isDate(data)) {
+		return {$date: data.getTime()};
+	}	
+	else if (data instanceof RegExp) {
+		var options = '';
+		if (data.global) {
+			options += 'g'
 		}
-
+		if (data.ignoreCase) {
+			options += 'i'
+		}
+		if (data.multiline) {
+			options += 'm'
+		}
+		return options.length ? {$regex: data.source, $options: options} : {$regex: data.source};
+	}
+	else if (Ext.isObject(data)) {
 		for (var d in data) {
 			data[d] = Savory.ExtendedJSON.pack(data[d]);
 		}
@@ -214,6 +212,9 @@ Ext.define('Savory.data.proxy.Rest', {
 			reader: {
 				type: 'extended-json',
 				root: 'documents'
+			},
+			writer: {
+				type: 'extended-json'
 			},
 			writer: 'extended-json',
 			noCache: false,

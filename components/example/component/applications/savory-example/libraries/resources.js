@@ -42,23 +42,31 @@ var MathClass = function(multiplyAll) {
 var Math = new MathClass(100)
 */
 
-var data = {
-	1: {_id: 1, name: 'tal', lastSeen: new Date()},
-	2: {_id: 2, name: 'fish', lastSeen: new Date()}
+var users = {
+	'4e057e94e799a23b0f581d7d': {
+		_id: '4e057e94e799a23b0f581d7d',
+		name: 'newton',
+		lastSeen: new Date()
+	},
+	'4e057e94e799a23b0f581d7e': {
+		_id: '4e057e94e799a23b0f581d7e',
+		name: 'sagan',
+		lastSeen: new Date()
+	}
 }
 
-//data = Sincerity.JVM.toMap(data, true)
+var usersMap = Sincerity.JVM.toMap(users, true)
 
 resources = {
 	math:                       new Savory.RPC.Resource({namespaces: {Math: Math}}),
 	shoppingcart:               new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
 	'mongo.users':              new Savory.REST.MongoDbResource({name: 'users'}),
 	'mongo.users.plural':       new Savory.REST.MongoDbResource({name: 'users', plural: true}),
-	'memory.users':             new Savory.REST.InMemoryResource({name: 'users', documents: data}),
-	'memory.users.plural':      new Savory.REST.InMemoryResource({name: 'users', documents: data, plural: true}),
-	'distributed.users':        new Savory.REST.DistributedResource({name: 'users', documents: data}),
-	'distributed.users.plural': new Savory.REST.DistributedResource({name: 'users', documents: data, plural: true}),
-	'users.model':              new Savory.REST.InMemoryResource({name: 'users.model', document: data})
+	'memory.users':             new Savory.REST.InMemoryResource({name: 'users', documents: usersMap}),
+	'memory.users.plural':      new Savory.REST.InMemoryResource({name: 'users', documents: usersMap, plural: true}),
+	'distributed.users':        new Savory.REST.DistributedResource({name: 'users', documents: users}),
+	'distributed.users.plural': new Savory.REST.DistributedResource({name: 'users', documents: users, plural: true}),
+	'users.model':              new Savory.REST.InMemoryResource({name: 'users.model', document: users})
 }
 
 //resources = Savory.REST.createMongoDbResources()

@@ -4730,13 +4730,14 @@ Even without customization via code, out of the box you get the following
 \begin_layout Itemize
 The default format immediately supports Ext JS's RESTful data stores.
  Attach any MongoDB collection to an editable grid widget in a web browser!
+ See the Sencha Integration manual for more information.
 \end_layout
 
 \begin_layout Itemize
 Automatic content negotiation with support for JSON and XML formats, as
  well as a human-readable HTML format perfect for debugging via browsers.
  The HTML format even allows simple editing of your content.
- Note, though, that if you want a full-fledged web frontend for your MongoDB
+ (Note, though, that if you want a full-fledged web frontend for your MongoDB
  data, you're better off with 
 \begin_inset CommandInset href
 LatexCommand href
@@ -4745,7 +4746,7 @@ target "http://code.google.com/p/mongo-vision/"
 
 \end_inset
 
-, which is easily installable side-by-side with your Savory application.
+, which is easily installable side-by-side with your Savory application.)
 \end_layout
 
 \begin_layout Itemize
@@ -4753,12 +4754,20 @@ Pagination for traversing collections of any size.
 \end_layout
 
 \begin_layout Itemize
-Choose which document fields you want to expose.
+Choose which document fields you want to expose, and extract sub-documents
+ from your main document.
 \end_layout
 
 \begin_layout Itemize
-Apply straightforward transformers that let you massage MongoDB's extended
- JSON format into simpler primitives.
+Apply straightforward 
+\begin_inset Quotes eld
+\end_inset
+
+modes,
+\begin_inset Quotes erd
+\end_inset
+
+ which let you transform MongoDB's extended JSON format into simpler primitives.
  For example, 
 \begin_inset Quotes eld
 \end_inset
@@ -5984,12 +5993,22 @@ resources = {
 
 \begin_layout Plain Layout
 
-resources.users.handleDelete = function(conversation) {
+resources.users.doDelete = function(conversation) {
 \end_layout
 
 \begin_layout Plain Layout
 
 	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	// Call overridden method
+\end_layout
+
+\begin_layout Plain Layout
+
+	arguments.callee.overridden.call(this, conversation)
 \end_layout
 
 \begin_layout Plain Layout
@@ -6013,6 +6032,311 @@ Savory.REST.createMongoDbResources()
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Subsubsection
+In-Memory Data
+\end_layout
+
+\begin_layout Standard
+The REST Service does not have to use MongoDB to store data: it also supports
+ storing data in memory, even shared memory distributed in the Prudence
+ cluster.
+\end_layout
+
+\begin_layout Standard
+This is useful if you don't need persistent storage in MongoDB (the data
+ is considered volatile) and is also useful for creating mock data for testing.
+ The URI-space otherwise behaves exactly the same as if it were attached
+ to MongoDB collections.
+ Performance, of course, should be better than if you were accessing MongoDB.
+ On the other, your storage size is limited to your RAM.
+ So, while this feature is not a replacement for using MongoDB, it can be
+ quite useful in various scenarios.
+\end_layout
+
+\begin_layout Standard
+Let's modify our example from above to use in-memory resources:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/sincerity/jvm/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var users = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	'4e057e94e799a23b0f581d7d': {
+\end_layout
+
+\begin_layout Plain Layout
+
+		_id: '4e057e94e799a23b0f581d7d',
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: 'newton',
+\end_layout
+
+\begin_layout Plain Layout
+
+		lastSeen: new Date()
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	'4e057e94e799a23b0f581d7e': {
+\end_layout
+
+\begin_layout Plain Layout
+
+		_id: '4e057e94e799a23b0f581d7e',
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: 'sagan',
+\end_layout
+
+\begin_layout Plain Layout
+
+		lastSeen: new Date()
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var usersMap = Sincerity.JVM.toMap(users, true)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	users:          new Savory.REST.InMemoryResource({name: 'users', documents:
+ usersMap}),
+\end_layout
+
+\begin_layout Plain Layout
+
+	'users.plural': new Savory.REST.InMemoryResource({name: 'users', documents:
+ usersMap, plural: true})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that we translated the 
+\begin_inset Quotes eld
+\end_inset
+
+users
+\begin_inset Quotes erd
+\end_inset
+
+ dict into a thread-safe JVM map.
+ We could have also just sent the 
+\begin_inset Quotes eld
+\end_inset
+
+users
+\begin_inset Quotes erd
+\end_inset
+
+ dict directly to the 
+\begin_inset Quotes eld
+\end_inset
+
+InMemoryResource
+\begin_inset Quotes erd
+\end_inset
+
+ constructor, which can create the map for us.
+ But, since we have 
+\emph on
+two
+\emph default
+ resources, the singular and the plural, and we want them to share the same
+ map, we have created this map ourselves.
+\end_layout
+
+\begin_layout Standard
+What if you're in a Prudence cluster, and want all nodes to share the same
+ in-memory data? Let's modify our code:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	users:          new Savory.REST.DistributedResource({name: 'users', documents:
+ users}),
+\end_layout
+
+\begin_layout Plain Layout
+
+	'users.plural': new Savory.REST.DistributedResource({name: 'users', documents:
+ users, plural: true})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The code is even simpler than the 
+\begin_inset Quotes eld
+\end_inset
+
+InMemoryResource
+\begin_inset Quotes erd
+\end_inset
+
+ code (no need to create 
+\begin_inset Quotes eld
+\end_inset
+
+usersMap
+\begin_inset Quotes erd
+\end_inset
+
+), but requires some explanation:
+\end_layout
+
+\begin_layout Itemize
+The 
+\begin_inset Quotes eld
+\end_inset
+
+name
+\begin_inset Quotes erd
+\end_inset
+
+ field will be used as the name of the Hazelcast map.
+ You can configure this map by name in the Hazelcast configuration, otherwise
+ it will use the Hazelcast defaults for new maps.
+\end_layout
+
+\begin_layout Itemize
+The data from the 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+ field will be copied into the Hazelcast 
+\emph on
+only once
+\emph default
+ and 
+\emph on
+only if the map is already empty
+\emph default
+.
+ Thus, it should be thought of as your initialization data: the first time
+ a resource is set up for that map, from anywhere in the cluster, this data
+ will be copied in.
+ From then on, for the life of the cluster, 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+ will be ignored.
+ Thus, if you want to re-initialize the map, you will need to either restart
+ your whole cluster, or programmatically set the data.
+ (The Savory Console would be very useful for that.)
+\end_layout
+
+\begin_layout Itemize
+Note that we are serializing data using JSON into the distributed map.
+ The performance hit should be minimal, but it's important to remember that
+ only your data must be extended-JSON-compatible.
+ (The 
+\begin_inset Quotes eld
+\end_inset
+
+InMemoryResource
+\begin_inset Quotes erd
+\end_inset
+
+ doesn't have this restriction.)
 \end_layout
 
 \begin_layout Subsection
@@ -8643,19 +8967,37 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.PayPal"
 \end_layout
 
 \begin_layout Section
-Sencha Integration: Grids
+Sencha Integration
 \end_layout
 
 \begin_layout Standard
-Hola!
+Ext JS and Sencha Touch are both large JavaScript frameworks in their own
+ right, and Savory supports many of their features.
+ For this reason, we've divided the section for Sencha Integration into
+ several sub-sections.
+ Still, you'll want to start here, where we go over some general usage applicabl
+e to all features.
 \end_layout
 
 \begin_layout Standard
-This is good.
+After that, go ahead and read the sections for the following integration
+ features:
+\end_layout
+
+\begin_layout Itemize
+Grids
+\end_layout
+
+\begin_layout Itemize
+Trees
+\end_layout
+
+\begin_layout Itemize
+Ext Direct
 \end_layout
 
 \begin_layout Subsection
-Setup
+Usage
 \end_layout
 
 \begin_layout Standard
@@ -8668,6 +9010,772 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.Sencha"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+To include Ext JS in your HTML page, you'll want to insert a scriptlet,
+ resulting in a page template similar to this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<head>
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+Savory.Sencha.extJsHead(conversation, 'ext-all-gray')
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+</head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<script type="text/javascript">
+\end_layout
+
+\begin_layout Plain Layout
+
+Ext.onReady(function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+});
+\end_layout
+
+\begin_layout Plain Layout
+
+</script>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Notes:
+\end_layout
+
+\begin_layout Itemize
+The 
+\begin_inset Quotes eld
+\end_inset
+
+extJsHead
+\begin_inset Quotes erd
+\end_inset
+
+ method uses 
+\begin_inset Quotes eld
+\end_inset
+
+conversation.pathToBase
+\begin_inset Quotes erd
+\end_inset
+
+ to make sure that the correct relative URL is inserted.
+ Be aware of this if you intend to cache that fragment for all URLs.
+\end_layout
+
+\begin_layout Itemize
+The second argument is the theme: it will be 
+\begin_inset Quotes eld
+\end_inset
+
+ext-all
+\begin_inset Quotes erd
+\end_inset
+
+ if not provided.
+\end_layout
+
+\begin_layout Itemize
+This also includes Savory's Ext JS client-side helper library.
+ You don't have to use it, but it can make your life easier.
+ You can find it under 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/web/scripts/savory/integration/ext-js.js
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The library enhances Ext JS via:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+JSON Readers and Writers that support MongoDB's extended JSON format.
+ This will allow you to automatically translate $date, $long and other JSON
+ extensions.
+ Even without using MongoDB, this is a very useful format.
+\end_layout
+
+\begin_layout Itemize
+A data Proxy that automatically uses the extended JSON Reader and Writer,
+ and builds URLs in Savory's default structure.
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Sencha Integration: Grids
+\end_layout
+
+\begin_layout Standard
+Ext JS's grid widget may be its most powerful feature.
+ It supports editing, paging and endless scrolling, with lots of room for
+ customization.
+ Grids offer a familiar and powerful UI for traversing large amounts of
+ structured data.
+ The Savory Framework offers excellent server-side support for this astounding
+ client widget: in a few lines of code, you can hook up an editable grid
+ widget to a MongoDB collection.
+\end_layout
+
+\begin_layout Standard
+Despite being one of Savory's most immediately impressive features, this
+ is going to be a rather short manual chapter! The reason is that the heavy
+ lifting is done by the REST Service.
+ The URI-space created by the REST Service is compatible with Ext JS, so
+ there's not much more to do other than hook up the grid using client-side
+ JavaScript.
+\end_layout
+
+\begin_layout Standard
+What we're going to do here is give a quick tutorial for using Ext JS grids
+ with Savory.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Sencha"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Sencha"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A full tutorial of Ext JS grids is beyond what we can do in this Manual,
+ but here are is a quick overview of the components as they apply to Savory:
+\end_layout
+
+\begin_layout Itemize
+You start by creating a 
+\begin_inset Quotes eld
+\end_inset
+
+Model
+\begin_inset Quotes erd
+\end_inset
+
+ class, which is a template for your 
+\begin_inset Quotes eld
+\end_inset
+
+records,
+\begin_inset Quotes erd
+\end_inset
+
+ represented by your grid rows.
+ Each model has a list of typed fields (the default is a plain string) which
+ imply client-side translation and validation.
+ You can further create your custom fields.
+ For Savory, it's important that you include the 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ field and also set 
+\begin_inset Quotes eld
+\end_inset
+
+idProperty
+\begin_inset Quotes erd
+\end_inset
+
+ to be that field.
+ If you don't explicitly set 
+\begin_inset Quotes eld
+\end_inset
+
+idProperty,
+\begin_inset Quotes erd
+\end_inset
+
+ Ext JS will not be able to save individual records.
+ Also not that Ext JS requires the idProperty to be a primitive, so we are
+ using the 
+\begin_inset Quotes eld
+\end_inset
+
+stringid
+\begin_inset Quotes erd
+\end_inset
+
+ mode for the Savory REST Service in order to make sure we get strings,
+ not MongoDB ObjectIds.
+\end_layout
+
+\begin_layout Itemize
+The model also defines a 
+\begin_inset Quotes eld
+\end_inset
+
+Proxy,
+\begin_inset Quotes erd
+\end_inset
+
+ which is Ext JS's extensible connector class.
+ Proxies are in charge of loading and saving the data.
+ In this case, we are using a 
+\begin_inset Quotes eld
+\end_inset
+
+savory
+\begin_inset Quotes erd
+\end_inset
+
+ proxy type.
+ This is a custom type that we have defined in Savory's Ext JS helper library.
+ It's rather simple, and you are free to use the 
+\begin_inset Quotes eld
+\end_inset
+
+ajax
+\begin_inset Quotes erd
+\end_inset
+
+ proxy type instead with the modifications we've made there.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+savory
+\begin_inset Quotes erd
+\end_inset
+
+ proxy is configured to automatically support MongoDB's extended JSON notation
+ and also use Savory's URL style.
+\end_layout
+
+\begin_layout Itemize
+The 
+\begin_inset Quotes eld
+\end_inset
+
+Store
+\begin_inset Quotes erd
+\end_inset
+
+ is an intermediary class between the model and the grid.
+ It handles caching of model instances (
+\begin_inset Quotes eld
+\end_inset
+
+records
+\begin_inset Quotes erd
+\end_inset
+
+) in memory, paging, pre-fetching, etc.
+ By default it will use the proxy we defined in our model.
+\end_layout
+
+\begin_layout Itemize
+Finally, there's the grid panel.
+ Though we've defined 
+\begin_inset Quotes eld
+\end_inset
+
+fields
+\begin_inset Quotes erd
+\end_inset
+
+ in our model, we must define 
+\begin_inset Quotes eld
+\end_inset
+
+columns
+\begin_inset Quotes erd
+\end_inset
+
+ in our grid that map onto the fields.
+ In many cases we'll be doing a one-to-one mapping, but you can create custom
+ columns that transform the model in various ways, for example combining
+ fields into a single column, or having a column that is derived from other
+ fields.
+ You do not have to have a column for every field.
+ (Indeed, you'd likely not want to have the 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ field visible.)
+\end_layout
+
+\begin_layout Itemize
+By default, the grid is not editable, but we can add the 
+\begin_inset Quotes eld
+\end_inset
+
+CellEditing
+\begin_inset Quotes erd
+\end_inset
+
+ plugin to handle that.
+ Every column can define its own editor, which can handle user-side validation
+ beyond what is offered by the model.
+ Ext JS comes with many powerful editing widgets, and of course you can
+ create your own.
+\end_layout
+
+\begin_layout Itemize
+In this example, we've also added a paging toolbar to the grid, and hooked
+ it up to use the same store as the grid.
+ As the store is paged by the toolbar, it fires events that update the visual
+ grid.
+\end_layout
+
+\begin_layout Standard
+That should be enough to get you started.
+ Here's how the code looks:
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+Savory.Sencha.extJsHead(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+</head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<div id="grid"></div>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<script type="text/javascript">
+\end_layout
+
+\begin_layout Plain Layout
+
+Ext.onReady(function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+	var pageSize = 15;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ext.define('User', {
+\end_layout
+
+\begin_layout Plain Layout
+
+		extend: 'Ext.data.Model',
+\end_layout
+
+\begin_layout Plain Layout
+
+		fields: [
+\end_layout
+
+\begin_layout Plain Layout
+
+			'_id',
+\end_layout
+
+\begin_layout Plain Layout
+
+			'name',
+\end_layout
+
+\begin_layout Plain Layout
+
+			{name: 'lastSeen', type: 'date'}
+\end_layout
+
+\begin_layout Plain Layout
+
+		],
+\end_layout
+
+\begin_layout Plain Layout
+
+		idProperty: '_id',
+\end_layout
+
+\begin_layout Plain Layout
+
+		proxy: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			type: 'savory',
+\end_layout
+
+\begin_layout Plain Layout
+
+			url: '<%= conversation.pathToBase %>/data/users/'
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	});
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	var store = Ext.create('Ext.data.Store', {
+\end_layout
+
+\begin_layout Plain Layout
+
+		model: 'User',
+\end_layout
+
+\begin_layout Plain Layout
+
+		pageSize: pageSize,
+\end_layout
+
+\begin_layout Plain Layout
+
+		autoSync: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+		autoLoad: true
+\end_layout
+
+\begin_layout Plain Layout
+
+	});
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ext.create('Ext.grid.Panel', {
+\end_layout
+
+\begin_layout Plain Layout
+
+		store: store,
+\end_layout
+
+\begin_layout Plain Layout
+
+		columns: [{
+\end_layout
+
+\begin_layout Plain Layout
+
+			dataIndex: 'name',
+\end_layout
+
+\begin_layout Plain Layout
+
+			header: 'Name',
+\end_layout
+
+\begin_layout Plain Layout
+
+			editor: 'textfield'
+\end_layout
+
+\begin_layout Plain Layout
+
+		}, {
+\end_layout
+
+\begin_layout Plain Layout
+
+			dataIndex: 'lastSeen',
+\end_layout
+
+\begin_layout Plain Layout
+
+			xtype: 'datecolumn',
+\end_layout
+
+\begin_layout Plain Layout
+
+			format: 'm/d/y, H:i',
+\end_layout
+
+\begin_layout Plain Layout
+
+			header: 'Last Seen',
+\end_layout
+
+\begin_layout Plain Layout
+
+			editor: {
+\end_layout
+
+\begin_layout Plain Layout
+
+				xtype: 'datefield',
+\end_layout
+
+\begin_layout Plain Layout
+
+				format: 'm/d/y, H:i'
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}],
+\end_layout
+
+\begin_layout Plain Layout
+
+		forceFit: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+		selType: 'cellmodel',
+\end_layout
+
+\begin_layout Plain Layout
+
+		plugins: [
+\end_layout
+
+\begin_layout Plain Layout
+
+			Ext.create('Ext.grid.plugin.CellEditing', {clicksToEdit: 2})
+\end_layout
+
+\begin_layout Plain Layout
+
+		],
+\end_layout
+
+\begin_layout Plain Layout
+
+		dockedItems: [{
+\end_layout
+
+\begin_layout Plain Layout
+
+			dock: 'bottom',
+\end_layout
+
+\begin_layout Plain Layout
+
+			xtype: 'pagingtoolbar',
+\end_layout
+
+\begin_layout Plain Layout
+
+			store: store,
+\end_layout
+
+\begin_layout Plain Layout
+
+		}],
+\end_layout
+
+\begin_layout Plain Layout
+
+		renderTo: 'grid',
+\end_layout
+
+\begin_layout Plain Layout
+
+		style: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			margin: 'auto'
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		width: 500,
+\end_layout
+
+\begin_layout Plain Layout
+
+		height: 370
+\end_layout
+
+\begin_layout Plain Layout
+
+	});
+\end_layout
+
+\begin_layout Plain Layout
+
+});
+\end_layout
+
+\begin_layout Plain Layout
+
+</script>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section

@@ -8,19 +8,25 @@ document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/xml/')
 document.executeOnce('/sincerity/objects/')
 
-var params = {}
+var params = {uri: 'mongo'}
 
-var httpUri = conversation.reference.baseRef + 'mongo/users/4e057e94e799a23b0f581d7d/'
+var id = '4e057e94e799a23b0f581d7d'
+var baseUri
 
 if (conversation.request.method.name == 'POST') {
 	Sincerity.Objects.merge(params, Prudence.Resources.getForm(conversation, {
 		internal: 'bool',
-		mediaType: 'string'
+		mediaType: 'string',
+		uri: 'string'
 	}))
+	baseUri = params.uri
 }
 
+params.uri = '{0}/users/{1}/'.cast(params.uri, id)
+var httpUri = conversation.reference.baseRef + params.uri
+
 if (params.internal) {
-	params.uri = '/data/users/4e057e94e799a23b0f581d7d/'
+	params.uri = '/' + params.uri
 	params.mediaType = 'application/java'
 }
 else {
@@ -35,15 +41,27 @@ var output = params.mediaType == 'application/xml' ? user.toXml(2) : Sincerity.J
 
 <p>
 	We've set up a RESTful URI-space for the "users" collection in MongoDB, and will here let you
-	access it, either internally without serialization, or via HTTP with serialization.
+	access it, either internally (without serialization), or via HTTP (with serialization).
 </p>
 <p>
-	Note that unlike JSON, XML does not translate naturally to standard JavaScript data structures,
-	and so if you request XML, we'll here just print out the XML document. The Sincerity.XML API,
-	however, lets you traverse XML DOM on its own terms.  
+	We've also used the REST Service's in-memory and distributed resources to set up a URI-space
+	with similar data. You can switch between resources using the combo box. See the manual below
+	for a full explanation.
+</p>
+<p>
+	Note that unlike JSON, XML does not translate naturally to standard JavaScript data structures.
+	Normally, you'd want to traverse it using the Sincerity.XML API. For this example, though, we'll
+	just print out the XML document as is. (You'll likely always prefer to use JSON when available;
+	but we want to show you that Savory fully supports XML, too.)
 </p>
 <p>
 	Here is a link to access the HTML view of the user document: <a href="<%= httpUri %>"><%= httpUri %></a>.
+	(It works because of HTTP content negotiation: your web browser prefers the "text/html" format,
+	which we support with a special view.)
+</p>
+<p>
+	Also be sure to check out the <a href="../../integration/sencha/grids/">Ext JS grids example</a>,
+	where the exact same resources are hooked up to a powerful, editable grid widget.
 </p>
 
 <pre>
@@ -66,10 +84,17 @@ var output = params.mediaType == 'application/xml' ? user.toXml(2) : Sincerity.J
 		</select>
 	</p>
 	<p>
+		Resource:
+		<select name="uri">
+			<option value="mongo" <%= baseUri == 'mongo' ? 'selected="true"' : '' %>>MongoDB</option>
+			<option value="memory" <%= baseUri == 'memory' ? 'selected="true"' : '' %>>in-memory</option>
+			<option value="distributed" <%= baseUri == 'distributed' ? 'selected="true"' : '' %>>distributed</option>
+		</select>
+	</p>
+	<p>
 		<input type="submit" value="Request" />
 	</p>
 </form>
-
 
 <% exampleFooter('REST', 'Service'); %>
 <%& '/site/footer/' %>

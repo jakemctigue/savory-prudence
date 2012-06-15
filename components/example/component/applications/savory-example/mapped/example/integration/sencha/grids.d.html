@@ -1,7 +1,7 @@
 <%{{ head %>
 <%
 document.executeOnce('/savory/integration/frontend/sencha/')
-Savory.Sencha.extJsHead(conversation)
+Savory.Sencha.extJsHead(conversation, 'ext-all-gray')
 %>
 <%}}%>
 <%& '/site/header/' %>
@@ -10,20 +10,30 @@ Savory.Sencha.extJsHead(conversation)
 <p>
 	Double click on any cell to edit it. Your changes will be saved when you leave the cell.
 </p>
-<div id="grid-mongo-db">
-</div>
+<p>
+	This is a simple example, but take a moment to marvel at how powerful it is: we've set up
+	a URI-space over our MongoDB data using the <a href="../../../service/rest">REST Service</a>,
+	and then directly hooked up an editable grid widget to it. And all in just a few dozen lines
+	of JavaScript: some on the server, some on the client. More on the client, actually, then
+	the server. This is the power of the Savory Framework and Ext JS!
+</p>
+<p>
+	Use the "Resource" combo box to switch to the in-memory and distributed resources. See the
+	<a href="../../../service/rest">REST Service example</a> for more information.
+</p>
+<div id="grid"></div>
 
 <%{{ foot %>
 <script type="text/javascript">
 Ext.onReady(function() {
 	var pageSize = 15;
-	
+
 	Ext.define('User', {
 		extend: 'Ext.data.Model',
 		fields: [
 			'_id',
 			'name',
-			'lastSeen'
+			{name: 'lastSeen', type: 'date'}
 		],
 		idProperty: '_id',
 		proxy: {
@@ -37,6 +47,15 @@ Ext.onReady(function() {
 		pageSize: pageSize,
 		autoSync: true,
 		autoLoad: true
+	});
+	
+	var uris = Ext.create('Ext.data.Store', {
+		fields: ['uri', 'text'],
+		data : [
+			{uri: 'mongo', text: 'MongoDB'},
+			{uri: 'memory', text: 'in-memory'},
+			{uri: 'distributed', text: 'distributed'}
+		]
 	});
 	
 	Ext.create('Ext.grid.Panel', {
@@ -63,9 +82,28 @@ Ext.onReady(function() {
 		dockedItems: [{
 			dock: 'bottom',
 			xtype: 'pagingtoolbar',
-			store: store
+			store: store,
+			items: [{
+				text: 'Resource:'
+			}, {
+				xtype: 'combobox',
+				width: 150,
+				store: uris,
+				valueField: 'uri',
+				value: 'mongo',
+				queryMode: 'local',
+				editable: false,
+				listeners: {
+					'select': function(combo, records) {
+						var uri = records[0].get('uri');
+						var proxy = User.getProxy();
+						proxy.url = '<%= conversation.pathToBase %>/' + uri + '/users/';
+						store.load();
+					}
+				}
+			}]
 		}],
-		renderTo: 'grid-mongo-db',
+		renderTo: 'grid',
 		style: {
 			margin: 'auto'
 		},
