@@ -2246,12 +2246,12 @@ var textPack = Savory.Internationalization.getPack('en')
 
 \begin_layout Plain Layout
 
-<p dir="<%= textPack.getDirection('application.savory-example.time') %>">
+<p dir="<%= textPack.getDirection('application.myapp.time') %>">
 \end_layout
 
 \begin_layout Plain Layout
 
-	<%= textPack.get('application.savory-example.time', {now: new Date()}) %>
+	<%= textPack.get('application.myapp.time', {now: new Date()}) %>
 \end_layout
 
 \begin_layout Plain Layout
@@ -2634,7 +2634,7 @@ status open
 
 \begin_layout Plain Layout
 
-			"savory-example": {
+			"myapp": {
 \end_layout
 
 \begin_layout Plain Layout
@@ -2750,7 +2750,7 @@ status open
 
 \begin_layout Plain Layout
 
-		"savory-example": {
+			"myapp": {
 \end_layout
 
 \begin_layout Plain Layout
@@ -7054,8 +7054,7 @@ var user = Prudence.Resources.request({
 
 \begin_layout Plain Layout
 
-	uri: 'http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/
-',
+	uri: 'http://localhost:8080/myapp/data/users/4e057e94e799a23b0f581d7d/',
 \end_layout
 
 \begin_layout Plain Layout
@@ -7154,8 +7153,7 @@ var user = Prudence.Resources.request({
 
 \begin_layout Plain Layout
 
-	uri: 'http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/
-',
+	uri: 'http://localhost:8080/myapp/data/users/4e057e94e799a23b0f581d7d/',
 \end_layout
 
 \begin_layout Plain Layout
@@ -7288,19 +7286,19 @@ status open
 
 \begin_layout Plain Layout
 
-curl "http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/?
-human=true"
+curl "http://localhost:8080/myapp/data/users/4e057e94e799a23b0f581d7d/?human=tru
+e"
 \end_layout
 
 \begin_layout Plain Layout
 
-curl "http://localhost:8080/savory-example/data/users/4e057e94e799a23b0f581d7d/?
-format=xml&human=true"
+curl "http://localhost:8080/myapp/data/users/4e057e94e799a23b0f581d7d/?format=xm
+l&human=true"
 \end_layout
 
 \begin_layout Plain Layout
 
-curl "http://localhost:8080/savory-example/data/users/?limit=3&human=true"
+curl "http://localhost:8080/myapp/data/users/?limit=3&human=true"
 \end_layout
 
 \end_inset
@@ -7328,8 +7326,8 @@ status open
 
 \begin_layout Plain Layout
 
-curl -d '{"email":"newemail@mysite.org"}' "http://localhost:8080/savory-example/d
-ata/users/4e057e94e799a23b0f581d7d/?human=true"
+curl -d '{"email":"newemail@mysite.org"}' "http://localhost:8080/myapp/data/users
+/4e057e94e799a23b0f581d7d/?human=true"
 \end_layout
 
 \end_inset
@@ -7372,8 +7370,8 @@ status open
 
 \begin_layout Plain Layout
 
-curl -d @data.json "http://localhost:8080/savory-example/data/users/4e057e94e799a
-23b0f581d7d/?human=true"
+curl -d @data.json "http://localhost:8080/myapp/data/users/4e057e94e799a23b0f581d
+7d/?human=true"
 \end_layout
 
 \end_inset
@@ -7401,8 +7399,7 @@ status open
 
 \begin_layout Plain Layout
 
-curl -X PUT -d @data.json "http://localhost:8080/savory-example/data/users/?human
-=true"
+curl -X PUT -d @data.json "http://localhost:8080/myapp/data/users/?human=true"
 \end_layout
 
 \end_inset
@@ -7421,8 +7418,8 @@ status open
 
 \begin_layout Plain Layout
 
-curl -X DELETE "http://localhost:8080/savory-example/data/users/4e057e94e799a23b
-0f581d7d/"
+curl -X DELETE "http://localhost:8080/myapp/data/users/4e057e94e799a23b0f581d7d/
+"
 \end_layout
 
 \end_inset
@@ -7449,8 +7446,8 @@ status open
 
 \begin_layout Plain Layout
 
-curl -H "Accept: application/xml" "http://localhost:8080/savory-example/data/use
-rs/4e057e94e799a23b0f581d7d/?human=true"
+curl -H "Accept: application/xml" "http://localhost:8080/myapp/data/users/4e057e
+94e799a23b0f581d7d/?human=true"
 \end_layout
 
 \end_inset
@@ -8675,8 +8672,7 @@ status open
 
 \begin_layout Plain Layout
 
-curl -d @rpc.json "http://localhost:8080/savory-example/math/?type=json&human=tru
-e"
+curl -d @rpc.json "http://localhost:8080/myapp/math/?type=json&human=true"
 \end_layout
 
 \end_inset
@@ -9208,6 +9204,15 @@ What we're going to do here is give a quick tutorial for using Ext JS grids
 \end_layout
 
 \begin_layout Subsection
+Setup
+\end_layout
+
+\begin_layout Standard
+See the REST Service.
+ Resources created there are immediately attachable to Ext JS grids.
+\end_layout
+
+\begin_layout Subsection
 Usage
 \end_layout
 
@@ -9336,6 +9341,23 @@ savory
 
  proxy is configured to automatically support MongoDB's extended JSON notation
  and also use Savory's URL style.
+ We've additionally set the 
+\begin_inset Quotes eld
+\end_inset
+
+root
+\begin_inset Quotes erd
+\end_inset
+
+ property for the reader to 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
@@ -9805,11 +9827,25 @@ Sencha Integration: Trees
 \end_layout
 
 \begin_layout Standard
-hi!
+Ext JS's tree widget is quite powerful, and gives you a lot of control over
+ the visual presentation, supporting complex nodes and multi-column displays.
+ Though it's not in itself editable, it integrates with Ext JS's drag-and-drop
+ model, which you can hook up into your custom editing model.
+ The Savory Framework offers excellent server-side support for it: in a
+ few lines of code, you can hook up a tree widget to a document MongoDB
+ collection, and use MongoDB 
+\begin_inset CommandInset href
+LatexCommand href
+name "DBRefs"
+target "http://docs.mongodb.org/manual/applications/database-references/"
+
+\end_inset
+
+ to expand the tree into other documents.
 \end_layout
 
 \begin_layout Subsection
-Usage
+Setup
 \end_layout
 
 \begin_layout Standard
@@ -9830,6 +9866,1113 @@ target "http://docs.sencha.com/ext-js/4-1/"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+The Ext JS's tree requires a rather specific JSON data representation, so
+ we've inherited the resource class in the REST Service to support it, with
+ classes 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Sencha.TreeResource
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Sencha.MongoDbTreeResource.
+\begin_inset Quotes erd
+\end_inset
+
+ You might want to start by reading the REST Service manual chapter.
+\end_layout
+
+\begin_layout Standard
+In your 
+\begin_inset Quotes eld
+\end_inset
+
+/routing.js
+\begin_inset Quotes erd
+\end_inset
+
+, add the following to app.routes and app.dispatchers:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/data/textpack/{id}/': {type: 'implicit', id: 'textpack'}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.dispatchers = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	javascript: {library: '/resources/'}
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note the 
+\begin_inset Quotes eld
+\end_inset
+
+{id}
+\begin_inset Quotes erd
+\end_inset
+
+ variable in the URI pattern: the resource expects the node ID to appear
+ there.
+\end_layout
+
+\begin_layout Standard
+Now add a 
+\begin_inset Quotes eld
+\end_inset
+
+MongoDbTreeResource
+\begin_inset Quotes erd
+\end_inset
+
+ to your 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resources.js
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	textpack: new Savory.Sencha.MongoDbTreeResource({collection: 'textpacks'})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Custom Queries
+\end_layout
+
+\begin_layout Standard
+In the above example, the 
+\begin_inset Quotes eld
+\end_inset
+
+id
+\begin_inset Quotes erd
+\end_inset
+
+ segment in the URI will be used for a MongoDB 
+\begin_inset Quotes eld
+\end_inset
+
+findOne
+\begin_inset Quotes erd
+\end_inset
+
+ operation in the collection for the document 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+, and the entire document (minus the 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ field) will be used for the tree data.
+ However, Savory allows you to customize this data search and extraction:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	textpack: new Savory.Sencha.MongoDbTreeResource({collection: 'textpacks',
+ query: {locale: 'en'}, field: 'text'})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+query
+\begin_inset Quotes erd
+\end_inset
+
+ key will be used for the MongoDB 
+\begin_inset Quotes eld
+\end_inset
+
+findOne
+\begin_inset Quotes erd
+\end_inset
+
+ operation, and the 
+\begin_inset Quotes eld
+\end_inset
+
+field
+\begin_inset Quotes erd
+\end_inset
+
+ key specifies which field in the document contains the tree data.
+\end_layout
+
+\begin_layout Subsubsection
+Custom Text
+\end_layout
+
+\begin_layout Standard
+By default, the text for each node will be the key for tree folders and
+ the stringified value for tree leaves.
+ But, you can customize this by overriding the 
+\begin_inset Quotes eld
+\end_inset
+
+getNodeText
+\begin_inset Quotes erd
+\end_inset
+
+ method:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	textpack: new Savory.Sencha.MongoDbTreeResource({
+\end_layout
+
+\begin_layout Plain Layout
+
+		collection: 'textpacks',
+\end_layout
+
+\begin_layout Plain Layout
+
+		query: {locale: 'en'},
+\end_layout
+
+\begin_layout Plain Layout
+
+		field: 'text',
+\end_layout
+
+\begin_layout Plain Layout
+
+		getNodeText: function(id, node) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			return typeof node == 'string' ? id + ': ' + node : id
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+id
+\begin_inset Quotes erd
+\end_inset
+
+ argument is the key, while the 
+\begin_inset Quotes eld
+\end_inset
+
+node
+\begin_inset Quotes erd
+\end_inset
+
+ argument is null for tree folders or the value for tree leaves.
+\end_layout
+
+\begin_layout Subsubsection
+Data Structure
+\end_layout
+
+\begin_layout Standard
+The expected document data structure is quite straightforward: a series
+ of nested dicts, for which non-dict keys become tree leaves.
+ For example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"_id": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"$oid": "4d474457f9e399e7e05e1269"
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	"text": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"application": {
+\end_layout
+
+\begin_layout Plain Layout
+
+			"title": "MyApp",
+\end_layout
+
+\begin_layout Plain Layout
+
+			"description": "This is an important application"
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	"locale": "en"
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here, 
+\begin_inset Quotes eld
+\end_inset
+
+text
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+application
+\begin_inset Quotes erd
+\end_inset
+
+ will both become tree folders, while 
+\begin_inset Quotes eld
+\end_inset
+
+title
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+description
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+locale
+\begin_inset Quotes erd
+\end_inset
+
+ will become tree leaves.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+_id
+\begin_inset Quotes erd
+\end_inset
+
+ field will be ignored by 
+\begin_inset Quotes eld
+\end_inset
+
+MongoDbTreeResource
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Multi-Document Data Structure
+\end_layout
+
+\begin_layout Standard
+The tree data can be split among several documents using MongoDB 
+\begin_inset CommandInset href
+LatexCommand href
+name "DBRefs"
+target "http://docs.mongodb.org/manual/applications/database-references/"
+
+\end_inset
+
+.
+ Savory will fetch the referred document and use the 
+\begin_inset Quotes eld
+\end_inset
+
+field
+\begin_inset Quotes erd
+\end_inset
+
+ key, if it was set, to retrieve a specific field.
+ This can continue recursively to any depth.
+\end_layout
+
+\begin_layout Standard
+Let's add a DBRef (using MongoDB's extended JSON notation, via the 
+\begin_inset Quotes eld
+\end_inset
+
+$ref
+\begin_inset Quotes erd
+\end_inset
+
+ key) to another document in our collection:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"_id": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"$oid": "4d474457f9e399e7e05e1269"
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	"text": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"application": {
+\end_layout
+
+\begin_layout Plain Layout
+
+			"title": "MyApp",
+\end_layout
+
+\begin_layout Plain Layout
+
+			"description": "This is an important application",
+\end_layout
+
+\begin_layout Plain Layout
+
+			"more": {
+\end_layout
+
+\begin_layout Plain Layout
+
+				"$ref": "textpacks",
+\end_layout
+
+\begin_layout Plain Layout
+
+				"$id": "4d6831f97c6c99e71b8eaf0e"
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	"locale": "en"
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The DBRef node will appear in the tree as a non-expanded folder so that
+ the user will have to explicitly expand it in order to fetch the nodes
+ underneath.
+ If you require all nodes to be expanded, you can call 
+\begin_inset Quotes eld
+\end_inset
+
+expandAll
+\begin_inset Quotes erd
+\end_inset
+
+ on the tree after it is loaded.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Subsubsection
+URI-space
+\end_layout
+
+\begin_layout Standard
+Tree widgets are read-only, so the 
+\begin_inset Quotes eld
+\end_inset
+
+MongoDbTreeResource
+\begin_inset Quotes erd
+\end_inset
+
+ is significantly simpler to implement than 
+\begin_inset Quotes eld
+\end_inset
+
+MongoDbResource
+\begin_inset Quotes erd
+\end_inset
+
+.
+ It only handles HTTP GET.
+ Moreover, since this resource is designed for Ext JS, it only supports
+ JSON, not XML.
+ The only URI query parameter supported is 
+\begin_inset Quotes eld
+\end_inset
+
+human=true
+\begin_inset Quotes erd
+\end_inset
+
+, to return multiline, indented JSON representations.
+\end_layout
+
+\begin_layout Standard
+What is a bit more complicated here is the node ID pattern.
+ To support the recursive nature of the tree, the node ID is constructed
+ using the path of the node starting at the root, with 
+\begin_inset Quotes eld
+\end_inset
+
+/
+\begin_inset Quotes erd
+\end_inset
+
+ as a separator.
+ The root node is simply 
+\begin_inset Quotes eld
+\end_inset
+
+/
+\begin_inset Quotes erd
+\end_inset
+
+.
+ (These constants are configurable.)
+\end_layout
+
+\begin_layout Standard
+To show how this works, let's lay out all the node IDs from the example
+ data structure provided above:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/
+\end_layout
+
+\begin_layout Plain Layout
+
+/text
+\end_layout
+
+\begin_layout Plain Layout
+
+/text/application
+\end_layout
+
+\begin_layout Plain Layout
+
+/text/application/title
+\end_layout
+
+\begin_layout Plain Layout
+
+/text/application/description
+\end_layout
+
+\begin_layout Plain Layout
+
+/locale
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that when include the node ID in the URI, you have to URI-encode it.
+ The URI-code for a 
+\begin_inset Quotes eld
+\end_inset
+
+/
+\begin_inset Quotes erd
+\end_inset
+
+ is 
+\begin_inset Quotes eld
+\end_inset
+
+%2f
+\begin_inset Quotes erd
+\end_inset
+
+.
+ As an example, let's fetch a node using cURL in the command line:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl "http://localhost:8080/myapp/data/textpack/%2ftext%2fapplication/?human=tru
+e"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Tree Widget
+\end_layout
+
+\begin_layout Standard
+A full tutorial of Ext JS trees is beyond what we can do in this Manual,
+ but here are is a quick overview of the components as they apply to Savory:
+\end_layout
+
+\begin_layout Itemize
+The 
+\begin_inset CommandInset href
+LatexCommand href
+name "“TreeStore”"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.data.TreeStore"
+
+\end_inset
+
+ is manages data for the tree.
+ It handles caching of tree node instances in memory.
+ Note that we've set 
+\begin_inset Quotes eld
+\end_inset
+
+defaultRootId
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+/
+\begin_inset Quotes erd
+\end_inset
+
+, instead of the default 
+\begin_inset Quotes eld
+\end_inset
+
+root
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This is to match Savory's path-based node ID pattern (see above).
+\end_layout
+
+\begin_layout Itemize
+The store also defines a 
+\begin_inset CommandInset href
+LatexCommand href
+name "“Proxy,”"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.data.proxy.Proxy"
+
+\end_inset
+
+ which is Ext JS's extensible connector class.
+ Proxies are in charge of loading the data.
+ In this case, we are using a 
+\begin_inset Quotes eld
+\end_inset
+
+savory
+\begin_inset Quotes erd
+\end_inset
+
+ proxy type.
+ This is a custom type that we have defined in Savory's Ext JS helper library.
+ It's rather simple, and you are free to use the 
+\begin_inset Quotes eld
+\end_inset
+
+ajax
+\begin_inset Quotes erd
+\end_inset
+
+ proxy type instead with the modifications we've made there.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+savory
+\begin_inset Quotes erd
+\end_inset
+
+ proxy is configured to automatically support MongoDB's extended JSON notation
+ and also use Savory's URL style.
+ We've additionally set the 
+\begin_inset Quotes eld
+\end_inset
+
+root
+\begin_inset Quotes erd
+\end_inset
+
+ property for the reader to 
+\begin_inset Quotes eld
+\end_inset
+
+documents
+\begin_inset Quotes erd
+\end_inset
+
+ (where the node's children will be found).
+\end_layout
+
+\begin_layout Itemize
+Finally, there's the 
+\begin_inset CommandInset href
+LatexCommand href
+name "tree panel"
+target "http://docs.sencha.com/ext-js/4-1/#!/api/Ext.tree.Panel"
+
+\end_inset
+
+, which is linked to the store.
+\end_layout
+
+\begin_layout Standard
+That should be enough to get you started.
+ Here's how the code looks:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+Savory.Sencha.extJsHead(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+</head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<div id="tree"></div>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<script type="text/javascript">
+\end_layout
+
+\begin_layout Plain Layout
+
+Ext.onReady(function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+	var store = Ext.create('Ext.data.TreeStore', {
+\end_layout
+
+\begin_layout Plain Layout
+
+		proxy: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			type: 'savory',
+\end_layout
+
+\begin_layout Plain Layout
+
+			url: '<%= conversation.pathToBase %>/data/textpack/'
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		defaultRootId: '/',
+\end_layout
+
+\begin_layout Plain Layout
+
+		autoLoad: true
+\end_layout
+
+\begin_layout Plain Layout
+
+	});
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ext.create('Ext.tree.Panel', {
+\end_layout
+
+\begin_layout Plain Layout
+
+		store: store,
+\end_layout
+
+\begin_layout Plain Layout
+
+		autoScroll: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+		useArrows: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+		rootVisible: false,
+\end_layout
+
+\begin_layout Plain Layout
+
+		renderTo: 'tree',
+\end_layout
+
+\begin_layout Plain Layout
+
+		style: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			margin: 'auto'
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		width: 500,
+\end_layout
+
+\begin_layout Plain Layout
+
+		height: 400
+\end_layout
+
+\begin_layout Plain Layout
+
+	});
+\end_layout
+
+\begin_layout Plain Layout
+
+});
+\end_layout
+
+\begin_layout Plain Layout
+
+</script>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section

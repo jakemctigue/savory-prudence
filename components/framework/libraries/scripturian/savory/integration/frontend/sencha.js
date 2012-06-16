@@ -64,10 +64,12 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Savory.REST.Resource
 
 		/** @ignore */
-		Public._configure = []
+		Public._configure = ['idProperty']
 
 		/** @ignore */
 		Public._construct = function(config) {
+			this.idProperty = this.idProperty || 'id'
+
 			arguments.callee.overridden.call(this, this)
 		}
 		
@@ -82,10 +84,10 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		Public.doGet = function(conversation) {
 			var query = Prudence.Resources.getQuery(conversation, {human: 'bool'})
-			var node = String(decodeURIComponent(conversation.locals.get('node')))
+			var id = String(decodeURIComponent(conversation.locals.get(this.idProperty)))
 			query.human = query.human || false
 
-			node = this.getChildren(node)
+			var node = this.getChildren(id)
 			
 			if (!Sincerity.Objects.exists(node)) {
 				return Prudence.Resources.Status.ClientError.NotFound
@@ -119,13 +121,13 @@ Savory.Sencha = Savory.Sencha || function() {
 		/** @ignore */
 		Public._inherit = Module.TreeResource
 
-		Public._configure = ['collection', 'separator', 'rootName', 'childrenProperty', 'query', 'field', 'getNodeText']
+		Public._configure = ['collection', 'query', 'field', 'separator', 'rootId', 'childrenProperty', 'getNodeText']
 
 		/** @ignore */
 		Public._construct = function(config) {
 			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
 			this.separator = this.separator || '/'
-			this.rootName = this.rootName || this.separator
+			this.rootId = this.rootId || this.separator
 			this.childrenProperty = this.childrenProperty || 'documents'
 			
 			arguments.callee.overridden.call(this, this)
@@ -136,12 +138,17 @@ Savory.Sencha = Savory.Sencha || function() {
 			
 			var children = []
 			
-			if (node) {
-				if (id == this.rootName) {
+			if (Sincerity.Objects.exists(node)) {
+				if (id == this.rootId) {
 					id = ''
 				}
-				for (var c in node) {
-					addNode.call(this, id + this.separator + c, c, node[c], children)
+				if (Sincerity.Objects.isDict(node)) {
+					for (var c in node) {
+						addNode.call(this, id + this.separator + c, c, node[c], children)
+					}
+				}
+				else {
+					addNode.call(this, id, null, node, children)
 				}
 			}
 			
@@ -149,20 +156,47 @@ Savory.Sencha = Savory.Sencha || function() {
 		}
 
 		Public.getNode = function(id) {
-			var query
-			if (id == this.rootName) {
-				query = this.query
+			var query = this.query || {_id: {$oid: id}}
+			
+			if (Sincerity.Objects.exists(this.field)) {
+				var fields = {}
+				fields[this.field] = 1
+				var node = this.collection.findOne(query, fields)
+				node = node ? node[this.field] : null
 			}
 			else {
-				id = id.split(this.separator)
-				id = id[id.length - 1]
-				query = {_id: MongoDB.id(id)}
+				var node = this.collection.findOne(query)
+				if (Sincerity.Objects.exists(node)) {
+					delete node._id
+				}
 			}
 			
-			var fields = {}
-			fields[this.field] = 1
-			var node = this.collection.findOne(query, fields)
-			return node ? node[this.field] : null
+			if (Sincerity.Objects.exists(node) && (id != this.rootId)) {
+				var paths = id.split(this.separator)
+				for (var p in paths) {
+					var path = paths[p]
+					if (path) {
+						node = node[path]
+						if (Sincerity.JVM.instanceOf(node, com.mongodb.DBRef)) {
+							var collection = new MongoDB.Collection(node.ref, {db: node.getDB()})
+							node = collection.findOne({_id: {$oid: node.id}})
+							if (Sincerity.Objects.exists(node)) {
+								if (Sincerity.Objects.exists(this.field)) {
+									node = node[this.field]
+								}
+								else {
+									delete node._id
+								}
+							}
+						}
+						if (!Sincerity.Objects.exists(node)) {
+							break
+						}
+					}
+				}
+			}
+			
+			return node
 		}
 		
 		Public.getNodeText = function(id, node) {
@@ -174,9 +208,16 @@ Savory.Sencha = Savory.Sencha || function() {
 		//
 		
 		function addNode(id, nodeId, node, array) {
+			if (!Sincerity.Objects.exists(nodeId)) {
+				var paths = id.split(this.separator)
+				if (paths.length > 0) {
+					nodeId = paths[paths.length - 1]
+				}
+			}
+			
 			if (Sincerity.JVM.instanceOf(node, com.mongodb.DBRef)) {
 				array.push({
-					id: id + this.separator + String(node.id),
+					id: id,
 					text: Sincerity.XML.escapeElements(this.getNodeText(nodeId, null))
 				})
 				return
@@ -189,7 +230,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			}
 			array.push(n)
 
-			if (Sincerity.Objects.isObject(node)) {
+			if (Sincerity.Objects.isDict(node)) {
 				var children = n[this.childrenProperty] = []
 				for (var c in node) {
 					addNode.call(this, id + this.separator + c, c, node[c], children)

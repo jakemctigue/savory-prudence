@@ -275,7 +275,7 @@ Savory.REST = Savory.REST || function() {
 		Public._inherit = Module.Resource
 
 		/** @ignore */
-		Public._configure = ['name', 'plural', 'extract', 'modes']
+		Public._configure = ['name', 'plural', 'extract', 'modes', 'documentsProperty', 'totalProperty']
 
 		/** @ignore */
 		Public._construct = function(config) {
@@ -288,6 +288,9 @@ Savory.REST = Savory.REST || function() {
 					this.extract = Sincerity.Objects.array(this.extract)
 				}
 			}
+			
+			this.documentsProperty = this.documentsProperty || 'documents'
+			this.totalProperty = this.totalProperty || 'total'
 			
 			arguments.callee.overridden.call(this, this)
 		}
@@ -493,7 +496,12 @@ Savory.REST = Savory.REST || function() {
 				
 			if (this.plural) {
 				var docs = iterator ? Sincerity.Iterators.toArray(iterator, 0, query.limit) : []
-				return represent.call(this, conversation, query, total ? {total: total, documents: docs} : {documents: docs}, '/savory/service/rest/plural/')
+				var r = {}
+				r[this.documentsProperty] = docs
+				if (Sincerity.Objects.exists(total)) {
+					r[this.totalProperty] = total
+				}
+				return represent.call(this, conversation, query, r, '/savory/service/rest/plural/')
 			}
 			else {
 				if (!iterator.hasNext()) {
@@ -538,7 +546,7 @@ Savory.REST = Savory.REST || function() {
 			for (var i in this.extract) {
 				var e = this.extract[i]
 				newDoc = doc[e]
-				if (newDoc === undefined) {
+				if (undefined === newDoc) {
 					return null
 				}
 			}

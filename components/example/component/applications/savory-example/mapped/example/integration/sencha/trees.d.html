@@ -8,7 +8,13 @@ Savory.Sencha.extJsHead(conversation, 'ext-all-gray')
 <% exampleHeader('Sencha', 'Integration', 'Trees'); %>
 
 <p>
-	To appreciate what's going on in this demo, We recommend
+	We've connected this tree widget to a document in the "textpacks" MongoDB collection.
+	Note that the XXX node in the tree is a MongoDB DBRef, so that opening it will trigger
+	an extra fetch of another document, seamlessly integrating it into the tree.
+	The relevant source code is in "routing.js" and "/libraries/resources.js".
+</p>
+<p>
+	To appreciate what's going on in this demo, we recommend
 	using <a href="http://getfirebug.com/">Firebug</a> to see all the communication with the server.	
 </p>
 <div id="tree"></div>

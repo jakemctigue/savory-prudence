@@ -57,13 +57,17 @@ var users = {
 
 var usersMap = Sincerity.JVM.toMap(users, true)
 
+function getTextpackNodeText(id, node) {
+	return typeof node == 'string' ? id + ': ' + node : id
+}
+
 resources = {
 	math:                       new Savory.RPC.Resource({namespaces: {Math: Math}}),
 	shoppingcart:               new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
 	'mongo.users':              new Savory.REST.MongoDbResource({name: 'users'}),
 	'mongo.users.plural':       new Savory.REST.MongoDbResource({name: 'users', plural: true}),
-	'mongo.textpack':           new Savory.Sencha.MongoDbTreeResource({collection: 'textpacks', field: 'text', query: {locale: 'fr'}}),
-	'memory.users':             new Savory.REST.InMemoryResource({name: 'users', documents: usersMap}),
+	'mongo.textpack':           new Savory.Sencha.MongoDbTreeResource({collection: 'textpacks', query: {locale: 'fr'}, field: 'text', getNodeText: getTextpackNodeText}),
+	'memory.users':             new Savory.REST.InMemoryResource({name: 'users', documents: usersMap, }),
 	'memory.users.plural':      new Savory.REST.InMemoryResource({name: 'users', documents: usersMap, plural: true}),
 	'distributed.users':        new Savory.REST.DistributedResource({name: 'users', documents: users}),
 	'distributed.users.plural': new Savory.REST.DistributedResource({name: 'users', documents: users, plural: true}),
