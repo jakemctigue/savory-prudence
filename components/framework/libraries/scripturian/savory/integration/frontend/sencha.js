@@ -14,6 +14,8 @@
 document.executeOnce('/savory/service/rpc/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/templates/')
+document.executeOnce('/sincerity/xml/')
+document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/mongo-db/')
 
 var Savory = Savory || {}
@@ -62,14 +64,10 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Savory.REST.Resource
 
 		/** @ignore */
-		Public._configure = ['name', 'plural', 'extract', 'modes']
+		Public._configure = []
 
 		/** @ignore */
 		Public._construct = function(config) {
-			if (Sincerity.Objects.isString(config)) {
-				this.name = String(config)
-			}
-			
 			arguments.callee.overridden.call(this, this)
 		}
 		
@@ -83,24 +81,21 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public.getChildren = function() {}
 
 		Public.doGet = function(conversation) {
-			var query = Prudence.Resources.getQuery(conversation, {
-				node: 'string',
-				human: 'bool'
-			})
+			var query = Prudence.Resources.getQuery(conversation, {human: 'bool'})
+			var node = String(decodeURIComponent(conversation.locals.get('node')))
 			query.human = query.human || false
-			
-			var node = this.getChildren(query.node)
+
+			node = this.getChildren(node)
 			
 			if (!Sincerity.Objects.exists(node)) {
 				return Prudence.Resources.Status.ClientError.NotFound
 			}
 			
-			if (conversation.mediaTypeName = 'application/java') {
+			if (conversation.mediaTypeName == 'application/java') {
 				return node
 			}
-			else if (conversation.mediaTypeName = 'text/html') {
-				// TODO
-				return ''
+			else if (conversation.mediaTypeName == 'text/html') {
+				return '<html><body><pre>' + Sincerity.JSON.to(node, true).escapeElements() + '</pre></body></html>'
 			}
 			else {
 				return Sincerity.JSON.to(node, query.human)
@@ -124,6 +119,87 @@ Savory.Sencha = Savory.Sencha || function() {
 		/** @ignore */
 		Public._inherit = Module.TreeResource
 
+		Public._configure = ['collection', 'separator', 'rootName', 'childrenProperty', 'query', 'field', 'getNodeText']
+
+		/** @ignore */
+		Public._construct = function(config) {
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+			this.separator = this.separator || '/'
+			this.rootName = this.rootName || this.separator
+			this.childrenProperty = this.childrenProperty || 'documents'
+			
+			arguments.callee.overridden.call(this, this)
+		}
+		
+		Public.getChildren = function(id) {
+			node = this.getNode(id)
+			
+			var children = []
+			
+			if (node) {
+				if (id == this.rootName) {
+					id = ''
+				}
+				for (var c in node) {
+					addNode.call(this, id + this.separator + c, c, node[c], children)
+				}
+			}
+			
+			return children
+		}
+
+		Public.getNode = function(id) {
+			var query
+			if (id == this.rootName) {
+				query = this.query
+			}
+			else {
+				id = id.split(this.separator)
+				id = id[id.length - 1]
+				query = {_id: MongoDB.id(id)}
+			}
+			
+			var fields = {}
+			fields[this.field] = 1
+			var node = this.collection.findOne(query, fields)
+			return node ? node[this.field] : null
+		}
+		
+		Public.getNodeText = function(id, node) {
+			return id
+		}
+		
+		//
+		// Private
+		//
+		
+		function addNode(id, nodeId, node, array) {
+			if (Sincerity.JVM.instanceOf(node, com.mongodb.DBRef)) {
+				array.push({
+					id: id + this.separator + String(node.id),
+					text: Sincerity.XML.escapeElements(this.getNodeText(nodeId, null))
+				})
+				return
+			}
+			
+			var n = {
+				id: id,
+				text: Sincerity.XML.escapeElements(this.getNodeText(nodeId, node)),
+				expanded: true
+			}
+			array.push(n)
+
+			if (Sincerity.Objects.isObject(node)) {
+				var children = n[this.childrenProperty] = []
+				for (var c in node) {
+					addNode.call(this, id + this.separator + c, c, node[c], children)
+				}
+			}
+			else {
+				n.leaf = true
+			}
+		}
+		
 		return Public
 	}(Public))
 	

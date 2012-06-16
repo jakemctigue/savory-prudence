@@ -17,6 +17,7 @@ app.routes = {
 	'/shoppingcart/':           {type: 'implicit', id: 'shoppingcart'},
 	'/mongo/users/{id}/':       {type: 'implicit', id: 'mongo.users'},
 	'/mongo/users/':            {type: 'implicit', id: 'mongo.users.plural'},
+	'/mongo/textpack/{node}/':  {type: 'implicit', id: 'mongo.textpack'},
 	'/memory/users/{id}/':      {type: 'implicit', id: 'memory.users'},
 	'/memory/users/':           {type: 'implicit', id: 'memory.users.plural'},
 	'/distributed/users/{id}/': {type: 'implicit', id: 'distributed.users'},

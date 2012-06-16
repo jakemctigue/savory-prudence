@@ -263,16 +263,20 @@ Ext.define('Savory.data.proxy.Rest', {
 		operation = request.operation,
 		records   = operation.records || [],
 		record    = records[0],
+		node      = operation.node,
 		format    = me.format,
 		url       = me.getUrl(request),
-		id        = record ? record.getId() : operation.id;
+		id        = record ? record.getId() : (node ? node.getId() : operation.id);
 		
 		if (id) {
 			if (!url.match(/\/$/)) {
 				url += '/';
 			}
-			url += id + '/';
+			url += encodeURIComponent(id) + '/';
         }
+		if (node) {
+			delete request.params.node
+		}
 		request.url = url;
 		return me.callParent(arguments);
 	}

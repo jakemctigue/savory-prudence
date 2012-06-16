@@ -8,109 +8,34 @@ Savory.Sencha.extJsHead(conversation, 'ext-all-gray')
 <% exampleHeader('Sencha', 'Integration', 'Trees'); %>
 
 <p>
-	Double click on any cell to edit it. Your changes will be saved when you leave the cell.
 	To appreciate what's going on in this demo, We recommend
 	using <a href="http://getfirebug.com/">Firebug</a> to see all the communication with the server.	
 </p>
-<p>
-	This is a simple example, but take a moment to marvel at how powerful it is: we've set up
-	a URI-space over our MongoDB data using the <a href="../../../service/rest">REST Service</a>,
-	and then directly hooked up an editable grid widget to it. And all in just a few dozen lines
-	of JavaScript: some on the server, some on the client. This is a nice demonstration of the
-	power of the Savory Framework and Ext JS!
-</p>
-<p>
-	Use the "Resource" combo box to switch to the in-memory and distributed resources. See the
-	<a href="../../../service/rest">REST Service example</a> for more information.
-</p>
-<div id="grid"></div>
+<div id="tree"></div>
 
 <%{{ foot %>
 <script type="text/javascript">
 Ext.onReady(function() {
-	var pageSize = 15;
-
-	Ext.define('User', {
-		extend: 'Ext.data.Model',
-		fields: [
-			'_id',
-			'name',
-			{name: 'lastSeen', type: 'date'}
-		],
-		idProperty: '_id',
+	var store = Ext.create('Ext.data.TreeStore', {
 		proxy: {
 			type: 'savory',
-			url: '<%= conversation.pathToBase %>/mongo/users/'
-		}
-	});
-	
-	var store = Ext.create('Ext.data.Store', {
-		model: 'User',
-		pageSize: pageSize,
-		autoSync: true,
+			url: '<%= conversation.pathToBase %>/mongo/textpack/'
+		},
+		defaultRootId: '/',
 		autoLoad: true
 	});
 	
-	var uris = Ext.create('Ext.data.Store', {
-		fields: ['uri', 'text'],
-		data : [
-			{uri: 'mongo', text: 'MongoDB'},
-			{uri: 'memory', text: 'in-memory'},
-			{uri: 'distributed', text: 'distributed'}
-		]
-	});
-	
-	Ext.create('Ext.grid.Panel', {
+	Ext.create('Ext.tree.Panel', {
 		store: store,
-		columns: [{
-			dataIndex: 'name',
-			header: 'Name',
-			editor: 'textfield'
-		}, {
-			dataIndex: 'lastSeen',
-			xtype: 'datecolumn',
-			format: 'm/d/y, H:i',
-			header: 'Last Seen',
-			editor: {
-				xtype: 'datefield',
-				format: 'm/d/y, H:i'
-			}
-		}],
-		forceFit: true,
-		selType: 'cellmodel',
-		plugins: [
-			Ext.create('Ext.grid.plugin.CellEditing', {clicksToEdit: 2})
-		],
-		dockedItems: [{
-			dock: 'bottom',
-			xtype: 'pagingtoolbar',
-			store: store,
-			items: [{
-				text: 'Resource:'
-			}, {
-				xtype: 'combobox',
-				width: 150,
-				store: uris,
-				valueField: 'uri',
-				value: 'mongo',
-				queryMode: 'local',
-				editable: false,
-				listeners: {
-					'select': function(combo, records) {
-						var uri = records[0].get('uri');
-						var proxy = User.getProxy();
-						proxy.url = '<%= conversation.pathToBase %>/' + uri + '/users/';
-						store.load();
-					}
-				}
-			}]
-		}],
-		renderTo: 'grid',
+		autoScroll: true,
+		useArrows: true,
+		rootVisible: false,
+		renderTo: 'tree',
 		style: {
 			margin: 'auto'
 		},
 		width: 500,
-		height: 370
+		height: 400
 	});
 });
 </script>
