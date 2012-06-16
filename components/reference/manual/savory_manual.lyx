@@ -10515,6 +10515,85 @@ expandAll
  on the tree after it is loaded.
 \end_layout
 
+\begin_layout Subsubsection
+In-Memory Data
+\end_layout
+
+\begin_layout Standard
+As with the REST Service, you can also avoid MongoDB and create an in-memory
+ tree resource:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var textpack = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	application: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		title: 'MyApp',
+\end_layout
+
+\begin_layout Plain Layout
+
+		description: 'This is an important application'
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	textpack: new Savory.Sencha.InMemroyTreeResource({tree: textpack})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that there is no distributed version of this, because it's unnecessary:
+ the tree data is read-only, so there's no reason to synchronize the data
+ across the cluster.
+\end_layout
+
 \begin_layout Subsection
 Usage
 \end_layout

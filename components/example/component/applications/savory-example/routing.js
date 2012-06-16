@@ -20,6 +20,7 @@ app.routes = {
 	'/mongo/textpack/{id}/':    {type: 'implicit', id: 'mongo.textpack'},
 	'/memory/users/{id}/':      {type: 'implicit', id: 'memory.users'},
 	'/memory/users/':           {type: 'implicit', id: 'memory.users.plural'},
+	'/memory/textpack/{id}/':   {type: 'implicit', id: 'memory.textpack'},
 	'/distributed/users/{id}/': {type: 'implicit', id: 'distributed.users'},
 	'/distributed/users/':      {type: 'implicit', id: 'distributed.users.plural'},
 	'/model/users/':            {type: 'implicit', id: 'users.model'}

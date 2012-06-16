@@ -36,8 +36,7 @@ var Section = function(name, content) {
 var Manual = function(file) {
 	this.clean = function() {
 		// Fix eLyXer output to more common HTML text
-		this.content = this.content.replace(/&ldquo;/g, '"')
-		this.content = this.content.replace(/&rdquo;/g, '"')
+		this.content = this.content.replace(/(“|”|&ldquo;|&rdquo;)/g, '"')
 		this.content = this.content.replace(/’/g, "'")
 		this.content = this.content.replace(/---/g, '&mdash;')
 		
@@ -45,8 +44,7 @@ var Manual = function(file) {
 		this.content = this.content.replace(/<u>(.*?)<\/u>\s*<u>\s*\(page\s*<a class="Reference" href="#(.+?)">.*?<\/a>\s*\)\s*<\/u>/g, '<a class="Reference" href="$2">$1</a>')
 		this.content = this.content.replace(/<u>(.*?)\s*\(page\s*<a class="Reference" href="#(.+?)">.*?<\/a>\s*\)\s*<\/u>/g, '<a class="Reference" href="$2">$1</a>')
 
-		this.content = this.content.replace(/↑/g, '')
-		this.content = this.content.replace(/↓/g, '')
+		this.content = this.content.replace(/(↑|↓)/g, '')
 		this.content = this.content.replace(/\|/g, '#')
 		
 		// Tricks with labels

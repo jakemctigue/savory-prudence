@@ -55,6 +55,13 @@ var users = {
 	}
 }
 
+var textpack = {
+	application: {
+		title: 'MyApp',
+		description: 'This is my application'
+	}
+}
+
 var usersMap = Sincerity.JVM.toMap(users, true)
 
 function getTextpackNodeText(id, node) {
@@ -69,6 +76,7 @@ resources = {
 	'mongo.textpack':           new Savory.Sencha.MongoDbTreeResource({collection: 'textpacks', query: {locale: 'fr'}, field: 'text', getNodeText: getTextpackNodeText}),
 	'memory.users':             new Savory.REST.InMemoryResource({name: 'users', documents: usersMap, }),
 	'memory.users.plural':      new Savory.REST.InMemoryResource({name: 'users', documents: usersMap, plural: true}),
+	'memory.textpack':          new Savory.Sencha.InMemoryTreeResource({tree: textpack, getNodeText: getTextpackNodeText}),
 	'distributed.users':        new Savory.REST.DistributedResource({name: 'users', documents: users}),
 	'distributed.users.plural': new Savory.REST.DistributedResource({name: 'users', documents: users, plural: true}),
 	'users.model':              new Savory.REST.InMemoryResource({name: 'users.model', document: users})

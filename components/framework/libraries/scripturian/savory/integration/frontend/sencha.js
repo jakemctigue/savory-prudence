@@ -64,11 +64,14 @@ Savory.Sencha = Savory.Sencha || function() {
 		Public._inherit = Savory.REST.Resource
 
 		/** @ignore */
-		Public._configure = ['idProperty']
+		Public._configure = ['separator', 'rootId', 'idProperty', 'childrenProperty', 'getNodeText']
 
 		/** @ignore */
 		Public._construct = function(config) {
+			this.separator = this.separator || '/'
+			this.rootId = this.rootId || this.separator
 			this.idProperty = this.idProperty || 'id'
+			this.childrenProperty = this.childrenProperty || 'documents'
 
 			arguments.callee.overridden.call(this, this)
 		}
@@ -80,59 +83,6 @@ Savory.Sencha = Savory.Sencha || function() {
 			'text/html'
 		]
 
-		Public.getChildren = function() {}
-
-		Public.doGet = function(conversation) {
-			var query = Prudence.Resources.getQuery(conversation, {human: 'bool'})
-			var id = String(decodeURIComponent(conversation.locals.get(this.idProperty)))
-			query.human = query.human || false
-
-			var node = this.getChildren(id)
-			
-			if (!Sincerity.Objects.exists(node)) {
-				return Prudence.Resources.Status.ClientError.NotFound
-			}
-			
-			if (conversation.mediaTypeName == 'application/java') {
-				return node
-			}
-			else if (conversation.mediaTypeName == 'text/html') {
-				return '<html><body><pre>' + Sincerity.JSON.to(node, true).escapeElements() + '</pre></body></html>'
-			}
-			else {
-				return Sincerity.JSON.to(node, query.human)
-			}
-		}
-
-		return Public
-	}(Public))
-    
-	/**
-	 * @class
-	 * @name Savory.Sencha.MongoDbTreeResource
-	 * @augments Savory.Sencha.TreeResource
-	 * 
-	 * @param config
-	 */
-	Public.MongoDbTreeResource = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.Sencha.MongoDbTreeResource */
-		var Public = {}
-
-		/** @ignore */
-		Public._inherit = Module.TreeResource
-
-		Public._configure = ['collection', 'query', 'field', 'separator', 'rootId', 'childrenProperty', 'getNodeText']
-
-		/** @ignore */
-		Public._construct = function(config) {
-			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
-			this.separator = this.separator || '/'
-			this.rootId = this.rootId || this.separator
-			this.childrenProperty = this.childrenProperty || 'documents'
-			
-			arguments.callee.overridden.call(this, this)
-		}
-		
 		Public.getChildren = function(id) {
 			node = this.getNode(id)
 			
@@ -155,48 +105,26 @@ Savory.Sencha = Savory.Sencha || function() {
 			return children
 		}
 
-		Public.getNode = function(id) {
-			var query = this.query || {_id: {$oid: id}}
+		Public.doGet = function(conversation) {
+			var query = Prudence.Resources.getQuery(conversation, {human: 'bool'})
+			var id = String(decodeURIComponent(conversation.locals.get(this.idProperty)))
+			query.human = query.human || false
+
+			var node = this.getChildren(id)
 			
-			if (Sincerity.Objects.exists(this.field)) {
-				var fields = {}
-				fields[this.field] = 1
-				var node = this.collection.findOne(query, fields)
-				node = node ? node[this.field] : null
+			if (!Sincerity.Objects.exists(node)) {
+				return Prudence.Resources.Status.ClientError.NotFound
+			}
+			
+			if (conversation.mediaTypeName == 'application/java') {
+				return node
+			}
+			else if (conversation.mediaTypeName == 'text/html') {
+				return '<html><body><pre>' + Sincerity.JSON.to(node, true).escapeElements() + '</pre></body></html>'
 			}
 			else {
-				var node = this.collection.findOne(query)
-				if (Sincerity.Objects.exists(node)) {
-					delete node._id
-				}
+				return Sincerity.JSON.to(node, query.human)
 			}
-			
-			if (Sincerity.Objects.exists(node) && (id != this.rootId)) {
-				var paths = id.split(this.separator)
-				for (var p in paths) {
-					var path = paths[p]
-					if (path) {
-						node = node[path]
-						if (Sincerity.JVM.instanceOf(node, com.mongodb.DBRef)) {
-							var collection = new MongoDB.Collection(node.ref, {db: node.getDB()})
-							node = collection.findOne({_id: {$oid: node.id}})
-							if (Sincerity.Objects.exists(node)) {
-								if (Sincerity.Objects.exists(this.field)) {
-									node = node[this.field]
-								}
-								else {
-									delete node._id
-								}
-							}
-						}
-						if (!Sincerity.Objects.exists(node)) {
-							break
-						}
-					}
-				}
-			}
-			
-			return node
 		}
 		
 		Public.getNodeText = function(id, node) {
@@ -239,6 +167,116 @@ Savory.Sencha = Savory.Sencha || function() {
 			else {
 				n.leaf = true
 			}
+		}
+
+		return Public
+	}(Public))
+
+	Public.InMemoryTreeResource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.Sencha.InMemoryTreeResource */
+		var Public = {}
+
+		/** @ignore */
+		Public._inherit = Module.TreeResource
+
+		Public._configure = ['tree']
+
+		/** @ignore */
+		Public._construct = function(config) {
+			arguments.callee.overridden.call(this, this)
+		}
+
+		Public.getNode = function(id) {
+			if (id == this.rootId) {
+				return this.tree
+			}
+			else {
+				var node
+				var paths = id.split(this.separator)
+				for (var p in paths) {
+					var path = paths[p]
+					if (path) {
+						node = node[path]
+						if (!Sincerity.Objects.exists(node)) {
+							break
+						}
+					}
+				}
+				return node
+			}
+		}
+		
+		return Public
+	}(Public))
+	
+	/**
+	 * @class
+	 * @name Savory.Sencha.MongoDbTreeResource
+	 * @augments Savory.Sencha.TreeResource
+	 * 
+	 * @param config
+	 */
+	Public.MongoDbTreeResource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.Sencha.MongoDbTreeResource */
+		var Public = {}
+
+		/** @ignore */
+		Public._inherit = Module.TreeResource
+
+		Public._configure = ['collection', 'query', 'field']
+
+		/** @ignore */
+		Public._construct = function(config) {
+			this.collection = Sincerity.Objects.isString(this.collection) ? new MongoDB.Collection(this.collection) : this.collection
+			this.separator = this.separator || '/'
+			this.rootId = this.rootId || this.separator
+			this.childrenProperty = this.childrenProperty || 'documents'
+			
+			arguments.callee.overridden.call(this, this)
+		}
+
+		Public.getNode = function(id) {
+			var query = this.query || {_id: {$oid: id}}
+			
+			if (Sincerity.Objects.exists(this.field)) {
+				var fields = {}
+				fields[this.field] = 1
+				var node = this.collection.findOne(query, fields)
+				node = node ? node[this.field] : null
+			}
+			else {
+				var node = this.collection.findOne(query)
+				if (Sincerity.Objects.exists(node)) {
+					delete node._id
+				}
+			}
+			
+			if (Sincerity.Objects.exists(node) && (id != this.rootId)) {
+				var paths = id.split(this.separator)
+				for (var p in paths) {
+					var path = paths[p]
+					if (path) {
+						node = node[path]
+						if (!Sincerity.Objects.exists(node)) {
+							break
+						}
+						else if (Sincerity.JVM.instanceOf(node, com.mongodb.DBRef)) {
+							var collection = new MongoDB.Collection(node.ref, {db: node.getDB()})
+							node = collection.findOne({_id: {$oid: node.id}})
+							if (Sincerity.Objects.exists(node)) {
+								if (Sincerity.Objects.exists(this.field)) {
+									node = node[this.field]
+								}
+								else {
+									delete node._id
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			return node
 		}
 		
 		return Public

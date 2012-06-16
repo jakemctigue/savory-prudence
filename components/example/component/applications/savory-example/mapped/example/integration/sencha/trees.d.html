@@ -30,12 +30,43 @@ Ext.onReady(function() {
 		defaultRootId: '/',
 		autoLoad: true
 	});
+
+	var uris = Ext.create('Ext.data.Store', {
+		fields: ['uri', 'text'],
+		data : [
+			{uri: 'mongo', text: 'MongoDB'},
+			{uri: 'memory', text: 'in-memory'}
+		]
+	});
 	
 	Ext.create('Ext.tree.Panel', {
 		store: store,
 		autoScroll: true,
 		useArrows: true,
 		rootVisible: false,
+		dockedItems: [{
+			dock: 'bottom',
+			xtype: 'toolbar',
+			items: [{
+				text: 'Resource:'
+			}, {
+				xtype: 'combobox',
+				width: 150,
+				store: uris,
+				valueField: 'uri',
+				value: 'mongo',
+				queryMode: 'local',
+				editable: false,
+				listeners: {
+					'select': function(combo, records) {
+						var uri = records[0].get('uri');
+						var proxy = store.getProxy();
+						proxy.url = '<%= conversation.pathToBase %>/' + uri + '/textpack/';
+						store.load();
+					}
+				}
+			}]
+		}],
 		renderTo: 'tree',
 		style: {
 			margin: 'auto'
