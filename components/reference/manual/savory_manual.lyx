@@ -1270,9 +1270,10 @@ That said, the combination of Prudence Hazelcast clusters, MongoDB, and
 \begin_layout Quote
 The point of an event-driven architecture is that you're relinquishing some
  control of your code-flow.
- It's thus hard to know, by simply looking at the code, which parts of the
- it will be triggered when an event is fired.
- You also need to know who exactly is subscribing.
+ It's thus hard to know, simply by looking at the code, which parts of it
+ will be triggered when an event is fired.
+ You also need to know what exactly is subscribing and where that listener
+ code is.
  Decoupling code is a great way to introduce some really difficult bugs
  into your codebase, and vastly reduce its debuggability.
  We present this service for your use, but encourage you to think of the
@@ -1292,8 +1293,8 @@ target "http://threecrickets.com/javascript-api/?namespace=Prudence.Task"
 specific
 \emph default
  listening code, rather than any generic subscriber.
- The bottom line is that as great as this service is, we don't recommend
- using it indiscriminately.
+ The bottom line is that as great as this service is, we recommend using
+ it with discrimination.
 \end_layout
 
 \begin_layout Subsection
@@ -8989,6 +8990,14 @@ Trees
 \end_layout
 
 \begin_layout Itemize
+Charts
+\end_layout
+
+\begin_layout Itemize
+Forms
+\end_layout
+
+\begin_layout Itemize
 Ext Direct
 \end_layout
 
@@ -11052,6 +11061,38 @@ Ext.onReady(function() {
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Sencha Integration: Charts
+\end_layout
+
+\begin_layout Standard
+Hi!
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Hi!
+\end_layout
+
+\begin_layout Section
+Sencha Integration: Forms
+\end_layout
+
+\begin_layout Standard
+Hi!
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Hi!
 \end_layout
 
 \begin_layout Section

@@ -103,5 +103,7 @@ manual.generate({
 	'Sencha Integration': ['component/applications/savory-example/fragments/manual/integration/sencha.html'],
 	'Sencha Integration: Grids': ['component/applications/savory-example/fragments/manual/integration/sencha-grids.html'],
 	'Sencha Integration: Trees': ['component/applications/savory-example/fragments/manual/integration/sencha-trees.html'],
+	'Sencha Integration: Charts': ['component/applications/savory-example/fragments/manual/integration/sencha-charts.html'],
+	'Sencha Integration: Forms': ['component/applications/savory-example/fragments/manual/integration/sencha-forms.html'],
 	'Sencha Integration: Ext Direct': ['component/applications/savory-example/fragments/manual/integration/sencha-ext-direct.html']
 })
