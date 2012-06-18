@@ -595,28 +595,13 @@ Savory.Sencha = Savory.Sencha || function() {
 								}
 								catch (x) {
 									var details = Sincerity.Rhino.getExceptionDetails(x)
-									if (isWebForm) {
-										// Web forms seem to expect a different result structure for errors
-										result = {
-											type: 'rpc',
-											tid: call.tid,
-											action: call.action,
-											method: call.method,
-											result: {
-												success: false,
-												msg: details.message
-											}
-										}
-									}
-									else {
-										result = {
-											type: 'exception',
-											tid: call.tid,
-											action: call.action,
-											method: call.method,
-											message: details.message,
-											where: details.stackTrace
-										}
+									result = {
+										type: 'exception',
+										tid: call.tid,
+										action: call.action,
+										method: call.method,
+										message: details.message,
+										where: details.stackTrace
 									}
 								}
 							}
@@ -642,6 +627,16 @@ Savory.Sencha = Savory.Sencha || function() {
 	    				message: 'Unsupported action: {action}'.cast(call)
 	    			}
 	    		}
+	    		
+				if (isWebForm && (result.type == 'exception')) {
+					// Web forms require a different error structure
+					result.type = 'rpc'
+					result.result = {
+						success: false,
+						msg: result.message
+					}
+					delete result.message
+				}
 	    		
 	    		results.push(result)
 	    	}
