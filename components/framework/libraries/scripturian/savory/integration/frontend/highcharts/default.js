@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/svg/')
+document.executeOnce('/savory/service/svg/')
 document.executeOnce('/prudence/resources/')
 
 var Savory = Savory || {}

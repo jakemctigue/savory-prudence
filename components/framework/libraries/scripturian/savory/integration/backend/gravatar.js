@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/savory/service/html/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')

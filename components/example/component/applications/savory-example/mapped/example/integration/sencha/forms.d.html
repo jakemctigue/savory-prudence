@@ -8,15 +8,17 @@ Savory.Sencha.extJsHead(conversation, 'ext-all-gray')
 <% exampleHeader('Sencha', 'Integration', 'Forms'); %>
 
 <%
-document.executeOnce('/savory/foundation/forms/')
+
+document.executeOnce('/savory/service/forms/')
+document.executeOnce('/sincerity/xml/')
 
 var form = Savory.Forms.getForm('/form/multiply/')
 
-var results
+var results = form.handle(conversation)
 
 %>
 
-<%= form.htmlText(conversation, 'first') %>
+<%# form.htmlText(conversation, 'first') %>
 
 <h3>Standard Forms</h3>
 <p>
@@ -34,11 +36,11 @@ var results
 	<button id="standard-form-half" class="open-form">With validation, without masking</button>
 	<button id="standard-form-bare" class="open-form">No validation nor masking</button>
 </p>
-<% if (results && (results.mode == 'none')) { %>
+<% if (results) { %>
 <h3>Results from Last Standard Submission</h3>
 <div class="note">
 	<%= results.msg %>
-<% if (!results.success) { %>
+<% if (!results.success && results.errors && results.errors.length) { %>
 	<ul>
 <% for (var name in results.errors) { %>
 		<li style="list-style-type: disc; margin-left: 20px;"><%= name %>: <%= results.errors[name] %></li>
@@ -46,12 +48,14 @@ var results
 	</ul>
 <% } %>
 </div>
-<script>
+<%{{ foot %>
+<script type="text/javascript">
 Ext.onReady(function() {
-	openForm(null, Ext.get('<%= conversation.query.get("form") %>'));
+	//openForm(null, Ext.get('<%= conversation.query.get("form") %>'));
 	Ext.Msg.alert('<%= results.success ? "Success!" : "Failure!" %>', '<%= results.msg.escapeSingleQuotes() %>');
 });
 </script>
+<%}}%>
 <% } %>
 
 <h3>AJAX Forms</h3>
@@ -124,7 +128,6 @@ var fields = {
 function openForm(event, el) {
 	var config = {
 		xtype: 'form',
-		url: '<%= conversation.pathToBase %>/form/multiply/',
 		border: false,
 		bodyCls: 'x-border-layout-ct', // Uses the neutral background color
 		bodyPadding: 10,
@@ -156,13 +159,13 @@ function openForm(event, el) {
 	
 	if (el.id.substring(0, 8) == 'standard') {
 		config.standardSubmit = true;
-		config.url += '?form=' + el.id;
+		config.url = '?form=' + el.id;
 	}
 	else if (el.id.substring(0, 4) == 'ajax') {
-		config.url += '?mode=json';
+		config.url = '<%= conversation.pathToBase %>/form/multiply/';
 	}
 	else if (el.id.substring(0, 6) == 'direct') {
-		delete config.url;
+		//delete config.url;
 		config.api = {
 			submit: Savory.Calc.multiply
 		};

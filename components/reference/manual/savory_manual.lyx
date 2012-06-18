@@ -398,30 +398,48 @@ Backups are very fast: large databases can be fully exported in durations
 \end_layout
 
 \begin_layout Standard
-You might wonder what advantages this service has over MongoDB's mongodump
- or mongoexport tools.
+You might wonder what advantages this service has over MongoDB's 
+\begin_inset CommandInset href
+LatexCommand href
+name "mongodump or mongoexport tools"
+target "http://www.mongodb.org/display/DOCS/Import+Export+Tools"
+
+\end_inset
+
+.
  First, from our experience, the admin tools that come with MongoDB are
  overly simplistic and unreliable.
  Otherwise, Savory's backup service offers the following advantages:
 \end_layout
 
 \begin_layout Itemize
-Thoughput: Because we're using the Java MongoDB driver underneath, with
- its support for connection pooling, we can achieve much higher throughput
- than the command line tools, which use a single connection and no concurrency.
- The default is to use 5 threads (and thus 5 connection at most) at once.
+
+\series bold
+Thoughput:
+\series default
+ Because we're using the Java MongoDB driver underneath, with its support
+ for connection pooling, we can achieve much higher throughput than the
+ command line tools, which use a single connection and no concurrency.
+ The default is to use 5 threads (and thus 5 connections at most) at once.
 \end_layout
 
 \begin_layout Itemize
-True JSON: The mongoexport tool does not export a real JSON array, instead
- it exports each document as a JSON dict, separating each document with
- a newline.
+
+\series bold
+True JSON:
+\series default
+ The mongoexport tool does not export a real JSON array, instead it exports
+ each document as a JSON dict, separating each document with a newline.
  Savory exports a standard JSON array, readable from any standard JSON parser.
 \end_layout
 
 \begin_layout Itemize
-Consistency: Works with the same MongoDB connection as your application,
- guaranteeing that you're backing up 
+
+\series bold
+Consistency:
+\series default
+ Works with the same MongoDB connection as your application, guaranteeing
+ that you're backing up 
 \emph on
 exactly
 \emph default
@@ -430,16 +448,23 @@ exactly
 \end_layout
 
 \begin_layout Itemize
-Fully integrated in your application: You don't have to create system scripts
- to backup your DB.
+
+\series bold
+Operations:
+\series default
+ You don't have to create system scripts to backup your DB.
  Instead, you can stay in JavaScript and Savory.
- You do not need MongoDB installed.
+ You do not even need MongoDB or its command line tools installed.
 \end_layout
 
 \begin_layout Itemize
-Iterators: The backup service uses Savory <a href="../../foundation/iterators/">iter
-ators</a>, so you can transform your data in various ways while backing
- up, or even include non-MongoDB data.
+
+\series bold
+Iterators:
+\series default
+ The backup service uses Savory <a href="../../foundation/iterators/">iterators</a>,
+ so you can transform your data in various ways while backing up, or even
+ include non-MongoDB data.
 \end_layout
 
 \begin_layout Subsection
@@ -2083,6 +2108,864 @@ Note the use of function(): this is required in order to allow the Events
 \end_layout
 
 \begin_layout Section
+Forms Service
+\end_layout
+
+\begin_layout Standard
+Forms are an important feature for any GUI application.
+ As for web applications, forms are supported in HTML, but many web applications
+ also use JavaScript to send forms to the server in the background (
+\begin_inset Quotes eld
+\end_inset
+
+AJAX
+\begin_inset Quotes erd
+\end_inset
+
+).
+ Savory goes a long way towards making it easier for you to use both models,
+ each with its own complexities and subtleties, through a unified API.
+ It especially makes it easy to implement form validation, both on the server
+ and the client, using an extensible system of field types.
+\end_layout
+
+\begin_layout Standard
+Savory explicitly supports Ext JS Forms, and strongly recommends Ext JS
+ as a client-side framework.
+ See the section on Sencha Integration for full details.
+\end_layout
+
+\begin_layout Subsubsection
+Client-side validation vs.
+ server-side validation
+\end_layout
+
+\begin_layout Standard
+Both are supported by Savory and, quite wonderfully, due to the fact that
+ Savory is a server-side JavaScript framework, you can actually share the
+ exact same validation code on both the client and the server! This marvelous
+ advantage makes using forms in Savory especially less cumbersome as compared
+ to other frameworks.
+\end_layout
+
+\begin_layout Standard
+That said, let's point out why you would want both kinds of validation:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Server-side validation:
+\series default
+ You'll at least want this.
+ It protects against errors when users send bad data, and moreover can return
+ user-friendly error codes so that the user will know how to correct the
+ form.
+ But, it's also important for security, to make sure that potentially damaging
+ information will never enter the other parts of your application.
+ You can guarantee that the form won't be processed without approved data.
+ For example, you can protect yourself from attacks which try to overflow
+ your database with too much data and SQL injection attacks.
+ (MongoDB injection attacks may be possible, too!) Note also that Savory
+ Forms will automatically catch server-side exceptions and stop form processing,
+ return the error properly to the user, but obviously this is not secure
+ enough.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Client-side validation:
+\series default
+ Adding this to server-side validation will enhance the user experience
+ by providing fast, instant feedback, thus avoiding an extra round-trip
+ to the server to validate the form data.
+ It will also save you some bandwidth and help you scale.
+ There are two kinds of client-side validation supported by Savory, which
+ when used together will offer the best user experience:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Validation:
+\series default
+ The field's whole value will be tested before allowing the form to be submitted.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Masking:
+\series default
+ When entering textual data, this locks the user's text field to only accept
+ allowed characters.
+ For example, if an integer is required, only the characters 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+9
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ (for negative integers) will be allowed.
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Setup
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.Forms"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.Forms"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Every form is an instance of 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Forms.Form
+\begin_inset Quotes erd
+\end_inset
+
+ or its subclasses.
+ This class inherits 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.REST.Resource,
+\begin_inset Quotes erd
+\end_inset
+
+ and thus can immediately be hooked to your URI-space.
+ Indeed, much of the Forms Service power comes from such a setup, so we'll
+ go over it here.
+ However, note that is also possible to use the form instance without hooking
+ it up to a URI, as we'll show in 
+\begin_inset Quotes eld
+\end_inset
+
+usage,
+\begin_inset Quotes erd
+\end_inset
+
+ below.
+\end_layout
+
+\begin_layout Standard
+First, let's configure the URI-space in your application's 
+\begin_inset Quotes eld
+\end_inset
+
+routing.js
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Add the following to app.routes and app.dispatchers:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/multiply/': {type: 'implicit', id: 'multiply'}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+app.dispatchers = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	javascript: {library: '/resources/'}
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can now configure our resources in 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resources.js
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/forms/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var multiplyForm = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	fields: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		first: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			type: 'number',
+\end_layout
+
+\begin_layout Plain Layout
+
+			label: 'A number',
+\end_layout
+
+\begin_layout Plain Layout
+
+			required: true
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		second: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			type: 'integer',
+\end_layout
+
+\begin_layout Plain Layout
+
+			label: 'An integer',
+\end_layout
+
+\begin_layout Plain Layout
+
+			required: true
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	process: function(results) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (results.success) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			results.values.result = Number(results.values.first) * Number(results.values.second
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+			results.msg = '{first} times {second} equals {result}'.cast(results.values)
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		else {
+\end_layout
+
+\begin_layout Plain Layout
+
+			results.msg = 'Invalid!'
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: new Savory.Forms.Form(multiplyForm)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let's look more closely at this setup below.
+\end_layout
+
+\begin_layout Subsubsection
+Fields and Validation
+\end_layout
+
+\begin_layout Standard
+Each field has at least a name (the key in the dict) and a type (defaults
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+string
+\begin_inset Quotes erd
+\end_inset
+
+).
+ If that's all the information you provide, then no validation will occur:
+ any value, including an empty value, will be accepted.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+required:
+\series default
+ The field cannot be empty, neither a null value nor an empty string will
+ be accepted.
+ Note that the 
+\begin_inset Quotes eld
+\end_inset
+
+required
+\begin_inset Quotes erd
+\end_inset
+
+ check happens before the 
+\begin_inset Quotes eld
+\end_inset
+
+validator
+\begin_inset Quotes erd
+\end_inset
+
+ function is called.
+ TODO error key
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+validator:
+\series default
+ A validating function, meant for both client- and server-side validation.
+ It 
+\emph on
+must
+\emph default
+ return true to signify that the value valid.
+ Any other return value will signify invalidity.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+clientValidator:
+\series default
+ As 
+\begin_inset Quotes eld
+\end_inset
+
+validator
+\begin_inset Quotes erd
+\end_inset
+
+, but intended only for client-side validation.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+serverValidator:
+\series default
+ As 
+\begin_inset Quotes eld
+\end_inset
+
+validator
+\begin_inset Quotes erd
+\end_inset
+
+, but intended only for server-side validation.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+mask:
+\series default
+ A regular expression used for masking.
+ This could be JavaScript literal regular expression, a RegExp object, or
+ a string.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+serverValidation:
+\series default
+ Set to false to override the default for the form.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+clientValidation:
+\series default
+ Set to false to override the default for the form.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+type:
+\series default
+ Instead of providing 
+\begin_inset Quotes eld
+\end_inset
+
+validator
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+clientValidator
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+serverValidator
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+mask
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+serverValidation
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+clientValidation
+\begin_inset Quotes erd
+\end_inset
+
+ for every single field, you can specify a 
+\begin_inset Quotes eld
+\end_inset
+
+type
+\begin_inset Quotes erd
+\end_inset
+
+ from which these keys will be inherited.
+ Defaults to 
+\begin_inset Quotes eld
+\end_inset
+
+string
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Note that even if you specify 
+\begin_inset Quotes eld
+\end_inset
+
+type
+\begin_inset Quotes erd
+\end_inset
+
+, you can override the inherited keys in the field definition.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+value:
+\series default
+ This is a default value assigned to the field when the form is initialized.
+\end_layout
+
+\begin_layout Standard
+The Forms Service comes with a few basic types to get you started, all defined
+ under 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Forms.Types
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+string:
+\series default
+ All values are valid.
+ This is the default type.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+number:
+\series default
+ Valid if the value can be converted into a JavaScript number.
+ Masked for digits, 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+integer:
+\series default
+ Valid if the value can be converted into a JavaScript integer.
+ Masked for digits and 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+email:
+\series default
+ Valid if the value is a standard email address.
+ Does no masking.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+recaptcha:
+\series default
+ See reCAPTCHA.
+\end_layout
+
+\begin_layout Standard
+You can also provide your own types:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var serviceForm = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	types: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		bool: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			validator: function(value, field, conversation) {
+\end_layout
+
+\begin_layout Plain Layout
+
+				value = String(value).toLowerCase()
+\end_layout
+
+\begin_layout Plain Layout
+
+				return (value == 'true') || (value == 'false')
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	fields: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		enabled: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			type: 'bool',
+\end_layout
+
+\begin_layout Plain Layout
+
+			label: 'Whether the service is enabled'
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		...
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Text and Internationalization
+\end_layout
+
+\begin_layout Subsubsection
+Processing
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Hi!
+\end_layout
+
+\begin_layout Section
+HTML Service
+\end_layout
+
+\begin_layout Standard
+This straightforward service generates unique integers in a series, using
+ MongoDB atomic operations.
+ No number in a specific series will ever be generated again.
+ This service is thus useful for generating integer IDs.
+\end_layout
+
+\begin_layout Standard
+Note that uniqueness is only guaranteed by the intactness of the MongoDB
+ database.
+ If you somehow lose it and have to start over, there's a chance you would
+ regenerate IDs that have already been used.
+ If you need unique IDs that don't have this limitation, you'll want to
+ use GUIDs instead.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Make sure to check out the 
+\begin_inset CommandInset href
+LatexCommand href
+name "API documentation for Savory.HTML"
+target "http://threecrickets.com/javascript-api/?namespace=Savory.HTML"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
 Internationalization Service
 \end_layout
 
@@ -2218,9 +3101,6 @@ target "http://threecrickets.com/javascript-api/?namespace=Savory.Internationali
 
 \begin_layout Standard
 Here's an example:
-\end_layout
-
-\begin_layout Standard
 \begin_inset listings
 inline false
 status open
@@ -7575,7 +8455,7 @@ app.routes = {
 
 \begin_layout Plain Layout
 
-	'/math/': {type: 'implicit', id: math'}
+	'/calc/': {type: 'implicit', id: 'calc'}
 \end_layout
 
 \begin_layout Plain Layout
@@ -7640,7 +8520,7 @@ document.executeOnce('/savory/service/rpc/')
 
 \begin_layout Plain Layout
 
-var Math = {
+var Calc = {
 \end_layout
 
 \begin_layout Plain Layout
@@ -7679,7 +8559,7 @@ resources = {
 
 \begin_layout Plain Layout
 
-	math: new Savory.RPC.Resource({namespaces: {Math: Math}})
+	calc: new Savory.RPC.Resource({namespaces: {Calc: Calc}})
 \end_layout
 
 \begin_layout Plain Layout
@@ -7708,7 +8588,7 @@ The key of the namespace is prefixed with a period before all method identifiers
 \begin_inset Quotes eld
 \end_inset
 
-Math.multiply
+Calc.multiply
 \begin_inset Quotes erd
 \end_inset
 
@@ -7744,7 +8624,7 @@ resources = {
 
 \begin_layout Plain Layout
 
-	math: new Savory.RPC.Resource({'.': Math})
+	calc: new Savory.RPC.Resource({'.': Calc})
 \end_layout
 
 \begin_layout Plain Layout
@@ -7799,7 +8679,7 @@ resources = {
 
 \begin_layout Plain Layout
 
-	math: new Savory.RPC.Resource({namespace: Math})
+	calc: new Savory.RPC.Resource({namespace: Calc})
 \end_layout
 
 \begin_layout Plain Layout
@@ -7829,7 +8709,7 @@ status open
 
 \begin_layout Plain Layout
 
-var Math = {
+var Calc = {
 \end_layout
 
 \begin_layout Plain Layout
@@ -8023,7 +8903,7 @@ status open
 
 \begin_layout Plain Layout
 
-var Math = {
+var Calc = {
 \end_layout
 
 \begin_layout Plain Layout
@@ -8094,7 +8974,7 @@ status open
 
 \begin_layout Plain Layout
 
-var Math = {
+var Calc = {
 \end_layout
 
 \begin_layout Plain Layout
@@ -8181,7 +9061,7 @@ status open
 
 \begin_layout Plain Layout
 
-var Math = function(multiplyAll) {
+var Calc = function(multiplyAll) {
 \end_layout
 
 \begin_layout Plain Layout
@@ -8229,7 +9109,7 @@ resources = {
 
 \begin_layout Plain Layout
 
-	math: new Savory.RPC.Resource({objects: {Math: new Math(100)}})
+	calc: new Savory.RPC.Resource({objects: {Calc: new Calc(100)}})
 \end_layout
 
 \begin_layout Plain Layout
@@ -8450,7 +9330,7 @@ var result = Savory.RPC.request({
 
 \begin_layout Plain Layout
 
-	uri: '/math/',
+	uri: '/calc/',
 \end_layout
 
 \begin_layout Plain Layout
@@ -8460,7 +9340,7 @@ var result = Savory.RPC.request({
 
 \begin_layout Plain Layout
 
-	name: 'Math.multiply',
+	name: 'Calc.multiply',
 \end_layout
 
 \begin_layout Plain Layout
@@ -8614,7 +9494,7 @@ status open
 
 \begin_layout Plain Layout
 
-	"method": "Math.multiply",
+	"method": "Calc.multiply",
 \end_layout
 
 \begin_layout Plain Layout
@@ -8673,7 +9553,7 @@ status open
 
 \begin_layout Plain Layout
 
-curl -d @rpc.json "http://localhost:8080/myapp/math/?type=json&human=true"
+curl -d @rpc.json "http://localhost:8080/myapp/calc/?type=json&human=true"
 \end_layout
 
 \end_inset
@@ -11231,7 +12111,7 @@ document.executeOnce('/savory/integration/frontend/sencha/')
 
 \begin_layout Plain Layout
 
-var Math = {
+var Calc = {
 \end_layout
 
 \begin_layout Plain Layout
@@ -11270,8 +12150,8 @@ resources = {
 
 \begin_layout Plain Layout
 
-	math: new Savory.Sencha.DirectResource({name: 'MyApp', namespaces: {Math:
- Math}})
+	calc: new Savory.Sencha.DirectResource({name: 'MyApp', namespaces: {Calc:
+ Calc}})
 \end_layout
 
 \begin_layout Plain Layout
@@ -11321,7 +12201,7 @@ status open
 
 \begin_layout Plain Layout
 
-var Math = {
+var Calc = {
 \end_layout
 
 \begin_layout Plain Layout
@@ -11482,7 +12362,7 @@ function init() {
 
 \begin_layout Plain Layout
 
-	MyApp.Math.multiply(2, 3, function(provider, response) {
+	MyApp.Calc.multiply(2, 3, function(provider, response) {
 \end_layout
 
 \begin_layout Plain Layout
@@ -11536,7 +12416,7 @@ Ext.Ajax.request({
 
 \begin_layout Plain Layout
 
-	url: '<%= conversation.pathToBase %>/math/',
+	url: '<%= conversation.pathToBase %>/calc/',
 \end_layout
 
 \begin_layout Plain Layout
@@ -11701,7 +12581,7 @@ status open
 
 \begin_layout Plain Layout
 
-		"Math": [{
+		"Calc": [{
 \end_layout
 
 \begin_layout Plain Layout

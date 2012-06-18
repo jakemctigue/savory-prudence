@@ -25,10 +25,8 @@ var Savory = Savory || {}
  * Support for the OAuth authentication standard. Uses MongoDB to store
  * authentication token secrets.
  * <p>
- * See the Savory Authentication module for a full-blown, ready-to-use
+ * See the Savory Authentication Service for a full-blown, ready-to-use
  * implementation.
- * <p>
- * See: /tasks/savory/foundation/oauth/maintenance/
  * 
  * @namespace
  * @see Visit <a href="http://dev.twitter.com/pages/auth#intro">Twitter's OAuth intro</a>

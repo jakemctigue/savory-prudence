@@ -1,8 +1,8 @@
 
 document.executeOnce('/savory/service/rest/')
 document.executeOnce('/savory/service/rpc/')
+document.executeOnce('/savory/service/forms/')
 document.executeOnce('/savory/integration/frontend/sencha/')
-document.executeOnce('/savory/foundation/forms/')
 document.executeOnce('/sincerity/jvm/')
 
 // For the REST Service example

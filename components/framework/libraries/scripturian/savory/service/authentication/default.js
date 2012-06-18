@@ -20,7 +20,7 @@
 //
 
 document.executeOnce('/savory/service/internationalization/')
-document.executeOnce('/savory/foundation/forms/')
+document.executeOnce('/savory/service/forms/')
 document.executeOnce('/prudence/lazy/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/prudence/logging/')

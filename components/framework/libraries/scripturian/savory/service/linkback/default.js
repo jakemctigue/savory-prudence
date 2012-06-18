@@ -12,7 +12,7 @@
 //
 
 document.executeOnce('/savory/service/rpc/')
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/savory/service/html/')
 document.executeOnce('/prudence/logging/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/sincerity/templates/')

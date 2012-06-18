@@ -1,21 +1,8 @@
-<%#
+<%
 
-This file is part of the Savory Framework
-
-Copyright 2011-2012 Three Crickets LLC.
-
-The contents of this file are subject to the terms of the LGPL version 3.0:
-http://www.gnu.org/copyleft/lesser.html
-
-Alternatively, you can obtain a royalty free commercial license with less
-limitations, transferable or non-transferable, directly from Three Crickets
-at http://threecrickets.com/
-
-%><%
-
+document.executeOnce('/savory/service/html/')
 document.executeOnce('/savory/feature/registration/')
-document.executeOnce('/savory/foundation/prudence/resources/')
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/prudence/resources/')
 
 var form = Savory.Resources.getCurrentForm(conversation)
 var results = Savory.Resources.getCurrentFormResults(conversation)

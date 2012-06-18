@@ -22,8 +22,6 @@ var Savory = Savory || {}
 
 /**
  * Integration with PayPal's NVPAPI.
- * <p>
- * See: /tasks/foundation/pay-pal/maintenance
  * 
  * @namespace
  * @see Visit <a href="https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_NVPAPIOverview">PayPal's NVPAPI documentation</a>

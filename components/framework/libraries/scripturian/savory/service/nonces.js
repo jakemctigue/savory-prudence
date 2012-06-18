@@ -20,8 +20,6 @@ var Savory = Savory || {}
 /**
  * Unique, expirable nonce (number-used-once) implementation. Uses a
  * MongoDB collection to store nonce entries.
- * <p>
- * See: /tasks/savory/foundation/nonces/maintenance/
  * 
  * @namespace
  * 

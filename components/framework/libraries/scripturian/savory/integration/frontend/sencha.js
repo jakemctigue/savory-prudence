@@ -12,7 +12,7 @@
 //
 
 document.executeOnce('/savory/service/rpc/')
-document.executeOnce('/savory/foundation/forms/')
+document.executeOnce('/savory/service/forms/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/templates/')
 document.executeOnce('/sincerity/xml/')
@@ -127,54 +127,46 @@ Savory.Sencha = Savory.Sencha || function() {
 						break
 				}
 
-				var validation
+				var type
 				if (params.clientValidation) {
-	    			if (field.required) {
-	    				senchaField.allowBlank = false
-	    			}
+					if (this.clientValidation !== false) {
+						if (field.clientValidation !== false) {
+			    			type = Sincerity.Objects.exists(field.type) ? (Savory.Forms.Types[field.type] || this.types[field.type]) : null
+							if (!Sincerity.Objects.exists(type) || (Sincerity.Objects.exists(type) && (type.clientValidation !== false))) {
+				    			if (field.required) {
+				    				senchaField.allowBlank = false
+				    			}
 
-					var validator = field.validator
-					validation = Sincerity.Validation[field.type || 'string']
-					
-					var allowed = field.clientValidation
-					if (!allowed && Sincerity.Objects.exists(validation)) {
-						allowed = validation.clientValidation
-					}
-					/*if (!allowed) {
-						// ??
-						allowed = true
-					}*/
-					
-					if (allowed) {
-						var textKeys = field.textKeys
-						if (!Sincerity.Objects.exists(textKeys) && Sincerity.Objects.exists(validation) && Sincerity.Objects.exists(validation.textKeys)) {
-							textKeys = validation.textKeys
-						}
-						
-						if (Sincerity.Objects.exists(textKeys)) {
-							senchaField.textPack = {
-								text: {},
-								get: function(name) {
-									return this.text[name];
+				    			var validator = field.clientValidator || field.validator 
+								if (!Sincerity.Objects.exists(validator) && Sincerity.Objects.exists(type)) {
+									validator = type.clientValidator || type.validator
+								}
+								
+								if (Sincerity.Objects.exists(validator)) {
+									if (typeof validator != 'function') {
+										validator = eval(validator)
+									}
+									
+									senchaField.validator = validator
+									var textKeys = field.textKeys
+									if (!Sincerity.Objects.exists(textKeys) && Sincerity.Objects.exists(type) && Sincerity.Objects.exists(type.textKeys)) {
+										textKeys = type.textKeys
+									}
+									
+									if (Sincerity.Objects.exists(textKeys)) {
+										senchaField.textPack = {
+											text: {},
+											get: function(name) {
+												return this.text[name];
+											}
+										}
+										for (var t in textKeys) {
+											var textKey = textKeys[t]
+											senchaField.textPack.text[textKey] = Sincerity.Objects.exists(textPack) ? textPack.get(textKey) : textKey
+										}
+									}
 								}
 							}
-							for (var t in textKeys) {
-								var textKey = textKeys[t]
-								senchaField.textPack.text[textKey] = Sincerity.Objects.exists(textPack) ? textPack.get(textKey) : textKey
-							}
-						}
-						
-						if (!Sincerity.Objects.exists(validator)) {
-							if (Sincerity.Objects.exists(validation) && Sincerity.Objects.exists(validation.fn)) {
-								validator = validation.fn
-							}
-						}
-						
-						if (Sincerity.Objects.exists(validator)) {
-							if (typeof validator != 'function') {
-								validator = eval(validator)
-							}
-							senchaField.validator = validator
 						}
 					}
 				}
@@ -182,14 +174,17 @@ Savory.Sencha = Savory.Sencha || function() {
 				if (params.clientMasking) {
 					var mask = field.mask
 					if (!Sincerity.Objects.exists(mask)) {
-						if (!Sincerity.Objects.exists(validation)) {
-							validation = Sincerity.Validation[field.type || 'string']
+						if (!Sincerity.Objects.exists(type)) {
+							type = Sincerity.Objects.exists(field.type) ? (Savory.Forms.Types[field.type] || this.types[field.type]) : null
 						}
-						if (Sincerity.Objects.exists(validation) && Sincerity.Objects.exists(validation.mask)) {
-							mask = validation.mask
+						if (Sincerity.Objects.exists(type) && Sincerity.Objects.exists(type.mask)) {
+							mask = type.mask
 						}
 					}
 	    			if (Sincerity.Objects.exists(mask)) {
+	    				if (!(mask instanceof RegExp)) {
+	    					mask = new RegExp(mask)
+	    				}
 	    				senchaField.maskRe = mask
 	    			}
 				}
@@ -636,6 +631,7 @@ Savory.Sencha = Savory.Sencha || function() {
 						msg: result.message
 					}
 					delete result.message
+					delete result.where
 				}
 	    		
 	    		results.push(result)
