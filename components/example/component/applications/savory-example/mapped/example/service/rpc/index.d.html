@@ -22,12 +22,12 @@ if (conversation.request.method.name == 'POST') {
 	})
 }
 
-var uri = form.internal ? '/rpc/math/' : conversation.reference.baseRef + 'rpc/math/'
+var uri = form.internal ? '/rpc/calc/' : conversation.reference.baseRef + 'rpc/calc/'
 
 var result = Savory.RPC.request({
 	uri: uri,
 	internal: form.internal,
-	name: 'Math.multiply',
+	name: 'Calc.multiply',
 	params: [form.value1, form.value2],
 	id: 'abc',
 	protocol: form.protocol

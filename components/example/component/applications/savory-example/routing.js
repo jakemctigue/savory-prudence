@@ -13,8 +13,8 @@ app.routes = {
 			'staticWeb',
 			{type: 'staticWeb', root: sincerity.container.getLibrariesFile('web')}]}
 	],
-	'/rpc/math/':               {type: 'implicit', id: 'math.rpc'},
-	'/direct/math/':            {type: 'implicit', id: 'math.direct'},
+	'/rpc/calc/':               {type: 'implicit', id: 'calc.rpc'},
+	'/direct/calc/':            {type: 'implicit', id: 'calc.direct'},
 	'/direct/shoppingcart/':    {type: 'implicit', id: 'shoppingcart.direct'},
 	'/mongo/users/{id}/':       {type: 'implicit', id: 'mongo.users'},
 	'/mongo/users/':            {type: 'implicit', id: 'mongo.users.plural'},

@@ -11284,6 +11284,116 @@ resources = {
 
 \end_layout
 
+\begin_layout Standard
+It is also possible to set Ext Direct method attributes using the long-form
+ method definition with the 
+\begin_inset Quotes eld
+\end_inset
+
+extDirect
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+\end_layout
+
+\begin_layout Subsubsection
+Ext JS Forms
+\end_layout
+
+\begin_layout Standard
+Ext Direct can be used to respond to Ext JS form submissions.
+ To do so, we need to set the 
+\begin_inset Quotes eld
+\end_inset
+
+formHandler
+\begin_inset Quotes erd
+\end_inset
+
+ attribute and also return an appropriate response:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var Math = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		fn: function(x, y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			return {
+\end_layout
+
+\begin_layout Plain Layout
+
+				success: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+				msg: '{0} times {1} is {2}'.cast(x, y, x * y)
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		extDirect: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			formHandler: true
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+See the section on Ext JS Forms for more information on usage.
+ Savory supports all of Ext JS's form submission mechanisms.
+\end_layout
+
 \begin_layout Subsection
 Usage
 \end_layout

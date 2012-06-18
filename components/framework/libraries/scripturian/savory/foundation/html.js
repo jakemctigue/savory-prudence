@@ -51,7 +51,7 @@ Savory.HTML = Savory.HTML || function() {
 		params._dir = Sincerity.Objects.exists(params._dir) ? params._dir : true
 		params._html = true
 		try {
-			params._conversation = params._conversation || conversation
+			params._conversation = Sincerity.Objects.ensure(params._conversation, conversation)
 			params._textPack = params._textPack || Savory.Internationalization.getCurrentPack(params._conversation)
 		}
 		catch (x) {
@@ -173,9 +173,9 @@ Savory.HTML = Savory.HTML || function() {
 		
 		params._value = true
 		params._tag = 'input'
-		if (params.name && !params.value) {
+		if (Sincerity.Objects.exists(params.name) && !Sincerity.Objects.exists(params.value)) {
 			try {
-				params._conversation = params._conversation || conversation
+				params._conversation = Sincerity.Objects.ensure(params._conversation, conversation)
 				params.value = params._conversation.form.get(params.name)
 			}
 			catch (x) {
@@ -211,9 +211,9 @@ Savory.HTML = Savory.HTML || function() {
 		}
 
 		params._tag = 'textarea'
-		if (params.name) {
+		if (Sincerity.Objects.exists(params.name)) {
 			try {
-				params._conversation = params._conversation || conversation
+				params._conversation = Sincerity.Objects.ensure(params._conversation, conversation)
 				params._content = params._conversation.form.get(params.name)
 			}
 			catch (x) {

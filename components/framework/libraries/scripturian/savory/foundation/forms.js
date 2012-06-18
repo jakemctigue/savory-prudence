@@ -13,9 +13,11 @@
 
 document.executeOnce('/savory/service/rest/')
 document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/sincerity/validation/')
+document.executeOnce('/sincerity/rhino/')
 
 var Savory = Savory || {}
 
@@ -46,6 +48,13 @@ Savory.Forms = Savory.Forms || function() {
 	 */
 	Public.getCurrentFormResults = function(conversation) {
 		return conversation.locals.get('savory.foundation.forms.results')
+	}
+	
+	Public.getForm = function(uri) {
+		return Prudence.Resources.request({
+			uri: uri,
+			internal: true
+		})		
 	}
 
 	/**
@@ -143,10 +152,25 @@ Savory.Forms = Savory.Forms || function() {
 			
 			var textPack = this.textPack || Savory.Internationalization.getCurrentPack(conversation)
 			var values = Prudence.Resources.getForm(conversation)
-			var results = this.validate(values, textPack, conversation)
-			if (this.process(results, params.conversation) !== false) {
+			var results
+			var processed
+			try {
+				results = this.validate(values, textPack, conversation)
+				processed = this.process(results, conversation)
+			}
+			catch (x) {
+				var details = Sincerity.Rhino.getExceptionDetails(x)
+				results = {
+					success: false,
+					msg: details.message
+				}
+			}
+			if (processed !== false) {
 				switch (query.mode) {
 					case 'json':
+						if (conversation.internal && (conversation.mediaTypeName == 'application/java')) {
+							return results
+						}
 						conversation.mediaTypeName = 'application/json'
 						if (results.success) {
 							delete results.values
@@ -154,7 +178,13 @@ Savory.Forms = Savory.Forms || function() {
 						return Sincerity.JSON.to(results, query.human)
 						
 					case 'capture':
-						var captureUri = this.captureSuccessUri || this.captureUri
+						var captureUri
+						if (results.success) {
+							captureUri = this.captureSuccessUri || this.captureUri
+						}
+						else {
+							captureUri = this.captureFailureUri || this.captureUri
+						}
 						if (Sincerity.Objects.exists(captureUri)) {
 							if (Sincerity.Objects.exists(params.conversation)) {
 								params.conversation.locals.put('savory.foundation.forms.form', this)
@@ -199,7 +229,7 @@ Savory.Forms = Savory.Forms || function() {
 		}
 		
 		Public.htmlError = function(name, results) {
-			if (results && results.errors && results.errors[name]) {
+			if (Sincerity.Objects.exists(results) && Sincerity.Objects.exists(results.errors) && Sincerity.Objects.exists(results.errors[name])) {
 				return Savory.HTML.div({_content: results.errors[name], 'class': 'error'})
 			}
 			return ''
@@ -255,7 +285,7 @@ Savory.Forms = Savory.Forms || function() {
 					
 					if (this.serverValidation) {
 						var validator = field.validator
-						var validation = Savory.Validation[field.type]
+						var validation = Sincerity.Validation[field.type]
 						
 						var allowed = field.serverValidation
 						if (!Sincerity.Objects.exists(allowed) && validation) {

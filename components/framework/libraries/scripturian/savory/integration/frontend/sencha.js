@@ -12,9 +12,11 @@
 //
 
 document.executeOnce('/savory/service/rpc/')
+document.executeOnce('/savory/foundation/forms/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/templates/')
 document.executeOnce('/sincerity/xml/')
+document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/mongo-db/')
 
@@ -49,127 +51,159 @@ Savory.Sencha = Savory.Sencha || function() {
     	println('<script type="text/javascript" src="{pathToBase}/scripts/savory/integration/ext-js.js"></script>'.cast(filler));
     }
 
-	/**
-	 * Translates form fields into the format expected by Sencha forms.
-	 * <p>
-	 * You can translate the result into client-side code via Sincerity.JSON.to(result, true, true).
-	 * See {@link Sincerity.JSON#to}. 
-	 * 
-	 * @param conversation The Savory conversation
-	 * @param {Prudence.Resources.Form} form The form
-	 * @param [results] The results from a call to {@link Prudence.Resources.Form#handle}, used it initialize field
-	 *        values
-	 * @param {Boolean} [clientValidation=form.clientValidation] True to include validator
-	 * @param {Boolean} [clientMasking=true] True to include maskRe
-	 * @returns {Array}
-	 */
-	Public.getFormFields = function(conversation, form, results, clientValidation, clientMasking) {
-		clientValidation = Sincerity.Objects.ensure(clientValidation, form.clientValidation)
-		clientMasking = Sincerity.Objects.ensure(clientMasking, true)
-		var textPack = Sincerity.Objects.exists(conversation) ? Savory.Internationalization.getCurrentPack(conversation) : null
+	Public.Form = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.Sencha.Form */
+		var Public = {}
 
-		var sencha = []
-		
-		for (var name in form.fields) {
-			var field = form.fields[name]
-			var senchaField = {name: name, fieldLabel: field.label}
+		/** @ignore */
+		Public._inherit = Savory.Forms.Form
+
+		/** @ignore */
+		Public._configure = ['clientMasking']
+
+		/** @ignore */
+		Public._construct = function(config) {
+			arguments.callee.overridden.call(this, this)
 			
-			if (results) {
-				if (results.values && results.values[name]) {
-					senchaField.value = results.values[name]
-				}
-				if (results.errors && results.errors[name]) {
-					senchaField.activeError = results.errors[name]
-				}
+			this.clientMasking = Sincerity.Objects.ensure(this.clientMasking, true)
+		}
+
+		/**
+		 * Translates form fields into the format expected by Sencha forms.
+		 * <p>
+		 * You can translate the result into client-side code via Sincerity.JSON.to(result, true, true).
+		 * See {@link Sincerity.JSON#to}. 
+		 * 
+		 * @param conversation The Savory conversation
+		 * @param [results] The results from a call to {@link Prudence.Resources.Form#handle}, used it initialize field
+		 *         values
+		 * @param {Boolean} [clientValidation=form.clientValidation] True to include validator
+		 * @param {Boolean} [clientMasking=true] True to include maskRe
+		 * @returns {Array}
+		 */
+		Public.toExtJs = function(conversation, params) {
+			params = Sincerity.Objects.exists(params) ? Sincerity.Objects.clone(params) : {}
+			params.clientValidation = Sincerity.Objects.ensure(params.clientValidation, this.clientValidation)
+			params.clientMasking = Sincerity.Objects.ensure(params.clientMasking, this.clientMasking)
+			var textPack = Sincerity.Objects.exists(params.conversation) ? Savory.Internationalization.getCurrentPack(params.conversation) : null
+			if (Sincerity.Objects.exists(params.results) && params.results.success) {
+				params.results = null
 			}
-			else if (field.value) {
-				senchaField.value = field.value
-			}
+
+			var sencha = []
 			
-			switch (field.type) {
-				case 'hidden':
-					senchaField.xtype = 'hiddenfield'
-					break
-				case 'password':
-					senchaField.inputType = 'password'
-					break
-				case 'reCaptcha':
-					senchaField.xtype = 'recaptchafield'
-					senchaField.code = field.code
-					break
-				case 'reCaptchaChallenge':
-					senchaField.xtype = 'recaptchachallengefield'
-					break
-			}
-
-			var validation
-			if (clientValidation) {
-    			if (field.required) {
-    				senchaField.allowBlank = false
-    			}
-
-				var validator = field.validator
-				validation = Sincerity.Validation[field.type || 'string']
-				
-				var allowed = field.clientValidation
-				if (!Sincerity.Objects.exists(allowed) && validation) {
-					allowed = validation.clientValidation
-				}
-				if (!Sincerity.Objects.exists(allowed)) {
-					allowed = true
+			for (var name in this.fields) {
+				var field = this.fields[name]
+				var senchaField = {
+					name: name,
+					fieldLabel: field.label
 				}
 				
-				if (allowed) {
-					var textKeys = field.textKeys
-					if (!textKeys && validation && validation.textKeys) {
-						textKeys = validation.textKeys
+				if (Sincerity.Objects.exists(params.results)) {
+					if (Sincerity.Objects.exists(params.results.values) && Sincerity.Objects.exists(params.results.values[name])) {
+						senchaField.value = params.results.values[name]
 					}
-					
-					if (textKeys) {
-						senchaField.textPack = {text: {}, get: function(name) { return this.text[name]; }}
-						for (var t in textKeys) {
-							var textKey = textKeys[t]
-							senchaField.textPack.text[textKey] = textPack ? textPack.get(textKey) : textKey
-						}
-					}
-					
-					if (!validator) {
-						if (validation && validation.fn) {
-							validator = validation.fn
-						}
-					}
-					
-					if (validator) {
-						if (typeof validator != 'function') {
-							validator = eval(validator)
-						}
-						senchaField.validator = validator
+					if (Sincerity.Objects.exists(params.results.errors) && Sincerity.Objects.exists(params.results.errors[name])) {
+						senchaField.activeError = results.errors[name]
 					}
 				}
-			}
-			
-			if (clientMasking) {
-				var mask = field.mask
-				if (!mask) {
-					if (!validation) {
-						validation = Sincerity.Validation[field.type || 'string']
-					}
-					if (validation && validation.mask) {
-						mask = validation.mask
-					}
+				else if (Sincerity.Objects.exists(field.value)) {
+					senchaField.value = field.value
 				}
-    			if (mask) {
-    				senchaField.maskRe = mask
-    			}
-			}
-			
-			Sincerity.Objects.merge(senchaField, field.sencha)
+				
+				switch (String(field.type)) {
+					case 'hidden':
+						senchaField.xtype = 'hiddenfield'
+						break
+					case 'password':
+						senchaField.inputType = 'password'
+						break
+					case 'reCaptcha':
+						senchaField.xtype = 'recaptchafield'
+						senchaField.code = field.code
+						break
+					case 'reCaptchaChallenge':
+						senchaField.xtype = 'recaptchachallengefield'
+						break
+				}
 
-			sencha.push(senchaField)
+				var validation
+				if (params.clientValidation) {
+	    			if (field.required) {
+	    				senchaField.allowBlank = false
+	    			}
+
+					var validator = field.validator
+					validation = Sincerity.Validation[field.type || 'string']
+					
+					var allowed = field.clientValidation
+					if (!allowed && Sincerity.Objects.exists(validation)) {
+						allowed = validation.clientValidation
+					}
+					/*if (!allowed) {
+						// ??
+						allowed = true
+					}*/
+					
+					if (allowed) {
+						var textKeys = field.textKeys
+						if (!Sincerity.Objects.exists(textKeys) && Sincerity.Objects.exists(validation) && Sincerity.Objects.exists(validation.textKeys)) {
+							textKeys = validation.textKeys
+						}
+						
+						if (Sincerity.Objects.exists(textKeys)) {
+							senchaField.textPack = {
+								text: {},
+								get: function(name) {
+									return this.text[name];
+								}
+							}
+							for (var t in textKeys) {
+								var textKey = textKeys[t]
+								senchaField.textPack.text[textKey] = Sincerity.Objects.exists(textPack) ? textPack.get(textKey) : textKey
+							}
+						}
+						
+						if (!Sincerity.Objects.exists(validator)) {
+							if (Sincerity.Objects.exists(validation) && Sincerity.Objects.exists(validation.fn)) {
+								validator = validation.fn
+							}
+						}
+						
+						if (Sincerity.Objects.exists(validator)) {
+							if (typeof validator != 'function') {
+								validator = eval(validator)
+							}
+							senchaField.validator = validator
+						}
+					}
+				}
+				
+				if (params.clientMasking) {
+					var mask = field.mask
+					if (!Sincerity.Objects.exists(mask)) {
+						if (!Sincerity.Objects.exists(validation)) {
+							validation = Sincerity.Validation[field.type || 'string']
+						}
+						if (Sincerity.Objects.exists(validation) && Sincerity.Objects.exists(validation.mask)) {
+							mask = validation.mask
+						}
+					}
+	    			if (Sincerity.Objects.exists(mask)) {
+	    				senchaField.maskRe = mask
+	    			}
+				}
+				
+				Sincerity.Objects.merge(senchaField, field.sencha)
+
+				sencha.push(senchaField)
+			}
+			
+			return Sincerity.JSON.to(sencha, true, true)
 		}
 		
-		return sencha
-	}
+		return Public
+	}(Public))
 	
 	/**
 	 * @class
@@ -466,6 +500,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	    				name: m,
 	    				len: method.arity
 	    			}
+	    			Sincerity.Objects.merge(directMethod, method.extDirect)
 	    			action.push(directMethod)
 	    		}
 	    	}
@@ -543,7 +578,7 @@ Savory.Sencha = Savory.Sencha || function() {
 							if (fn) {
 								try {
     								var context = method.scope ? method.scope : {
-    									namespace: n,
+    									namespace: namespace,
     									definition: method,
     									resource: this,
     									conversation: conversation,
@@ -560,13 +595,28 @@ Savory.Sencha = Savory.Sencha || function() {
 								}
 								catch (x) {
 									var details = Sincerity.Rhino.getExceptionDetails(x)
-									result = {
-										type: 'exception',
-										tid: call.tid,
-										action: call.action,
-										method: call.method,
-										message: details.message,
-										where: details.stackTrace
+									if (isWebForm) {
+										// Web forms seem to expect a different result structure for errors
+										result = {
+											type: 'rpc',
+											tid: call.tid,
+											action: call.action,
+											method: call.method,
+											result: {
+												success: false,
+												msg: details.message
+											}
+										}
+									}
+									else {
+										result = {
+											type: 'exception',
+											tid: call.tid,
+											action: call.action,
+											method: call.method,
+											message: details.message,
+											where: details.stackTrace
+										}
 									}
 								}
 							}

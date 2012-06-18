@@ -369,7 +369,7 @@ Savory.RPC = Savory.RPC || function() {
 
 		/** @ignore */
 		Public._construct = function(config) {
-			this.namespaces = this.namespaces || {}
+			this.namespaces = Sincerity.Objects.exists(this.namespaces) ? Sincerity.Objects.clone(this.namespaces) : {}
 
 			if (this.namespace) {
 				this.namespaces = {'.': this.namespace}

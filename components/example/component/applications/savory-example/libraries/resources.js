@@ -5,16 +5,35 @@ document.executeOnce('/savory/integration/frontend/sencha/')
 document.executeOnce('/savory/foundation/forms/')
 document.executeOnce('/sincerity/jvm/')
 
-var Math = {
-	multiply: {
-		fn: function(x, y) {
-			if ((x == 1) && (y == 2)) {
-				throw 'You\'re trying to multiply the magic numbers!'
-			}
-			return x * y
-		}
+// For the REST Service example
+
+var users = {
+	'4e057e94e799a23b0f581d7d': {
+		_id: '4e057e94e799a23b0f581d7d',
+		name: 'newton',
+		lastSeen: new Date()
+	},
+	'4e057e94e799a23b0f581d7e': {
+		_id: '4e057e94e799a23b0f581d7e',
+		name: 'sagan',
+		lastSeen: new Date()
 	}
 }
+
+var usersMap = Sincerity.JVM.toMap(users, true)
+
+// For the RPC Service example 
+
+var Calc = {
+	multiply: function(x, y) {
+		if ((x == 1) && (y == 2)) {
+			throw "You're trying to multiply the magic numbers!"
+		}
+		return Number(x) * Number(y)
+	}
+}
+
+// For the Ext Direct example
 
 var ShoppingCart = function() {
 	this.addItem = function(item) {
@@ -31,17 +50,26 @@ var ShoppingCart = function() {
 	this.items = Sincerity.JVM.newSet(true)
 }
 
-/*
-var MathClass = function(multiplyAll) {
-	this.multiplyAll = multiplyAll
+// For the Ext JS Forms example
 
-	this.multiply = function(x, y) {
-		return x * y * this.multiplyAll
+var CalcDirect = {
+	multiply: {
+		fn: function(first, second) {
+			var values = {
+				first: first,
+				second: second,
+				result: Calc.multiply(first, second)
+			}
+			return {
+				success: true,
+				msg: '{first} times {second} equals {result}'.cast(values)
+			}
+		},
+		extDirect: {
+			formHandler: true
+		}
 	}
 }
-
-var Math = new MathClass(100)
-*/
 
 var multiplyForm = {
 	fields: {
@@ -56,11 +84,10 @@ var multiplyForm = {
 			required: true
 		}
 	},
-	proccess: function(results) {
+	process: function(results) {
 		if (results.success) {
-			results.values.result = Number(results.values.first) * Number(results.values.second)
+			results.values.result = Calc.multiply(results.values.first, results.values.second)
 			results.msg = '{first} times {second} equals {result}'.cast(results.values)
-			//results.msg = Sincerity.JSON.to(results.values)
 		}
 		else {
 			results.msg = 'Invalid!'
@@ -73,18 +100,7 @@ var multiplyForm = {
 	}
 }
 
-var users = {
-	'4e057e94e799a23b0f581d7d': {
-		_id: '4e057e94e799a23b0f581d7d',
-		name: 'newton',
-		lastSeen: new Date()
-	},
-	'4e057e94e799a23b0f581d7e': {
-		_id: '4e057e94e799a23b0f581d7e',
-		name: 'sagan',
-		lastSeen: new Date()
-	}
-}
+// For the Ext JS Trees example
 
 var textpack = {
 	application: {
@@ -93,15 +109,15 @@ var textpack = {
 	}
 }
 
-var usersMap = Sincerity.JVM.toMap(users, true)
-
 function getTextpackNodeText(id, node) {
 	return typeof node == 'string' ? id + ': ' + node : id
 }
 
+// The resources
+
 resources = {
-	'math.rpc':                 new Savory.RPC.Resource({namespaces: {Math: Math}}),
-	'math.direct':              new Savory.Sencha.DirectResource({name: 'Savory', namespaces: {Math: Math}}),
+	'calc.rpc':                 new Savory.RPC.Resource({namespaces: {Calc: Calc}}),
+	'calc.direct':              new Savory.Sencha.DirectResource({name: 'Savory', namespaces: {Calc: CalcDirect}}),
 	'shoppingcart.direct':      new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
 	'mongo.users':              new Savory.REST.MongoDbResource({name: 'users'}),
 	'mongo.users.plural':       new Savory.REST.MongoDbResource({name: 'users', plural: true}),
@@ -111,7 +127,7 @@ resources = {
 	'memory.textpack':          new Savory.Sencha.InMemoryTreeResource({tree: textpack, getNodeText: getTextpackNodeText}),
 	'distributed.users':        new Savory.REST.DistributedResource({name: 'users', documents: users}),
 	'distributed.users.plural': new Savory.REST.DistributedResource({name: 'users', documents: users, plural: true}),
-	'form.multiply':            new Savory.Forms.Form(multiplyForm)
+	'form.multiply':            new Savory.Sencha.Form(multiplyForm)
 }
 
 //resources = Savory.REST.createMongoDbResources()
