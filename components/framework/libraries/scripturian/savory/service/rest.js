@@ -517,7 +517,10 @@ Savory.REST = Savory.REST || function() {
 		function represent(conversation, query, value, htmlUri) {
 			switch (String(conversation.mediaTypeName)) {
 				case 'application/java':
-					return value
+					if (conversation.internal) {
+						return value
+					}
+					return Prudence.Resources.Status.ClientError.BadRequest
 
 				case 'application/xml':
 					var xml = Sincerity.XML.to({documents: value})

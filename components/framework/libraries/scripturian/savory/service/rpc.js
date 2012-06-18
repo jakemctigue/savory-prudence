@@ -43,8 +43,8 @@ var Savory = Savory || {}
  */
 Savory.RPC = Savory.RPC || function() {
 	/** @exports Public as Savory.RPC */
-    var Public = {}
-    
+	var Public = {}
+	
 	/**
 	 * The library's logger.
 	 *
@@ -59,27 +59,27 @@ Savory.RPC = Savory.RPC || function() {
 	 * @see Visit the <a href="http://xmlrpc-epi.sourceforge.net/specs/rfc.fault_codes.php">RFC</a>
 	 */
 	Public.Fault = {
-    	/** @constant */
-    	ParseError: -32700,
-    	/** @constant */
-    	UnsupportedEncoding: -32701,
-    	/** @constant */
-    	InvalidCharacter: -32702,
-    	/** @constant */
-    	InvalidRequest: -32600,
-    	/** @constant */
-    	MethodNotFound: -32601,
-    	/** @constant */
-    	InvalidParams: -32602,
-    	/** @constant */
-    	ServerError: -32603,
-    	/** @constant */
-    	ApplicationError: -32500,
-    	/** @constant */
-    	SystemError: -32400,
-    	/** @constant */
-    	GatewayError: -32300
-    }
+		/** @constant */
+		ParseError: -32700,
+		/** @constant */
+		UnsupportedEncoding: -32701,
+		/** @constant */
+		InvalidCharacter: -32702,
+		/** @constant */
+		InvalidRequest: -32600,
+		/** @constant */
+		MethodNotFound: -32601,
+		/** @constant */
+		InvalidParams: -32602,
+		/** @constant */
+		ServerError: -32603,
+		/** @constant */
+		ApplicationError: -32500,
+		/** @constant */
+		SystemError: -32400,
+		/** @constant */
+		GatewayError: -32300
+	}
 
 	/**
 	 * XML-RPC spec.
@@ -268,15 +268,15 @@ Savory.RPC = Savory.RPC || function() {
 	 * @param params All params used in {@link Prudence.Resources#request} are applicable here
 	 * @param {String} params.name The method identifier
 	 * @param {String} [params.id] The call ID (for JSON-RPC); note that if you do not provide an ID, you will not get
-	 *                              any result!
-	 * @param {String} [params.protocol='json'] Available options are 'json2.0' (or 'json'), 'json1.1', 'json1.0' and 'xml'
+	 *							  any result!
+	 * @param {String} [params.protocol='json'] Available options are 'json2.0' (or 'json'), 'json1.1', 'json1.0', 'xml'
 	 * @returns {Object} A JSON-RPC-style result, or null if the request did not go through
 	 */
 	Public.request = function(params) {
 		params = Sincerity.Objects.exists(params) ? Sincerity.Objects.clone(params) : {}
 		params.protocol = String(params.protocol || 'json')
 		params.method = params.method || 'post'
-		params.mediaType = params.mediaType || 'application/' + params.protocol
+		params.mediaType = params.mediaType || (params.internal ? 'application/java' : 'application/' + params.protocol)
 		var isJson = params.protocol.substring(0, 4) == 'json'
 			
 		if (isJson) {
@@ -359,65 +359,65 @@ Savory.RPC = Savory.RPC || function() {
 	 */
 	Public.Resource = Sincerity.Classes.define(function(Module) {
 		/** @exports Public as Savory.RPC.Resource */
-	    var Public = {}
+		var Public = {}
 
-	    /** @ignore */
-	    Public._inherit = Savory.REST.Resource
+		/** @ignore */
+		Public._inherit = Savory.REST.Resource
 
-	    /** @ignore */
-	    Public._configure = ['namespace', 'namespaces', 'object', 'objects']
+		/** @ignore */
+		Public._configure = ['namespace', 'namespaces', 'object', 'objects']
 
-	    /** @ignore */
-	    Public._construct = function(config) {
-	    	this.namespaces = this.namespaces || {}
+		/** @ignore */
+		Public._construct = function(config) {
+			this.namespaces = this.namespaces || {}
 
-	    	if (this.namespace) {
-	    		this.namespaces = {'.': this.namespace}
-	    	}
+			if (this.namespace) {
+				this.namespaces = {'.': this.namespace}
+			}
 
-	    	for (var n in this.namespaces) {
-	    		var namespace = this.namespaces[n]
-	    		for (var m in namespace) {
-	    			var method = namespace[m]
-	    			if (typeof method == 'function') {
-	    				namespace[m] = {
-	    					fn: method,
-	    					arity: method.length
-	    				}
-	    			}
-	    			else {
-	    				if (!Sincerity.Objects.exists(method.arity)) {
-	    					method.arity = method.fn.length
-	    				}
-	    			}
-	    		}
-	    	}
+			for (var n in this.namespaces) {
+				var namespace = this.namespaces[n]
+				for (var m in namespace) {
+					var method = namespace[m]
+					if (typeof method == 'function') {
+						namespace[m] = {
+							fn: method,
+							arity: method.length
+						}
+					}
+					else {
+						if (!Sincerity.Objects.exists(method.arity)) {
+							method.arity = method.fn.length
+						}
+					}
+				}
+			}
 
-	    	if (this.object) {
-	    		this.objects = {'.': this.objects}
-	    	}
+			if (this.object) {
+				this.objects = {'.': this.objects}
+			}
 
-	    	if (Sincerity.Objects.exists(this.objects)) {
-		    	for (var o in this.objects) {
-		    		var object = this.objects[o]
-		    		this.namespaces[o] = {}
-		    		for (var m in object) {
-		    			var method = object[m]
-		    			if (typeof method == 'function') {
-		    				this.namespaces[o][m] = {
-		    					fn: method,
-		    					arity: method.length,
-		    					scope: object
-		    				}
-		    			}
-		    		}
-		    	}
-	    	}
+			if (Sincerity.Objects.exists(this.objects)) {
+				for (var o in this.objects) {
+					var object = this.objects[o]
+					this.namespaces[o] = {}
+					for (var m in object) {
+						var method = object[m]
+						if (typeof method == 'function') {
+							this.namespaces[o][m] = {
+								fn: method,
+								arity: method.length,
+								scope: object
+							}
+						}
+					}
+				}
+			}
 
-	    	arguments.callee.overridden.call(this, this)	    	
-	    }
+			arguments.callee.overridden.call(this, this)			
+		}
 
-	    Public.mediaTypes = [
+		Public.mediaTypes = [
 			'application/json',
 			'application/xml',
 			'application/java',
@@ -426,306 +426,316 @@ Savory.RPC = Savory.RPC || function() {
 			'text/html'
 		]
 
-	    Public.handlePost = function(conversation) {
-	    	var entity = conversation.entity ? conversation.entity.text : null
-	    	var calls = []
-	    	var isBatch = false
-	    	var faultCode = null
-	    	var value = null
+		Public.doPost = function(conversation) {
+			var entity = conversation.entity ? conversation.entity.text : null
+			var calls = []
+			var isBatch = false
+			var faultCode = null
+			var value = null
 
-	    	var query = Prudence.Resources.getQuery(conversation, {
-	    		type: 'string',
-	    		human: 'bool'
-	    	})
-	    	query.human = query.human || false
+			var query = Prudence.Resources.getQuery(conversation, {
+				type: 'string',
+				human: 'bool'
+			})
+			query.human = query.human || false
 
-	    	var type = query.type || conversation.locals.get('type')
-	    	if (type == 'xml') {
-	    		isXml = true
-	    	}
-	    	else if (type == 'json') {
-	    		isXml = false
-	    	}
-	    	else {
-		    	var mediaType = conversation.entity ? conversation.entity.mediaType : conversation.mediaTypeName
-	    		isXml = (mediaType == 'application/xml') || (mediaType == 'text/xml')
-	    	}
-	    	if (isXml) {
-	    		// Try XML-RPC
-	    		var doc
-	    		try {
-	    			doc = Sincerity.XML.from(entity)
-	    		}
-	    		catch (x) {
-	    			faultCode = Module.Fault.ParseError
-	    			value = 'Malformed XML'
-	    		}
-	    		if (doc) {
-	    			// Convert to our call format (identical to JSON-RPC's!)
-	    			var methodCalls = doc.getElements('methodCall')
-	    			if (methodCalls.length) {
-	    				var methodCall = methodCalls[0]
-	    				var methodName = methodCall.getElements('methodName')
-	    				if (methodName.length) {
-	    					var call = {}
-	    					call.method = methodName[0].getText()
-	    					call.params = []
-	    					var params = methodCall.getElements('params')
-	    					if (params.length) {
-	    						params = params[0].getElements('param')
-	    						for (var p in params) {
-	    							var param = params[p]
-	    							var values = param.getElements('value')
-	    							if (values.length) {
-	    								var value = values[0]
-	    								call.params.push(Module.fromXmlValue(value))
-	    							}
-	    						}
-	    					}
-	    					calls.push(call)
-	    				}
-	    			}
-	    		}
-	    	}
-	    	else {
-	    		// Try JSON-RPC
-	    		try {
-	    			calls = Sincerity.JSON.from(entity)
-	    			isBatch = Sincerity.Objects.isArray(calls)
-	    			if (!isBatch) {
-	    				calls = [calls]
-	    			}
-	    		}
-	    		catch (x) {
-	    			faultCode = Module.Fault.ParseError
-	    			value = 'Malformed JSON'
-	    		}
-	    	}
-	    	
-	    	// Process calls
-	    	var results = []
-	    	for (var c in calls) {
-	    		var call = calls[c]
+			var type = query.type || conversation.locals.get('type')
+			if (type == 'xml') {
+				isXml = true
+			}
+			else if (type == 'json') {
+				isXml = false
+			}
+			else {
+				var mediaType = conversation.entity ? conversation.entity.mediaType : conversation.mediaTypeName
+				isXml = (mediaType == 'application/xml') || (mediaType == 'text/xml')
+			}
+			if (isXml) {
+				// Try XML-RPC
+				var doc
+				try {
+					doc = Sincerity.XML.from(entity)
+				}
+				catch (x) {
+					faultCode = Module.Fault.ParseError
+					value = 'Malformed XML'
+				}
+				if (doc) {
+					// Convert to our call format (identical to JSON-RPC's!)
+					var methodCalls = doc.getElements('methodCall')
+					if (methodCalls.length) {
+						var methodCall = methodCalls[0]
+						var methodName = methodCall.getElements('methodName')
+						if (methodName.length) {
+							var call = {}
+							call.method = methodName[0].getText()
+							call.params = []
+							var params = methodCall.getElements('params')
+							if (params.length) {
+								params = params[0].getElements('param')
+								for (var p in params) {
+									var param = params[p]
+									var values = param.getElements('value')
+									if (values.length) {
+										var value = values[0]
+										call.params.push(Module.fromXmlValue(value))
+									}
+								}
+							}
+							calls.push(call)
+						}
+					}
+				}
+			}
+			else {
+				// Try JSON-RPC
+				try {
+					calls = Sincerity.JSON.from(entity)
+					isBatch = Sincerity.Objects.isArray(calls)
+					if (!isBatch) {
+						calls = [calls]
+					}
+				}
+				catch (x) {
+					faultCode = Module.Fault.ParseError
+					value = 'Malformed JSON'
+				}
+			}
+			
+			// Process calls
+			var results = []
+			for (var c in calls) {
+				var call = calls[c]
 
-	    		if (!call.method) {
-	    			faultCode = Module.Fault.InvalidRequest
-	    			value = 'Method name not provided'
-	    		}
-	    		
-	    		if (!call.params) {
-	    			call.params = []
-	    		}
-	    		
-	    		if (!faultCode) {
-	    			if (call.method == 'system.getCapabilities') {
-	    				if (call.params.length) {
-	    					faultCode = Module.Fault.InvalidParams
-	    					value = 'Too many params'
-	    				}
-	    				else {
-	    					value = {
-	    						faults_interop: {
-	    							specUrl: 'http://xmlrpc-epi.sourceforge.net/specs/rfc.fault_codes.php',
-	    							specVersion: {_: {'int': 20010516}}
-	    						}
-	    					}
-	    				}
-	    			}
-	    			else if (call.method == 'system.listMethods') {
-	    				if (call.params.length) {
-	    					faultCode = Module.Fault.InvalidParams
-	    					value = 'Too many params'
-	    				}
-	    				else {
-	    					value = []
-	    					for (var n in this.namespaces) {
-	    						var methods = this.namespaces[n]
-	    						for (var m in methods) {
-	    							value.push(n == '.' ? m : n + '.' + m)
-	    						}
-	    					}
-	    				}
-	    			}
-	    			else if (call.method == 'system.methodSignature') {
-	    				if (call.params.length > 1) {
-	    					faultCode = Module.Fault.InvalidParams
-	    					value = 'Too many params'
-	    				}
-	    				else {
-	    					var find = call.params.length ? findMethod.call(this, call.params[0]) : null
-	    					if (find) {
-	    						value = []
-	    						// Return value
-	    						value.push('struct')
-	    						// Arguments
-	    						for (var a = find.method.arity; a > 0; a--) {
-	    							value.push('struct')
-	    						}
-	    					}
-	    					else {
-	    						faultCode = Module.Fault.ServerError
-	    						if (call.params.length) {
-	    							value = 'Method not found: ' + call.params[0]
-	    						}
-	    						else {
-	    							value = 'No method specified'
-	    						}
-	    					}
-	    				}
-	    			}
-	    			else if (call.method == 'system.methodHelp') {
-	    				if (call.params.length > 1) {
-	    					faultCode = Module.Fault.InvalidParams
-	    					value = 'Too many params'
-	    				}
-	    				else {
-	    					var find = call.params.length ? findMethod.call(this, call.params[0]) : null
-	    					if (find) {
-	    						value = find.method.help || call.params[0]
-	    					}
-	    					else {
-	    						faultCode = Module.Fault.ServerError
-	    						if (call.params.length) {
-	    							value = 'Method not found: ' + call.params[0]
-	    						}
-	    						else {
-	    							value = 'No method specified'
-	    						}
-	    					}
-	    				}
-	    			}
-	    			else {
-	    				var find = findMethod.call(this, call.method)
-	    				if (find) {
-	    					if (call.params.length > find.method.arity) {
-	    						faultCode = Module.Fault.InvalidParams
-	    						value = 'Too many params'
-	    					}
-	    					else {
-	    						var fn = find.method.fn
-	    						if (fn) {
-	    							try {
-	    								var context = find.method.scope ? find.method.scope : {
-	    									namespace: find.namespace,
-	    									definition: find.method,
-	    									resource: this,
-	    									conversation: conversation,
-	    									call: call
-	    								}
-	    								value = fn.apply(context, call.params)
-	    							}
-	    							catch (x) {
-	    								if (typeof x == 'number') {
-	    									faultCode = x
-	    									value = 'Error'
-	    								}
-	    								else if (typeof x.code == 'number') {
-	    									faultCode = x.code
-	    									value = x.message || 'Error'
-	    								}
-	    								else {
-	    									var details = Sincerity.Rhino.getExceptionDetails(x)
-	    									faultCode = Module.Fault.ServerError
-	    									value = details.message
-	    								}
-	    							}
-	    						}
-	    						else {
-	    							faultCode = Module.Fault.ServerError
-	    							value = 'No function for method: ' + call.method
-	    						}
-	    					}
-	    				}
-	    				else {
-	    					faultCode = Module.Fault.MethodNotFound
-	    					value = 'Unknown method: ' + call.method
-	    				}
-	    			}
-	    		}
-	    		
-	    		if (isXml) {
-	    			var result
-	    			if (faultCode) {
-	    				result = {
-	    					fault: Module.toXmlValue({
-	    						faultCode: {_: {'int': faultCode}},
-	    						faultString: value
-	    					})
-	    				}
-	    			}
-	    			else {
-	    				result = {
-	    					params: {
-	    						param: Module.toXmlValue(value)
-	    					}
-	    				}
-	    			}
-	    			
-	    			results.push(result)
-	    		}
-	    		// In JSON-RPC, if no ID is supplied, do not return a result (called a 'notification call')
-	    		else if (faultCode || Sincerity.Objects.exists(call.id)) {
-	    	    	var result = {
-	    	    		id: call.id || null
-	    	    	}
-	    	
-	    	    	// In 2.0, 'jsonrpc' is used, in 1.1 'version' is used
-	    	    	var version = call.jsonrpc || call.version || '1.0'
-	    	    	
-	    	    	if (faultCode) {
-	    	    		result.result = null
-	    		    	switch (version) {
-	    		    		case '2.0':
-	    			    		result.error = {
-	    		    				code: faultCode,
-	    		    				message: value
-	    			    		}
-	    		    			break
-	    		    		default:
-	    		    			result.error = faultCode
-	    		    			break
-	    		    	}
-	    	    	}
-	    	    	else {
-	    	    		result.result = value
-	    	    		result.error = null
-	    	    	}
-	    	    	
-	    	    	switch (version) {
-	    	    		case '2.0':
-	    	    			result.jsonrpc = '2.0'
-	    	    			break
-	    	    		case '1.1':
-	    	    			result.version = '1.1'
-	    	    			break
-	    	    	}
-	    	    	
-	    	    	results.push(result)
-	    		}
-	    	}
+				if (!call.method) {
+					faultCode = Module.Fault.InvalidRequest
+					value = 'Method name not provided'
+				}
+				
+				if (!call.params) {
+					call.params = []
+				}
+				
+				if (!faultCode) {
+					if (call.method == 'system.getCapabilities') {
+						if (call.params.length) {
+							faultCode = Module.Fault.InvalidParams
+							value = 'Too many params'
+						}
+						else {
+							value = {
+								faults_interop: {
+									specUrl: 'http://xmlrpc-epi.sourceforge.net/specs/rfc.fault_codes.php',
+									specVersion: {_: {'int': 20010516}}
+								}
+							}
+						}
+					}
+					else if (call.method == 'system.listMethods') {
+						if (call.params.length) {
+							faultCode = Module.Fault.InvalidParams
+							value = 'Too many params'
+						}
+						else {
+							value = []
+							for (var n in this.namespaces) {
+								var methods = this.namespaces[n]
+								for (var m in methods) {
+									value.push(n == '.' ? m : n + '.' + m)
+								}
+							}
+						}
+					}
+					else if (call.method == 'system.methodSignature') {
+						if (call.params.length > 1) {
+							faultCode = Module.Fault.InvalidParams
+							value = 'Too many params'
+						}
+						else {
+							var find = call.params.length ? findMethod.call(this, call.params[0]) : null
+							if (find) {
+								value = []
+								// Return value
+								value.push('struct')
+								// Arguments
+								for (var a = find.method.arity; a > 0; a--) {
+									value.push('struct')
+								}
+							}
+							else {
+								faultCode = Module.Fault.ServerError
+								if (call.params.length) {
+									value = 'Method not found: ' + call.params[0]
+								}
+								else {
+									value = 'No method specified'
+								}
+							}
+						}
+					}
+					else if (call.method == 'system.methodHelp') {
+						if (call.params.length > 1) {
+							faultCode = Module.Fault.InvalidParams
+							value = 'Too many params'
+						}
+						else {
+							var find = call.params.length ? findMethod.call(this, call.params[0]) : null
+							if (find) {
+								value = find.method.help || call.params[0]
+							}
+							else {
+								faultCode = Module.Fault.ServerError
+								if (call.params.length) {
+									value = 'Method not found: ' + call.params[0]
+								}
+								else {
+									value = 'No method specified'
+								}
+							}
+						}
+					}
+					else {
+						var find = findMethod.call(this, call.method)
+						if (find) {
+							if (call.params.length > find.method.arity) {
+								faultCode = Module.Fault.InvalidParams
+								value = 'Too many params'
+							}
+							else {
+								var fn = find.method.fn
+								if (fn) {
+									try {
+										var context = find.method.scope ? find.method.scope : {
+											namespace: find.namespace,
+											definition: find.method,
+											resource: this,
+											conversation: conversation,
+											call: call
+										}
+										value = fn.apply(context, call.params)
+									}
+									catch (x) {
+										if (typeof x == 'number') {
+											faultCode = x
+											value = 'Error'
+										}
+										else if (typeof x.code == 'number') {
+											faultCode = x.code
+											value = x.message || 'Error'
+										}
+										else {
+											var details = Sincerity.Rhino.getExceptionDetails(x)
+											faultCode = Module.Fault.ServerError
+											value = details.message
+										}
+									}
+								}
+								else {
+									faultCode = Module.Fault.ServerError
+									value = 'No function for method: ' + call.method
+								}
+							}
+						}
+						else {
+							faultCode = Module.Fault.MethodNotFound
+							value = 'Unknown method: ' + call.method
+						}
+					}
+				}
+				
+				if (isXml) {
+					var result
+					if (faultCode) {
+						result = {
+							fault: Module.toXmlValue({
+								faultCode: {_: {'int': faultCode}},
+								faultString: value
+							})
+						}
+					}
+					else {
+						result = {
+							params: {
+								param: Module.toXmlValue(value)
+							}
+						}
+					}
+					
+					results.push(result)
+				}
+				// In JSON-RPC, if no ID is supplied, do not return a result (called a 'notification call')
+				else if (faultCode || Sincerity.Objects.exists(call.id)) {
+					var result = {
+						id: call.id || null
+					}
+			
+					// In 2.0, 'jsonrpc' is used, in 1.1 'version' is used
+					var version = call.jsonrpc || call.version || '1.0'
+					
+					if (faultCode) {
+						result.result = null
+						switch (version) {
+							case '2.0':
+								result.error = {
+									code: faultCode,
+									message: value
+								}
+								break
+							default:
+								result.error = faultCode
+								break
+						}
+					}
+					else {
+						result.result = value
+						result.error = null
+					}
+					
+					switch (version) {
+						case '2.0':
+							result.jsonrpc = '2.0'
+							break
+						case '1.1':
+							result.version = '1.1'
+							break
+					}
+					
+					results.push(result)
+				}
+			}
 
-	    	if (isXml) {
-	    		if (results.length) {
-	    			// XML-RPC does not have a batch mode
-	    			var xml = Sincerity.XML.to({methodResponse: results[0]})
-	    			if (query.human) {
-	    				xml = Sincerity.XML.humanize(xml)
-	    			}
-	    			return xml
-	    		}
-	    	}
-	    	else {
-	    		if (results.length) {
-	    			if (isBatch) {
-	    				return Sincerity.JSON.to(results, query.human)
-	    			}
-	    			else {
-	    				return Sincerity.JSON.to(results[0], query.human)
-	    			}
-	    		}
-	    	}
-	    	return null
-	    }
+			if (isXml) {
+				if (results.length) {
+					// XML-RPC does not have a batch mode
+					var xml = Sincerity.XML.to({methodResponse: results[0]})
+					if (conversation.internal) {
+						conversation.mediaTypeName = 'application/java'
+						return Sincerity.XML.from(xml)
+					}
+					else {
+						if (query.human) {
+							xml = Sincerity.XML.humanize(xml)
+						}
+						return xml
+					}
+				}
+			}
+			else {
+				if (results.length) {
+					if (!isBatch) {
+						results = results[0]
+					}
+					if (conversation.internal) {
+						conversation.mediaTypeName = 'application/java'
+						return results
+					}
+					else {
+						return Sincerity.JSON.to(results, query.human)
+					}
+				}
+			}
+			return null
+		}
 
 		//
 		// Private
@@ -745,7 +755,7 @@ Savory.RPC = Savory.RPC || function() {
 		
 			return (namespace && namespace[name]) ? {namespace: namespace, method: namespace[name]} : null
 		}
-	    
+		
 		return Public
 	}(Public))
 	

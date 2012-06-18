@@ -9,20 +9,24 @@ document.executeOnce('/prudence/resources/')
 var form = {
 	value1: 2,
 	value2: 6,
-	protocol: 'json'
+	protocol: 'json',
+	internal: false
 }
 
 if (conversation.request.method.name == 'POST') {
 	form = Prudence.Resources.getForm(conversation, {
 		value1: 'float',
 		value2: 'float',
-		protocol: 'string'
+		protocol: 'string',
+		internal: 'bool'
 	})
 }
 
+var uri = form.internal ? '/rpc/math/' : conversation.reference.baseRef + 'rpc/math/'
+
 var result = Savory.RPC.request({
-	uri: '/math/',
-	internal: true,
+	uri: uri,
+	internal: form.internal,
 	name: 'Math.multiply',
 	params: [form.value1, form.value2],
 	id: 'abc',
@@ -55,6 +59,10 @@ var result = Savory.RPC.request({
 		</select>
 	</p>
 	<p>
+		Internal:
+		<input type="checkbox" name="internal" value="true" <%= form.internal ? 'checked="checked"' : '' %> />
+	</p>
+	<p>
 		<input type="submit" value="Multiply" />
 	</p>
 </form>
@@ -64,7 +72,7 @@ var result = Savory.RPC.request({
 </p>
 <% } else { %>
 <p class="note">
-	Result: <b><%= result.result %></b> via <b><%= result.protocol %></b>
+	Result: <b><%= result.result %></b> via <b><%= result.protocol %></b> at <b><%= uri %></b>
 </p>
 <% } %>
 
