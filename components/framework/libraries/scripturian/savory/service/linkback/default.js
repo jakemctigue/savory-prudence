@@ -12,10 +12,10 @@
 //
 
 document.executeOnce('/savory/service/rpc/')
+document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/prudence/logging/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/sincerity/templates/')
-document.executeOnce('/savory/foundation/html/parsing/')
-document.executeOnce('/prudence/logging/')
 document.executeOnce('/mongo-db/')
 
 /**
