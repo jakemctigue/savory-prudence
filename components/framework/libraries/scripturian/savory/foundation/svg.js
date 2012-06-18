@@ -11,6 +11,11 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/savory/service/rest/')
+document.executeOnce('/prudence/resources/')
+document.executeOnce('/sincerity/classes/')
+document.executeOnce('/sincerity/objects/')
+
 var Savory = Savory || {}
 
 /**
@@ -34,15 +39,14 @@ Savory.SVG = Savory.SVG || function() {
 	/** @exports Public as Savory.SVG */
     var Public = {}
 
-	/**
-	 * Installs the library's pass-throughs.
-	 * <p>
-	 * Can only be called from Prudence configuration scripts!
-	 */
-	Public.settings = function() {
-		resourcesPassThrough.push('/savory/foundation/svg/raster/')
-	}
-		
+	Public.testSVG =
+		'<?xml version="1.0" standalone="no"?>' +
+		'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
+		'"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' +
+		'<svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
+		'<path d="M2,111 h300 l-242.7,176.3 92.7,-285.3 92.7,285.3 z" style="fill:#FB2;stroke:#B00;stroke-width:4;stroke-linejoin:round"/>' +
+		 '</svg>'
+    
 	/**
 	 * Converts SVG source into a binary raster image.
 	 * 
@@ -67,7 +71,7 @@ Savory.SVG = Savory.SVG || function() {
 				break
 		}
 
-		if (transcoder) {
+		if (Sincerity.Objects.exists(transcoder)) {
 			var input = new org.apache.batik.transcoder.TranscoderInput(new java.io.StringReader(svg))
 			var stream = new java.io.ByteArrayOutputStream()
 			var output = new org.apache.batik.transcoder.TranscoderOutput(stream)
@@ -77,6 +81,39 @@ Savory.SVG = Savory.SVG || function() {
 		
 		return null
 	}
-    
+
+	/**
+	 * @class
+	 * @name Savory.SVG.Resource
+	 * @augments Savory.REST.Resource
+	 * 
+	 * @param config
+	 */
+	Public.Resource = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.SVG.Resource */
+		var Public = {}
+
+		/** @ignore */
+		Public._inherit = Savory.REST.Resource
+
+		/** @ignore */
+		Public._construct = function(config) {
+			arguments.callee.overridden.call(this, this)
+		}
+
+		Public.mediaTypes = [
+			'image/jpeg',
+			'image/png',
+			'application/pdf'
+		]
+
+		function handlePost(conversation) {
+			var svg = Prudence.Resources.getEntity(conversation, 'text')
+			return Module.toRaster(svg, conversation.mediaTypeName)
+		}
+		
+		return Public
+	}(Public))
+	
     return Public
 }()
