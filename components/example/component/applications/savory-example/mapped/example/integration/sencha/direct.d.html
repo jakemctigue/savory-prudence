@@ -31,53 +31,53 @@ Savory.Sencha.extJsHead(conversation, 'ext-all-gray')
 </p>
 <%{{ foot %>
 <script type="text/javascript">
-Ext.onReady(function() {
-	function refresh() {
-		Savory.ShoppingCart.getItems(function(provider, response) {
+function refresh() {
+	Savory.ShoppingCart.getItems(function(provider, response) {
+		if (response.type == 'exception') {
+			Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
+		}
+		else {
+			var items = response.result;
+			Ext.fly('shopping-cart').update('<b>Contents:</b> ' + items.join('; '));
+		}
+	});
+}
+
+function init() {
+	refresh();
+	
+	Ext.fly('add-item')
+	.set({disabled: null}, false)
+	.on('click', function() {
+		var item = Ext.fly('item').getValue();
+		if (!item) {
+			Ext.Msg.alert('Shopping Cart', 'Enter an item first!');
+			return;
+		}
+		Savory.ShoppingCart.addItem(item, Ext.bind(function(provider, response) {
 			if (response.type == 'exception') {
 				Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
 			}
 			else {
-				var items = response.result;
-				Ext.fly('shopping-cart').update('<b>Contents:</b> ' + items.join('; '));
-			}
-		});
-	}
-
-	function init() {
-		refresh();
-		
-		Ext.fly('add-item')
-		.set({disabled: null}, false)
-		.on('click', function() {
-			var item = Ext.fly('item').getValue();
-			if (!item) {
-				Ext.Msg.alert('Shopping Cart', 'Enter an item first!');
-				return;
-			}
-			Savory.ShoppingCart.addItem(item, Ext.bind(function(provider, response) {
-				if (response.type == 'exception') {
-					Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
+				if (response.result) {
+					Ext.Msg.alert('Shopping Cart', 'Added "' + this + '" to your cart!');
+					refresh();
 				}
 				else {
-					if (response.result) {
-						Ext.Msg.alert('Shopping Cart', 'Added "' + this + '" to your cart!');
-						refresh();
-					}
-					else {
-						Ext.Msg.alert('Shopping Cart', 'You already have "' + this + '" in your cart!');
-					}
+					Ext.Msg.alert('Shopping Cart', 'You already have "' + this + '" in your cart!');
 				}
-			}, item));
-		});
-		
-		Ext.fly('get-items')
-		.set({disabled: null}, false)
-		.on('click', refresh);
-	}
+			}
+		}, item));
+	});
+	
+	Ext.fly('get-items')
+	.set({disabled: null}, false)
+	.on('click', refresh);
+}
 
+Ext.onReady(function() {
 	Ext.Ajax.request({
-		url: '<%= conversation.pathToBase %>/shoppingcart/',
+		url: '<%= conversation.pathToBase %>/direct/shoppingcart/',
 		method: 'GET',
 		disableCaching: false,
 		success: function(response) {

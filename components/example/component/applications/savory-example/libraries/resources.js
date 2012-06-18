@@ -2,6 +2,7 @@
 document.executeOnce('/savory/service/rest/')
 document.executeOnce('/savory/service/rpc/')
 document.executeOnce('/savory/integration/frontend/sencha/')
+document.executeOnce('/savory/foundation/forms/')
 document.executeOnce('/sincerity/jvm/')
 
 var Math = {
@@ -42,6 +43,36 @@ var MathClass = function(multiplyAll) {
 var Math = new MathClass(100)
 */
 
+var multiplyForm = {
+	fields: {
+		first: {
+			type: 'number',
+			label: 'A number',
+			required: true
+		},
+		second: {
+			type: 'integer',
+			label: 'An integer',
+			required: true
+		}
+	},
+	proccess: function(results) {
+		if (results.success) {
+			results.values.result = Number(results.values.first) * Number(results.values.second)
+			results.msg = '{first} times {second} equals {result}'.cast(results.values)
+			//results.msg = Sincerity.JSON.to(results.values)
+		}
+		else {
+			results.msg = 'Invalid!'
+			/*
+			for (var e in results.errors) {
+				results.msg += '<p><b>' + e + '</b>: ' + results.errors[e] + '</p>'
+			}
+			*/
+		}
+	}
+}
+
 var users = {
 	'4e057e94e799a23b0f581d7d': {
 		_id: '4e057e94e799a23b0f581d7d',
@@ -69,8 +100,9 @@ function getTextpackNodeText(id, node) {
 }
 
 resources = {
-	math:                       new Savory.RPC.Resource({namespaces: {Math: Math}}),
-	shoppingcart:               new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
+	'math.rpc':                 new Savory.RPC.Resource({namespaces: {Math: Math}}),
+	'math.direct':              new Savory.Sencha.DirectResource({name: 'Savory', namespaces: {Math: Math}}),
+	'shoppingcart.direct':      new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),
 	'mongo.users':              new Savory.REST.MongoDbResource({name: 'users'}),
 	'mongo.users.plural':       new Savory.REST.MongoDbResource({name: 'users', plural: true}),
 	'mongo.textpack':           new Savory.Sencha.MongoDbTreeResource({collection: 'textpacks', query: {locale: 'fr'}, field: 'text', getNodeText: getTextpackNodeText}),
@@ -79,7 +111,7 @@ resources = {
 	'memory.textpack':          new Savory.Sencha.InMemoryTreeResource({tree: textpack, getNodeText: getTextpackNodeText}),
 	'distributed.users':        new Savory.REST.DistributedResource({name: 'users', documents: users}),
 	'distributed.users.plural': new Savory.REST.DistributedResource({name: 'users', documents: users, plural: true}),
-	'users.model':              new Savory.REST.InMemoryResource({name: 'users.model', document: users})
+	'form.multiply':            new Savory.Forms.Form(multiplyForm)
 }
 
 //resources = Savory.REST.createMongoDbResources()

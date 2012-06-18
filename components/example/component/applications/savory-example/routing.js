@@ -13,8 +13,9 @@ app.routes = {
 			'staticWeb',
 			{type: 'staticWeb', root: sincerity.container.getLibrariesFile('web')}]}
 	],
-	'/math/':                   {type: 'implicit', id: 'math'},
-	'/shoppingcart/':           {type: 'implicit', id: 'shoppingcart'},
+	'/rpc/math/':               {type: 'implicit', id: 'math.rpc'},
+	'/direct/math/':            {type: 'implicit', id: 'math.direct'},
+	'/direct/shoppingcart/':    {type: 'implicit', id: 'shoppingcart.direct'},
 	'/mongo/users/{id}/':       {type: 'implicit', id: 'mongo.users'},
 	'/mongo/users/':            {type: 'implicit', id: 'mongo.users.plural'},
 	'/mongo/textpack/{id}/':    {type: 'implicit', id: 'mongo.textpack'},
@@ -23,7 +24,7 @@ app.routes = {
 	'/memory/textpack/{id}/':   {type: 'implicit', id: 'memory.textpack'},
 	'/distributed/users/{id}/': {type: 'implicit', id: 'distributed.users'},
 	'/distributed/users/':      {type: 'implicit', id: 'distributed.users.plural'},
-	'/model/users/':            {type: 'implicit', id: 'users.model'}
+	'/form/multiply/':          {type: 'implicit', id: 'form.multiply'}
 }
 
 //Sincerity.Objects.merge(app.routes, Savory.REST.createMongoDbRoutes({prefix: '/data/'}))

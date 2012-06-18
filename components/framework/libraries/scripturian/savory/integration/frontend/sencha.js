@@ -50,6 +50,128 @@ Savory.Sencha = Savory.Sencha || function() {
     }
 
 	/**
+	 * Translates form fields into the format expected by Sencha forms.
+	 * <p>
+	 * You can translate the result into client-side code via Sincerity.JSON.to(result, true, true).
+	 * See {@link Sincerity.JSON#to}. 
+	 * 
+	 * @param conversation The Savory conversation
+	 * @param {Prudence.Resources.Form} form The form
+	 * @param [results] The results from a call to {@link Prudence.Resources.Form#handle}, used it initialize field
+	 *        values
+	 * @param {Boolean} [clientValidation=form.clientValidation] True to include validator
+	 * @param {Boolean} [clientMasking=true] True to include maskRe
+	 * @returns {Array}
+	 */
+	Public.getFormFields = function(conversation, form, results, clientValidation, clientMasking) {
+		clientValidation = Sincerity.Objects.ensure(clientValidation, form.clientValidation)
+		clientMasking = Sincerity.Objects.ensure(clientMasking, true)
+		var textPack = Sincerity.Objects.exists(conversation) ? Savory.Internationalization.getCurrentPack(conversation) : null
+
+		var sencha = []
+		
+		for (var name in form.fields) {
+			var field = form.fields[name]
+			var senchaField = {name: name, fieldLabel: field.label}
+			
+			if (results) {
+				if (results.values && results.values[name]) {
+					senchaField.value = results.values[name]
+				}
+				if (results.errors && results.errors[name]) {
+					senchaField.activeError = results.errors[name]
+				}
+			}
+			else if (field.value) {
+				senchaField.value = field.value
+			}
+			
+			switch (field.type) {
+				case 'hidden':
+					senchaField.xtype = 'hiddenfield'
+					break
+				case 'password':
+					senchaField.inputType = 'password'
+					break
+				case 'reCaptcha':
+					senchaField.xtype = 'recaptchafield'
+					senchaField.code = field.code
+					break
+				case 'reCaptchaChallenge':
+					senchaField.xtype = 'recaptchachallengefield'
+					break
+			}
+
+			var validation
+			if (clientValidation) {
+    			if (field.required) {
+    				senchaField.allowBlank = false
+    			}
+
+				var validator = field.validator
+				validation = Sincerity.Validation[field.type || 'string']
+				
+				var allowed = field.clientValidation
+				if (!Sincerity.Objects.exists(allowed) && validation) {
+					allowed = validation.clientValidation
+				}
+				if (!Sincerity.Objects.exists(allowed)) {
+					allowed = true
+				}
+				
+				if (allowed) {
+					var textKeys = field.textKeys
+					if (!textKeys && validation && validation.textKeys) {
+						textKeys = validation.textKeys
+					}
+					
+					if (textKeys) {
+						senchaField.textPack = {text: {}, get: function(name) { return this.text[name]; }}
+						for (var t in textKeys) {
+							var textKey = textKeys[t]
+							senchaField.textPack.text[textKey] = textPack ? textPack.get(textKey) : textKey
+						}
+					}
+					
+					if (!validator) {
+						if (validation && validation.fn) {
+							validator = validation.fn
+						}
+					}
+					
+					if (validator) {
+						if (typeof validator != 'function') {
+							validator = eval(validator)
+						}
+						senchaField.validator = validator
+					}
+				}
+			}
+			
+			if (clientMasking) {
+				var mask = field.mask
+				if (!mask) {
+					if (!validation) {
+						validation = Sincerity.Validation[field.type || 'string']
+					}
+					if (validation && validation.mask) {
+						mask = validation.mask
+					}
+				}
+    			if (mask) {
+    				senchaField.maskRe = mask
+    			}
+			}
+			
+			Sincerity.Objects.merge(senchaField, field.sencha)
+
+			sencha.push(senchaField)
+		}
+		
+		return sencha
+	}
+	
+	/**
 	 * @class
 	 * @name Savory.Sencha.TreeResource
 	 * @augments Savory.REST.Resource
@@ -116,7 +238,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				return Prudence.Resources.Status.ClientError.NotFound
 			}
 			
-			if (conversation.mediaTypeName == 'application/java') {
+			if (conversation.mediaTypeName == 'application/java' && conversation.internal) {
 				return node
 			}
 			else if (conversation.mediaTypeName == 'text/html') {
@@ -315,7 +437,7 @@ Savory.Sencha = Savory.Sencha || function() {
  			'text/plain'
  		]
 	    
-	    Public.handleGet = function(conversation) {
+	    Public.doGet = function(conversation) {
 	    	var query = Prudence.Resources.getQuery(conversation, {
 	    		namespace: 'string',
 	    		human: 'bool'
@@ -351,7 +473,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	    	return Sincerity.JSON.to(result, query.human || false)
 	    }
 	    
-	    Public.handlePost = function(conversation) {
+	    Public.doPost = function(conversation) {
 	    	var query = Prudence.Resources.getQuery(conversation, {
 	    		namespace: 'string',
 	    		human: 'bool'

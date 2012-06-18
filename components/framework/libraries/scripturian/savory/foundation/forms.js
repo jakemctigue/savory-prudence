@@ -11,6 +11,7 @@
 // at http://threecrickets.com/
 //
 
+document.executeOnce('/savory/service/rest/')
 document.executeOnce('/savory/foundation/html/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
@@ -27,7 +28,7 @@ var Savory = Savory || {}
  */
 Savory.Forms = Savory.Forms || function() {
 	/** @exports Public as Savory.Forms */
-    var Public = {}
+	var Public = {}
 
 	/**
 	 * @param conversation The Prudence conversation
@@ -35,7 +36,7 @@ Savory.Forms = Savory.Forms || function() {
 	 * @see #getCurrentFormResults
 	 */
 	Public.getCurrentForm = function(conversation) {
-		return conversation.locals.get('savory.foundation.html.form')
+		return conversation.locals.get('savory.foundation.forms.form')
 	}
 
 	/**
@@ -44,7 +45,7 @@ Savory.Forms = Savory.Forms || function() {
 	 * @see #getCurrentForm
 	 */
 	Public.getCurrentFormResults = function(conversation) {
-		return conversation.locals.get('savory.foundation.html.form.results')
+		return conversation.locals.get('savory.foundation.forms.results')
 	}
 
 	/**
@@ -55,173 +56,257 @@ Savory.Forms = Savory.Forms || function() {
 	 * 
 	 * @class
 	 * @name Savory.Forms.Form
+	 * @augments Savory.REST.Resource
 	 * 
 	 * @param config
 	 * @param config.fields A dict of field names mapped to this format:
-	 *        {label: '', type: '', validator: '', mask: ''} or a plain string, which will considered as the 'type';
-	 *        'label' will default to the field name; 'type' defaults to 'string' and is used with the {@link Sincerity.Validation}
-	 *        library; 'validator' and 'mask' will both override options provided by the validation library
+	 *		{label: '', type: '', validator: '', mask: ''} or a plain string, which will considered as the 'type';
+	 *		'label' will default to the field name; 'type' defaults to 'string' and is used with the {@link Sincerity.Validation}
+	 *		library; 'validator' and 'mask' will both override options provided by the validation library
 	 * @param {String} [config.mode='none'] The default handling mode in case none is provided (see {@link #handle})
-	 * @param {String} [config.includeSuccessDocumentName=config.includeDocumentName] The default document to include for successful handling
-	 *                 in 'include' mode
-	 * @param {String} [config.includeFailureDocumentName=config.includeDocumentName] The default document to include for failed handling
-	 *                 in 'include' mode
-	 * @param {String} [config.includeDocumentName] The default for config.includeSuccessDocumentName and config.includeFailureDocumentName
+	 * @param {String} [config.captureSuccessUri=config.captureUri] The default document to include for successful handling
+	 *				 in 'include' mode
+	 * @param {String} [config.captureFailureUri=config.captureUri] The default document to include for failed handling
+	 *				 in 'include' mode
+	 * @param {String} [config.captureUri] The default for config.captureSuccessUri and config.captureFailureUri
 	 * @param {String} [config.redirectSuccessUri=config.redirectUri] The default document to redirect for successful handling
-	 *                 in 'redirect' mode
+	 *				 in 'redirect' mode
 	 * @param {String} [config.redirectFailureUri=config.redirectUri] The default document to redirect for failed handling
-	 *                 in 'redirect' mode
+	 *				 in 'redirect' mode
 	 * @param {String} [config.redirectUri] The default for config.redirectSuccessUri and config.redirectFailureUri
 	 * @param {Boolean} [config.serverValidation=true] True to enable server-side validation for all fields
 	 * @param {Boolean} [config.clientValidation=true] True to enable client-side validation for all fields (this value is not
-	 *        handled directly by this class, but is defined and stored as a convenience for client implementations)
+	 *		handled directly by this class, but is defined and stored as a convenience for client implementations)
 	 */
-    Public.Form = Sincerity.Classes.define(function(Module) {
-    	/** @exports Public as Savory.Forms.Form */
-    	var Public = {}
-    	
-    	/** @ignore */
-    	Public._configure = ['fields', 'mode', 'includeSuccessDocumentName', 'includeFailureDocumentName', 'includeDocumentName', 'redirectSuccessUri', 'redirectFailureUri', 'redirectUri', 'serverValidation', 'clientValidation']
-    	
-        /** @ignore */
-    	Public._construct = function(config) {
-    		this.mode = this.mode || 'none'
-    		this.serverValidation = Sincerity.Objects.ensure(this.serverValidation, true)
-    		this.clientValidation = Sincerity.Objects.ensure(this.clientValidation, true)
-    		
-    		var fields = {}
-    		for (var name in this.fields) {
-    			var field = this.fields[name]
-    			
-    			field = Sincerity.Objects.isString(field) ? {type: String(field)} : Sincerity.Objects.clone(field)
-    			field.label = field.label || name
-    			
-    			fields[name] = field
-    		}
-    		this.fields = fields
-    	}
-    	
-    	Public.htmlText = function(name, results) {
-    		return Savory.HTML.input({name: name}, {_content: this.fields[name].label}) + this.htmlError(name, results)
-    	}
+	Public.Form = Sincerity.Classes.define(function(Module) {
+		/** @exports Public as Savory.Forms.Form */
+		var Public = {}
 
-    	Public.htmlTextArea = function(name, results) {
-    		return Savory.HTML.textarea({name: name}, {_content: this.fields[name].label}) + this.htmlError(name, results)
-    	}
+		/** @ignore */
+		Public._inherit = Savory.REST.Resource
 
-    	Public.htmlPassword = function(name, results) {
-    		return Savory.HTML.input({name: name, type: 'password'}, {_content: this.fields[name].label}) + this.htmlError(name, results)
-    	}
-    	
-    	Public.htmlError = function(name, results) {
+		/** @ignore */
+		Public._configure = [
+			'fields',
+			'mode',
+			'textPack',
+			'captureSuccessUri',
+			'captureFailureUri',
+			'captureUri',
+			'redirectSuccessUri',
+			'redirectFailureUri',
+			'redirectUri',
+			'serverValidation',
+			'clientValidation',
+			'process'
+		]
+		
+		/** @ignore */
+		Public._construct = function(config) {
+			arguments.callee.overridden.call(this, this)
+
+			this.mode = this.mode || 'none'
+			this.serverValidation = Sincerity.Objects.ensure(this.serverValidation, true)
+			this.clientValidation = Sincerity.Objects.ensure(this.clientValidation, true)
+			
+			var fields = {}
+			for (var name in this.fields) {
+				var field = this.fields[name]
+				
+				field = Sincerity.Objects.isString(field) ? {type: String(field)} : Sincerity.Objects.clone(field)
+				field.label = field.label || name
+				
+				fields[name] = field
+			}
+			this.fields = fields
+		}
+
+		Public.mediaTypes = [
+ 			'application/json',
+ 			'application/java'
+ 		]
+		
+		Public.doGet = function(conversation) {
+			if (conversation.internal) {
+				return this
+			}
+			return Prudence.Resources.Status.ServerError.NotImplemented
+		}
+		
+		Public.doPost = function(conversation) {
+			var query = Prudence.Resources.getQuery(conversation, {
+				human: 'bool',
+				mode: 'string'
+			})
+			query.human = query.human || false
+			query.mode = query.mode || 'json'
+			
+			var textPack = this.textPack || Savory.Internationalization.getCurrentPack(conversation)
+			var values = Prudence.Resources.getForm(conversation)
+			var results = this.validate(values, textPack, conversation)
+			if (this.process(results, params.conversation) !== false) {
+				switch (query.mode) {
+					case 'json':
+						conversation.mediaTypeName = 'application/json'
+						if (results.success) {
+							delete results.values
+						}
+						return Sincerity.JSON.to(results, query.human)
+						
+					case 'capture':
+						var captureUri = this.captureSuccessUri || this.captureUri
+						if (Sincerity.Objects.exists(captureUri)) {
+							if (Sincerity.Objects.exists(params.conversation)) {
+								params.conversation.locals.put('savory.foundation.forms.form', this)
+								params.conversation.locals.put('savory.foundation.forms.results', results)
+							}
+							var reference = 'riap://application' + captureUri + '?{rq}';
+							var redirector = new com.threecrickets.prudence.util.CapturingRedirector(conversation.resource.context, reference, false)
+							redirector.handle(conversation.request, conversation.response)
+							return null
+						}
+						break
+						
+					case 'redirect':
+						var redirectUri
+						if (results.success) {
+							redirectUri = this.redirectSuccessUri || this.redirectUri
+						}
+						else {
+							redirectUri = this.redirectFailureUri || this.redirectUri
+						}
+						if (Sincerity.Objects.exists(redirectUri)) {
+							conversation.response.redirectSeeOther(redirectUri)
+							return null
+						}
+						break
+				}
+			}
+			
+			return Prudence.Resources.Status.ServerError.BadRequest
+		}
+		
+		Public.htmlText = function(conversation, name, results) {
+			return Savory.HTML.input({name: name, _conversation: conversation}, {_content: this.fields[name].label}) + this.htmlError(name, results)
+		}
+
+		Public.htmlTextArea = function(conversation, name, results) {
+			return Savory.HTML.textarea({name: name, _conversation: conversation}, {_content: this.fields[name].label}) + this.htmlError(name, results)
+		}
+
+		Public.htmlPassword = function(conversation, name, results) {
+			return Savory.HTML.input({name: name, type: 'password', _conversation: conversation}, {_content: this.fields[name].label}) + this.htmlError(name, results)
+		}
+		
+		Public.htmlError = function(name, results) {
 			if (results && results.errors && results.errors[name]) {
 				return Savory.HTML.div({_content: results.errors[name], 'class': 'error'})
 			}
-    		return ''
-    	}
-    	
-    	/**
-    	 * Performs server-side validation of values according to the form's defined fields.
-    	 * 
-    	 * @param values A dict of field names mapped to values; all values will be treated as strings;
-    	 *        unrecognized field names will be ignored
-    	 * @param {Savory.Internationalization.Pack} [textPack] The text pack to use for error messages
-    	 * @param [conversation] The Prudence conversation
-    	 * @returns A structure in the format: {success: true, values: {...}} or {success: false, values: {...}, errors: {...}};
-    	 *          values are copied over from the arg (always as strings), and errors are all texts that can be displayed
-    	 *          to users
-    	 */
-    	Public.validate = function(values, textPack, conversation) {
+			return ''
+		}
+		
+		/**
+		 * Performs server-side validation of values according to the form's defined fields.
+		 * 
+		 * @param values A dict of field names mapped to values; all values will be treated as strings;
+		 *		unrecognized field names will be ignored
+		 * @param {Savory.Internationalization.Pack} [textPack] The text pack to use for error messages
+		 * @param [conversation] The Prudence conversation
+		 * @returns A structure in the format: {success: true, values: {...}} or {success: false, values: {...}, errors: {...}};
+		 *		  values are copied over from the arg (always as strings), and errors are all texts that can be displayed
+		 *		  to users
+		 */
+		Public.validate = function(values, textPack, conversation) {
 			this.textPack = textPack
-    		var results = {success: true}
+			var results = {success: true}
 
-    		for (var name in this.fields) {
-    			var field = this.fields[name]
+			for (var name in this.fields) {
+				var field = this.fields[name]
 				var value = values[name]
-    			
-    			// Make sure field has its initial value
-    			if (Sincerity.Objects.exists(field.value) && !Sincerity.Objects.exists(value)) {
-    				value = values[name] = field.value
-    			}
-    			
-        		// Check that all required fields are provided
-        		if (this.serverValidation && field.required) {
-    				if (!Sincerity.Objects.exists(value) || (value == '')) {
-    					results.success = false
-    					results.errors = results.errors || {} 
-    					results.errors[name] = textPack.get('savory.foundation.validation.required', {name: name})
-    				}
-        		}
-    		}
-    		
-    		// Check remaining values
-    		for (var name in values) {
-    			if (!results.success && Sincerity.Objects.exists(results.errors[name])) {
-    				// We've already validated this value
-    				continue
-    			}
+				
+				// Make sure field has its initial value
+				if (Sincerity.Objects.exists(field.value) && !Sincerity.Objects.exists(value)) {
+					value = values[name] = field.value
+				}
+				
+				// Check that all required fields are provided
+				if (this.serverValidation && field.required) {
+					if (!Sincerity.Objects.exists(value) || (value == '')) {
+						results.success = false
+						results.errors = results.errors || {} 
+						results.errors[name] = textPack.get('savory.foundation.validation.required', {name: name})
+					}
+				}
+			}
+			
+			// Check remaining values
+			for (var name in values) {
+				if (!results.success && Sincerity.Objects.exists(results.errors[name])) {
+					// We've already validated this value
+					continue
+				}
 
-    			var value = values[name]
-    			var field = this.fields[name]
-    			
-    			// Only include defined fields
-    			if (Sincerity.Objects.exists(field) && Sincerity.Objects.exists(value)) {
-    				var error = null
-    				
-    				if (this.serverValidation) {
-        				var validator = field.validator
+				var value = values[name]
+				var field = this.fields[name]
+				
+				// Only include defined fields
+				if (Sincerity.Objects.exists(field) && Sincerity.Objects.exists(value)) {
+					var error = null
+					
+					if (this.serverValidation) {
+						var validator = field.validator
 						var validation = Savory.Validation[field.type]
-        				
-        				var allowed = field.serverValidation
-        				if (!Sincerity.Objects.exists(allowed) && validation) {
-        					allowed = validation.serverValidation
-        				}
-        				if (!Sincerity.Objects.exists(allowed)) {
-        					allowed = true
-        				}
-        				
-        				if (allowed) {
-	        				if (!validator) {
-	    						if (validation && validation.fn) {
-	    							validator = validation.fn
-	    						}
-	        				}
-	        				
-	        				if (validator) {
-		    					var validity = validator.call(this, value, field, conversation)
-		    					if (validity !== true) {
-		    						error = validity
-		    						/*if (Sincerity.Objects.exists(textPack)) {
-	    								error = textPack.get(validity, {name: name})
-		    						}*/
-		    						if (!Sincerity.Objects.exists(error)) {
-		    							error = 'Invalid'
-		    						}
-		    					}
-		    				}
-        				}
-    				}
-    				
-    				if (Sincerity.Objects.exists(value)) {
-    					results.values = results.values || {} 
-    					results.values[name] = String(value)
-    				}
-    				
-    				if (error) {
-    					results.success = false
-    					results.errors = results.errors || {} 
-    					results.errors[name] = error
-    				}
-    			}
-    		}
-    		
-    		delete this.textPack
-    		return results
-    	}
-    	
-    	/**
-    	 * Handles the form, first validating it (server-side, of course) if necessary.
-    	 * <p>
+						
+						var allowed = field.serverValidation
+						if (!Sincerity.Objects.exists(allowed) && validation) {
+							allowed = validation.serverValidation
+						}
+						if (!Sincerity.Objects.exists(allowed)) {
+							allowed = true
+						}
+						
+						if (allowed) {
+							if (!validator) {
+								if (validation && validation.fn) {
+									validator = validation.fn
+								}
+							}
+							
+							if (validator) {
+								var validity = validator.call(this, value, field, conversation)
+								if (validity !== true) {
+									error = validity
+									/*if (Sincerity.Objects.exists(textPack)) {
+										error = textPack.get(validity, {name: name})
+									}*/
+									if (!Sincerity.Objects.exists(error)) {
+										error = 'Invalid'
+									}
+								}
+							}
+						}
+					}
+					
+					if (Sincerity.Objects.exists(value)) {
+						results.values = results.values || {} 
+						results.values[name] = String(value)
+					}
+					
+					if (error) {
+						results.success = false
+						results.errors = results.errors || {} 
+						results.errors[name] = error
+					}
+				}
+			}
+			
+			delete this.textPack
+			return results
+		}
+		
+		/**
+		 * Handles the form, first validating it (server-side, of course) if necessary.
+		 * <p>
 		 * A few handling modes are supported, which you can set explicitly when you call the function, via params.mode, set 
 		 * default mode when you create the form, or let Savory pick it up automatically from the "?mode=..." query param.
 		 * <ul>
@@ -229,111 +314,114 @@ Savory.Forms = Savory.Forms || function() {
 		 * This is the default.</li>
 		 * <li>json: Savory dumps the results as JSON to the page, and sets the MIME type to 'application/json'. This is useful for
 		 * AJAX forms, which will consume this JSON data on the client. Just make sure not to output anything else on the page,
-		 * otherwise the JSON will be unparsable!</li>
+		 * otherwise the JSON will be unparseable!</li>
 		 * <li>include: Savory does a document.include of specified documents according the success or failure of the handling.
-		 * You can then use /web/fragments/ to implement your own views. The 'savory.foundation.html.form' conversation.local will
-		 * contain the form itself, and 'savory.foundation.html.form.results' the results of the handling.</li>
+		 * You can then use /web/fragments/ to implement your own views. The 'savory.foundation.forms.form' conversation.local will
+		 * contain the form itself, and 'savory.foundation.forms.results' the results of the handling.</li>
 		 * <li>redirect: Savory does a conversation.response.redirectSeeOther of specified URIs according the success or failure of
 		 * the handling.</li>
 		 * </ul>
-    	 * 
-    	 * @param [params]
-    	 * @param [params.conversation] The Prudence conversation
-    	 * @param [params.document=document] The Prudence document service
-    	 * @param [params.values] The form values (will be extracted from params.conversation if not provided explicitly) 
-    	 * @param {Savory.Internationalization.Pack} [params.textPack] The text pack to use for messages (will be extracted from params.conversation if not provided explicitly) 
-    	 * @param {String} [params.mode=this.mode] Set this to override the query param; can be 'none', 'json',
-    	 *                 'include' or 'redirect'
-    	 * @param {String} [params.includeSuccessDocumentName=this.includeSuccessDocumentName] Set this to override the form's value 
-    	 * @param {String} [params.includeFailureDocumentName=this.includeFailureDocumentName] Set this to override the form's value 
-    	 * @param {String} [params.includeDocumentName=this.includeDocumentName] Set this to override the form's value 
-    	 * @param {String} [params.redirectSuccessUri=this.redirectSuccessUri] Set this to override the form's value 
-    	 * @param {String} [params.redirectFailureUri=this.redirectFailureUri] Set this to override the form's value 
-    	 * @param {String} [params.redirectUri=this.redirectUri] Set this to override the form's value 
-    	 * @returns False is the form was not handled, otherwise the raw results (see {@link #validate})
-    	 */
-    	Public.handle = function(params) {
-    		params = params || {}
-    		var mode = params.mode || (Sincerity.Objects.exists(params.conversation) ? params.conversation.query.get('mode') : null) || this.mode
-    		mode = String(mode)
-    		
-    		if (!Sincerity.Objects.exists(params.conversation) || (params.conversation.request.method == 'POST')) {
-	    		var values = params.values || (Sincerity.Objects.exists(params.conversation) ? Module.getForm(params.conversation) : {})
-	    		
-	    		var textPack = params.textPack || (Sincerity.Objects.exists(params.conversation) ? Savory.Internationalization.getCurrentPack(params.conversation) : null)
-	    		var results = this.validate(values, textPack, params.conversation)
-	    		results.mode = mode
-	    		if (this.process(results, params.conversation) !== false) {
-		    		switch (mode) {
-		    			case 'json':
-		    	    		conversation.mediaTypeName = 'application/json'
-		    	    		var printResults = results
-	    		    		if (printResults.success) {
-	    		    			printResults = Sincerity.Objects.clone(printResults)
-	    		    			delete printResults.values
-	    		    		}
-		    	    		var human = Sincerity.Objects.exists(params.conversation) ? (params.conversation.query.get('human') == 'true') : false
-	    		    		print(Sincerity.JSON.to(printResults, human))
-	    		    		break
-	    		    		
-		    			case 'include':
-		    				var includeDocumentName
-		    				if (results.success) {
-		    					includeDocumentName = params.includeSuccessDocumentName || this.includeSuccessDocumentName
-		    				}
-		    				else {
-		    					includeDocumentName = params.includeFailureDocumentName || this.includeFailureDocumentName
-		    				}
-	    					includeDocumentName = includeDocumentName || this.includeDocumentName
-	    					if (Sincerity.Objects.exists(includeDocumentName)) {
-	    						if (Sincerity.Objects.exists(params.conversation)) {
-	    							params.conversation.locals.put('savory.foundation.html.form', this)
-	    							params.conversation.locals.put('savory.foundation.html.form.results', results)
-	    						}
-	    						var documentService = Sincerity.Objects.exists(params.document) ? params.document : document
-	    						documentService.include(includeDocumentName)
-	    					}
-		    				break
-		    				
-		    			case 'redirect':
-		    				var redirectUri
-		    				if (results.success) {
-		    					redirectUri = params.redirectSuccessUri || this.redirectSuccessUri
-		    				}
-		    				else {
-		    					redirectUri = params.redirectFailureUri || this.redirectFailureUri
-		    				}
-	    					redirectUri = redirectUri || this.redirectUri
-	    					if (Sincerity.Objects.exists(redirectUri)) {
-	    						conversation.response.redirectSeeOther(redirectUri)
-	    					}
-		    				break
-		    		}
-	    		}
-	    		
-	    		return results
-    		}
-    		
-    		if (mode == 'include') {
-				includeDocumentName = params.includeDocumentName || this.includeDocumentName
-				if (Sincerity.Objects.exists(includeDocumentName)) {
+		 * 
+		 * @param [params]
+		 * @param [params.conversation] The Prudence conversation
+		 * @param [params.document=document] The Prudence document service
+		 * @param [params.values] The form values (will be extracted from params.conversation if not provided explicitly) 
+		 * @param {Savory.Internationalization.Pack} [params.textPack] The text pack to use for messages (will be extracted from params.conversation if not provided explicitly) 
+		 * @param {String} [params.mode=this.mode] Set this to override the query param; can be 'none', 'json',
+		 *				 'include' or 'redirect'
+		 * @param {String} [params.captureSuccessUri=this.captureSuccessUri] Set this to override the form's value 
+		 * @param {String} [params.captureFailureUri=this.captureFailureUri] Set this to override the form's value 
+		 * @param {String} [params.captureUri=this.captureUri] Set this to override the form's value 
+		 * @param {String} [params.redirectSuccessUri=this.redirectSuccessUri] Set this to override the form's value 
+		 * @param {String} [params.redirectFailureUri=this.redirectFailureUri] Set this to override the form's value 
+		 * @param {String} [params.redirectUri=this.redirectUri] Set this to override the form's value 
+		 * @returns False is the form was not handled, otherwise the raw results (see {@link #validate})
+		 */
+		Public.handle = function(params) {
+			if (Sincerity.Objects.exists(params) && !Sincerity.Objects.isDict(params)) {
+				params = {conversation: params}
+			}
+			params = params || {}
+			var mode = params.mode || (Sincerity.Objects.exists(params.conversation) ? params.conversation.query.get('mode') : null) || this.mode
+			mode = String(mode)
+			
+			if (!Sincerity.Objects.exists(params.conversation) || (params.conversation.request.method == 'POST')) {
+				var values = params.values || (Sincerity.Objects.exists(params.conversation) ? Module.getCurrentForm(params.conversation) : {})
+				
+				var textPack = params.textPack || (Sincerity.Objects.exists(params.conversation) ? Savory.Internationalization.getCurrentPack(params.conversation) : null)
+				var results = this.validate(values, textPack, params.conversation)
+				results.mode = mode
+				if (this.process(results, params.conversation) !== false) {
+					switch (mode) {
+						case 'json':
+							conversation.mediaTypeName = 'application/json'
+							var printResults = results
+							if (printResults.success) {
+								printResults = Sincerity.Objects.clone(printResults)
+								delete printResults.values
+							}
+							var human = Sincerity.Objects.exists(params.conversation) ? (params.conversation.query.get('human') == 'true') : false
+							print(Sincerity.JSON.to(printResults, human))
+							break
+							
+						case 'include':
+							var captureUri
+							if (results.success) {
+								captureUri = params.captureSuccessUri || this.captureSuccessUri
+							}
+							else {
+								captureUri = params.captureFailureUri || this.captureFailureUri
+							}
+							captureUri = captureUri || this.captureUri
+							if (Sincerity.Objects.exists(captureUri)) {
+								if (Sincerity.Objects.exists(params.conversation)) {
+									params.conversation.locals.put('savory.foundation.forms.form', this)
+									params.conversation.locals.put('savory.foundation.forms.results', results)
+								}
+								var documentService = Sincerity.Objects.exists(params.document) ? params.document : document
+								documentService.include(captureUri)
+							}
+							break
+							
+						case 'redirect':
+							var redirectUri
+							if (results.success) {
+								redirectUri = params.redirectSuccessUri || this.redirectSuccessUri
+							}
+							else {
+								redirectUri = params.redirectFailureUri || this.redirectFailureUri
+							}
+							redirectUri = redirectUri || this.redirectUri
+							if (Sincerity.Objects.exists(redirectUri)) {
+								conversation.response.redirectSeeOther(redirectUri)
+							}
+							break
+					}
+				}
+				
+				return results
+			}
+			
+			if (mode == 'include') {
+				captureUri = params.captureUri || this.captureUri
+				if (Sincerity.Objects.exists(captureUri)) {
 					if (Sincerity.Objects.exists(params.conversation)) {
-						params.conversation.locals.put('savory.foundation.html.form', this)
-						params.conversation.locals.remove('savory.foundation.html.form.results')
+						params.conversation.locals.put('savory.foundation.forms.form', this)
+						params.conversation.locals.remove('savory.foundation.forms.results')
 					}
 					var documentService = Sincerity.Objects.exists(params.document) ? params.document : document
-					documentService.include(includeDocumentName)
+					documentService.include(captureUri)
 				}
-    		}
-    		
-    		return false
-    	}
-    	
-    	Public.process = function(results, conversation) {
-    	}
-    	
-    	return Public
-    }(Public))
+			}
+			
+			return false
+		}
+		
+		Public.process = function(results, conversation) {
+		}
+		
+		return Public
+	}(Public))
 	
 	return Public
 }()
