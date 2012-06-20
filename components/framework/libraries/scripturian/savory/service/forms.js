@@ -31,29 +31,29 @@ Savory.Forms = Savory.Forms || function() {
 	/** @exports Public as Savory.Forms */
 	var Public = {}
 
-	/**
-	 * @param conversation The Prudence conversation
-	 * @returns {Savory.Forms.Form} The current form or null
-	 * @see #getCurrentFormResults
-	 */
-	Public.getCurrentForm = function(conversation) {
-		return conversation.locals.get('savory.foundation.forms.form')
-	}
-
-	/**
-	 * @param conversation The Prudence conversation
-	 * @returns The results of the current form's validation and processing, or null
-	 * @see #getCurrentForm
-	 */
-	Public.getCurrentFormResults = function(conversation) {
-		return conversation.locals.get('savory.foundation.forms.results')
-	}
-	
 	Public.getForm = function(uri) {
 		return Prudence.Resources.request({
 			uri: uri,
 			internal: true
 		})		
+	}
+	
+	/**
+	 * @param conversation The Prudence conversation
+	 * @returns {Savory.Forms.Form} The current form or null
+	 * @see #getCaptureResults
+	 */
+	Public.getCapturedForm = function(conversation) {
+		return conversation.locals.get('savory.service.forms.form')
+	}
+
+	/**
+	 * @param conversation The Prudence conversation
+	 * @returns The results of the current form's validation and processing, or null
+	 * @see #getCaptureForm
+	 */
+	Public.getCaptureResults = function(conversation) {
+		return conversation.locals.get('savory.service.forms.results')
 	}
 	
 	Public.Types = {
@@ -94,7 +94,7 @@ Savory.Forms = Savory.Forms || function() {
 	    },
 	    
 	    reCaptcha: {
-	    	validator: function(value, field, conversation) {
+	    	serverValidator: function(value, field, conversation) {
 		    	return this.reCaptcha.validate(conversation) ? true : this.textPack.get('savory.foundation.validation.reCaptcha.not')
 	    	},
 			textKeys: ['savory.foundation.validation.reCaptcha.not'],
@@ -170,7 +170,9 @@ Savory.Forms = Savory.Forms || function() {
 				var field = this.fields[name]
 				
 				field = Sincerity.Objects.isString(field) ? {type: String(field)} : Sincerity.Objects.clone(field)
-				field.label = field.label || name
+				if (!Sincerity.Objects.exists(field.labelKey)) { 
+					field.label = field.label || name
+				}
 				
 				fields[name] = field
 			}
@@ -237,8 +239,10 @@ Savory.Forms = Savory.Forms || function() {
 				}
 			}
 			if (processed !== false) {
-				switch (query.mode) {
+				switch (String(query.mode)) {
 					case 'json':
+						delete results.redirect
+						delete results.capture
 						if (conversation.internal && (conversation.mediaTypeName == 'application/java')) {
 							return results
 						}
@@ -249,12 +253,15 @@ Savory.Forms = Savory.Forms || function() {
 						return Sincerity.JSON.to(results, query.human)
 						
 					case 'redirect':
-						var redirectUri
-						if (results.success) {
-							redirectUri = this.redirectSuccessUri || this.redirectUri
+						var redirectUri = results.redirect
+						if (!Sincerity.Objects.exists(redirectUri)) {
+							redirectUri = results.success ? this.redirectSuccessUri : this.redirectFailureUri
 						}
-						else {
-							redirectUri = this.redirectFailureUri || this.redirectUri
+						if (!Sincerity.Objects.exists(redirectUri)) {
+							redirectUri = this.redirectUri
+						}
+						if (!Sincerity.Objects.exists(redirectUri)) {
+							redirectUri = String(conversation.request.referrerRef)
 						}
 						if (Sincerity.Objects.exists(redirectUri)) {
 							conversation.response.redirectSeeOther(redirectUri)
@@ -263,17 +270,20 @@ Savory.Forms = Savory.Forms || function() {
 						break
 
 					case 'capture':
-						var captureUri
-						if (results.success) {
-							captureUri = this.captureSuccessUri || this.captureUri
+						var captureUri = results.capture
+						if (!Sincerity.Objects.exists(captureUri)) {
+							captureUri = results.success ? this.captureSuccessUri : this.captureFailureUri
 						}
-						else {
-							captureUri = this.captureFailureUri || this.captureUri
+						if (!Sincerity.Objects.exists(captureUri)) {
+							captureUri = this.captureUri
+						}
+						if (!Sincerity.Objects.exists(captureUri)) {
+							captureUri = String(conversation.request.referrerRef)
 						}
 						if (Sincerity.Objects.exists(captureUri)) {
 							if (Sincerity.Objects.exists(params.conversation)) {
-								params.conversation.locals.put('savory.foundation.forms.form', this)
-								params.conversation.locals.put('savory.foundation.forms.results', results)
+								params.conversation.locals.put('savory.service.forms.form', this)
+								params.conversation.locals.put('savory.service.forms.results', results)
 							}
 							var reference = 'riap://application' + captureUri + '?{rq}';
 							var redirector = new com.threecrickets.prudence.util.CapturingRedirector(conversation.resource.context, reference, false)
@@ -287,8 +297,42 @@ Savory.Forms = Savory.Forms || function() {
 			return Prudence.Resources.Status.ServerError.BadRequest
 		}
 		
-		Public.htmlText = function(conversation, name, results) {
-			return Savory.HTML.input({name: name, _conversation: conversation}, {_content: this.fields[name].label}) + this.htmlError(name, results)
+		/**
+		 * @param params
+		 * @param params.name
+		 * @param params.conversation
+		 * @param [params.textPack]
+		 * @param [params.results]
+		 */
+		Public.htmlText = function(params) {
+			var field = this.fields[params.name]
+
+			var input = {
+				name: params.name,
+				_conversation: params.conversation
+			}
+			
+			var label
+			if (Sincerity.Objects.exists(field.labelKey)) {
+				var textPack = params.textPack
+				if (!Sincerity.Objects.exists(textPack) && Sincerity.Objects.exists(params.conversation)) {
+					textPack = Savory.Internationalization.getCurrentPack(params.conversation)
+				}
+				if (!Sincerity.Objects.exists(textPack)) {
+					textPack = this.textPack
+				}
+				label = {
+					_textPack: textPack,
+					_key: field.labelKey
+				}
+			}
+			else {
+				label = {
+					_content: field.label
+				}
+			}
+
+			return Savory.HTML.input(input, label) + this.htmlError(params.name, params.results)
 		}
 
 		Public.htmlTextArea = function(conversation, name, results) {
@@ -364,7 +408,11 @@ Savory.Forms = Savory.Forms || function() {
 								}
 								
 								if (Sincerity.Objects.exists(validator)) {
-									var validity = validator.call(this, value, field, conversation)
+									var context = {
+										textPack: textPack,
+										form: this
+									}
+									var validity = validator.call(context, value, field, conversation)
 									if (validity !== true) {
 										error = validity
 										/*if (Sincerity.Objects.exists(textPack)) {

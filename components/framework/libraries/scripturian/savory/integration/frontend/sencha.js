@@ -85,8 +85,14 @@ Savory.Sencha = Savory.Sencha || function() {
 			params = Sincerity.Objects.exists(params) ? Sincerity.Objects.clone(params) : {}
 			params.clientValidation = Sincerity.Objects.ensure(params.clientValidation, this.clientValidation)
 			params.clientMasking = Sincerity.Objects.ensure(params.clientMasking, this.clientMasking)
-			var textPack = Sincerity.Objects.exists(params.conversation) ? Savory.Internationalization.getCurrentPack(params.conversation) : null
+			if (!Sincerity.Objects.exists(params.textPack) && Sincerity.Objects.exists(params.conversation)) {
+				params.textPack = Savory.Internationalization.getCurrentPack(params.conversation)
+			}
+			if (!Sincerity.Objects.exists(params.textPack)) {
+				params.textPack = this.textPack
+			}
 			if (Sincerity.Objects.exists(params.results) && params.results.success) {
+				// Don't use results when successful
 				params.results = null
 			}
 
@@ -94,9 +100,18 @@ Savory.Sencha = Savory.Sencha || function() {
 			
 			for (var name in this.fields) {
 				var field = this.fields[name]
+				
+				var label
+				if (Sincerity.Objects.exists(field.labelKey)) {
+					label = Sincerity.Objects.exists(params.textPack) ? textPack.get(field.labelKey) : field.labelKey
+				}
+				else {
+					label = field.label
+				}
+				
 				var senchaField = {
 					name: name,
-					fieldLabel: field.label
+					fieldLabel: label
 				}
 				
 				if (Sincerity.Objects.exists(params.results)) {
@@ -162,7 +177,7 @@ Savory.Sencha = Savory.Sencha || function() {
 										}
 										for (var t in textKeys) {
 											var textKey = textKeys[t]
-											senchaField.textPack.text[textKey] = Sincerity.Objects.exists(textPack) ? textPack.get(textKey) : textKey
+											senchaField.textPack.text[textKey] = Sincerity.Objects.exists(params.textPack) ? textPack.get(params.textKey) : textKey
 										}
 									}
 								}

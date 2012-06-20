@@ -2125,13 +2125,37 @@ AJAX
 ).
  Savory goes a long way towards making it easier for you to use both models,
  each with its own complexities and subtleties, through a unified API.
- It especially makes it easy to implement form validation, both on the server
- and the client, using an extensible system of field types.
+ Allowing for both 
+\begin_inset Quotes eld
+\end_inset
+
+AJAX
+\begin_inset Quotes erd
+\end_inset
+
+ and HTML client forms with the same server code makes it easy to support
+ 
+\begin_inset Quotes eld
+\end_inset
+
+legacy
+\begin_inset Quotes erd
+\end_inset
+
+ clients that can't use 
+\begin_inset Quotes eld
+\end_inset
+
+AJAX.
+\begin_inset Quotes erd
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Savory explicitly supports Ext JS Forms, and strongly recommends Ext JS
- as a client-side framework.
+Savory explicitly supports Ext JS Forms, and recommends Ext JS as a client-side
+ framework.
  See the section on Sencha Integration for full details.
 \end_layout
 
@@ -2141,15 +2165,17 @@ Client-side validation vs.
 \end_layout
 
 \begin_layout Standard
-Both are supported by Savory and, quite wonderfully, due to the fact that
- Savory is a server-side JavaScript framework, you can actually share the
- exact same validation code on both the client and the server! This marvelous
- advantage makes using forms in Savory especially less cumbersome as compared
- to other frameworks.
+Like all good form frameworks, Savory's Form Service makes it especially
+ makes it easy to implement form validation, both on the server and the
+ client, using an extensible system of field types.
+ Due to the fact that Savory is a server-side JavaScript framework, you
+ can actually share the exact same validation code on both the client and
+ the server! This marvelous advantage makes using forms in Savory less cumbersom
+e as compared to other frameworks.
 \end_layout
 
 \begin_layout Standard
-That said, let's point out why you would want both kinds of validation:
+What are the advantages of each kind of validation? Why you would want both?
 \end_layout
 
 \begin_layout Itemize
@@ -2158,18 +2184,16 @@ That said, let's point out why you would want both kinds of validation:
 Server-side validation:
 \series default
  You'll at least want this.
- It protects against errors when users send bad data, and moreover can return
- user-friendly error codes so that the user will know how to correct the
- form.
- But, it's also important for security, to make sure that potentially damaging
- information will never enter the other parts of your application.
- You can guarantee that the form won't be processed without approved data.
+ It protects against user error, and can return friendly error codes so
+ that the user will know how to correct the form.
+ It's also important for security, to make sure that potentially damaging
+ data will never enter the other parts of your application.
  For example, you can protect yourself from attacks which try to overflow
- your database with too much data and SQL injection attacks.
+ your database with too much data, or attempts at SQL injection.
  (MongoDB injection attacks may be possible, too!) Note also that Savory
- Forms will automatically catch server-side exceptions and stop form processing,
- return the error properly to the user, but obviously this is not secure
- enough.
+ Forms will automatically catch server-side exceptions, invalidating the
+ form and returning the error to the user, but obviously relying on exceptions
+ is not secure enough.
 \end_layout
 
 \begin_layout Itemize
@@ -2271,7 +2295,7 @@ Savory.REST.Resource,
 \begin_inset Quotes eld
 \end_inset
 
-usage,
+Usage,
 \begin_inset Quotes erd
 \end_inset
 
@@ -2578,22 +2602,15 @@ must
 \emph default
  return true to signify that the value valid.
  Any other return value will signify invalidity.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-clientValidator:
-\series default
- As 
+ (See 
 \begin_inset Quotes eld
 \end_inset
 
-validator
+validation functions,
 \begin_inset Quotes erd
 \end_inset
 
-, but intended only for client-side validation.
+ below.)
 \end_layout
 
 \begin_layout Itemize
@@ -2610,6 +2627,22 @@ validator
 \end_inset
 
 , but intended only for server-side validation.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+clientValidator:
+\series default
+ As 
+\begin_inset Quotes eld
+\end_inset
+
+validator
+\begin_inset Quotes erd
+\end_inset
+
+, but intended only for client-side validation.
 \end_layout
 
 \begin_layout Itemize
@@ -2636,6 +2669,23 @@ serverValidation:
 clientValidation:
 \series default
  Set to false to override the default for the form.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+textKeys:
+\series default
+ An array of text pack keys used by validator function.
+ See 
+\begin_inset Quotes eld
+\end_inset
+
+Text and Internationalization,
+\begin_inset Quotes erd
+\end_inset
+
+ below.
 \end_layout
 
 \begin_layout Itemize
@@ -2683,11 +2733,19 @@ serverValidation
 \begin_inset Quotes erd
 \end_inset
 
- and 
+, 
 \begin_inset Quotes eld
 \end_inset
 
 clientValidation
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+textKeys
 \begin_inset Quotes erd
 \end_inset
 
@@ -2726,6 +2784,229 @@ type
 value:
 \series default
  This is a default value assigned to the field when the form is initialized.
+\end_layout
+
+\begin_layout Subsubsection
+Validator Functions
+\end_layout
+
+\begin_layout Standard
+Let's look at such a function in the context of a field definition:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+first: {
+\end_layout
+
+\begin_layout Plain Layout
+
+	required: true
+\end_layout
+
+\begin_layout Plain Layout
+
+	validator: function(value, field, conversation) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return value % 1 == 0 ? true : 'Must be an integer'
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The return value, as stated before must be true to signify a valid value.
+ Otherwise, the value will be considered invalid and the return value will
+ be used as the error message.
+\end_layout
+
+\begin_layout Standard
+The arguments are as follows:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+value:
+\series default
+ The value to be validated, most likely a string.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+field:
+\series default
+ The field definition.
+ This is useful if you are using the same function for multiple fields,
+ and need to validate differently per field.
+ Note that the field definition is framework-dependent.
+ For example, if you are on the server, it will look like the examples above,
+ but if you're on an Ext JS client, then it will use Ext JS's definition.
+ Because we're not using 
+\begin_inset Quotes eld
+\end_inset
+
+field
+\begin_inset Quotes erd
+\end_inset
+
+ in this example, we supplied just one 
+\begin_inset Quotes eld
+\end_inset
+
+validator
+\begin_inset Quotes erd
+\end_inset
+
+ function for both the client and the server.
+ However, if you do need to access 
+\begin_inset Quotes eld
+\end_inset
+
+field
+\begin_inset Quotes erd
+\end_inset
+
+, it may be better to have separate 
+\begin_inset Quotes eld
+\end_inset
+
+serverValidator
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+clientValidator
+\begin_inset Quotes erd
+\end_inset
+
+ functions.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+conversation:
+\series default
+ The Prudence conversation.
+ Only available on the server.
+\end_layout
+
+\begin_layout Standard
+The function is called with an implicit 
+\begin_inset Quotes eld
+\end_inset
+
+this
+\begin_inset Quotes erd
+\end_inset
+
+ object, which obviously refers to different objects on the server and the
+ client, but you can expect these fields:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+form:
+\series default
+ The form instance.
+ Only available on the server.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+textPack:
+\series default
+ The currently used text pack.
+ Always available on the server, and available on some clients, such as
+ Ext JS if you use Savory's Sencha Integration.
+ See 
+\begin_inset Quotes eld
+\end_inset
+
+Text and Internationalization,
+\begin_inset Quotes erd
+\end_inset
+
+ below, for more information.
+\end_layout
+
+\begin_layout Standard
+Through accessing the 
+\begin_inset Quotes eld
+\end_inset
+
+field
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+conversation
+\begin_inset Quotes erd
+\end_inset
+
+ arguments as well as 
+\begin_inset Quotes eld
+\end_inset
+
+this.form
+\begin_inset Quotes erd
+\end_inset
+
+, you can do some very sophisticated server-side validation.
+ For example, you can query MongoDB and check against data, check for security
+ authorization, etc.
+ And, of course, you can use similar sophistication for client-side frameworks
+ according to the features they provide.
+\end_layout
+
+\begin_layout Standard
+(At this point, you might be wondering how exactly client-side validator
+ functions get to be called on the client, since we are defining them on
+ the server.
+ We'll talk about that in 
+\begin_inset Quotes eld
+\end_inset
+
+Usage,
+\begin_inset Quotes erd
+\end_inset
+
+ below, but the solution is simple: we send the source code directly as
+ text!)
+\end_layout
+
+\begin_layout Subsubsection
+Types
 \end_layout
 
 \begin_layout Standard
@@ -2917,16 +3198,856 @@ var serviceForm = {
 Text and Internationalization
 \end_layout
 
+\begin_layout Standard
+If you don't need internationalization, then just use the 
+\begin_inset Quotes eld
+\end_inset
+
+label
+\begin_inset Quotes erd
+\end_inset
+
+ key in the field definition to set up the text directly.
+ If unspecified, it will default to the field name.
+\end_layout
+
+\begin_layout Standard
+Otherwise, read about the Savory Internationalization Service to understand
+ how to set it up.
+ We will use the 
+\begin_inset Quotes eld
+\end_inset
+
+labelKey
+\begin_inset Quotes erd
+\end_inset
+
+ key instead of 
+\begin_inset Quotes eld
+\end_inset
+
+label
+\begin_inset Quotes erd
+\end_inset
+
+, and also set up the list of other keys we might need using the 
+\begin_inset Quotes eld
+\end_inset
+
+textKeys
+\begin_inset Quotes erd
+\end_inset
+
+ key:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+first: {
+\end_layout
+
+\begin_layout Plain Layout
+
+	labelKey: 'myapp.myform.field.first',
+\end_layout
+
+\begin_layout Plain Layout
+
+	textKeys: ['myapp.myform.validation.integer.not'],
+\end_layout
+
+\begin_layout Plain Layout
+
+	required: true
+\end_layout
+
+\begin_layout Plain Layout
+
+	validator: function(value, field, conversation) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return value % 1 == 0 ? true : this.textPack.get('myapp.myform.validation.integer.no
+t')
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The above code will work on both the client and the server, because 
+\begin_inset Quotes eld
+\end_inset
+
+textKeys
+\begin_inset Quotes erd
+\end_inset
+
+ ensures that all those text values are sent to the client.
+\end_layout
+
 \begin_layout Subsubsection
 Processing
+\end_layout
+
+\begin_layout Standard
+Let's look at our processing function again:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+process: function(results) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (results.success) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		results.values.result = Number(results.values.first) * Number(results.values.second)
+\end_layout
+
+\begin_layout Plain Layout
+
+		results.msg = '{first} times {second} equals {result}'.cast(results.values)
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	else {
+\end_layout
+
+\begin_layout Plain Layout
+
+		results.msg = 'Invalid!'
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The function will be called after validation happens, with 
+\begin_inset Quotes eld
+\end_inset
+
+results
+\begin_inset Quotes erd
+\end_inset
+
+ being a pre-defined dict, ready for you to modify, with the following keys:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+results.success:
+\series default
+ Will be true if the form data is valid.
+ You can change it to false during processing in order to signify an error
+ to the user.
+ Exceptions thrown in this function will also cause 
+\begin_inset Quotes eld
+\end_inset
+
+results.success
+\begin_inset Quotes erd
+\end_inset
+
+ to be false.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+results.values:
+\series default
+ A dict of the form values sent from the user.
+ The value keys correspond to the field keys.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+results.msg:
+\series default
+ A message to be displayed to the user.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+results.errors:
+\series default
+ A dict of error messages per field, as set by the field validator functions.
+ The error keys correspond to the field keys.
+ This dict will not exist if 
+\begin_inset Quotes eld
+\end_inset
+
+results.success
+\begin_inset Quotes erd
+\end_inset
+
+ is true when this function is called.
+\end_layout
+
+\begin_layout Standard
+As stated, you can modify any of these results as you need, including settings
+ 
+\begin_inset Quotes eld
+\end_inset
+
+results.errors
+\begin_inset Quotes erd
+\end_inset
+
+ to extra per-field error messages, beyond what was performed in validation.
+ 
+\end_layout
+
+\begin_layout Standard
+Indeed, you can use the processing function to do extra validation, which
+ might have to take into consideration the form as a whole, rather than
+ individual fields.
+ For example, what if a start-date field in the form is set to be after
+ an end-date field? You can find that out here and set 
+\begin_inset Quotes eld
+\end_inset
+
+results.success
+\begin_inset Quotes erd
+\end_inset
+
+ to false, with 
+\begin_inset Quotes eld
+\end_inset
+
+results.errors.endDate
+\begin_inset Quotes erd
+\end_inset
+
+ to a suitable error message.
+\end_layout
+
+\begin_layout Standard
+The return value of this function is ignored.
 \end_layout
 
 \begin_layout Subsection
 Usage
 \end_layout
 
+\begin_layout Subsubsection
+POSTing to the Resource
+\end_layout
+
 \begin_layout Standard
-Hi!
+If you've set up the resource as instructed above, you should be able to
+ access it at the specified URI.
+ By default, it will only support the HTTP POST operation, for which it
+ expects an entity in the 
+\begin_inset Quotes eld
+\end_inset
+
+application/x-www-form-urlencoded
+\begin_inset Quotes erd
+\end_inset
+
+ media type, as is used by HTML forms.
+\end_layout
+
+\begin_layout Standard
+Later on, we'll show you below how the Forms Service can help you render
+ an HTML form, complete with validation error messages and internationalization
+ support.
+ For now, let's just start with a straightforward, literal HTML example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<form action="<%= conversation.pathToBase + '/multiply/?mode=redirect' %>"
+ method="post">
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p>First value: <input name="first" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p>Second value: <input name="second" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p><input type="submit" value="Multiply!" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+</form>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You'll notice that added a 
+\begin_inset Quotes eld
+\end_inset
+
+mode
+\begin_inset Quotes erd
+\end_inset
+
+ query parameter to the action URI.
+ This lets us select one of the following modes of behavior supported by
+ the resource:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+json:
+\series default
+ This is the mode you'll want to use for 
+\begin_inset Quotes eld
+\end_inset
+
+AJAX,
+\begin_inset Quotes erd
+\end_inset
+
+ as it returns the form results in JSON format.
+ JSON mode additionally supports the 
+\begin_inset Quotes eld
+\end_inset
+
+human=true
+\begin_inset Quotes erd
+\end_inset
+
+ query parameter to return the JSON in multiline, indented format.
+ 
+\emph on
+Note that this is the default mode.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+redirect:
+\series default
+ After processing, the resource will redirect the client to a new URI.
+ The default is the sending URI, but you can set up specific URIs for success
+ and failure.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+capture:
+\series default
+ As an alternative to a redirect, you can perform a Prudence 
+\begin_inset Quotes eld
+\end_inset
+
+capture
+\begin_inset Quotes erd
+\end_inset
+
+ of another internal URI.
+ The user will see the URI of the form itself, but the content will come
+ from elsewhere.
+ Note that because capturing happens in the same conversation, without a
+ round trip to the client, you can use all the data used during processing.
+ If you do a redirect, the client will be sending a new request and that
+ data will be gone.
+\end_layout
+
+\begin_layout Standard
+When creating your resource instance, you can change the default to be something
+ other than 
+\begin_inset Quotes eld
+\end_inset
+
+json
+\begin_inset Quotes erd
+\end_inset
+
+ by setting the 
+\begin_inset Quotes eld
+\end_inset
+
+mode
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+ JSON was chosen as a default because it's easiest to test and produces
+ the least amount of side-effects due to unintentional access to the resource.
+\end_layout
+
+\begin_layout Standard
+You can also test your resource by using the cURL command line tool, like
+ so:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl --data-urlencode first=5 --data-urlencode second=6 "http://localhost:8080/m
+yapp/multiply/?human=true"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because the default mode is JSON, you should get this result:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"success": true,
+\end_layout
+
+\begin_layout Plain Layout
+
+	"msg": "5 times 6 equals 30"
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If you're using 
+\begin_inset Quotes eld
+\end_inset
+
+AJAX
+\begin_inset Quotes erd
+\end_inset
+
+ to POST to the resource, then you'll have to parse these JSON results according
+ly.
+ See 
+\begin_inset Quotes eld
+\end_inset
+
+Processing
+\begin_inset Quotes erd
+\end_inset
+
+ above for the exact format of the results.
+\end_layout
+
+\begin_layout Standard
+Also note that this format is immediately usable by Ext JS forms! See Savory's
+ Ext JS Integration for more details.
+\end_layout
+
+\begin_layout Subsubsection
+Redirect Mode
+\end_layout
+
+\begin_layout Standard
+Redirect mode will by default redirect to the sending URI, using HTTP status
+ 303 (
+\begin_inset Quotes eld
+\end_inset
+
+See Other
+\begin_inset Quotes erd
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+But, you can explicitly set the redirection URI:
+\end_layout
+
+\begin_layout Itemize
+You can set 
+\begin_inset Quotes eld
+\end_inset
+
+results.redirect
+\begin_inset Quotes erd
+\end_inset
+
+ to a URI in your form processing function.
+\end_layout
+
+\begin_layout Itemize
+When you create the form instance, you can set 
+\begin_inset Quotes eld
+\end_inset
+
+successRedirectUri
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+failureRedirectUri
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+redirectUri
+\begin_inset Quotes erd
+\end_inset
+
+ for both success and failure.
+\end_layout
+
+\begin_layout Subsubsection
+Capture Mode
+\end_layout
+
+\begin_layout Subsubsection
+Manual Mode
+\end_layout
+
+\begin_layout Standard
+If you go back to the code for the simple HTML form we've provided above,
+ you might wonder if having the form as a separate resource is necessary.
+ While it does provide a cleaner separation between the form processing
+ resource and the HTML view resource, it would be more efficient if we could
+ avoid that extra client redirect and do the processing and viewing in the
+ same resource.
+\end_layout
+
+\begin_layout Standard
+Before we consider if this is a good idea or not, let's see how this would
+ be easily done with Savory:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/forms/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var form = Savory.Forms.getForm('/multiply/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var results = form.handle(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+if (results && results.success) {
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+<p><%= results.msg %></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+<% } else { %>
+\end_layout
+
+\begin_layout Plain Layout
+
+<form action="<%= conversation.pathToBase + '/multiply/?mode=redirect' %>"
+ method="post">
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p>First value: <input name="first" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p>Second value: <input name="second" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p><input type="submit" value="Multiply!" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+</form>
+\end_layout
+
+\begin_layout Plain Layout
+
+<% } %>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A few points to explain:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Forms.getForm
+\begin_inset Quotes erd
+\end_inset
+
+ is a very useful function.
+ It works by doing an internal GET on the URI to fetch the form instance.
+ We could have also avoided setting up the instance in 
+\begin_inset Quotes eld
+\end_inset
+
+resources.js
+\begin_inset Quotes erd
+\end_inset
+
+ as well as routing it in 
+\begin_inset Quotes eld
+\end_inset
+
+routing.js
+\begin_inset Quotes erd
+\end_inset
+
+, and instead simply have created the 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Forms.Form
+\begin_inset Quotes erd
+\end_inset
+
+ instance here.
+ But this lets us use the instance both as a resource and in manual mode,
+ as we've done here.
+\end_layout
+
+\begin_layout Itemize
+The 
+\begin_inset Quotes eld
+\end_inset
+
+handle
+\begin_inset Quotes erd
+\end_inset
+
+ method will validate and process the form, but only if the conversation
+ is a POST.
+ If it's not processed, it will will return null.
+\end_layout
+
+\begin_layout Itemize
+Note how we're displaying different content according to whether the processing
+ was successful or not.
+\end_layout
+
+\begin_layout Standard
+So, is manual mode a good idea or not? If can provide a straightforward,
+ quick-and-dirty way to use a form.
+ Compact, too: you can create the instance, do all the processing, and put
+ all the view code in a single file.
+\end_layout
+
+\begin_layout Standard
+But, there are a few disadvantages:
+\end_layout
+
+\begin_layout Itemize
+The code is not very easy to follow or debug.
+ The same page is doing three different things: 1) displaying the form,
+ 2) displaying errors, and 3) displaying the results of a successful post.
+ (You could put each view in a different included fragment, but would lose
+ the compactness.)
+\end_layout
+
+\begin_layout Itemize
+This also means that caching logic for the page my be difficult if not impossibl
+e to do efficiently.
+\end_layout
+
+\begin_layout Itemize
+A single URI with multiple uses can be confusing for users.
+ If they bookmark the result 
+\begin_inset Quotes eld
+\end_inset
+
+page,
+\begin_inset Quotes erd
+\end_inset
+
+ but try to go to it again at a later time, it would display an unfilled
+ form, because it's the same page.
+ This is problematic for all POSTed HTML forms: it's always a good idea
+ to redirect the user to a book-markable URI that responds correctly to
+ an HTTP GET.
+\end_layout
+
+\begin_layout Subsubsection
+Rendering an HTML Form
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -3014,6 +4135,73 @@ Text packs can inherit each other, making it easy to manage many text packs
  text pack will stay left-to-right.
 \end_layout
 
+\begin_layout Subsection
+Setup
+\end_layout
+
+\begin_layout Standard
+Text packs are looked for first JSON files and then in a MongoDB collection
+ called 
+\begin_inset Quotes eld
+\end_inset
+
+textpacks
+\begin_inset Quotes erd
+\end_inset
+
+.
+ You can combine text packs from both, and inherit either from the other.
+\end_layout
+
+\begin_layout Standard
+The text pack is a dict that must include at least a 
+\begin_inset Quotes eld
+\end_inset
+
+text
+\begin_inset Quotes erd
+\end_inset
+
+ key, with a structure of any depth, and optionally a 
+\begin_inset Quotes eld
+\end_inset
+
+direction
+\begin_inset Quotes erd
+\end_inset
+
+ key, which could be either 
+\begin_inset Quotes eld
+\end_inset
+
+ltr
+\begin_inset Quotes erd
+\end_inset
+
+ (the default, for left-to-right, the default), or 
+\begin_inset Quotes eld
+\end_inset
+
+rtl
+\begin_inset Quotes erd
+\end_inset
+
+ (for right-to-left languages).
+ Additionally, you can add an 
+\begin_inset Quotes eld
+\end_inset
+
+inherits
+\begin_inset Quotes erd
+\end_inset
+
+ key, which can be either a single locale specification or an array of locale
+ specifications, which specifies which text packs should be merged into
+ this one.
+ The values of the inheriting text pack will always override those from
+ the inherited text packs.
+\end_layout
+
 \begin_layout Subsubsection
 Locale Specifications
 \end_layout
@@ -3078,6 +4266,265 @@ status open
 {"language": "en", "country": "nz"}
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+As MongoDB Documents
+\end_layout
+
+\begin_layout Standard
+Text packs will be found in the collection called 
+\begin_inset Quotes eld
+\end_inset
+
+textpacks
+\begin_inset Quotes erd
+\end_inset
+
+.
+ They have the same structure as the JSON files, but must also have a 
+\begin_inset Quotes eld
+\end_inset
+
+locale
+\begin_inset Quotes erd
+\end_inset
+
+ key, with the locale specification as detailed above.
+ Here's an example document:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	_id: ObjectId("4d6803e6ddfe99e799c7b809"),
+\end_layout
+
+\begin_layout Plain Layout
+
+	"locale": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"language": "en",
+\end_layout
+
+\begin_layout Plain Layout
+
+		"country": "nz"
+\end_layout
+
+\begin_layout Plain Layout
+
+	},
+\end_layout
+
+\begin_layout Plain Layout
+
+	"direction": "ltr",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"inherit": "en",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"text": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"application": {
+\end_layout
+
+\begin_layout Plain Layout
+
+			"myapp": {
+\end_layout
+
+\begin_layout Plain Layout
+
+				"time": "It is now {now}"
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Again we'll emphasize: even though this text pack is defined in MongoDB,
+ it can inherit the 
+\begin_inset Quotes eld
+\end_inset
+
+en
+\begin_inset Quotes erd
+\end_inset
+
+ text pack defined in the JSON file.
+\end_layout
+
+\begin_layout Standard
+You'll usually prefer one method or the other, but it might make sense to
+ use both: for example, a default text pack can be hard-coded for your applicati
+on, to allow it to function even if MongoDB is not available.
+\end_layout
+
+\begin_layout Subsubsection
+As JSON Files
+\end_layout
+
+\begin_layout Standard
+If stored in files, the name of the file must be in the form 
+\begin_inset Quotes eld
+\end_inset
+
+[locale].json
+\begin_inset Quotes erd
+\end_inset
+
+.
+ For example, for the English locale it is 
+\begin_inset Quotes eld
+\end_inset
+
+en.json
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If the locale has country and variant specifications, they are added with
+ underscores.
+ For example, English/New Zealand would be 
+\begin_inset Quotes eld
+\end_inset
+
+en_nz.json
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+An example 
+\begin_inset Quotes eld
+\end_inset
+
+en.json
+\begin_inset Quotes erd
+\end_inset
+
+ file:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	"direction": "ltr",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"text": {
+\end_layout
+
+\begin_layout Plain Layout
+
+		"application": {
+\end_layout
+
+\begin_layout Plain Layout
+
+			"myapp": {
+\end_layout
+
+\begin_layout Plain Layout
+
+				"time": "It is now {now}"
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Per-User Text Packs
+\end_layout
+
+\begin_layout Standard
+See the 
+\begin_inset Quotes eld
+\end_inset
+
+Authentication Service.
+\begin_inset Quotes erd
 \end_inset
 
 
@@ -3371,316 +4818,6 @@ defaultLocale: {.: {language: 'en', country: 'nz'}}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsection
-Storage
-\end_layout
-
-\begin_layout Standard
-Text packs are looked for first JSON files and then in a MongoDB collection
- called 
-\begin_inset Quotes eld
-\end_inset
-
-textpacks
-\begin_inset Quotes erd
-\end_inset
-
-.
- You can combine text packs from both, and inherit either from the other.
-\end_layout
-
-\begin_layout Standard
-The text pack is a dict that must include at least a 
-\begin_inset Quotes eld
-\end_inset
-
-text
-\begin_inset Quotes erd
-\end_inset
-
- key, with a structure of any depth, and optionally a 
-\begin_inset Quotes eld
-\end_inset
-
-direction
-\begin_inset Quotes erd
-\end_inset
-
- key, which could be either 
-\begin_inset Quotes eld
-\end_inset
-
-ltr
-\begin_inset Quotes erd
-\end_inset
-
- (the default, for left-to-right, the default), or 
-\begin_inset Quotes eld
-\end_inset
-
-rtl
-\begin_inset Quotes erd
-\end_inset
-
- (for right-to-left languages).
- Additionally, you can add an 
-\begin_inset Quotes eld
-\end_inset
-
-inherits
-\begin_inset Quotes erd
-\end_inset
-
- key, which can be either a single locale specification or an array of locale
- specifications, which specifies which text packs should be merged into
- this one.
- The values of the inheriting text pack will always override those from
- the inherited text packs.
-\end_layout
-
-\begin_layout Subsubsection
-As JSON Files
-\end_layout
-
-\begin_layout Standard
-If stored in files, the name of the file must be in the form 
-\begin_inset Quotes eld
-\end_inset
-
-[locale].json
-\begin_inset Quotes erd
-\end_inset
-
-.
- For example, for the English locale it is 
-\begin_inset Quotes eld
-\end_inset
-
-en.json
-\begin_inset Quotes erd
-\end_inset
-
-.
- If the locale has country and variant specifications, they are added with
- underscores.
- For example, English/New Zealand would be 
-\begin_inset Quotes eld
-\end_inset
-
-en_nz.json
-\begin_inset Quotes erd
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-An example 
-\begin_inset Quotes eld
-\end_inset
-
-en.json
-\begin_inset Quotes erd
-\end_inset
-
- file:
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-	"direction": "ltr",
-\end_layout
-
-\begin_layout Plain Layout
-
-	"text": {
-\end_layout
-
-\begin_layout Plain Layout
-
-		"application": {
-\end_layout
-
-\begin_layout Plain Layout
-
-			"myapp": {
-\end_layout
-
-\begin_layout Plain Layout
-
-				"time": "It is now {now}"
-\end_layout
-
-\begin_layout Plain Layout
-
-			}
-\end_layout
-
-\begin_layout Plain Layout
-
-		}
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-As MongoDB Documents
-\end_layout
-
-\begin_layout Standard
-Text packs will be found in the collection called 
-\begin_inset Quotes eld
-\end_inset
-
-textpacks
-\begin_inset Quotes erd
-\end_inset
-
-.
- They have the same structure as the JSON files, but must also have a 
-\begin_inset Quotes eld
-\end_inset
-
-locale
-\begin_inset Quotes erd
-\end_inset
-
- key, with the locale specification as detailed above.
- Here's an example document:
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-	_id: ObjectId("4d6803e6ddfe99e799c7b809"),
-\end_layout
-
-\begin_layout Plain Layout
-
-	"locale": {
-\end_layout
-
-\begin_layout Plain Layout
-
-		"language": "en",
-\end_layout
-
-\begin_layout Plain Layout
-
-		"country": "nz"
-\end_layout
-
-\begin_layout Plain Layout
-
-	},
-\end_layout
-
-\begin_layout Plain Layout
-
-	"direction": "ltr",
-\end_layout
-
-\begin_layout Plain Layout
-
-	"inherit": "en",
-\end_layout
-
-\begin_layout Plain Layout
-
-	"text": {
-\end_layout
-
-\begin_layout Plain Layout
-
-		"application": {
-\end_layout
-
-\begin_layout Plain Layout
-
-			"myapp": {
-\end_layout
-
-\begin_layout Plain Layout
-
-				"time": "It is now {now}"
-\end_layout
-
-\begin_layout Plain Layout
-
-			}
-\end_layout
-
-\begin_layout Plain Layout
-
-		}
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Again we'll emphasize: even though this text pack is defined in MongoDB,
- it can inherit the 
-\begin_inset Quotes eld
-\end_inset
-
-en
-\begin_inset Quotes erd
-\end_inset
-
- text pack defined in the JSON file.
-\end_layout
-
-\begin_layout Standard
-You'll usually prefer one method or the other, but it might make sense to
- use both: for example, a default text pack can be hard-coded for your applicati
-on, to allow it to function even if MongoDB is not available.
 \end_layout
 
 \begin_layout Section
