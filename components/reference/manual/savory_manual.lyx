@@ -3627,12 +3627,12 @@ capture
 \end_inset
 
  of another internal URI.
- The user will see the URI of the form itself, but the content will come
- from elsewhere.
+ The user will see the URI of the form resource itself, but the content
+ will come from elsewhere.
  Note that because capturing happens in the same conversation, without a
  round trip to the client, you can use all the data used during processing.
- If you do a redirect, the client will be sending a new request and that
- data will be gone.
+ If you do a redirect, the client would be sending a new request and that
+ data would be gone.
 \end_layout
 
 \begin_layout Standard
@@ -3680,7 +3680,29 @@ yapp/multiply/?human=true"
 \end_layout
 
 \begin_layout Standard
-Because the default mode is JSON, you should get this result:
+See the REST Service for a quick tutorial on using cURL.
+ Note that using the 
+\begin_inset Quotes eld
+\end_inset
+
+data-urlencode
+\begin_inset Quotes erd
+\end_inset
+
+ switch will automatically set the method to POST and the entity type to
+ 
+\begin_inset Quotes eld
+\end_inset
+
+application/x-www-form-urlencoded.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because the resource's default mode is JSON, you should get this result:
 \end_layout
 
 \begin_layout Standard
@@ -3740,13 +3762,45 @@ Also note that this format is immediately usable by Ext JS forms! See Savory's
  Ext JS Integration for more details.
 \end_layout
 
+\begin_layout Standard
+You can also use cURL to test redirect mode:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+curl -v -e "http://my-referring-url" --data-urlencode first=5 --data-urlencode
+ second=6 "http://localhost:8080/myapp/multiply/?mode=redirect"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You should see the redirected URL in the 
+\begin_inset Quotes eld
+\end_inset
+
+Location
+\begin_inset Quotes erd
+\end_inset
+
+ header, as well as an HTTP status of 303.
+\end_layout
+
 \begin_layout Subsubsection
 Redirect Mode
 \end_layout
 
 \begin_layout Standard
-Redirect mode will by default redirect to the sending URI, using HTTP status
- 303 (
+Redirect mode will by default redirect to the referring URI, using HTTP
+ status 303 (
 \begin_inset Quotes eld
 \end_inset
 
@@ -3758,7 +3812,7 @@ See Other
 \end_layout
 
 \begin_layout Standard
-But, you can explicitly set the redirection URI:
+But, you can explicitly set the redirection URI to something specific:
 \end_layout
 
 \begin_layout Itemize
@@ -3803,6 +3857,30 @@ redirectUri
 
 \begin_layout Subsubsection
 Capture Mode
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
+\begin_layout Standard
+You can access the form and the results using 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Forms.getCapturedForm
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Forms.getCapturedResults
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4042,7 +4120,88 @@ status open
 
 \begin_layout Plain Layout
 
-<html>
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/forms/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var form = Savory.Forms.getForm('/multiply/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var results = form.handle(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+<form method="post">
+\end_layout
+
+\begin_layout Plain Layout
+
+	<div>
+\end_layout
+
+\begin_layout Plain Layout
+
+		<%= form.htmlText({name: 'first', conversation: conversation, results:
+ results}) %>
+\end_layout
+
+\begin_layout Plain Layout
+
+	</div>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<div>
+\end_layout
+
+\begin_layout Plain Layout
+
+		<%= form.htmlText({name: 'second', conversation: conversation, results:
+ results}) %>
+\end_layout
+
+\begin_layout Plain Layout
+
+	</div>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<div>
+\end_layout
+
+\begin_layout Plain Layout
+
+		<input type="submit" value="Multiply!" />
+\end_layout
+
+\begin_layout Plain Layout
+
+	</div>
+\end_layout
+
+\begin_layout Plain Layout
+
+</form>
 \end_layout
 
 \end_inset
@@ -9454,7 +9613,7 @@ With the
 \begin_inset Quotes erd
 \end_inset
 
- switch, you can also control the HTTP headers in raw form:
+ switch, you can also send HTTP headers in raw form:
 \end_layout
 
 \begin_layout Standard
@@ -9471,6 +9630,18 @@ curl -H "Accept: application/xml" "http://localhost:8080/myapp/data/users/4e057e
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Finally, add the 
+\begin_inset Quotes eld
+\end_inset
+
+-v
+\begin_inset Quotes erd
+\end_inset
+
+ switch to print out the outgoing and incoming headers.
 \end_layout
 
 \begin_layout Subsection

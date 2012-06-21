@@ -176,10 +176,12 @@ Savory.HTML = Savory.HTML || function() {
 		if (Sincerity.Objects.exists(params.name) && !Sincerity.Objects.exists(params.value)) {
 			try {
 				params._conversation = Sincerity.Objects.ensure(params._conversation, conversation)
-				params.value = params._conversation.form.get(params.name)
 			}
 			catch (x) {
 				// No conversation?
+			}
+			if (Sincerity.Objects.exists(params._conversation)) {
+				params.value = params._conversation.form.get(params.name)
 			}
 		}
 		
@@ -211,13 +213,15 @@ Savory.HTML = Savory.HTML || function() {
 		}
 
 		params._tag = 'textarea'
-		if (Sincerity.Objects.exists(params.name)) {
+		if (Sincerity.Objects.exists(params.name) && !Sincerity.Objects.exists(params._content)) {
 			try {
 				params._conversation = Sincerity.Objects.ensure(params._conversation, conversation)
-				params._content = params._conversation.form.get(params.name)
 			}
 			catch (x) {
 				// No conversation?
+			}
+			if (Sincerity.Objects.exists(params._conversation)) {
+				params._content = params._conversation.form.get(params.name)
 			}
 		}
 

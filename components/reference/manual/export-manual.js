@@ -91,6 +91,7 @@ var manual = new Manual(application.arguments[1])
 manual.generate({
 	'Backup Service': ['component/applications/savory-example/fragments/manual/service/backup.html'],
 	'Cache Service': ['component/applications/savory-example/fragments/manual/service/cache.html'],
+	'Forms Service': ['component/applications/savory-example/fragments/manual/service/forms.html'],
 	'Internationalization Service': ['component/applications/savory-example/fragments/manual/service/internationalization.html'],
 	'Nonces Service': ['component/applications/savory-example/fragments/manual/service/nonces.html'],
 	'Notification Service': ['component/applications/savory-example/fragments/manual/service/notification.html'],

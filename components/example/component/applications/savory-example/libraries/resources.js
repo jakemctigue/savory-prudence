@@ -97,7 +97,8 @@ var multiplyForm = {
 			}
 			*/
 		}
-	}
+	},
+	captureUri: '/example/service/forms/results/'
 }
 
 // For the Ext JS Trees example

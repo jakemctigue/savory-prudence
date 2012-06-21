@@ -41,7 +41,7 @@ Savory.Forms = Savory.Forms || function() {
 	/**
 	 * @param conversation The Prudence conversation
 	 * @returns {Savory.Forms.Form} The current form or null
-	 * @see #getCaptureResults
+	 * @see #getCapturedResults
 	 */
 	Public.getCapturedForm = function(conversation) {
 		return conversation.locals.get('savory.service.forms.form')
@@ -50,9 +50,9 @@ Savory.Forms = Savory.Forms || function() {
 	/**
 	 * @param conversation The Prudence conversation
 	 * @returns The results of the current form's validation and processing, or null
-	 * @see #getCaptureForm
+	 * @see #getCapturedForm
 	 */
-	Public.getCaptureResults = function(conversation) {
+	Public.getCapturedResults = function(conversation) {
 		return conversation.locals.get('savory.service.forms.results')
 	}
 	
@@ -260,7 +260,7 @@ Savory.Forms = Savory.Forms || function() {
 						if (!Sincerity.Objects.exists(redirectUri)) {
 							redirectUri = this.redirectUri
 						}
-						if (!Sincerity.Objects.exists(redirectUri)) {
+						if (!Sincerity.Objects.exists(redirectUri) && Sincerity.Objects.exists(conversation.request.referrerRef)) {
 							redirectUri = String(conversation.request.referrerRef)
 						}
 						if (Sincerity.Objects.exists(redirectUri)) {
@@ -277,14 +277,9 @@ Savory.Forms = Savory.Forms || function() {
 						if (!Sincerity.Objects.exists(captureUri)) {
 							captureUri = this.captureUri
 						}
-						if (!Sincerity.Objects.exists(captureUri)) {
-							captureUri = String(conversation.request.referrerRef)
-						}
 						if (Sincerity.Objects.exists(captureUri)) {
-							if (Sincerity.Objects.exists(params.conversation)) {
-								params.conversation.locals.put('savory.service.forms.form', this)
-								params.conversation.locals.put('savory.service.forms.results', results)
-							}
+							conversation.locals.put('savory.service.forms.form', this)
+							conversation.locals.put('savory.service.forms.results', results)
 							var reference = 'riap://application' + captureUri + '?{rq}';
 							var redirector = new com.threecrickets.prudence.util.CapturingRedirector(conversation.resource.context, reference, false)
 							redirector.handle(conversation.request, conversation.response)
@@ -294,7 +289,7 @@ Savory.Forms = Savory.Forms || function() {
 				}
 			}
 			
-			return Prudence.Resources.Status.ServerError.BadRequest
+			return Prudence.Resources.Status.ClientError.BadRequest
 		}
 		
 		/**
@@ -331,8 +326,15 @@ Savory.Forms = Savory.Forms || function() {
 					_content: field.label
 				}
 			}
+			
+			r = ''
+			if (Sincerity.Objects.exists(params.results) && Sincerity.Objects.exists(params.results.errors) && Sincerity.Objects.exists(params.results.errors[params.name])) {
+				input['class'] = 'error'
+				label['class'] = 'error'
+				r = this.htmlError(params)
+			}
 
-			return Savory.HTML.input(input, label) + this.htmlError(params.name, params.results)
+			return Savory.HTML.input(input, label) + r
 		}
 
 		Public.htmlTextArea = function(conversation, name, results) {
@@ -343,11 +345,8 @@ Savory.Forms = Savory.Forms || function() {
 			return Savory.HTML.input({name: name, type: 'password', _conversation: conversation}, {_content: this.fields[name].label}) + this.htmlError(name, results)
 		}
 		
-		Public.htmlError = function(name, results) {
-			if (Sincerity.Objects.exists(results) && Sincerity.Objects.exists(results.errors) && Sincerity.Objects.exists(results.errors[name])) {
-				return Savory.HTML.div({_content: results.errors[name], 'class': 'error'})
-			}
-			return ''
+		Public.htmlError = function(params) {
+			return Savory.HTML.div({_content: params.results.errors[params.name], 'class': 'error'})
 		}
 		
 		/**
