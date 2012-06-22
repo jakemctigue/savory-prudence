@@ -119,7 +119,7 @@ Savory.Sencha = Savory.Sencha || function() {
 						senchaField.value = params.results.values[name]
 					}
 					if (Sincerity.Objects.exists(params.results.errors) && Sincerity.Objects.exists(params.results.errors[name])) {
-						senchaField.activeError = results.errors[name]
+						senchaField.activeError = params.results.errors[name]
 					}
 				}
 				else if (Sincerity.Objects.exists(field.value)) {

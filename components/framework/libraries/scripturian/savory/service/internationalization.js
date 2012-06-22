@@ -60,10 +60,10 @@ Savory.Internationalization = Savory.Internationalization || function() {
 	}
     
     Public.getCurrentPack = function(conversation) {
-    	var pack = conversation.locals.get('savory.service.internationalization.text')
+    	var pack = conversation.locals.get('savory.service.internationalization.pack')
     	if (!Sincerity.Objects.exists(pack)) {
     		pack = Public.getPack()
-    		conversation.locals.put('savory.service.internationalization.text', pack)
+    		conversation.locals.put('savory.service.internationalization.pack', pack)
     	}
     	return pack
     }
@@ -224,7 +224,11 @@ Savory.Internationalization = Savory.Internationalization || function() {
 
 			return direction ? 'rtl' : 'ltr'
 		}
-		
+
+	    Public.setCurrent = function(conversation) {
+    		conversation.locals.put('savory.service.internationalization.pack', this)
+	    }
+
 		return Public
 	}())
 	

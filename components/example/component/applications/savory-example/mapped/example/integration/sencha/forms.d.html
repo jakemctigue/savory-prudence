@@ -163,11 +163,9 @@ function openForm(event, el) {
 		config.url = '<%= conversation.pathToBase %>/form/multiply/';
 	}
 	else if (el.id.substring(0, 6) == 'direct') {
-		//delete config.url;
 		config.api = {
 			submit: Savory.Calc.multiply
 		};
-		//config.paramOrder = ['first', 'second'];
 	}
 	
 	Ext.create('Ext.window.Window', {

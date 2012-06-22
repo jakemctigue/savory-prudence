@@ -2125,16 +2125,8 @@ AJAX
 ).
  Savory goes a long way towards making it easier for you to use both models,
  each with its own complexities and subtleties, through a unified API.
- Allowing for both 
-\begin_inset Quotes eld
-\end_inset
-
-AJAX
-\begin_inset Quotes erd
-\end_inset
-
- and HTML client forms with the same server code makes it easy to support
- 
+ Allowing for both AJAX and HTML client forms with the same server code
+ makes it easy to support 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2142,15 +2134,7 @@ legacy
 \begin_inset Quotes erd
 \end_inset
 
- clients that can't use 
-\begin_inset Quotes eld
-\end_inset
-
-AJAX.
-\begin_inset Quotes erd
-\end_inset
-
-
+ clients that can't use AJAX.
 \end_layout
 
 \begin_layout Standard
@@ -3609,15 +3593,8 @@ mode
 \series bold
 json:
 \series default
- This is the mode you'll want to use for 
-\begin_inset Quotes eld
-\end_inset
-
-AJAX,
-\begin_inset Quotes erd
-\end_inset
-
- as it returns the form results in JSON format.
+ This is the mode you'll want to use for AJAX, as it returns the form results
+ in JSON format.
  JSON mode additionally supports the 
 \begin_inset Quotes eld
 \end_inset
@@ -3765,16 +3742,8 @@ status open
 \end_layout
 
 \begin_layout Standard
-If you're using 
-\begin_inset Quotes eld
-\end_inset
-
-AJAX
-\begin_inset Quotes erd
-\end_inset
-
- to POST to the resource, then you'll have to parse these JSON results according
-ly.
+If you're using AJAX to POST to the resource, then you'll have to parse
+ these JSON results accordingly.
  See 
 \begin_inset Quotes eld
 \end_inset
@@ -5497,7 +5466,10 @@ rtl
 \end_inset
 
  according to the directionality of that specific key.
- 
+\end_layout
+
+\begin_layout Subsubsection
+Attaching a Text Pack to the Conversation
 \end_layout
 
 \begin_layout Standard
@@ -5508,11 +5480,30 @@ In many cases, you would not want to specify the locale explicitly, but
 \begin_inset Quotes eld
 \end_inset
 
-savory.service.internationalization.text
+savory.service.internationalization.pack
 \begin_inset Quotes erd
 \end_inset
 
- and then retrieve it like so:
+, or use this shortcut:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+textPack.setCurrent(conversation)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And then retrieve it like so:
 \end_layout
 
 \begin_layout Standard
@@ -13964,16 +13955,959 @@ Hi!
 Sencha Integration: Forms
 \end_layout
 
+\begin_layout Subsection
+Setup
+\end_layout
+
 \begin_layout Standard
-Hi!
+We're using the Savory Forms Service, so follow the instructions there.
+\end_layout
+
+\begin_layout Standard
+The different is that you should use the 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Sencha.Form
+\begin_inset Quotes erd
+\end_inset
+
+ class instead of 
+\begin_inset Quotes eld
+\end_inset
+
+Savory.Forms.Form
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The former class extends the latter class with an extra method to better
+ integrate with Ext JS.
+\end_layout
+
+\begin_layout Standard
+So, in 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resources.js
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: new Savory.Sencha.Form(multiplyForm)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
 Usage
 \end_layout
 
+\begin_layout Subsubsection
+Configuring the Form Fields
+\end_layout
+
 \begin_layout Standard
-Hi!
+The 
+\begin_inset Quotes eld
+\end_inset
+
+toExtJs
+\begin_inset Quotes erd
+\end_inset
+
+ method lets you generate the correct client-side source code for configuring
+ fields for the Ext JS form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/forms/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var form = Savory.Forms.getForm('/multiply/')
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+<script type="text/javascript">
+\end_layout
+
+\begin_layout Plain Layout
+
+var fields = <%= form.toExtJs(conversation) %>;
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+</script>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note the difference between server-side and client-side JavaScript here!
+\end_layout
+
+\begin_layout Standard
+The field configurations include the following, if they were set up for
+ the field:
+\end_layout
+
+\begin_layout Itemize
+The masking regular expression.
+\end_layout
+
+\begin_layout Itemize
+The client-side validation function.
+\end_layout
+
+\begin_layout Itemize
+Internationalization text strings for field labels and possible client-side
+ validation error messages.
+\end_layout
+
+\begin_layout Standard
+You can explicitly disable these like so:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var fields = <%= form.toExtJs(conversation, {clientValidation: false, clientMaski
+ng: false}) %>;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Internationalization will use text pack stored in the conversation, or you
+ can set one explicitly:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+var textPack = Savory.Internationalization.getPack('fr')
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+var fields = <%= form.toExtJs(conversation, {textPack: textPack}) %>;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+AJAX Forms
+\end_layout
+
+\begin_layout Standard
+A full tutorial of Ext JS forms is beyond what we can do in this Manual,
+ but here are is a quick example of how you could create an AJAX form to
+ use with Savory:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+Savory.Sencha.extJsHead(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+</head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<script type="text/javascript">
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/forms/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var form = Savory.Forms.getForm('/multiply/')
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+var fields = <%= form.toExtJs(conversation) %>;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Ext.onReady(function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ext.create('Ext.window.Window', {
+\end_layout
+
+\begin_layout Plain Layout
+
+		title: 'MyForm',
+\end_layout
+
+\begin_layout Plain Layout
+
+		width: 350,
+\end_layout
+
+\begin_layout Plain Layout
+
+		items: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			xtype: 'form',
+\end_layout
+
+\begin_layout Plain Layout
+
+			url: '<%= conversation.pathToBase %>/multiply/?mode=json',
+\end_layout
+
+\begin_layout Plain Layout
+
+			border: false,
+\end_layout
+
+\begin_layout Plain Layout
+
+			bodyCls: 'x-border-layout-ct', // Uses the neutral background color
+\end_layout
+
+\begin_layout Plain Layout
+
+			bodyPadding: 10,
+\end_layout
+
+\begin_layout Plain Layout
+
+			layout: 'anchor',
+\end_layout
+
+\begin_layout Plain Layout
+
+			defaults: {
+\end_layout
+
+\begin_layout Plain Layout
+
+				anchor: '100%'
+\end_layout
+
+\begin_layout Plain Layout
+
+			},
+\end_layout
+
+\begin_layout Plain Layout
+
+			defaultType: 'textfield',
+\end_layout
+
+\begin_layout Plain Layout
+
+			items: fields,
+\end_layout
+
+\begin_layout Plain Layout
+
+			buttons: [{
+\end_layout
+
+\begin_layout Plain Layout
+
+				text: 'Submit',
+\end_layout
+
+\begin_layout Plain Layout
+
+				disabled: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+				formBind: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+				handler: function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+					var form = this.up('form').getForm();
+\end_layout
+
+\begin_layout Plain Layout
+
+					if (form.isValid()) {
+\end_layout
+
+\begin_layout Plain Layout
+
+						form.submit({
+\end_layout
+
+\begin_layout Plain Layout
+
+							success: function(form, action) {
+\end_layout
+
+\begin_layout Plain Layout
+
+								Ext.Msg.alert('Success!', action.result.msg);
+\end_layout
+
+\begin_layout Plain Layout
+
+							},
+\end_layout
+
+\begin_layout Plain Layout
+
+							failure: function(form, action) {
+\end_layout
+
+\begin_layout Plain Layout
+
+								Ext.Msg.alert('Failure!', action.result.msg);
+\end_layout
+
+\begin_layout Plain Layout
+
+							}
+\end_layout
+
+\begin_layout Plain Layout
+
+						});
+\end_layout
+
+\begin_layout Plain Layout
+
+					}
+\end_layout
+
+\begin_layout Plain Layout
+
+				}
+\end_layout
+
+\begin_layout Plain Layout
+
+			}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	}).show();
+\end_layout
+
+\begin_layout Plain Layout
+
+});
+\end_layout
+
+\begin_layout Plain Layout
+
+</script>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Standard Forms
+\end_layout
+
+\begin_layout Standard
+Ext JS can also perform a standard submission instead of using AJAX.
+ The result is that you get the nice GUI of Ext JS, including client-side
+ validation, but as far as the server is concerned, the behavior is like
+ the standard HTML <form> mechanism.
+\end_layout
+
+\begin_layout Standard
+Why would want to do this? Honestly, with Savory handling AJAX forms for
+ you, it's hard to imagine a use case.
+ Nevertheless, we'll tell you how to do this, for completion's sake.
+\end_layout
+
+\begin_layout Standard
+Let's use the Savory Form Service's manual mode:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<script type="text/javascript">
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/forms/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var form = Savory.Forms.getForm('/multiply/')
+\end_layout
+
+\begin_layout Plain Layout
+
+var results = form.handle(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+var fields = <%= form.toExtJs(conversation, {results: results}) %>;
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+</script>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note how we added 
+\begin_inset Quotes eld
+\end_inset
+
+results
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+toExtJs
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This makes sure that the fields will be initialized with the previous form
+ submission values, and also the correct error codes for field validation.
+\end_layout
+
+\begin_layout Subsubsection
+Ext Direct Forms
+\end_layout
+
+\begin_layout Standard
+Finally, Ext JS forms can also use Ext Direct, Sencha's RPC mechanism, which
+ is nicely supported by Savory, instead of the regular AJAX mode.
+ Going this route means that you will not use the Savory Forms Service at
+ all, and use the Savory RPC Service instead.
+\end_layout
+
+\begin_layout Standard
+We recommend using the Savory Forms Service if you can, because it will
+ give you fuller control over field validation.
+ However, Ext Direct might be nice to use if you already are using it a
+ lot and have everything set up for it.
+ In any case, Ext Direct is fully supported, and since it's also based on
+ AJAX, the user experience is pretty much the same.
+\end_layout
+
+\begin_layout Standard
+You will need to add an extra attribute when setting up Ext Direct, to make
+ sure that it supports form submission, and also return the results in the
+ appropriate format.
+ Here's an example 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resources.js
+\begin_inset Quotes erd
+\end_inset
+
+, similar to the one for the RPC Service:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/integration/frontend/sencha/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var Calc = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	multiply: {
+\end_layout
+
+\begin_layout Plain Layout
+
+		fn: function(x, y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			return {
+\end_layout
+
+\begin_layout Plain Layout
+
+				success: true,
+\end_layout
+
+\begin_layout Plain Layout
+
+				msg: '{0} times {1} is {2}'.cast(x, y, x * y)
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+		extDirect: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			formHandler: true
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resources = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	calc: new Savory.Sencha.DirectResource({name: 'MyApp', namespaces: {Calc:
+ Calc}})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Then, on the client you would create your form 
+\emph on
+after
+\emph default
+ initializing Ext Direct like so:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<script type="text/javascript">
+\end_layout
+
+\begin_layout Plain Layout
+
+function openForm() {
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ext.create('Ext.window.Window', {
+\end_layout
+
+\begin_layout Plain Layout
+
+		title: 'MyForm',
+\end_layout
+
+\begin_layout Plain Layout
+
+		width: 350,
+\end_layout
+
+\begin_layout Plain Layout
+
+		items: {
+\end_layout
+
+\begin_layout Plain Layout
+
+			xtype: 'form',
+\end_layout
+
+\begin_layout Plain Layout
+
+			api: {
+\end_layout
+
+\begin_layout Plain Layout
+
+				submit: MyApp.Calc.multiply
+\end_layout
+
+\begin_layout Plain Layout
+
+			},
+\end_layout
+
+\begin_layout Plain Layout
+
+			...
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}).show();
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Ext.onReady(function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ext.Ajax.request({
+\end_layout
+
+\begin_layout Plain Layout
+
+		url: '<%= conversation.pathToBase %>/calc/',
+\end_layout
+
+\begin_layout Plain Layout
+
+		method: 'GET',
+\end_layout
+
+\begin_layout Plain Layout
+
+		disableCaching: false,
+\end_layout
+
+\begin_layout Plain Layout
+
+		success: function(response) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			var provider = Ext.decode(response.responseText);
+\end_layout
+
+\begin_layout Plain Layout
+
+			Ext.Direct.addProvider(provider);
+\end_layout
+
+\begin_layout Plain Layout
+
+			openForm();
+\end_layout
+
+\begin_layout Plain Layout
+
+		},
+\end_layout
+
+\begin_layout Plain Layout
+
+	});
+\end_layout
+
+\begin_layout Plain Layout
+
+});
+\end_layout
+
+\begin_layout Plain Layout
+
+</script>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that instead of supplying a 
+\begin_inset Quotes eld
+\end_inset
+
+url
+\begin_inset Quotes erd
+\end_inset
+
+ key to the form configuration, we use 
+\begin_inset Quotes eld
+\end_inset
+
+api
+\begin_inset Quotes erd
+\end_inset
+
+ and hook the 
+\begin_inset Quotes eld
+\end_inset
+
+submit
+\begin_inset Quotes erd
+\end_inset
+
+ key to our Ext Direct method.
+ Ext JS will take care of the rest.
 \end_layout
 
 \begin_layout Section
@@ -14093,7 +15027,15 @@ name
 \end_inset
 
  key.
- Here's an example, similar to the one for the RPC Service:
+ Here's an example 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resources.js
+\begin_inset Quotes erd
+\end_inset
+
+, similar to the one for the RPC Service:
 \end_layout
 
 \begin_layout Standard
@@ -14272,15 +15214,12 @@ var Calc = {
 
 \begin_layout Standard
 See the section on Ext JS Forms for more information on usage.
- Savory supports all of Ext JS's form submission mechanisms.
+ Note furthermore that Savory supports all of Ext JS's form submission mechanism
+s.
 \end_layout
 
 \begin_layout Subsection
 Usage
-\end_layout
-
-\begin_layout Subsubsection
-Calling from Ext JS
 \end_layout
 
 \begin_layout Standard
@@ -14663,21 +15602,6 @@ The last argument for any Ext Direct method is a callback that is called
  when the server returns a response.
  It's cumbersome, but that's the price you pay for asynchronous remote calls!
  Also note that you want to properly handle server and network failures.
-\end_layout
-
-\begin_layout Subsubsection
-Calling by HTML Forms
-\end_layout
-
-\begin_layout Standard
-Ext Direct is easiest to use via Ext JS's or Sencha Toucher's provider API,
- as in the example above.
- However, the Ext Direct specification supports regular HTML forms, likely
- in order to make it easier to call your server from other frameworks.
-\end_layout
-
-\begin_layout Standard
-TODO: example
 \end_layout
 
 \begin_layout Section
