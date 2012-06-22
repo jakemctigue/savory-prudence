@@ -2587,7 +2587,7 @@ validator
 \end_inset
 
  function is called.
- TODO error key
+ [TODO error key]
 \end_layout
 
 \begin_layout Itemize
@@ -3405,6 +3405,35 @@ results.values:
 \series default
  A dict of the form values sent from the user.
  The value keys correspond to the field keys.
+ Note that 
+\begin_inset Quotes eld
+\end_inset
+
+results.values
+\begin_inset Quotes erd
+\end_inset
+
+ will be deleted if 
+\begin_inset Quotes eld
+\end_inset
+
+results.success
+\begin_inset Quotes erd
+\end_inset
+
+ is true.
+ The reason is that you should only need the old values if the user needs
+ to correct the form in case of an error.
+ If the form was successful, the form values should be reset.
+ (In the example above we are setting 
+\begin_inset Quotes eld
+\end_inset
+
+results.values.result
+\begin_inset Quotes erd
+\end_inset
+
+ only for the purpose of the string template cast.)
 \end_layout
 
 \begin_layout Itemize
@@ -3480,7 +3509,7 @@ Usage
 \end_layout
 
 \begin_layout Subsubsection
-POSTing to the Resource
+POSTing Form Values to the Resource
 \end_layout
 
 \begin_layout Standard
@@ -3799,8 +3828,8 @@ Redirect Mode
 \end_layout
 
 \begin_layout Standard
-Redirect mode will by default redirect to the referring URI, using HTTP
- status 303 (
+Redirect mode will by default redirect the client to the referring URI,
+ using HTTP status 303 (
 \begin_inset Quotes eld
 \end_inset
 
@@ -3812,11 +3841,75 @@ See Other
 \end_layout
 
 \begin_layout Standard
-But, you can explicitly set the redirection URI to something specific:
+But, you can explicitly set the redirection URI to something specific in
+ 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resources.js
+\begin_inset Quotes erd
+\end_inset
+
+:
 \end_layout
 
-\begin_layout Itemize
-You can set 
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var multiplyForm = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	redirectUri: '/multiply/results/',
+\end_layout
+
+\begin_layout Plain Layout
+
+	mode: 'redirect' // we'll make this the default mode (instead of 'json')
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can also set 
+\begin_inset Quotes eld
+\end_inset
+
+redirectSuccessUri
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+redirectFailureUri
+\begin_inset Quotes erd
+\end_inset
+
+ separately.
+\end_layout
+
+\begin_layout Standard
+Or, you can set the URI dynamically by setting 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3824,35 +3917,83 @@ results.redirect
 \begin_inset Quotes erd
 \end_inset
 
- to a URI in your form processing function.
+ in your processing function.
+\end_layout
+
+\begin_layout Standard
+This should go without saying, but client redirections means that a whole
+ new HTTP GET request will be sent by the client, such that all your conversatio
+n data will be gone.
+ Of course, often the resulting page should depend on the result of form
+ processing.
+ There are two good strategies for handling this:
 \end_layout
 
 \begin_layout Itemize
-When you create the form instance, you can set 
+Because you can set the URI dynamically in 
 \begin_inset Quotes eld
 \end_inset
 
-successRedirectUri
+results.redirect
 \begin_inset Quotes erd
 \end_inset
 
-, 
+, you can create a special kind of results view.
+ For example, let's say you are implementing a search form (like Google's
+ search engine page), which should redirect the user to the search results.
+ You could redirect to a URI which includes the search results, for example
+ in the URI query string.
+ For example, searching for the phrase 
 \begin_inset Quotes eld
 \end_inset
 
-failureRedirectUri
+cool apps
 \begin_inset Quotes erd
 \end_inset
 
- or 
+ could end up redirecting to something like this: 
 \begin_inset Quotes eld
 \end_inset
 
-redirectUri
+http://myapp.org/search/?terms=cool+apps
 \begin_inset Quotes erd
 \end_inset
 
- for both success and failure.
+.
+ In 
+\begin_inset Quotes eld
+\end_inset
+
+/mapped/search.d.html
+\begin_inset Quotes erd
+\end_inset
+
+ you would then unpack the terms and display the correct results.
+ (You likely want to cache the search results for a while for the best user
+ experience!)
+\end_layout
+
+\begin_layout Itemize
+Another option is set a cookie, using Prudence's 
+\begin_inset Quotes eld
+\end_inset
+
+conversation.createCookie
+\begin_inset Quotes erd
+\end_inset
+
+ API, which you can then read in the redirected page using 
+\begin_inset Quotes eld
+\end_inset
+
+conversation.cookies
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Cookies are great if the result is very specific to the user, but note
+ that bookmarks to the result URL would display something different if the
+ cookie does not exist.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3860,11 +4001,28 @@ Capture Mode
 \end_layout
 
 \begin_layout Standard
-TODO
+Capture mode may seem similar to redirect mode: you supply a new URI which
+ gets displayed to the client.
+ The difference is that 
+\begin_inset Quotes eld
+\end_inset
+
+redirection
+\begin_inset Quotes erd
+\end_inset
+
+ happens on the server, rather than the client.
+ That means that the URI for the client will remain the same.
+ This is more efficient in that an extra round trip from the client is avoided.
+ However, it creates serious problems for bookmarking: the result URI ends
+ up being the same as the form URI.
+ Think carefully about the pros and cons of each approach in terms of what
+ would provide the best user experience.
+ (Also see manual mode, below, which is similar in behavior to capture mode.)
 \end_layout
 
 \begin_layout Standard
-You can access the form and the results using 
+You can access the form and the captured page using 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3881,6 +4039,248 @@ Savory.Forms.getCapturedResults
 \end_inset
 
 .
+ This API will only work in a captured page.
+ Let's see how this works by creating a 
+\begin_inset Quotes eld
+\end_inset
+
+/mapped/multiply/results.d.html
+\begin_inset Quotes erd
+\end_inset
+
+ for our results:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/savory/service/forms/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var form = Savory.Forms.getCapturedForm(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+var results = Savory.Forms.getCapturedResults(conversation)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+if (results && results.success) {
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+<p><%= results.msg %></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+<% } else { %>
+\end_layout
+
+\begin_layout Plain Layout
+
+<form method="post">
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p>First value: <input name="first" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p>Second value: <input name="second" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p><input type="submit" value="Multiply!" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+</form>
+\end_layout
+
+\begin_layout Plain Layout
+
+<% } %>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can specify the capture URI when we create the resource, in 
+\begin_inset Quotes eld
+\end_inset
+
+/libraries/resources.js
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+var multiplyForm = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	captureUri: '/multiply/results/',
+\end_layout
+
+\begin_layout Plain Layout
+
+	mode: 'capture' // we'll make this the default mode (instead of 'json')
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can also set 
+\begin_inset Quotes eld
+\end_inset
+
+captureSuccessUri
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+captureFailureUri
+\begin_inset Quotes erd
+\end_inset
+
+ separately.
+\end_layout
+
+\begin_layout Standard
+Or, you can set the URI dynamically by setting 
+\begin_inset Quotes eld
+\end_inset
+
+results.capture
+\begin_inset Quotes erd
+\end_inset
+
+ in your processing function.
+\end_layout
+
+\begin_layout Standard
+Finally, while it's not entirely necessary, you can hide the URI.
+ This will guarantee that it's only available for capturing, but the user
+ won't be able to reach it by entering the URL in their browser.
+ You do this in your application's 
+\begin_inset Quotes eld
+\end_inset
+
+routing.js
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+app.routes = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+	'/multiply/results/': 'hidden'
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -3962,8 +4362,7 @@ if (results && results.success) {
 
 \begin_layout Plain Layout
 
-<form action="<%= conversation.pathToBase + '/multiply/?mode=redirect' %>"
- method="post">
+<form method="post">
 \end_layout
 
 \begin_layout Plain Layout
@@ -4070,9 +4469,10 @@ Note how we're displaying different content according to whether the processing
 
 \begin_layout Standard
 So, is manual mode a good idea or not? If can provide a straightforward,
- quick-and-dirty way to use a form.
+ quick-and-dirty way to implement a form.
  Compact, too: you can create the instance, do all the processing, and put
  all the view code in a single file.
+ There's no need to set up routing for a resource.
 \end_layout
 
 \begin_layout Standard
@@ -4109,14 +4509,327 @@ page,
  an HTTP GET.
 \end_layout
 
+\begin_layout Standard
+You can mitigate some of these problems by using capture mode instead.
+ Capture mode will let you use a separate page for results, which can be
+ cached (on the server, at least: a POST will never cache on the client),
+ while keeping the URI the same.
+\end_layout
+
 \begin_layout Subsubsection
-Rendering an HTML Form
+Low-Level Manual Mode
+\end_layout
+
+\begin_layout Standard
+So, this 
+\begin_inset Quotes eld
+\end_inset
+
+mode
+\begin_inset Quotes erd
+\end_inset
+
+ actually does not use the Savory Forms Service at all, instead it relies
+ directly on the Prudence API.
+ We thought it would be a good idea to include it here for the sake of completio
+n.
+ Sometimes, even manual mode may not be quick-and-dirty enough! Note that
+ validation is very, very basic: if the value cannot be converted, you will
+ simply get a null.
+\end_layout
+
+\begin_layout Standard
+Here's how it would look:
 \end_layout
 
 \begin_layout Standard
 \begin_inset listings
 inline false
 status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
+
+\begin_layout Plain Layout
+
+<%
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/prudence/resources/')
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/sincerity/objects/')
+\end_layout
+
+\begin_layout Plain Layout
+
+document.executeOnce('/sincerity/templates/')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+var form
+\end_layout
+
+\begin_layout Plain Layout
+
+if (conversation.request.method.name == 'POST') {
+\end_layout
+
+\begin_layout Plain Layout
+
+	form = Prudence.Resources.getForm(conversation, {
+\end_layout
+
+\begin_layout Plain Layout
+
+		first: 'float',
+\end_layout
+
+\begin_layout Plain Layout
+
+		second: 'int'
+\end_layout
+
+\begin_layout Plain Layout
+
+	})
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+if (form && Sincerity.Objects.exists(form.first) && Sincerity.Objects.exists(form.seco
+nd)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	form.result = Number(form.first) * Number(form.second)
+\end_layout
+
+\begin_layout Plain Layout
+
+%>
+\end_layout
+
+\begin_layout Plain Layout
+
+<p><%= '{first} times {second} equals {result}'.cast(form) %></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+<% } else { %>
+\end_layout
+
+\begin_layout Plain Layout
+
+<form method="post">
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p>First value: <input name="first" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p>Second value: <input name="second" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+	<p><input type="submit" value="Multiply!" /></p>
+\end_layout
+
+\begin_layout Plain Layout
+
+</form>
+\end_layout
+
+\begin_layout Plain Layout
+
+<% } %>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Rendering an Internationalized HTML Form
+\end_layout
+
+\begin_layout Standard
+In all the above examples, we explicitly entered the HTML for the form and
+ its fields.
+ But, Savory Forms can also generate the HTML for you, and moreover use
+ the Internationalization Service, in conjunction with the Authorization
+ Service, to render the correct text for the user's preferred language.
+\end_layout
+
+\begin_layout Standard
+The rendered HTML is very straightforward: it's a simple <input> tag when
+ using 
+\begin_inset Quotes eld
+\end_inset
+
+htmlText
+\begin_inset Quotes erd
+\end_inset
+
+ (or a <textarea> tag when usng 
+\begin_inset Quotes eld
+\end_inset
+
+htmlTextArea
+\begin_inset Quotes erd
+\end_inset
+
+), with a connected <label> prepended.
+ If the field failed validation then an extra <div> is appended with the
+ validation error message.
+ Furthermore, in case of validation error, all tags for the field will get
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+error
+\begin_inset Quotes erd
+\end_inset
+
+ class, allowing you to use CSS in order to stylize validation errors.
+\end_layout
+
+\begin_layout Standard
+You should add the 
+\begin_inset Quotes eld
+\end_inset
+
+results
+\begin_inset Quotes erd
+\end_inset
+
+ of the form if you have them (they are available in capture mode and manual
+ mode) to the method calls.
+ This will render errors properly, and also set the values of the form to
+ the previous values, making it easier for the user to correct the form.
+\end_layout
+
+\begin_layout Standard
+Here's an example using manual mode, which also uses CSS to stylize form
+ errors:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<html>
+\end_layout
+
+\begin_layout Plain Layout
+
+<head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<style>
+\end_layout
+
+\begin_layout Plain Layout
+
+form input.error {
+\end_layout
+
+\begin_layout Plain Layout
+
+	border: 1px solid red;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+form div.error {
+\end_layout
+
+\begin_layout Plain Layout
+
+	color: red;
+\end_layout
+
+\begin_layout Plain Layout
+
+	display: inline;
+\end_layout
+
+\begin_layout Plain Layout
+
+	padding-left: 5px;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+</style>
+\end_layout
+
+\begin_layout Plain Layout
+
+</head>
+\end_layout
+
+\begin_layout Plain Layout
+
+<body>
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -4154,54 +4867,34 @@ var results = form.handle(conversation)
 
 \begin_layout Plain Layout
 
-	<div>
+	<div><%= form.htmlText({name: 'first', conversation: conversation, results:
+ results}) %></div>
 \end_layout
 
 \begin_layout Plain Layout
 
-		<%= form.htmlText({name: 'first', conversation: conversation, results:
- results}) %>
+	<div><%= form.htmlText({name: 'second', conversation: conversation, results:
+ results}) %></div>
 \end_layout
 
 \begin_layout Plain Layout
 
-	</div>
-\end_layout
-
-\begin_layout Plain Layout
-
-	<div>
-\end_layout
-
-\begin_layout Plain Layout
-
-		<%= form.htmlText({name: 'second', conversation: conversation, results:
- results}) %>
-\end_layout
-
-\begin_layout Plain Layout
-
-	</div>
-\end_layout
-
-\begin_layout Plain Layout
-
-	<div>
-\end_layout
-
-\begin_layout Plain Layout
-
-		<input type="submit" value="Multiply!" />
-\end_layout
-
-\begin_layout Plain Layout
-
-	</div>
+	<div><input type="submit" value="Multiply!" /></div>
 \end_layout
 
 \begin_layout Plain Layout
 
 </form>
+\end_layout
+
+\begin_layout Plain Layout
+
+</body>
+\end_layout
+
+\begin_layout Plain Layout
+
+</html>
 \end_layout
 
 \end_inset
