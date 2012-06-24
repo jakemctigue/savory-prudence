@@ -1,367 +1,62 @@
 <%& '/site/header/' %>
 
-<table width="100%" cellpadding="0" cellspacing="0"><tr valign="top">
-	<td width="50%" style="padding-right: 10px;">
+<h1>Savory Examples</h1>
 
-<h1>About Savory</h1>
 <p>
-    The Savory Framework is a collection of ready-to-use code to help you tackle much of the dreary work required for building massively multi-user web applications.
-	It relies on and fully embraces <a href="http://threecrickets.com/prudence/">Prudence</a>
-    (the "Savory JavaScript" flavor) and <a href="http://www.mongodb.org/">MongoDB</a>, two platforms designed from the ground-up for REST-friendly scalability.
-	With Savory you can quickly get users logging in, accessing data with permissions, subscribing to email notifications, shopping and paying you, interacting with each
-	other, and managing their own content on your site. It lets you cleanly integrate with third party technologies and services,
-	from <a href="http://www.sencha.com/products/extjs/">Ext JS</a> and <a href="http://www.sencha.com/products/touch/">Sencha Touch</a> to Facebook.
-</p>
-<p align="center">
-	<img src="media/savory/savory.png" style="padding: 5px;" />
-</p>
-
-<h3>Savor Every Bite (And Byte)</h3>
-<p>
-    Savory's design principles are minimalism (no dependencies beyond Prudence and MongoDB) and hackability.
-    With JavaScript on the server, in the database and on the client, you never have to switch programming paradigms, and can even share code among platforms.
+	Welcome to the Savory Framework!
 </p>
 <p>
-    Though an effort has been made for the code to be immediately usable, you are encouraged to mix, match, cut, paste and otherwise make Savory work best for you.
-    This is especially easy due to JavaScript's dynamism and closures on the one hand, and MongoDB's ability to accept any JavaScript-compatible data structure
-    on the other.
+	This application is designed to help you learn how to use Savory.
+	It is designed as a collection of live examples for every single Savory feature and service.
+	Together with each example, we've also included the relevant chapter from the Savory Manual,
+	and provided a link to the example's source code, as well as the relevant API documentation. 
 </p>
 <p>
-    The developers are battle-tested web developers and admins tired of bloated "automagical" frameworks, which seem to do a lot out of the box
-    but are very difficult to hack, and can't scale well without heavy ... well, hacking. Savory is ready both for massive scale and for your butcher knife. 
-    Go at it!
+	To navigate, use the menu on the left. When reading the manual, a small floating menu will
+	appear at the bottom right to help you move between sections.
 </p>
 <p>
-    And it tastes good. Mmm... savory.
+	There's a <i>lot</i> of information here, and it may be overwhelming! Where to start?
+	This really depends on what has drawn you to Savory in the first place. So, let make a few
+	suggested itineraries:
 </p>
+
+
+<h3>Using Savory to Create a CMS-Like Web Application</h3>
 <p>
-	Don't forget to check out <a href="http://code.google.com/p/mongo-vision/">MongoVision</a>, a Prudence-based MongoDB admin tool that
-	can make your Savory experience even tastier.
+	Savory contains several building blocks for this. The most important is the
+	<a href="example/service/documents/">Documents Service</a>. You'll then want to
+	look at the higher-level features, the <a href="example/feature/wiki/">Discussion Feature</a>,
+	the <a href="example/feature/wiki/">Wiki Feature</a> and the <a href="example/feature/blog/">Blog Feature</a>.
+	Also of immediate use are the <a href="example/service/syndication/">Syndication Service</a> and
+	the <a href="example/service/linkback/">Linkback Service</a>.
 </p>
 
-<h2>Drop-In Features</h2>
+
+<h3>Using Savory to Create Social Networking Web Application</h3>
 <p>
-    High-level features ready to drop into any web application.
+	Start with the <a href="example/service/authentication/">Authentication Service</a> to see
+	how you can allow social networking users to login to your application. Also check out
+	<a href="example/integration/gravatar/">Gravatar Integration</a>.
 </p>
-<ul>
-    <li>
-        <strong>Blog</strong>: compose documents from the Documents Service into a blog, syndicate via the Syndication Service
-		to RSS/ATOM, embed comments using the Discussion Feature, plus Trackback support
-		<a href="<%= conversation.pathToBase %>/about/feature/blog/">(about)</a>
-    </li>
-    <li>
-        <strong>Console</strong>: execute server-side code, watch logs, and save programs for later... on the web --
-		how have you survived this far without this awesome debugging tool?
-		<a href="<%= conversation.pathToBase %>/about/feature/console/">(about)</a>
-    </li>
-    <li>
-        <strong>Contact Us</strong>: let users ask questions, report bugs, etc. (CAPTCHA-protected for anonymous users)
-		<a href="<%= conversation.pathToBase %>/about/feature/contact-us/">(about)</a>
-    </li>
-    <li>
-        <strong>Discussion</strong>: manage complete forums, or just attach threaded comments to blogs, wikis, etc.
-		<a href="<%= conversation.pathToBase %>/about/feature/discussion/">(about)</a>
-    </li>
-    <li>
-        <strong>Registration</strong>: let users create logins for themselves, with CAPTCHA and expirable email-based confirmation
-		<a href="<%= conversation.pathToBase %>/about/feature/registration/">(about)</a>
-    </li>
-    <li>
-        <strong>SEO</strong>: keep search engines happy via robust sitemap.xml and robots.txt generation,
-		with support for <i>very large</i> sitemaps divided into many compressed files
-		<a href="<%= conversation.pathToBase %>/about/feature/seo/">(about)</a>
-    </li>
-    <li>
-        <strong>Shopping Cart</strong>: let users save lists of items, manipulate them, and eventually check out with PayPal or Google Checkout
-		(todo)
-    </li>
-    <li>
-        <strong>Wiki</strong>: compose documents from the Documents Service with full-page HTML templates editable
-		according to fine-grained permissions from the Authorization Service, and embed comments using the
-		Discussion Feature
-		<a href="<%= conversation.pathToBase %>/about/feature/wiki/">(about)</a>
-    </li>
-</ul>
 
-<h2>Application Services</h2>
+
+<h3>Using Savory to Create an Ext JS or Sencha Touch Web Application</h3>
 <p>
-    The bread and butter of any web application.
+	This is a rich area of Savory, and support for these client-side frameworks is very
+	comprehensive. Start with the <a href="example/integration/sencha/">Sencha Integration</a>
+	page, and move form there to exploring the features you need. It will lead you
+	to also exploring the <a href="example/service/rest/">REST Service</a> and the
+	<a href="example/service/rpc/">RPC Service</a>
 </p>
-<ul>
-    <li>
-        <strong>Authentication</strong>: user logins with random salt password encryption, plus support for external authentication via
-		Facebook, Windows Live, Twitter and OpenID (the latter tested with Google, Yahoo, Myspace and LiveJournal)
-		<a href="<%= conversation.pathToBase %>/about/service/authentication/">(about)</a>
-    </li>
-    <li>
-        <strong>Authorization</strong>: fine-grained, cascading, inheritable, cached permissions by user and group
-		<a href="<%= conversation.pathToBase %>/about/service/authorization/">(about)</a>
-    </li>
-    <li>
-        <strong>Backup</strong>: high-performance, multithreaded, flexible backup of your MongoDB data
-		<a href="<%= conversation.pathToBase %>/about/service/backup/">(about)</a>
-    </li>
-    <li>
-        <strong>Cache</strong>: general-purpose expirable MongoDB-backed caches, with support for function decorators to cache any return value
-		<a href="<%= conversation.pathToBase %>/about/service/cache/">(about)</a>
-    </li>
-    <li>
-        <strong>Documents</strong>: editable markup-rendered HTML documents with site-wide revision control;
-		useful building blocks for wikis, blogs, CMS, etc.
-		<a href="<%= conversation.pathToBase %>/about/service/documents/">(about)</a>
-    </li>
-    <li>
-        <strong>Events</strong>: synchronous, asynchronous and distributed event system
-		<a href="<%= conversation.pathToBase %>/about/service/events/">(about)</a>
-    </li>
-    <li>
-        <strong>Internationalization</strong>: use cached, localized, inheritable text packs from MongoDB or file;
-		native support for right-to-left languages
-		<a href="<%= conversation.pathToBase %>/about/service/internationalization/">(about)</a>
-    </li>
-    <li>
-        <strong>Linkback</strong>: a clean implementation of <a href="http://www.sixapart.com/pronet/docs/trackback_spec">Trackback</a> and
-		<a href="http://www.hixie.ch/specs/pingback/pingback">Pingback</a>, useful for blogs and wikis
-		<a href="<%= conversation.pathToBase %>/about/service/linkback/">(about)</a>
-    </li>
-    <li>
-        <strong>Nonces</strong>: expirable number-used-once generator
-		<a href="<%= conversation.pathToBase %>/about/service/nonces/">(about)</a>
-    </li>
-    <li>
-        <strong>Notification</strong>: massive-scale subscription and broadcasting, with support for digests;
-		pluggable delivery services (email, MongoDB-based inboxes, IM, SMS, etc.); integrates with Authentication Service
-		to use each user's personal perferences
-		<a href="<%= conversation.pathToBase %>/about/service/notification/">(about)</a>
-    </li>
-    <li>
-        <strong>Progress</strong>: keeps track of asynchronous processes; milestones along the way to process completion; useful for anything that would
-		require the user to "please wait" or come back later (searches, interaction with external services, mail delivery tracking, forum moderation, etc.)
-		<a href="<%= conversation.pathToBase %>/about/service/progress/">(about)</a>
-    </li>
-    <li>
-        <strong>RPC</strong>: lets you export plain-old JavaScript functions via <a href="http://www.xmlrpc.com/spec">XML-RPC</a> and
-		<a href="http://groups.google.com/group/json-rpc/web/json-rpc-2-0">JSON-RPC</a>
-		<a href="<%= conversation.pathToBase %>/about/service/rpc/">(about)</a>
-    </li>
-    <li>
-        <strong>REST</strong>: flexible RESTful resource routing over Prudence's strong foundation, with support for innovative
-		Document-Resource Mapping (DRM, not ORM!) to automatically attach a collection of MongoDB documents or sub-documents to a URI-space
-		<a href="<%= conversation.pathToBase %>/about/service/rest/">(about)</a>
-    </li>
-    <li>
-        <strong>Search</strong>: uses <a href="http://lucene.apache.org/">Lucene</a> to cleanly integrate textual search
-		into your applications
-		<a href="<%= conversation.pathToBase %>/about/service/search/">(about)</a>
-    </li>
-    <li>
-        <strong>Serials</strong>: unique serial integer generator
-		<a href="<%= conversation.pathToBase %>/about/service/serials/">(about)</a>
-    </li>
-    <li>
-        <strong>Syndication</strong>: produce Atom/RSS feeds
-		<a href="<%= conversation.pathToBase %>/about/service/syndication/">(about)</a>
-    </li>
-	
-</ul>
 
 
-
-	</td>
-	<td width="50%" style="padding-left: 10px;">		
-
-
-<h2>Integrations</h2>
-
-<h3>Web Services</h3>
+<h3>Using Savory to Create a RESTful API over MongoDB</h3>
 <p>
-    Clean-room implementations written in 100% JavaScript over the standard Prudence API with no external dependencies.
+	You want to start with the <a href="example/service/rest/">REST Service</a>, which can
+	automatically create a URI-space around your MongoDB database. 
 </p>
-<ul>
-    <li>
-        <strong><a href="http://developers.facebook.com/">Facebook</a></strong>: <a href="http://developers.facebook.com/docs/authentication/">authentication</a>,
-        <a href="http://developers.facebook.com/docs/reference/api/">Graph API</a> and
-		<a href="http://developers.facebook.com/docs/guides/canvas/">encrypted canvas application payloads</a>
-    </li>
-    <li>
-        <strong><a href="http://code.google.com/apis/checkout/">Google Checkout</a></strong>: <a href="http://code.google.com/apis/checkout/developer/Google_Checkout_Custom_Processing_How_To.html">order processing</a>
-    </li>
-    <li>
-        <strong><a href="http://en.gravatar.com/">Gravatar</a></strong>: avatars and user profiles
-		<a href="<%= conversation.pathToBase %>/about/integration/gravatar/">(about)</a>
-    </li>
-    <li>
-        <strong><a href="http://oauth.net/">OAuth</a></strong>: authentication
-    </li>
-    <li>
-        <strong><a href="http://openid.net/">OpenID</a></strong>: <a href="http://openid.net/specs/openid-authentication-2_0.html">XRDS discovery (Yadis) and authentication</a>
-    </li>
-    <li>
-        <strong><a href="https://www.paypal.com/">PayPal</a></strong>: <a href="https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&amp;content_ID=developer/e_howto_api_nvp_NVPAPIOverview">NVPAPI</a>
-		<a href="<%= conversation.pathToBase %>/about/integration/pay-pal/">(about)</a>
-    </li>
-    <li>
-        <strong><a href="http://www.google.com/recaptcha">reCAPTCHA</a></strong>: both JavaScript and "noscript" pure HTML modes
-    </li>
-    <li>
-        <strong><a href="http://twitter.com/">Twitter</a></strong>: <a href="http://dev.twitter.com/pages/auth">authentication</a>
-    </li>
-    <li>
-        <strong><a href="http://msdn.microsoft.com/en-us/windowslive/default">Windows Live</a></strong>: <a href="http://msdn.microsoft.com/en-us/library/bb676633.aspx">authentication</a> and
-		<a href="http://msdn.microsoft.com/en-us/library/bb264574.aspx">Messenger Connect</a>
-    </li>
-</ul>
-
-<h3>Client Frameworks</h3>
-<p>
-	Client-side JavaScript meets server-side JavaScript meets db-side JavaScript in a sexy ménage à trois.
-</p>
-<ul>
-	<!--
-	<li>
-		<strong><a href="http://www.datatables.net/">DataTables</a></strong>: back this popular jQuery table widget directly from MongoDB
-	</li>
-	-->
-    <li>
-        <strong><a href="http://www.sencha.com/products/extjs/">Ext JS</a></strong> and <strong><a href="http://www.sencha.com/products/touch/">Sencha Touch</a></strong>:
-		back Ext JS grid <a href="<%= conversation.pathToBase %>/about/integration/sencha/grids/">(about)</a>,
-		tree <a href="<%= conversation.pathToBase %>/about/integration/sencha/trees/">(about)</a> and chart <a href="<%= conversation.pathToBase %>/about/integration/sencha/charts/">(about)</a>
-		widgets directly from MongoDB, with support for all REST operations, paging and metadata; implicit support of MongoDB's extended JSON notation; AJAX forms <a href="<%= conversation.pathToBase %>/about/integration/sencha/forms/">(about)</a>;
-		clean, intuitive support for Ext Direct <a href="<%= conversation.pathToBase %>/about/integration/sencha/direct/">(about)</a>
-    </li>
-	<!--
-	<li>
-		<strong><a href="http://arshaw.com/fullcalendar/">FullCalendar</a></strong>: back this popular jQuery calendar widget directly from MongoDB,
-		with support for drag-and-drop editing
-	</li>
-	-->
-	<li>
-		<strong><a href="http://www.highcharts.com/">Highcharts</a></strong>: backend support for Highcharts exporting module (downloading and printing, rasters and PDFs)
-	</li>
-</ul>
 
 
-<h2>Foundation Libraries</h2>
-<p>
-	Until now, Rhino lacked a standard library. Now has arrived.
-</p>
-<ul>
-    <li>
-        <strong>Calendar</strong>: safe operations and arithmetic
-    </li>
-    <li>
-        <strong>Cryptography</strong>: encryption, decryption, hashing
-    </li>
-    <li>
-        <strong>Files</strong>: includes fast memory-mapped files, grep, tail in any encoding
-    </li>
-    <li>
-        <strong>Iterators</strong>: generic iterators for large series of entries, compatible with MongoDB cursors
-		<a href="<%= conversation.pathToBase %>/about/foundation/iterators/">(about)</a>
-    </li>
-    <li>
-        <strong>JSON</strong>: fast, robust conversion to and from JSON with support for MongoDB's extended JSON notations
-		and human-readable, nicely indented JSON; written in 100% Java to work directly with Rhino's native types for
-		best performance
-		(using <a href="http://code.google.com/p/mongodb-rhino/">MongoDB Rhino</a>)
-    </li>
-    <li>
-        <strong>JVM</strong>: convert between JavaScript and JVM data types
-    </li>
-    <li>
-        <strong>Localization</strong>: format and parse dates, times and currency
-    </li>
-    <li>
-        <strong>Lucene</strong>: high-performance indexing and searching of textual data, with support for search term highlighting
-		(using <a href="http://lucene.apache.org/">Lucene</a>)
-		<a href="<%= conversation.pathToBase %>/about/foundation/lucene/">(about)</a>
-    </li>
-    <li>
-        <strong>Mail</strong>: send SMTP mail, with support for mixed media messages and message templates (using <a href="http://www.oracle.com/technetwork/java/javamail/">JavaMail</a>)
-    </li>
-    <li>
-        <strong>MongoDB</strong>: fast, extra robust MongoDB driver that uses JavaScript data types directly, with native support for MongoDB's extended JSON notations
-		(using <a href="http://code.google.com/p/mongodb-rhino/">MongoDB Rhino</a> and <a href="https://github.com/mongodb/mongo-java-driver">MongoDB Java driver</a>)
-    </li>
-    <li>
-        <strong>Objects</strong>: lots of useful manipulations of JavaScript objects, arrays and strings
-    </li>
-    <li>
-        <strong>Rhino</strong>: filling in some platform gaps, such as getting the current stack trace
-    </li>
-    <li>
-        <strong>SVG</strong>: render SVG into PNG, JPEG or PDF (using <a href="http://xmlgraphics.apache.org/batik/">Batik</a>)
-    </li>
-    <li>
-        <strong>Templates</strong>: powerful and flexible string interpolation
-		<a href="<%= conversation.pathToBase %>/about/foundation/templates/">(about)</a>
-    </li>
-    <li>
-        <strong>Validation</strong>: server- <i>and</i> client-side, with the same code!
-    </li>
-    <li>
-        <strong>XML</strong>: parse, generate, prettify and build using a flexible extended JSON notation that can be stored as-is in MongoDB
-    </li>
-</ul>
-
-<h3>HTML Galore</h3>
-<ul>
-    <li>
-        <strong>HTML Builder</strong>: use a flexible extended JSON notation that can be stored as-is in MongoDB;
-		integrated with the Internationalization Service, including smart support for right-to-left languages
-    </li>
-    <li>
-        <strong>HTML Markup</strong>: extensible rendering of Textile, Confluence, MediaWiki, Trac, TWiki and Markdown markup into HTML
-		(using <a href="http://wiki.eclipse.org/Mylyn/Incubator/WikiText">Mylyn WikiText</a> and <a href="https://github.com/sirthias/pegdown">pegdown</a>)
-		<a href="<%= conversation.pathToBase %>/about/foundation/html/markup/">(about)</a>
-    </li>
-    <li>
-        <strong>HTML Parsing</strong>: parse and query HTML on the server with a jQuery-like language
-		(using <a href="http://jsoup.org/">jsoup</a>)
-    </li>
-</ul>
-
-<h3>Prudence Sugar</h3>
-<p>
-	Sweet and savory: a culinary delight.
-</p>
-<ul>
-    <li>
-        <strong>Blocks</strong>: enhance Prudence's HTML templates
-		<a href="<%= conversation.pathToBase %>/about/foundation/blocks/">(about)</a>
-    </li>
-    <li>
-        <strong>Lazy</strong>: lazy, thread-safe construction of global services via a straightforward DSL
-		<a href="<%= conversation.pathToBase %>/about/foundation/lazy/">(about)</a>
-    </li>
-    <li>
-        <strong>Logging</strong>: adds templating and lots of shortcuts to Prudence's logging API
-		<a href="<%= conversation.pathToBase %>/about/foundation/logging/">(about)</a>
-    </li>
-    <li>
-        <strong>Resources</strong>: powerful wrapper over Prudence's REST client, supports JSON, XML, web-forms, property sheets, and unserialized object passing for internal access
-		<a href="<%= conversation.pathToBase %>/about/foundation/resources/">(about)</a>;
-        includes a single API for HTML and AJAX forms, integrated with the validation library
-		<a href="<%= conversation.pathToBase %>/about/foundation/resources/forms/">(about)</a>
-    </li>
-    <li>
-        <strong>Tasks</strong>: a single API to start asynchronous Prudence tasks, whether in-process
-		or distributed in the Prudence cluster
-		<a href="<%= conversation.pathToBase %>/about/foundation/tasks/">(about)</a>
-    </li>
-</ul>
-
-<h2>Tools</h2>
-<ul>
-    <li>
-        <strong>Savory JsDoc</strong>: generate source-code documentation with this gorgeous, user-friendly Ext-JS-based template for <a href="http://code.google.com/p/jsdoc-toolkit/">JsDoc</a>
-		(was used to generate the <a href="api/">Savory API documentation</a>) 
-		<a href="<%= conversation.pathToBase %>/about/tool/js-doc/">(about)</a>
-    </li>
-</ul>
-
-
-	</td>
-</tr></table>
 
 <%& '/site/footer/' %>

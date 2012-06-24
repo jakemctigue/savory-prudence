@@ -3492,10 +3492,6 @@ The return value of this function is ignored.
 Usage
 \end_layout
 
-\begin_layout Subsubsection
-POSTing Form Values to the Resource
-\end_layout
-
 \begin_layout Standard
 If you've set up the resource as instructed above, you should be able to
  access it at the specified URI.
@@ -3515,7 +3511,14 @@ application/x-www-form-urlencoded
 Later on, we'll show you below how the Forms Service can help you render
  an HTML form, complete with validation error messages and internationalization
  support.
- For now, let's just start with a straightforward, literal HTML example:
+\end_layout
+
+\begin_layout Subsubsection
+HTML Forms
+\end_layout
+
+\begin_layout Standard
+For now, let's just start with a straightforward, literal HTML example:
 \end_layout
 
 \begin_layout Standard
@@ -3664,9 +3667,27 @@ mode
  the least amount of side-effects due to unintentional access to the resource.
 \end_layout
 
+\begin_layout Subsubsection
+Testing Your Form Resource with cURL
+\end_layout
+
 \begin_layout Standard
-You can also test your resource by using the cURL command line tool, like
- so:
+\begin_inset CommandInset href
+LatexCommand href
+name "cURL"
+target "http://curl.haxx.se/"
+
+\end_inset
+
+ is an HTTP command line tool based on the cURL library, available for a
+ great many Unix-like operating systems as well as Windows.
+ It's especially useful for testing RESTful APIs.
+ Here's a quick tutorial to get you started with using cURL with the Forms
+ Service.
+\end_layout
+
+\begin_layout Standard
+Try this command to send a POST to your form:
 \end_layout
 
 \begin_layout Standard
@@ -3686,8 +3707,7 @@ yapp/multiply/?human=true"
 \end_layout
 
 \begin_layout Standard
-See the REST Service for a quick tutorial on using cURL.
- Note that using the 
+Note that using the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -13620,6 +13640,53 @@ e"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Quote
+If you are using Apache to reverse-proxy to your server, you may find that
+ it does not proxy URLs with a 
+\begin_inset Quotes eld
+\end_inset
+
+%2f
+\begin_inset Quotes erd
+\end_inset
+
+.
+ To solve this problem, you need to add the 
+\begin_inset Quotes eld
+\end_inset
+
+AllowEncodedSlashes NoDecode
+\begin_inset Quotes erd
+\end_inset
+
+ directive, and also add the 
+\begin_inset Quotes eld
+\end_inset
+
+nocanon
+\begin_inset Quotes erd
+\end_inset
+
+ attribute to your 
+\begin_inset Quotes eld
+\end_inset
+
+ProxyPass
+\begin_inset Quotes erd
+\end_inset
+
+ directive.
+ For more information, see 
+\begin_inset CommandInset href
+LatexCommand href
+name "this discussion"
+target "http://stackoverflow.com/questions/4390436/need-to-allow-encoded-slashes-on-apache"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection

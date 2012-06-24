@@ -26,8 +26,8 @@ var duration = Sincerity.Localization.formatDuration(java.lang.System.currentTim
 <p>
 	In this example we cache the results of a function that purposely delays for a second to return its data
 	(the page will load slowly on purpose, not because Savory is slow!) and set the cache duration to 10 seconds.
-<p>
 </p>
+<p>
 	This means that if you keep refreshing this page, only once every
 	10 seconds will the function be called, and you will see a duration below of "1s" for calling the function.
 	Otherwise, the call will simply retrieve the last result from the cache, which should take about 1 or 2 milliseconds,

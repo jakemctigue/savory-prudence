@@ -18,6 +18,35 @@ var results = form.handle(conversation)
 
 %>
 
+<h3>AJAX Forms</h3>
+<p>
+	These are the default, and make most sense for the kind of UI that Ext JS implies: the form does
+	a <i>background</i> (AJAX) POST to a URL, in the same format as standard HTML form. The difference is that
+	the response is not a regular web page seen by the user, but JSON data used by Ext JS to manage
+	errors, and also your own data as is necessary for your application. The whole page is not reloaded
+	(unless you explicitly do so in your code).  
+</p>
+<p>
+	<button id="ajax-form" class="open-form">Validation and masking</button>
+	<button id="ajax-form-half" class="open-form">With validation, without masking</button>
+	<button id="ajax-form-bare" class="open-form">No validation nor masking</button>
+</p>
+
+<h3>Ext Direct Forms</h3>
+<p>
+	These work similarly to AJAX forms, but the Ext Direct protocol is used instead of a generic HTML form post.
+	The advantages of using Ext Direct are that 1) you can simulate the form submit from your code, via an elegant and simple
+	function call, and 2) if you're using Ext Direct lot already, you can handle all client access, including forms, uniformly.
+</p>
+<p>
+	See Savory's <a href="../direct/">Ext Direct</a> page for more dicussion.
+</p>
+<p>
+	<button id="direct-form" class="open-form">Validation and masking</button>
+	<button id="direct-form-half" class="open-form">With validation, without masking</button>
+	<button id="direct-form-bare" class="open-form">No validation nor masking</button>
+</p>
+
 <h3>Standard Forms</h3>
 <p>
 	These work the same way as HTML's &lt;form&gt; tag (and in fact use it behind the scenes): the browser
@@ -55,35 +84,6 @@ Ext.onReady(function() {
 </script>
 <%}}%>
 <% } %>
-
-<h3>AJAX Forms</h3>
-<p>
-	These are the default, and make most sense for the kind of UI that Ext JS implies: the form does
-	a <i>background</i> (AJAX) POST to a URL, in the same format as standard HTML form. The difference is that
-	the response is not a regular web page seen by the user, but JSON data used by Ext JS to manage
-	errors, and also your own data as is necessary for your application. The whole page is not reloaded
-	(unless you explicitly do so in your code).  
-</p>
-<p>
-	<button id="ajax-form" class="open-form">Validation and masking</button>
-	<button id="ajax-form-half" class="open-form">With validation, without masking</button>
-	<button id="ajax-form-bare" class="open-form">No validation nor masking</button>
-</p>
-
-<h3>Ext Direct Forms</h3>
-<p>
-	These work similarly to AJAX forms, but the Ext Direct protocol is used instead of a generic HTML form post.
-	The advantages of using Ext Direct are that 1) you can simulate the form submit from your code, via an elegant and simple
-	function call, and 2) if you're using Ext Direct lot already, you can handle all client access, including forms, uniformly.
-</p>
-<p>
-	See Savory's <a href="../direct/">Ext Direct</a> page for more dicussion.
-</p>
-<p>
-	<button id="direct-form" class="open-form">Validation and masking</button>
-	<button id="direct-form-half" class="open-form">With validation, without masking</button>
-	<button id="direct-form-bare" class="open-form">No validation nor masking</button>
-</p>
 
 <%{{ foot %>
 <script type="text/javascript">
