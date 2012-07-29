@@ -356,8 +356,8 @@ Savory.Events = Savory.Events || function() {
 	    /** @ignore */
 	    Public._construct = function(name) {
 	    	name = name || 'savory.service.events.distributedStore'
-			this.events = com.hazelcast.core.Hazelcast.getMultiMap(name)
-			this.listeners = com.hazelcast.core.Hazelcast.getMap(name + '.listeners')
+			this.events = application.hazelcast.getMultiMap(name)
+			this.listeners = application.hazelcast.getMap(name + '.listeners')
 	    }
 
 	    Public.subscribe = function(name, listener) {

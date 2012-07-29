@@ -733,7 +733,7 @@ Savory.REST = Savory.REST || function() {
 		/** @ignore */
 		Public._construct = function(config) {
 			if (!Sincerity.Objects.exists(this.map)) {
-				this.map = com.hazelcast.core.Hazelcast.getMap(this.name)
+				this.map = application.hazelcast.getMap(this.name)
 				if (this.map.empty && Sincerity.Objects.exists(this.documents)) {
 					for (var k in this.documents) {
 						this.map.put(k, Sincerity.JSON.to(this.documents[k]))
