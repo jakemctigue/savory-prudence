@@ -3,6 +3,7 @@ document.executeOnce('/savory/service/rest/')
 document.executeOnce('/savory/service/rpc/')
 document.executeOnce('/savory/service/forms/')
 document.executeOnce('/savory/integration/frontend/sencha/')
+document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/jvm/')
 
 // For the REST Service example
@@ -117,6 +118,7 @@ function getTextpackNodeText(id, node) {
 // The resources
 
 resources = {
+	'log':                      new Prudence.Resources.LoggingResource(),
 	'calc.rpc':                 new Savory.RPC.Resource({namespaces: {Calc: Calc}}),
 	'calc.direct':              new Savory.Sencha.DirectResource({name: 'Savory', namespaces: {Calc: CalcDirect}}),
 	'shoppingcart.direct':      new Savory.Sencha.DirectResource({name: 'Savory', objects: {ShoppingCart: new ShoppingCart()}}),

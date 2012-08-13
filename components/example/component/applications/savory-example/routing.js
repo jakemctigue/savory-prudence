@@ -13,6 +13,7 @@ app.routes = {
 			'staticWeb',
 			{type: 'staticWeb', root: sincerity.container.getLibrariesFile('web')}]}
 	],
+	'/log/':                           {type: 'implicit', id: 'log'},
 	'/rpc/calc/':                      {type: 'implicit', id: 'calc.rpc'},
 	'/direct/calc/':                   {type: 'implicit', id: 'calc.direct'},
 	'/direct/shoppingcart/':           {type: 'implicit', id: 'shoppingcart.direct'},

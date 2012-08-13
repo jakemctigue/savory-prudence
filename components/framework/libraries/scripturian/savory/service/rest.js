@@ -709,7 +709,7 @@ Savory.REST = Savory.REST || function() {
 	 * A RESTful resource for a distributed Hazelcast map.
 	 * 
 	 * @class
-	 * @name Savory.REST.DistributesResource
+	 * @name Savory.REST.DistributedResource
 	 * @augments Savory.REST.IteratorResource
 	 * 
 	 * @param {Object|String} config
