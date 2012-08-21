@@ -1,0 +1,48 @@
+<%& '/site/header/' %>
+
+<%
+
+document.executeOnce('/orient-db/')
+
+var db = OrientDB.open({uri: 'local:scratchpad'})
+
+try {
+	try {
+	db.execute('create property Person.first string')
+	} catch (x) {}
+	try {
+	db.execute('create index Person.first notunique')
+	} catch (x) {}
+
+	db.begin()
+	var doc = db.newDocument('Person', {
+		first: 'Tal',
+		last: 'Liron',
+		address: {street: '3021 W. Wilson Ave', city: 'Chicago'}
+	})
+	doc.save()
+	db.commit()
+
+	var results = db.query('select * from index:Person.first where key = \'Tal\'')
+	//var results = db.query('select * from Person')
+	for (var i = results.iterator(); i.hasNext(); ) {
+		var o = i.next()
+		o = o.field('rid')
+		print(o.toJSON())
+		print('<br>')
+	}
+}
+finally {
+	db.close()
+}
+
+
+%>
+
+<h1>OrientDB Experiment</h1>
+
+<p>
+	Click <a href="sample/">here</a> to see the sample resource.
+</p>
+
+<%& '/site/footer/' %>
