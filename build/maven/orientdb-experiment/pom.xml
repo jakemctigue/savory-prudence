@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.threecrickets.savory</groupId>
-	<artifactId>savory-framework</artifactId>
+	<artifactId>orientdb-experiment</artifactId>
 	<version>1.0-beta1</version>
 	<packaging>pom</packaging>
 
-	<name>The Savory Framework</name>
-	<description>A RESTful web development framework based on Prudence and MongoDB.</description>
+	<name>The Savory Framework: OrientDB Experiment Application</name>
+	<description>An OrientDB experiment application for the Savory Framework.</description>
 	<url>http://threecrickets.com/savory/</url>
 	<inceptionYear>2011</inceptionYear>
 
@@ -49,79 +49,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.threecrickets.prudence</groupId>
-			<artifactId>prudence-distributed</artifactId>
-			<version>2.0-beta1</version>
+			<groupId>com.threecrickets.savory</groupId>
+			<artifactId>savory-framework</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.threecrickets.sincerity.library</groupId>
-			<artifactId>sincerity-mongodb</artifactId>
-			<version>1.70</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sencha</groupId>
-			<artifactId>ext-js</artifactId>
-			<version>4.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sencha</groupId>
-			<artifactId>sencha-touch</artifactId>
-			<version>2.0.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.codemirror</groupId>
-			<artifactId>codemirror</artifactId>
-			<version>2.21</version>
-		</dependency>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javamail</artifactId>
-			<version>1.4.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-highlighter</artifactId>
-			<version>3.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.pegdown</groupId>
-			<artifactId>pegdown</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.mylyn</groupId>
-			<artifactId>wikitext-confluence</artifactId>
-			<version>1.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.mylyn</groupId>
-			<artifactId>wikitext-mediawiki</artifactId>
-			<version>1.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.mylyn</groupId>
-			<artifactId>wikitext-twiki</artifactId>
-			<version>1.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.mylyn</groupId>
-			<artifactId>wikitext-tracwiki</artifactId>
-			<version>1.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.mylyn</groupId>
-			<artifactId>wikitext-textile</artifactId>
-			<version>1.5.0</version>
+			<artifactId>sincerity-orientdb</artifactId>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 
-	<modules>
-		<module>example</module>
-		<module>orientdb-experiment</module>
-	</modules>
-
 	<build>
-		<directory>../cache/maven</directory>
+		<directory>../../cache/maven</directory>
 
 		<plugins>
 			<!-- jar artifact -->

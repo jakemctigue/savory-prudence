@@ -1,7 +1,7 @@
 
 app.hosts = {
-	'default': '/o/',
-	internal: '/o/' // If not provided will default to the application subdirectory name
+	'default': '/orientdb/',
+	internal: '/orientdb/' // If not provided will default to the application subdirectory name
 }
 
 app.routes = {

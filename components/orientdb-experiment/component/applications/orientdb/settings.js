@@ -1,15 +1,15 @@
 
 app.settings = {
 	description: {
-		name: 'o',
-		description: 'Skeleton for o application',
-		author: 'The Author',
-		owner: 'The Project'
+		name: 'OrientDB Experiment',
+		description: 'An experiment in using OrientDB with Prudence',
+		author: 'Three Crickets',
+		owner: 'The Savory Framework'
 	},
 
 	errors: {
 		debug: true,
-		homeUrl: 'http://threecrickets.com/prudence/', // Only used when debug=false
+		homeUrl: 'http://threecrickets.com/savory/', // Only used when debug=false
 		contactEmail: 'info@threecrickets.com' // Only used when debug=false
 	},
 	
