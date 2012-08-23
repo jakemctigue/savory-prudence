@@ -13,14 +13,14 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>../../../components/example</directory>
+			<directory>@ROOT@/components/example</directory>
 			<outputDirectory>.</outputDirectory>
 			<includes>
 				<include>**</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>../../cache/example</directory>
+			<directory>@ROOT@/build/cache/example</directory>
 			<outputDirectory>.</outputDirectory>
 			<includes>
 				<include>component/**</include>

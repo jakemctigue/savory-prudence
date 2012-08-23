@@ -3,6 +3,7 @@
 <%
 
 document.executeOnce('/orient-db/')
+document.executeOnce('/sincerity/json/')
 
 try {
 OrientDB.createDatabase({uri: 'remote:localhost/scratchpad', password: 'E5976D471E5F84A53D3E9FEE000B97B10007E0007533E757CE478988C12CB53F'})
@@ -14,27 +15,29 @@ try {
 	db.newClass('Person')
 	} catch (x) {}
 	try {
-	db.execute('create property Person.first string')
+	db.execute('CREATE PROPERTY Person.first STRING')
 	} catch (x) {}
 	try {
-	db.execute('create index Person.first notunique')
+	db.execute('CREATE INDEX Person.first NOTUNIQUE')
 	} catch (x) {}
 
 	//db.begin()
 	var doc = db.newDocument('Person', {
 		first: 'Tal',
 		last: 'Liron',
-		address: {street: '3021 W. Wilson Ave', city: 'Chicago'}
+		address: {street: '3021 W. Wilson Ave', city: 'Chicago'},
+		created: new Date()
 	})
 	doc.save()
 	//db.commit()
 
-	var results = db.query('select * from index:Person.first where key = \'Tal\'')
-	//var results = db.query('select * from Person')
-	for (var i = results.iterator(); i.hasNext(); ) {
-		var o = i.next()
-		o = o.field('rid')
-		print(o.toJSON())
+	var results = db.query('SELECT * FROM index:Person.first WHERE key = \'Tal\'')
+	//var results = db.query('SELECT * FROM Person')
+	while (results.hasNext()) {
+		var o = results.next()
+		//o = o.field('rid')
+		//print(o.toJSON())
+		print(Sincerity.JSON.to(o))
 		print('<br>')
 	}
 }
