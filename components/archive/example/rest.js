@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/rest/')
+document.executeOnce('/diligence/service/rest/')
 
 var data = [{
 	type: 'fish2',
@@ -31,12 +31,12 @@ for (var i = 0; i < 10; i++) {
 	data = data.concat(Sincerity.Objects.clone(data))
 }
 
-routes = Sincerity.Objects.merge(routes, Savory.Lazy.build(Savory.REST.lazyConfigsForMongoDbCollections('/mongo/')))
+routes = Sincerity.Objects.merge(routes, Diligence.Lazy.build(Diligence.REST.lazyConfigsForMongoDbCollections('/mongo/')))
 
-routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
+routes = Sincerity.Objects.merge(routes, Diligence.Lazy.build({
 	'/about/integration/sencha/charts/self-contained/': {
-		dependencies: '/savory/integration/frontend/sencha/',
-		name: 'Savory.Sencha.SelfContainedResource',
+		dependencies: '/diligence/integration/frontend/sencha/',
+		name: 'Diligence.Sencha.SelfContainedResource',
 		config: {
 			data: [{
 				type: 'Fish',
@@ -58,8 +58,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/about/integration/sencha/grids/mongo-db/': {
-		dependencies: '/savory/integration/frontend/sencha/',
-		name: 'Savory.Sencha.MongoDbResource',
+		dependencies: '/diligence/integration/frontend/sencha/',
+		name: 'Diligence.Sencha.MongoDbResource',
 		config: {
 			collection: 'users',
 			fields: ['name', {name: 'lastSeen', type: 'date'}],
@@ -70,8 +70,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/about/integration/sencha/grids/resource/': {
-		dependencies: '/savory/integration/frontend/sencha/',
-		name: 'Savory.Sencha.ResourceWrapper',
+		dependencies: '/diligence/integration/frontend/sencha/',
+		name: 'Diligence.Sencha.ResourceWrapper',
 		config: {
 			resource: {
 				uri: '/data/users/',
@@ -85,8 +85,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/about/integration/sencha/grids/self-contained/': {
-		dependencies: '/savory/integration/frontend/sencha/',
-		name: 'Savory.Sencha.SelfContainedResource',
+		dependencies: '/diligence/integration/frontend/sencha/',
+		name: 'Diligence.Sencha.SelfContainedResource',
 		config: {
 			data: data,
 			columns: {
@@ -97,8 +97,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/about/integration/sencha/trees/mongo-db/': {
-		dependencies: '/savory/integration/frontend/sencha/',
-		name: 'Savory.Sencha.MongoDbTreeResource',
+		dependencies: '/diligence/integration/frontend/sencha/',
+		name: 'Diligence.Sencha.MongoDbTreeResource',
 		config: {
 			collection: 'textpacks',
 			field: 'text',
@@ -109,8 +109,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/about/integration/sencha/trees/self-contained/': {
-		dependencies: '/savory/integration/frontend/sencha/',
-		name: 'Savory.Sencha.SelfContainedTreeResource',
+		dependencies: '/diligence/integration/frontend/sencha/',
+		name: 'Diligence.Sencha.SelfContainedTreeResource',
 		config: {
 			root: {
 				children: {
@@ -127,26 +127,26 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 	},
 	
 	/*'/rpc/': {
-		dependencies: '/savory/service/rpc/',
-		name: 'Savory.RPC.JsonResource'
+		dependencies: '/diligence/service/rpc/',
+		name: 'Diligence.RPC.JsonResource'
 	},*/
 	
 	'/data/sites/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: {
 			name: 'site',
 			plural: true
 		}
 	},
 	'/data/user/{id}/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: 'user'
 	},
 	'/data/users/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: {
 			name: 'user',
 			plural: true,
@@ -160,8 +160,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/data/user/{id}/email/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: {
 			name: 'user',
 			fields: 'email',
@@ -169,8 +169,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/data/users/emails/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: {
 			name: 'user',
 			plural: true,
@@ -179,8 +179,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/data/user/{id}/groups/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: {
 			name: 'user',
 			fields: 'authorization',
@@ -188,8 +188,8 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/data/users/groups/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: {
 			name: 'user',
 			plural: true,
@@ -198,20 +198,20 @@ routes = Sincerity.Objects.merge(routes, Savory.Lazy.build({
 		}
 	},
 	'/data/tests/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: {
 			name: 'test',
 			plural: true
 		}
 	},
 	'/data/test/{id}/': {
-		dependencies: '/savory/service/rest/',
-		name: 'Savory.REST.MongoDbResource',
+		dependencies: '/diligence/service/rest/',
+		name: 'Diligence.REST.MongoDbResource',
 		config: 'test'
 	}
 }))
 
-/*source2 = new Savory.Sencha.SelfContainedTreeResource({
+/*source2 = new Diligence.Sencha.SelfContainedTreeResource({
 	root: ['HI', {text: 'HI2', children: ['FISH']}]
 })*/

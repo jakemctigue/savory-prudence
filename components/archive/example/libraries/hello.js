@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -15,7 +15,7 @@ document.executeOnce('/prudence/logging/')
 document.executeOnce('/prudence/tasks/')
 
 Prudence.Logging.getLogger().info('Hello task:')
-var context = Savory.Tasks.getContext()
-var task = context['savory.task']
-var process = context['savory.process']
+var context = Diligence.Tasks.getContext()
+var task = context['diligence.task']
+var process = context['diligence.process']
 Prudence.Logging.getLogger().info('Hello {0} from {1}!', task.sayHello, process ? process.key : 'nobody')

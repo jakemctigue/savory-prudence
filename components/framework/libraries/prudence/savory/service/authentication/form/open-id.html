@@ -1,23 +1,23 @@
 <%
 
-document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/savory/service/html/')
+document.executeOnce('/diligence/service/authentication/')
+document.executeOnce('/diligence/service/html/')
 document.executeOnce('/prudence/resources/')
 
-var form = Savory.Resources.getCurrentForm(conversation)
-var results = Savory.Resources.getCurrentFormResults(conversation)
-var provider = Savory.Authentication.getProviderBySlug(conversation)
+var form = Diligence.Resources.getCurrentForm(conversation)
+var results = Diligence.Resources.getCurrentFormResults(conversation)
+var provider = Diligence.Authentication.getProviderBySlug(conversation)
 var siteName = provider.getName()
 
 %>
 <div class="centerpiece">
 	<form id="login-form" method="POST">
-		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.openId.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
+		<%= Diligence.HTML.build({_key: 'diligence.service.authentication.form.openId.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
 		<div class="field">
 			<%= form.htmlText('username', results) %>
 		</div>
 		<div class="buttons">
-			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.openId.button.login'}) %>
+			<%= Diligence.HTML.submit({_key: 'diligence.service.authentication.form.openId.button.login'}) %>
 		</div>
 	</form>
 </div>

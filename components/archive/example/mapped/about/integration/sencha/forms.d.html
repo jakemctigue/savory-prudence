@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -13,7 +13,7 @@ at http://threecrickets.com/
 
 %><%
 document.executeOnce('/about/integration/sencha/multiplier/')
-document.executeOnce('/savory/integration/frontend/sencha/')
+document.executeOnce('/diligence/integration/frontend/sencha/')
 document.executeOnce('/sincerity/json/')
 
 var results = multiplierForm.handle({conversation: conversation})
@@ -22,22 +22,22 @@ if (!results || (results.mode != 'json')) {
 conversation.locals.put('extJs', true)
 %>
 <%{{ 'page.main' %>
-<h1>Savory's Sencha Integration Library</h1>
+<h1>Diligence's Sencha Integration Library</h1>
 <h2>Ext JS Forms</h2>
 
 <p>
 	The Ext JS form widget allows for flexible form layouts, and includes various widgets for
 	representing form fields.
-	As far as submitting the form, Ext JS offers three (!) different ways of doing so, and Savory
+	As far as submitting the form, Ext JS offers three (!) different ways of doing so, and Diligence
 	supports them all.
 </p>
 <p>
-	Savory's support layer for Ext JS forms is really just a function added to <a href="../../../foundation/resources/forms/">Savory's form support</a>
+	Diligence's support layer for Ext JS forms is really just a function added to <a href="../../../foundation/resources/forms/">Diligence's form support</a>
 	in order to convert fields to Ext JS's format. Otherwise, all the server-side stuff you
 	see here is just how Savoy supports forms generally.
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Sencha">Savory.Sencha API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Sencha">Diligence.Sencha API documentation</a>
 	for more details.
 </p>
 
@@ -47,23 +47,23 @@ conversation.locals.put('extJs', true)
 	For all these demos, use the third button (without validation or masking) to test the server-side
 	validation, otherwise client-side validation will make sure that the server always gets valid
 	values. Also, make sure to hover over invalid fields, so you can see the error message! It's being
-	supplied by Savory's Internationalizaion service.
+	supplied by Diligence's Internationalizaion service.
 </p>
 
 
 <%{{ 'page.scripts' %>
 <script>
-var fieldsWithValues = <%= Sincerity.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null), true, true) %>;
+var fieldsWithValues = <%= Sincerity.JSON.to(Diligence.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null), true, true) %>;
 
-var fieldsWithValuesWithValidationWithoutMasking = <%= Sincerity.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null, true, false), true, true) %>;
+var fieldsWithValuesWithValidationWithoutMasking = <%= Sincerity.JSON.to(Diligence.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null, true, false), true, true) %>;
 
-var fieldsWithValuesBare = <%= Sincerity.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null, false, false), true, true) %>;
+var fieldsWithValuesBare = <%= Sincerity.JSON.to(Diligence.Sencha.getFormFields(conversation, multiplierForm, (results && !results.success) ? results : null, false, false), true, true) %>;
 
-var fields = <%= Sincerity.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm), true, true) %>;
+var fields = <%= Sincerity.JSON.to(Diligence.Sencha.getFormFields(conversation, multiplierForm), true, true) %>;
 
-var fieldsWithValidationWithoutMasking = <%= Sincerity.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, null, true, false), true, true) %>;
+var fieldsWithValidationWithoutMasking = <%= Sincerity.JSON.to(Diligence.Sencha.getFormFields(conversation, multiplierForm, null, true, false), true, true) %>;
 
-var fieldsBare = <%= Sincerity.JSON.to(Savory.Sencha.getFormFields(conversation, multiplierForm, null, false, false), true, true) %>;
+var fieldsBare = <%= Sincerity.JSON.to(Diligence.Sencha.getFormFields(conversation, multiplierForm, null, false, false), true, true) %>;
 
 var titles = {
 	'standard-form': 'Standard Form Multiplier',
@@ -130,7 +130,7 @@ function openForm(event, el) {
 	}
 	else if (el.id.substring(0, 6) == 'direct') {
 		config.api = {
-			submit: Savory.Multiplier.multiply
+			submit: Diligence.Multiplier.multiply
 		};
 		config.paramOrder = ['first', 'second'];
 	}
@@ -143,8 +143,8 @@ function openForm(event, el) {
 }
 
 Ext.onReady(function() {
-	Savory.addDirectProvider({
-		namespace: 'Savory',
+	Diligence.addDirectProvider({
+		namespace: 'Diligence',
 		baseUrl: '<%= conversation.pathToBase %>',
 		success: function() {
 			Ext.select('.open-form').on('click', openForm);
@@ -215,7 +215,7 @@ Ext.onReady(function() {
 	function call, and 2) if you're using Ext Direct lot already, you can handle all client access, including forms, uniformly.
 </p>
 <p>
-	See Savory's <a href="../direct/">Ext Direct</a> page for more dicussion.
+	See Diligence's <a href="../direct/">Ext Direct</a> page for more dicussion.
 </p>
 <p>
 	<button id="direct-form" class="open-form">Ext Direct</button>

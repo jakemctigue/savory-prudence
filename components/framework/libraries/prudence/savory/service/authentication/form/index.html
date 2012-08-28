@@ -1,21 +1,21 @@
 <%
 
-document.executeOnce('/savory/feature/registration/')
-document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/savory/service/html/')
+document.executeOnce('/diligence/feature/registration/')
+document.executeOnce('/diligence/service/authentication/')
+document.executeOnce('/diligence/service/html/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/xml/')
 document.executeOnce('/sincerity/objects/')
 
-var form = Savory.Resources.getCurrentForm(conversation)
-var results = Savory.Resources.getCurrentFormResults(conversation)
-var providers = Savory.Authentication.getProviders()
-var siteName = Savory.Registration.getSiteName()
+var form = Diligence.Resources.getCurrentForm(conversation)
+var results = Diligence.Resources.getCurrentFormResults(conversation)
+var providers = Diligence.Authentication.getProviders()
+var siteName = Diligence.Registration.getSiteName()
 
 %>
 <div class="centerpiece">
 	<form id="login-form" method="POST">
-		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.login.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
+		<%= Diligence.HTML.build({_key: 'diligence.service.authentication.form.login.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
 		<div class="field">
 			<%= form.htmlText('username', results) %>
 		</div>
@@ -23,17 +23,17 @@ var siteName = Savory.Registration.getSiteName()
 			<%= form.htmlPassword('password', results) %>
 		</div>
 		<div class="buttons">
-			<%= Savory.HTML.submit({_key: 'savory.service.authentication.form.login.button.login'}) %>
+			<%= Diligence.HTML.submit({_key: 'diligence.service.authentication.form.login.button.login'}) %>
 		</div>
 	</form>
 
 	<form>
-		<%= Savory.HTML.build({_key: 'savory.service.authentication.form.login.alternative.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
-		<div class="status"><%= Savory.HTML.a({_key: 'savory.service.authentication.form.login.alternative.register', href: conversation.pathToBase + '/registration/'}) %></div>
+		<%= Diligence.HTML.build({_key: 'diligence.service.authentication.form.login.alternative.title', _tag: 'h2', _cast: {siteName: siteName}}) %>
+		<div class="status"><%= Diligence.HTML.a({_key: 'diligence.service.authentication.form.login.alternative.register', href: conversation.pathToBase + '/registration/'}) %></div>
 <%
-if (!Savory.Objects.isEmpty(providers)) {
+if (!Diligence.Objects.isEmpty(providers)) {
 %>		
-		<%= Savory.HTML.div({_key: 'savory.service.authentication.form.login.alternative.services', _classes: ['status', 'field']}) %>
+		<%= Diligence.HTML.div({_key: 'diligence.service.authentication.form.login.alternative.services', _classes: ['status', 'field']}) %>
 		<div class="icon-matrix field"><div>
 <%
 	var count = 0

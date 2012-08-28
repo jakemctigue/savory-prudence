@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,14 +11,14 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/diligence/service/authentication/')
 document.executeOnce('/prudence/resources/')
 
 function handleBefore(conversation) {
-	var session = Savory.Authentication.getCurrentSession(conversation)
+	var session = Diligence.Authentication.getCurrentSession(conversation)
 	if (!session) {
-		Savory.Authentication.logger.info('Received an unauthenticated request to a private URI: ' + conversation.reference)
-		Savory.Authentication.redirect(conversation)
+		Diligence.Authentication.logger.info('Received an unauthenticated request to a private URI: ' + conversation.reference)
+		Diligence.Authentication.redirect(conversation)
 		return 'stop'
 	}
 	

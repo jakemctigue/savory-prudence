@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,23 +11,23 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/savory/service/authorization/')
+document.executeOnce('/diligence/service/authentication/')
+document.executeOnce('/diligence/service/authorization/')
 document.executeOnce('/prudence/resources/')
 
 function handleBefore(conversation) {
-	if (Prudence.Resources.hasRelativePrefix(conversation, application.globals.get('savory.service.authorization.excludeFromFilter'))) {
+	if (Prudence.Resources.hasRelativePrefix(conversation, application.globals.get('diligence.service.authorization.excludeFromFilter'))) {
 		return 'continue'
 	}
 
-	if (!conversation.locals.get('savory.service.authorization.permissions')) {
-		var session = Savory.Authentication.getCurrentSession(conversation)
+	if (!conversation.locals.get('diligence.service.authorization.permissions')) {
+		var session = Diligence.Authentication.getCurrentSession(conversation)
 		if (session) {
 			var user = session.getUser()
 			if (user) {
-				var permissions = Savory.Authorization.getPermissions(user)
+				var permissions = Diligence.Authorization.getPermissions(user)
 				if (permissions) {
-					conversation.locals.put('savory.service.authorization.permissions', permissions)
+					conversation.locals.put('diligence.service.authorization.permissions', permissions)
 				}
 			}
 		}

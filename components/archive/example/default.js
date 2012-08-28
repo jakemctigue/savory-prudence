@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework for Prudence
+// This file is part of Diligence for Prudence
 //
 // Copyright 2011 Three Crickets LLC.
 //
@@ -13,9 +13,9 @@
 
 document.execute('/defaults/application/')
 
-document.executeOnce('/savory/integration/backend/open-id/')
-document.executeOnce('/savory/integration/backend/oauth/')
+document.executeOnce('/diligence/integration/backend/open-id/')
+document.executeOnce('/diligence/integration/backend/oauth/')
 
-Savory.SEO.registerExtensions()
-Savory.OpenID.registerMediaType()
-Savory.OAuth.registerHelper()
+Diligence.SEO.registerExtensions()
+Diligence.OpenID.registerMediaType()
+Diligence.OAuth.registerHelper()

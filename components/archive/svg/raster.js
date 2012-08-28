@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -18,7 +18,7 @@ var testSVG = '<?xml version="1.0" standalone="no"?>' +
 '<path d="M2,111 h300 l-242.7,176.3 92.7,-285.3 92.7,285.3 z" style="fill:#FB2;stroke:#B00;stroke-width:4;stroke-linejoin:round"/>' +
  '</svg>'
 
-document.executeOnce('/savory/foundation/svg/')
+document.executeOnce('/diligence/foundation/svg/')
 document.executeOnce('/prudence/resources/')
 
 /** @ignore */
@@ -38,5 +38,5 @@ function handleGet(conversation) {
 function handlePost(conversation) {
 	//conversation.mediaTypeName = 'image/jpeg'
 	var svg = Prudence.Resources.getEntity(conversation, 'text')
-	return Savory.SVG.toRaster(svg, conversation.mediaTypeName)
+	return Diligence.SVG.toRaster(svg, conversation.mediaTypeName)
 }

@@ -4,12 +4,12 @@ app.settings = {
 		name: 'OrientDB Experiment',
 		description: 'An experiment in using OrientDB with Prudence',
 		author: 'Three Crickets',
-		owner: 'The Savory Framework'
+		owner: 'Diligence'
 	},
 
 	errors: {
 		debug: true,
-		homeUrl: 'http://threecrickets.com/savory/', // Only used when debug=false
+		homeUrl: 'http://threecrickets.com/diligence/', // Only used when debug=false
 		contactEmail: 'info@threecrickets.com' // Only used when debug=false
 	},
 	

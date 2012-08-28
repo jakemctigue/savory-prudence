@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -19,17 +19,17 @@
 // Version 1.0
 //
 
-document.executeOnce('/savory/foundation/classes/')
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/diligence/foundation/classes/')
+document.executeOnce('/diligence/foundation/html/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/prudence/resources/')
 
-var Savory = Savory || {}
+var Diligence = Diligence || {}
 
 /**
  * Parsing of HTML via a powerful <a href="http://jsoup.org/cookbook/extracting-data/selector-syntax">CSS/jQuery-like syntax</a>.
  *  
- * @name Savory.HTML.Parsing
+ * @name Diligence.HTML.Parsing
  * @namespace
  * @requires org.jsoup.jar
  * @see Visit <a href="http://jsoup.org/">jsoup</a>
@@ -37,15 +37,15 @@ var Savory = Savory || {}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
-	/** @exports Public as Savory.HTML */
+Diligence.HTML = Sincerity.Objects.merge(Diligence.HTML, function() {
+	/** @exports Public as Diligence.HTML */
     var Public = {}
 
 	/**
 	 * Parses HTML into a queryable, DOM-like structure.
 	 * 
 	 * @param {String} source The HTML source
-	 * @returns {Savory.HTML.Element}
+	 * @returns {Diligence.HTML.Element}
 	 */
 	Public.parse = function(source) {
 		return new Public.Element(org.jsoup.Jsoup.parse(source))
@@ -65,7 +65,7 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	 * Shortcut to request HTML and parse it.
 	 * 
 	 * @see Prudence.Resources#request
-	 * @see Savory.HTML#parse
+	 * @see Diligence.HTML#parse
 	 */
 	Public.request = function(params) {
 		if (!params.mediaType) {
@@ -80,12 +80,12 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	 * A queryable HTML element (JavaScript wrapper over org.jsoup.nodes.Element).
 	 * 
 	 * @class
-	 * @name Savory.HTML.Element
+	 * @name Diligence.HTML.Element
 	 * @param {org.jsoup.nodes.Element} element The wrapped jsoup element
-	 * @see Savory.HTML#parse
+	 * @see Diligence.HTML#parse
 	 */
-	Public.Element = Savory.Classes.define(function(Module) {
-		/** @exports Public as Savory.HTML.Element */
+	Public.Element = Diligence.Classes.define(function(Module) {
+		/** @exports Public as Diligence.HTML.Element */
 	    var Public = {}
 	    
 	    /** @ignore */
@@ -97,7 +97,7 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	     * Returns the first element matching the query.
 	     * 
 		 * @param {String} query See the <a href="http://jsoup.org/cookbook/extracting-data/selector-syntax">jsoup syntax</a>
-	     * @returns {Savory.HTML.Element}
+	     * @returns {Diligence.HTML.Element}
 	     */
 	    Public.selectFirst = function(query) {
 	    	var element = this.element.select(query).first()

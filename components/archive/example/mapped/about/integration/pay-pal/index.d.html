@@ -1,12 +1,12 @@
 <%& '/site/header/' %>
 <%
 
-document.executeOnce('/savory/integration/backend/pay-pal/')
-document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/diligence/integration/backend/pay-pal/')
+document.executeOnce('/diligence/service/authentication/')
 
-var session = Savory.Authentication.getCurrentSession(conversation)
+var session = Diligence.Authentication.getCurrentSession(conversation)
 if (!session) {
-	Savory.Authentication.redirect(conversation)
+	Diligence.Authentication.redirect(conversation)
 	conversation.stop()
 }
 

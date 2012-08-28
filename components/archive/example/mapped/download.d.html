@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -12,7 +12,7 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%& '/site/header/' %>
-<% var version = application.globals.get('savory.version.download') || application.globals.get('savory.version'); %>
+<% var version = application.globals.get('diligence.version.download') || application.globals.get('diligence.version'); %>
 
 <h1>Download</h1>
 
@@ -23,7 +23,7 @@ at http://threecrickets.com/
 	What you will be downloading right now is an "Early Bird" release. "Early," in that it's not yet at "1.0" quality: what's missing is some
 	more documentation and fleshing out a few last-in features. "Bird," in that it's the contemporary evolutionary descendent of dinosaurs, and
 	dinosaurs are very cool. The bulk of the code is here and fully functional, and of immediate use. There's nothing stopping you from creating
-	super-scalable, data-driven web and mobile applications with Savory right now.
+	super-scalable, data-driven web and mobile applications with Diligence right now.
 </p>
 
 <h2>Requirements</h2>
@@ -33,7 +33,7 @@ at http://threecrickets.com/
 	Prudence comes with a big, printable Creative-Commons-licensed manual. And there are some decent books about MongoDB out there.
 </p>
 
-<h2>How to Install the Savory Framework</h2>
+<h2>How to Install Diligence</h2>
 <p>
 	Pick one of the distributions below, download it and unzip it.
 </p>
@@ -42,32 +42,32 @@ at http://threecrickets.com/
 	in your JVM's classpath.)
 </p>
 <p>
-	Then put "savory-common.prudence.zip" and a "savory-dependencies-common.prudence.zip" (or its debug version if you're
+	Then put "diligence-common.prudence.zip" and a "diligence-dependencies-common.prudence.zip" (or its debug version if you're
 	using the debug edition) into your Prudence's /common/ subdirectory. Restart Prudence, and it will unpack these automagically.
 </p>
 
 
 <h2>How to Install the Demo Application</h2>
 <p>
-	The distribution comes with some demo data for MongoDB, all in the /demo-data/ directory. You need to put in the "savory"
+	The distribution comes with some demo data for MongoDB, all in the /demo-data/ directory. You need to put in the "diligence"
 	collection on MongoDB. An example command:
 </p>
 <pre>
-mongorestore --drop --db savory ./demo-data 
+mongorestore --drop --db diligence ./demo-data 
 </pre>
 <p>
-	Then put 'savory-demo-application.prudence.zip' into your Prudence's /applications/ subdirectory.
-	Restart Prudence, and it will unpack it automagically. You can then go to <a href="http://localhost:8080/savory/">http://localhost:8080/savory/</a>
+	Then put 'diligence-demo-application.prudence.zip' into your Prudence's /applications/ subdirectory.
+	Restart Prudence, and it will unpack it automagically. You can then go to <a href="http://localhost:8080/diligence/">http://localhost:8080/diligence/</a>
 	to see it. Have fun!
 </p>
 <p>
-	All the demo users have the password "savory". There is a user named "savory", too. 
+	All the demo users have the password "diligence". There is a user named "diligence", too. 
 </p>
 <p class="note">
-	Note: Many of Savory's integration features (Facebook, Twitter, PayPal, etc.) require you to create accounts on those services, which
-	then issue private security keys. You can edit the "/applications/savory/settings.js" with these keys, or otherwise
-	create a "/applications/savory/settings-extra.js" to override the default blank settings for these. Beyond that, these services
-	will likely need to callback to your application over the internet, so you may need to deploy the Savory demo application
+	Note: Many of Diligence's integration features (Facebook, Twitter, PayPal, etc.) require you to create accounts on those services, which
+	then issue private security keys. You can edit the "/applications/diligence/settings.js" with these keys, or otherwise
+	create a "/applications/diligence/settings-extra.js" to override the default blank settings for these. Beyond that, these services
+	will likely need to callback to your application over the internet, so you may need to deploy the Diligence demo application
 	on a publicly available site to appreciate it fully.
 </p>
 
@@ -76,8 +76,8 @@ mongorestore --drop --db savory ./demo-data
 <h3>Development Snapshot</h3>
 <p>
 	While in Early Bird status, you'll see multiple daily commits. Seriously, as soon as you download you'll already be out of date.
-	For people wanting to keep in touch with the path to Savory 1.0, we recommend using the development snapshot and updating frequently. 
-	<a href="http://code.google.com/p/savory-prudence/source/checkout">Get it via Subversion</a>.
+	For people wanting to keep in touch with the path to Diligence 1.0, we recommend using the development snapshot and updating frequently. 
+	<a href="http://code.google.com/p/diligence-prudence/source/checkout">Get it via Subversion</a>.
 	Easy, quick build with <a href="http://ant.apache.org/">Ant</a>.
 </p>
 <p>
@@ -86,10 +86,10 @@ mongorestore --drop --db savory ./demo-data
 
 <h3>Standard Edition</h3>	
 <p>
-	You probably want this! It includes everything you need to get Savory up and running.
+	You probably want this! It includes everything you need to get Diligence up and running.
 </p>
 <p>
-	<a href="http://savory-prudence.googlecode.com/files/savory-standard-<%= version %>.zip" onclick="javascript:pageTracker._trackPageview('/savory/download/files/savory-standard-<%= version %>.zip');">The Savory Framework: Standard Edition</a> (9mb)
+	<a href="http://diligence-prudence.googlecode.com/files/diligence-standard-<%= version %>.zip" onclick="javascript:pageTracker._trackPageview('/diligence/download/files/diligence-standard-<%= version %>.zip');">Diligence: Standard Edition</a> (9mb)
 </p>
 
 <h3>Debug Edition</h3>	
@@ -97,22 +97,22 @@ mongorestore --drop --db savory ./demo-data
 	This is identical to the standard edition, but also includes the debug versions of Ext JS and Sencha Touch.  
 </p>
 <p>
-	<a href="http://savory-prudence.googlecode.com/files/savory-debug-<%= version %>.zip" onclick="javascript:pageTracker._trackPageview('/savory/download/files/savory-debug-<%= version %>.zip');">The Savory Framework: Debug Edition</a> (11mb)
+	<a href="http://diligence-prudence.googlecode.com/files/diligence-debug-<%= version %>.zip" onclick="javascript:pageTracker._trackPageview('/diligence/download/files/diligence-debug-<%= version %>.zip');">Diligence: Debug Edition</a> (11mb)
 </p>
 
 <h3>Minimal Edition</h3>	
 <p>
-	This is Savory only, without any of its dependency libraries. This is useful if you just want to upgrade
+	This is Diligence only, without any of its dependency libraries. This is useful if you just want to upgrade
 	and you already have all the dependencies.  
 </p>
 <p>
-	<a href="http://savory-prudence.googlecode.com/files/savory-minimal-<%= version %>.zip" onclick="javascript:pageTracker._trackPageview('/savory/download/files/savory-minimal-<%= version %>.zip');">The Savory Framework: Minimal Edition</a> (1mb)
+	<a href="http://diligence-prudence.googlecode.com/files/diligence-minimal-<%= version %>.zip" onclick="javascript:pageTracker._trackPageview('/diligence/download/files/diligence-minimal-<%= version %>.zip');">Diligence: Minimal Edition</a> (1mb)
 </p>
 
 <h2>Need Help?</h2>
 <p>
-	Join the <a href="http://groups.google.com/group/prudence-community">Prudence Community</a>, which is where we'll be talking about Savory
-	related issues. And please open a bug on the <a href="http://code.google.com/p/savory-prudence/">community site</a>, or request a feature.
+	Join the <a href="http://groups.google.com/group/prudence-community">Prudence Community</a>, which is where we'll be talking about Diligence
+	related issues. And please open a bug on the <a href="http://code.google.com/p/diligence-prudence/">community site</a>, or request a feature.
 	We love bug reports!
 </p>
 

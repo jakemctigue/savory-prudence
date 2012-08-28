@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/rest/')
+document.executeOnce('/diligence/service/rest/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/templates/')
 document.executeOnce('/sincerity/json/')
@@ -23,7 +23,7 @@ document.executeOnce('/sincerity/validation/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/mongo-db/')
 
-var Savory = Savory || {}
+var Diligence = Diligence || {}
 
 /**
  * Integration with Sencha's Ext JS client framework. Extensible
@@ -31,7 +31,7 @@ var Savory = Savory || {}
  * with MongoDB integration.
  * <p>
  * See front-end companion utilities:
- *   /web/static/script/ext/savory/sencha.js
+ *   /web/static/script/ext/diligence/sencha.js
  * 
  * @namespace
  * @see Visit <a href="http://www.sencha.com/products/extjs/">Ext JS</a>
@@ -39,8 +39,8 @@ var Savory = Savory || {}
  * @author Tal Liron
  * @version 1.0
  */
-Savory.Sencha = Savory.Sencha || function() {
-	/** @exports Public as Savory.Sencha */
+Diligence.Sencha = Diligence.Sencha || function() {
+	/** @exports Public as Diligence.Sencha */
     var Public = {}
     
 	/**
@@ -49,7 +49,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * Can only be called from Prudence configuration scripts!
 	 */
 	Public.settings = function() {
-		resourcesPassThrough.push('/savory/integration/frontend/sencha/direct/')
+		resourcesPassThrough.push('/diligence/integration/frontend/sencha/direct/')
 	}
     
 	/**
@@ -68,7 +68,7 @@ Savory.Sencha = Savory.Sencha || function() {
 
 		params.debug = params.debug || (conversation.query.get('debug') == 'true')
 		params.indent = params.indent || '\t'
-		params.theme = params.theme || application.globals.get('savory.integration.frontend.sencha.defaultTheme')
+		params.theme = params.theme || application.globals.get('diligence.integration.frontend.sencha.defaultTheme')
 		params.theme = Sincerity.Objects.exists(params.theme) ? '-' + params.theme : ''
 		params.pathToBase = params.pathToBase || conversation.pathToBase
 
@@ -146,7 +146,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * You can translate the result into client-side code via Sincerity.JSON.to(result, true, true).
 	 * See {@link Sincerity.JSON#to}. 
 	 * 
-	 * @param conversation The Savory conversation
+	 * @param conversation The Diligence conversation
 	 * @param {Prudence.Resources.Form} form The form
 	 * @param [results] The results from a call to {@link Prudence.Resources.Form#handle}, used it initialize field
 	 *        values
@@ -157,7 +157,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	Public.getFormFields = function(conversation, form, results, clientValidation, clientMasking) {
 		clientValidation = Sincerity.Objects.ensure(clientValidation, form.clientValidation)
 		clientMasking = Sincerity.Objects.ensure(clientMasking, true)
-		var textPack = Sincerity.Objects.exists(conversation) ? Savory.Internationalization.getCurrentPack(conversation) : null
+		var textPack = Sincerity.Objects.exists(conversation) ? Diligence.Internationalization.getCurrentPack(conversation) : null
 
 		var sencha = []
 		
@@ -275,8 +275,8 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * implementation for truly RESTful applications.
 	 * 
 	 * @class
-	 * @name Savory.Sencha.Resource
-	 * @augments Savory.REST.Resource
+	 * @name Diligence.Sencha.Resource
+	 * @augments Diligence.REST.Resource
 	 * 
 	 * @param config
 	 * @param {String} [config.rootProperty='records']
@@ -284,11 +284,11 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param {String} [config.idProperty='id']
 	 */
 	Public.Resource = Sincerity.Classes.define(function() {
-		/** @exports Public as Savory.Sencha.Resource */
+		/** @exports Public as Diligence.Sencha.Resource */
 		var Public = {}
 
 		/** @ignore */
-		Public._inherit = Savory.REST.Resource
+		Public._inherit = Diligence.REST.Resource
 
 		/** @ignore */
 		Public._configure = ['fields', 'columns', 'rootProperty', 'idProperty', 'totalProperty']
@@ -299,7 +299,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			this.idProperty = this.idProperty || 'id'
 			this.totalProperty = this.totalProperty || 'total'
 			
-			Savory.Sencha.Resource.prototype.superclass.call(this, this)
+			Diligence.Sencha.Resource.prototype.superclass.call(this, this)
 		}
 		
 	    Public.mediaTypes = [
@@ -320,7 +320,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				meta: 'bool'
 			})
 			
-			//Savory.REST.logger.dump(query)
+			//Diligence.REST.logger.dump(query)
 			
 			if (query.columns) {
 				// "Get columns" mode
@@ -524,14 +524,14 @@ Savory.Sencha = Savory.Sencha || function() {
 	
 	/**
 	 * @class
-	 * @name Savory.Sencha.SelfContainedResource
-	 * @augments Savory.Sencha.Resource
+	 * @name Diligence.Sencha.SelfContainedResource
+	 * @augments Diligence.Sencha.Resource
 	 * 
 	 * @param config
 	 * @param config.data
 	 */
 	Public.SelfContainedResource = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.Sencha.SelfContainedResource */
+		/** @exports Public as Diligence.Sencha.SelfContainedResource */
 		var Public = {}
 
 		/** @ignore */
@@ -555,7 +555,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			
 			this.modificationTimestamp = new Date()
 			
-			Savory.Sencha.SelfContainedResource.prototype.superclass.call(this, this)
+			Diligence.Sencha.SelfContainedResource.prototype.superclass.call(this, this)
 		}
 	
 		Public.getTotal = function() {
@@ -614,8 +614,8 @@ Savory.Sencha = Savory.Sencha || function() {
 	
 	/**
 	 * @class
-	 * @name Savory.Sencha.MongoDbResource
-	 * @augments Savory.Sencha.Resource
+	 * @name Diligence.Sencha.MongoDbResource
+	 * @augments Diligence.Sencha.Resource
 	 * 
 	 * @param config
 	 * @param {MongoDB.Collection|String} this.config.collection
@@ -623,7 +623,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param {Boolean} [config.isObjectId=true] Whether the idProperty is a MongoDB ObjectID
 	 */
 	Public.MongoDbResource = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.Sencha.MongoDbResource */
+		/** @exports Public as Diligence.Sencha.MongoDbResource */
 		var Public = {}
 
 		/** @ignore */
@@ -654,7 +654,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				this.fields.push(this.idProperty)
 			}
 			
-			Savory.Sencha.MongoDbResource.prototype.superclass.call(this, this)
+			Diligence.Sencha.MongoDbResource.prototype.superclass.call(this, this)
 		}
 
 		Public.getTotal = function() {
@@ -721,8 +721,8 @@ Savory.Sencha = Savory.Sencha || function() {
 	
 	/**
 	 * @class
-	 * @name Savory.Sencha.ResourceWrapper
-	 * @augments Savory.Sencha.Resource
+	 * @name Diligence.Sencha.ResourceWrapper
+	 * @augments Diligence.Sencha.Resource
 	 * 
 	 * @param config
 	 * @param {String|Object} config.resource Basic config for {@link Prudence.Resources#request}
@@ -735,7 +735,7 @@ Savory.Sencha = Savory.Sencha || function() {
 	 * @param {String} [config.limitAttribute='limit']
 	 */
 	Public.ResourceWrapper = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.Sencha.ResourceWrapper */
+		/** @exports Public as Diligence.Sencha.ResourceWrapper */
 		var Public = {}
 
 		/** @ignore */
@@ -771,7 +771,7 @@ Savory.Sencha = Savory.Sencha || function() {
 				this.fields.push(this.idProperty)
 			}
 			
-			Savory.Sencha.ResourceWrapper.prototype.superclass.call(this, this)
+			Diligence.Sencha.ResourceWrapper.prototype.superclass.call(this, this)
 		}
 
 		Public.getTotal = function() {
@@ -840,19 +840,19 @@ Savory.Sencha = Savory.Sencha || function() {
 	
 	/**
 	 * @class
-	 * @name Savory.Sencha.TreeResource
-	 * @augments Savory.REST.Resource
+	 * @name Diligence.Sencha.TreeResource
+	 * @augments Diligence.REST.Resource
 	 */
 	Public.TreeResource = Sincerity.Classes.define(function() {
-		/** @exports Public as Savory.Sencha.TreeResource */
+		/** @exports Public as Diligence.Sencha.TreeResource */
 		var Public = {}
 
 		/** @ignore */
-		Public._inherit = Savory.REST.Resource
+		Public._inherit = Diligence.REST.Resource
 		
 		/** @ignore */
 		Public._construct = function(config) {
-			Savory.Sencha.TreeResource.prototype.superclass.call(this, this)
+			Diligence.Sencha.TreeResource.prototype.superclass.call(this, this)
 		}
 
 		Public.getChildren = function() {}
@@ -873,11 +873,11 @@ Savory.Sencha = Savory.Sencha || function() {
 
 	/**
 	 * @class
-	 * @name Savory.Sencha.SelfContainedTreeResource
-	 * @augments Savory.Sencha.TreeResource
+	 * @name Diligence.Sencha.SelfContainedTreeResource
+	 * @augments Diligence.Sencha.TreeResource
 	 */
 	Public.SelfContainedTreeResource = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.Sencha.SelfContainedTreeResource */
+		/** @exports Public as Diligence.Sencha.SelfContainedTreeResource */
 		var Public = {}
 
 		/** @ignore */
@@ -895,7 +895,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			
 			addNode.call(this, this.rootName, Sincerity.Objects.clone(this.root))
 			
-			Savory.Sencha.SelfContainedTreeResource.prototype.superclass.call(this, this)
+			Diligence.Sencha.SelfContainedTreeResource.prototype.superclass.call(this, this)
 		}
 		
 		Public.getChildren = function(name) {
@@ -969,11 +969,11 @@ Savory.Sencha = Savory.Sencha || function() {
 
 	/**
 	 * @class
-	 * @name Savory.Sencha.MongoDbTreeResource
-	 * @augments Savory.Sencha.TreeResource
+	 * @name Diligence.Sencha.MongoDbTreeResource
+	 * @augments Diligence.Sencha.TreeResource
 	 */
 	Public.MongoDbTreeResource = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.Sencha.MongoDbTreeResource */
+		/** @exports Public as Diligence.Sencha.MongoDbTreeResource */
 		var Public = {}
 
 		/** @ignore */
@@ -988,7 +988,7 @@ Savory.Sencha = Savory.Sencha || function() {
 			this.separator = this.separator || '/'
 			this.rootName = this.rootName || this.separator
 			
-			Savory.Sencha.MongoDbTreeResource.prototype.superclass.call(this, this)
+			Diligence.Sencha.MongoDbTreeResource.prototype.superclass.call(this, this)
 		}
 	
 		Public.getNode = function(id) {
@@ -1091,29 +1091,29 @@ Savory.Sencha = Savory.Sencha || function() {
 		'<!-- Ext JS -->\n' +
 		'{indent}<link rel="stylesheet" type="text/css" href="{base}/{stylePath}/css/ext-all{theme}.css" id="ext-theme" />\n' +
 		'{indent}<script type="text/javascript" src="{base}/{scriptPath}/ext-all.js"></script>\n\n' +
-		'{indent}<!-- Savory Extensions -->\n' +
-		'{indent}<script type="text/javascript" src="{base}/script/savory/integration/ext-js.js"></script>'
+		'{indent}<!-- Diligence Extensions -->\n' +
+		'{indent}<script type="text/javascript" src="{base}/script/diligence/integration/ext-js.js"></script>'
 	
 	var extJsDebugHead = '' +
 		'<!-- Ext JS Debug -->\n' +
 		'{indent}<link rel="stylesheet" type="text/css" href="{base}/{stylePath}/css/ext-all{theme}.css" id="ext-theme" />\n' +
 		'{indent}<script type="text/javascript" src="{base}/{scriptPath}/ext-debug.js"></script>\n\n' +
-		'{indent}<!-- Savory Extensions -->\n' +
-		'{indent}<script type="text/javascript" src="{base}/script/savory/integration/ext-js.js"></script>'
+		'{indent}<!-- Diligence Extensions -->\n' +
+		'{indent}<script type="text/javascript" src="{base}/script/diligence/integration/ext-js.js"></script>'
 
 	var senchaTouchHead = '' +
 		'<!-- Sencha Touch -->\n' +
 		'{indent}<link rel="stylesheet" type="text/css" href="{base}/{stylePath}/sencha-touch.css" id="ext-theme" />\n' +
 		'{indent}<script type="text/javascript" src="{base}/{scriptPath}/sencha-touch.js"></script>\n\n' +
-		'{indent}<!-- Savory Extensions -->\n' +
-		'{indent}<script type="text/javascript" src="{base}/script/savory/integration/sencha-touch.js"></script>'
+		'{indent}<!-- Diligence Extensions -->\n' +
+		'{indent}<script type="text/javascript" src="{base}/script/diligence/integration/sencha-touch.js"></script>'
 
 	var senchaTouchDebugHead = '' +
 		'<!-- Sencha Touch Debug -->\n' +
 		'{indent}<link rel="stylesheet" type="text/css" href="{base}/{stylePath}/sencha-touch.css" id="ext-theme" />\n' +
 		'{indent}<script type="text/javascript" src="{base}/{scriptPath}/sencha-touch-debug-w-comments.js"></script>\n\n' +
-		'{indent}<!-- Savory Extensions -->\n' +
-		'{indent}<script type="text/javascript" src="{base}/script/savory/integration/sencha-touch.js"></script>'
+		'{indent}<!-- Diligence Extensions -->\n' +
+		'{indent}<script type="text/javascript" src="{base}/script/diligence/integration/sencha-touch.js"></script>'
 
 	return Public
 }()

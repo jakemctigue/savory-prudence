@@ -33,7 +33,7 @@ Ext.ux.PagingToolbar = Ext.extend(Ext.Toolbar, {
 				}, this)
 			}]
 		}, config);
-		Savory.PagingToolbar.superclass.constructor.call(this, config);
+		Diligence.PagingToolbar.superclass.constructor.call(this, config);
 		
 		this.getStore().on('load', Ext.createDelegate(function(store) {
 			this.update(store);
@@ -72,7 +72,7 @@ Ext.ux.PagingToolbar = Ext.extend(Ext.Toolbar, {
 	}
 });
 
-Ext.reg('paging', Savory.PagingToolbar);
+Ext.reg('paging', Diligence.PagingToolbar);
 
 /**
  * A paging plugin for Ext.List that works in tandem with the {@link Ext.ux.PagingToolbar}.

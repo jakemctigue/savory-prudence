@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/internationalization/')
+document.executeOnce('/diligence/service/internationalization/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/jvm/')
 document.executeOnce('/sincerity/templates/')
@@ -46,7 +46,7 @@ var Multiplier = Multiplier || function() {
 					first: first,
 					second: second
 				},
-				textPack: Savory.Internationalization.getCurrentPack(this.conversation)
+				textPack: Diligence.Internationalization.getCurrentPack(this.conversation)
 			})
 		}
 	}

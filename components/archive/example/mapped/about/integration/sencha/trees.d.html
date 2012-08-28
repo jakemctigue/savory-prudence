@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -17,11 +17,11 @@ conversation.locals.put('extJs', true)
 document.executeOnce('/prudence/blocks/')
 %>
 <%{{ 'page.main' %>
-<h1>Savory's Sencha Integration Library</h1>
+<h1>Diligence's Sencha Integration Library</h1>
 <h3>Ext JS Trees</h3>
 
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Sencha">Savory.Sencha API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Sencha">Diligence.Sencha API documentation</a>
 	for more details.
 </p>
 
@@ -70,7 +70,7 @@ Ext.onReady(function() {
 </script>
 <%}}%>
 <p>
-One cool extra is that Savory's SimpleMongoDbTree can recognize DBRefs anywhere in the
+One cool extra is that Diligence's SimpleMongoDbTree can recognize DBRefs anywhere in the
 document, and allow Ext JS's tree loader to lazy-load them when the user clicks. This lets
 you stretch trees across as many MongoDB documents as you like, increasing atomicity for
 updating them and allowing fine-grained control over performance and user experience.
@@ -84,7 +84,7 @@ Try clicking on the cluck.next node to see it load the other document.
 <p>
 This second tree is "self contained," in that its data is provided as simple JavaScript
 arrays and dicts that you build or retrieve yourslef. You can provide the unique node IDs
-yourself, too, as dict keys, or let Savory generate them automatically for you, as in this
+yourself, too, as dict keys, or let Diligence generate them automatically for you, as in this
 example:
 </p>
 <pre>

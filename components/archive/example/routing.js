@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework for Prudence
+// This file is part of Diligence for Prudence
 //
 // Copyright 2011 Three Crickets LLC.
 //
@@ -13,21 +13,21 @@
 
 document.execute('/defaults/application/routing/')
 
-document.executeOnce('/savory/service/authorization/')
-document.executeOnce('/savory/foundation/prudence/blocks/')
+document.executeOnce('/diligence/service/authorization/')
+document.executeOnce('/diligence/foundation/prudence/blocks/')
 
-Savory.SEO.routing(true)
-Savory.Console.routing()
-Savory.Wiki.routing()
-Savory.Registration.routing()
-Savory.RPC.routing()
-Savory.REST.routing()
-Savory.Internationalization.routing()
-Savory.Linkback.routing()
-Savory.Authentication.routing()
-Savory.Authentication.privatize('/private/')
-Savory.Authorization.routing()
-Savory.Progress.routing()
-Savory.PayPal.routing()
-Savory.Blocks.routing()
-Savory.HTML.routing()
+Diligence.SEO.routing(true)
+Diligence.Console.routing()
+Diligence.Wiki.routing()
+Diligence.Registration.routing()
+Diligence.RPC.routing()
+Diligence.REST.routing()
+Diligence.Internationalization.routing()
+Diligence.Linkback.routing()
+Diligence.Authentication.routing()
+Diligence.Authentication.privatize('/private/')
+Diligence.Authorization.routing()
+Diligence.Progress.routing()
+Diligence.PayPal.routing()
+Diligence.Blocks.routing()
+Diligence.HTML.routing()

@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,10 +11,10 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/feature/seo/')
+document.executeOnce('/diligence/feature/seo/')
 
 function handleBefore(conversation) {
-	var domain = Savory.SEO.getCurrentDomain(conversation)
+	var domain = Diligence.SEO.getCurrentDomain(conversation)
 	if (domain && !domain.isDynamic()) {
 		// Redirect statically generate sitemaps to /web/static/ URIs
 		var uri

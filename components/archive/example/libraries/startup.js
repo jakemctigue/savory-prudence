@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -13,15 +13,15 @@
 
 document.executeOnce('/prudence/tasks/')
 
-Savory.Tasks.task({
+Diligence.Tasks.task({
 	fn: function() {
-		document.executeOnce('/savory/service/notification/')
-		Savory.Notification.sendQueuedNotices()
+		document.executeOnce('/diligence/service/notification/')
+		Diligence.Notification.sendQueuedNotices()
 	},
 	repeatEvery: 10000
 })
 
-Savory.Tasks.task({
+Diligence.Tasks.task({
 	name: '/hello/',
 	sayHello: 'Tal',
 	distributed: true,

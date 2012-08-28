@@ -3,19 +3,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.threecrickets.savory</groupId>
+	<groupId>com.threecrickets.diligence</groupId>
 	<artifactId>orientdb-experiment</artifactId>
 	<version>@VERSION@</version>
 	<packaging>pom</packaging>
 
-	<name>The Savory Framework: OrientDB Experiment Application</name>
-	<description>An OrientDB experiment application for the Savory Framework.</description>
-	<url>http://threecrickets.com/savory/</url>
+	<name>Diligence: OrientDB Experiment Application</name>
+	<description>An OrientDB experiment application for Diligence.</description>
+	<url>http://threecrickets.com/diligence/</url>
 	<inceptionYear>2011</inceptionYear>
 
 	<scm>
-		<connection>scm:git:https://code.google.com/p/savory-prudence/</connection>
-		<url>http://code.google.com/p/savory-prudence/source/browse/</url>
+		<connection>scm:git:https://code.google.com/p/diligence/</connection>
+		<url>http://code.google.com/p/diligence/source/browse/</url>
 	</scm>
 
 	<organization>
@@ -49,8 +49,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.threecrickets.savory</groupId>
-			<artifactId>savory-framework</artifactId>
+			<groupId>com.threecrickets.diligence</groupId>
+			<artifactId>diligence</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

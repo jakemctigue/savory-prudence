@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -26,7 +26,7 @@ function handleGetScriptlet(conversation, code, languageAdapter, content) {
 
 			var language = content.substring(0, firstWhitespace)
 			content = content.substring(firstWhitespace + 1)
-			return 'document.executeOnce(\'/savory/foundation/html/markup/\');print(Savory.HTML.getRenderer(\'' + language.escapeSingleQuotes() + '\').render(\'' + content.escapeSingleQuotes().escapeNewlines() + '\', false));'
+			return 'document.executeOnce(\'/diligence/foundation/html/markup/\');print(Diligence.HTML.getRenderer(\'' + language.escapeSingleQuotes() + '\').render(\'' + content.escapeSingleQuotes().escapeNewlines() + '\', false));'
 	}
 
 	return ''

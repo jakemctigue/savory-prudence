@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -17,7 +17,7 @@ conversation.locals.put('extJs', true)
 document.executeOnce('/prudence/blocks/')
 %>
 <%{{ 'page.main' %>
-<h1>Savory's Sencha Integration Library</h1>
+<h1>Diligence's Sencha Integration Library</h1>
 <h2>Ext JS Charts</h2>
 
 <p>
@@ -31,8 +31,8 @@ document.executeOnce('/prudence/blocks/')
 Ext.onReady(function() {
 	var pageSize = 20;
 	
-	var store = Ext.create('Savory.data.Store', {
-		storeId: 'savory',
+	var store = Ext.create('Diligence.data.Store', {
+		storeId: 'diligence',
 		proxy: {
 			url: 'self-contained/'
 		},
@@ -89,19 +89,19 @@ Ext.onReady(function() {
 <%}}%>
 
 <p>
-	With Savory, you just need to define a data source to back your store, the same way you would with
-	<a href="../grids/">grids</a>, so you might want to check out our examples there. Any Savory source can be
+	With Diligence, you just need to define a data source to back your store, the same way you would with
+	<a href="../grids/">grids</a>, so you might want to check out our examples there. Any Diligence source can be
 	thrown into a chart.
 </p>
 <p>
 	And just to make sure you've been paying attention, here's a grid linked to the same store as the chart above.
 	Edit the grid and the chart will immediately update (with cool animation) to match the values -- and of course the
-	server-side source is also updated. Magic? Yes! Magic is possible if you just believe in Savory and Ext JS.
+	server-side source is also updated. Magic? Yes! Magic is possible if you just believe in Diligence and Ext JS.
 	Future versions may even support unicorns and goldfish that grant wishes.
 </p>
 <div id="grid-self-contained"></div>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Sencha">Savory.Sencha API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Sencha">Diligence.Sencha API documentation</a>
 	for more details.
 </p>
 <%{{ 'page.scripts' %>
@@ -109,7 +109,7 @@ Ext.onReady(function() {
 Ext.onReady(function() {
 	var pageSize = 20;
 	
-	Ext.data.StoreManager.lookup('savory').getColumns(function(store, columns) {
+	Ext.data.StoreManager.lookup('diligence').getColumns(function(store, columns) {
 		Ext.create('Ext.grid.Panel', {
 			store: store,
 			columns: columns,

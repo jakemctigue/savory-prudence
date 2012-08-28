@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -15,7 +15,7 @@ at http://threecrickets.com/
 conversation.locals.put('extJs', true)
 
 document.executeOnce('/prudence/blocks/')
-document.executeOnce('/savory/foundation/html/parsing/')
+document.executeOnce('/diligence/foundation/html/parsing/')
 document.executeOnce('/about/foundation/lucene/')
 
 var query = conversation.query.get('query'), results
@@ -31,7 +31,7 @@ if (null !== query) {
 }
 %>
 <%{{ 'page.main' %>
-<h1>Savory's Lucene Library</h1>
+<h1>Diligence's Lucene Library</h1>
 <p class="note">
 	Still working on documenting this feature, though it's otherwise pretty complete!
 </p>
@@ -42,8 +42,8 @@ if (null !== query) {
 
 
 <form>
-	<p><%= Savory.HTML.input({name: 'query', value: query}, {_content: 'Search:'}) %></p>
-	<p><%= Savory.HTML.submit({value: 'Search'}) %></p>
+	<p><%= Diligence.HTML.input({name: 'query', value: query}, {_content: 'Search:'}) %></p>
+	<p><%= Diligence.HTML.submit({value: 'Search'}) %></p>
 </form>
 
 <%

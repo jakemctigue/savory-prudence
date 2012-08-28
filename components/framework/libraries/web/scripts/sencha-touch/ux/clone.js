@@ -14,7 +14,7 @@ Ext.ux.clone = function(o) {
 	else if (Ext.isArray(o)) {
 		var c = [];
 		for (var i = 0, l = o.length; i < l; i++) {
-			c.push(Savory.clone(o[i]));
+			c.push(Diligence.clone(o[i]));
 		}
 		return c;
 	}
@@ -26,7 +26,7 @@ Ext.ux.clone = function(o) {
 			var c = {};
 			for (var k in o) {
 				if (o.hasOwnProperty(k)) {
-					c[k] = Savory.clone(o[k]);
+					c[k] = Diligence.clone(o[k]);
 				}
 			}
 			return c;

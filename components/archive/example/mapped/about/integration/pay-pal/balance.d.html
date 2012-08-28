@@ -1,9 +1,9 @@
 <%& '/site/header/' %>
 <%
 
-document.executeOnce('/savory/integration/backend/pay-pal/')
+document.executeOnce('/diligence/integration/backend/pay-pal/')
 
-var balance = Savory.PayPal.getBalance()
+var balance = Diligence.PayPal.getBalance()
 if (balance) {
 	for (var b in balance) {
 %>

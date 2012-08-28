@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -13,9 +13,9 @@ at http://threecrickets.com/
 
 %><%
 
-document.executeOnce('/savory/feature/wiki/')
+document.executeOnce('/diligence/feature/wiki/')
 
-var pages = Savory.Wiki.getPages()
+var pages = Diligence.Wiki.getPages()
 for (var p in pages) {
 	var page = pages[p]
 	var name = page.getName()

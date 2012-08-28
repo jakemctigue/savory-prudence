@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,16 +11,16 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/feature/seo/')
+document.executeOnce('/diligence/feature/seo/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/iterators/')
 
-Savory.SEO.resetProviders()
+Diligence.SEO.resetProviders()
 
 var FakeProvider = FakeProvider || Sincerity.Classes.define(function() {
 	var Public = {}
 	
-	Public._inherit = Savory.SEO.Provider
+	Public._inherit = Diligence.SEO.Provider
 	
 	Public._construct = function(config) {
 		Sincerity.Objects.merge(this, config, ['name', 'domains'])
@@ -65,265 +65,265 @@ var FakeProvider = FakeProvider || Sincerity.Classes.define(function() {
 	return Public
 }())
 
-var SavoryProvider = SavoryProvider || Sincerity.Classes.define(function() {
+var DiligenceProvider = DiligenceProvider || Sincerity.Classes.define(function() {
 	var Public = {}
 	
-	Public._inherit = Savory.SEO.ExplicitProvider
+	Public._inherit = Diligence.SEO.ExplicitProvider
 	
 	Public._construct = function(config) {
-		this.name = 'savory'
+		this.name = 'diligence'
 		this.domains = ['http://threecrickets.com', 'http://localhost:8080']
-		this.exclusions = ['/savory/media/', '/savory/style/', '/savory/script/']
+		this.exclusions = ['/diligence/media/', '/diligence/style/', '/diligence/script/']
 		
 		var lastModified = new Date()
 		
 		this.locations = [{
-			uri: '/savory/',
+			uri: '/diligence/',
 			lastModified: lastModified,
 			priority: 0.9,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/download/',
+			uri: '/diligence/download/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/legal/',
+			uri: '/diligence/legal/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/progress/',
+			uri: '/diligence/progress/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/feature/blog/',
+			uri: '/diligence/about/feature/blog/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/feature/console/',
+			uri: '/diligence/about/feature/console/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/feature/contact-us/',
+			uri: '/diligence/about/feature/contact-us/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/feature/discussion/',
+			uri: '/diligence/about/feature/discussion/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/feature/registration/',
+			uri: '/diligence/about/feature/registration/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/feature/seo/',
+			uri: '/diligence/about/feature/seo/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/feature/shopping-cart/',
+			uri: '/diligence/about/feature/shopping-cart/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/feature/wiki/',
+			uri: '/diligence/about/feature/wiki/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/blocks/',
+			uri: '/diligence/about/foundation/blocks/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/html/',
+			uri: '/diligence/about/foundation/html/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/html/markup/',
+			uri: '/diligence/about/foundation/html/markup/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/iterators/',
+			uri: '/diligence/about/foundation/iterators/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/lazy/',
+			uri: '/diligence/about/foundation/lazy/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/logging/',
+			uri: '/diligence/about/foundation/logging/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/lucene/',
+			uri: '/diligence/about/foundation/lucene/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/resources/',
+			uri: '/diligence/about/foundation/resources/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/svg/',
+			uri: '/diligence/about/foundation/svg/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/tasks/',
+			uri: '/diligence/about/foundation/tasks/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/foundation/templates/',
+			uri: '/diligence/about/foundation/templates/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/gravatar/',
+			uri: '/diligence/about/integration/gravatar/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/pay-pal/',
+			uri: '/diligence/about/integration/pay-pal/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/sencha/',
+			uri: '/diligence/about/integration/sencha/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/sencha/charts/',
+			uri: '/diligence/about/integration/sencha/charts/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/sencha/direct/',
+			uri: '/diligence/about/integration/sencha/direct/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/sencha/forms/',
+			uri: '/diligence/about/integration/sencha/forms/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/sencha/grids/',
+			uri: '/diligence/about/integration/sencha/grids/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/sencha/touch/',
+			uri: '/diligence/about/integration/sencha/touch/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/integration/sencha/trees/',
+			uri: '/diligence/about/integration/sencha/trees/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/authentication/',
+			uri: '/diligence/about/service/authentication/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/authorization/',
+			uri: '/diligence/about/service/authorization/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/backup/',
+			uri: '/diligence/about/service/backup/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/cache/',
+			uri: '/diligence/about/service/cache/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/documents/',
+			uri: '/diligence/about/service/documents/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/events/',
+			uri: '/diligence/about/service/events/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/internationalization/',
+			uri: '/diligence/about/service/internationalization/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/linkback/',
+			uri: '/diligence/about/service/linkback/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/nonces/',
+			uri: '/diligence/about/service/nonces/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/notification/',
+			uri: '/diligence/about/service/notification/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/progress/',
+			uri: '/diligence/about/service/progress/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/rest/',
+			uri: '/diligence/about/service/rest/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/rpc/',
+			uri: '/diligence/about/service/rpc/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/search/',
+			uri: '/diligence/about/service/search/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/serials/',
+			uri: '/diligence/about/service/serials/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/syndication/',
+			uri: '/diligence/about/service/syndication/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/about/service/tool/js-doc/',
+			uri: '/diligence/about/service/tool/js-doc/',
 			lastModified: lastModified,
 			priority: 0.3,
 			frequency: 'monthly'
 		}, {
-			uri: '/savory/api/',
+			uri: '/diligence/api/',
 			lastModified: lastModified,
 			priority: 0.5,
 			frequency: 'monthly'

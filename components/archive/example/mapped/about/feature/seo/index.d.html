@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -12,7 +12,7 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%& '/site/header/' %>
-<h1>Savory's SEO Feature</h1>
+<h1>Diligence's SEO Feature</h1>
 
 <p>
 	This feature helps you comply with a few de-facto search engine standards to improve your interaction with them, specifically
@@ -21,10 +21,10 @@ at http://threecrickets.com/
 <p>
 	At first glance, there's nothing very sophisticated about these standards, and you might be tempted to create the required text
 	files manually and then serve them statically. However, large applications with many URLs can easily have unweildy site maps.
-	This Savory feature helps you create them and manage them fairly automatically. It supports <i>very, very large</i> site maps.
+	This Diligence feature helps you create them and manage them fairly automatically. It supports <i>very, very large</i> site maps.
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.SEO">Savory.SEO API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.SEO">Diligence.SEO API documentation</a>
 	for more details.
 </p>
 
@@ -82,7 +82,7 @@ at http://threecrickets.com/
 	so potentially your site map can be as big as needed.
 </p>
 <p>
-	Savory supports two ways of generating site map resources: dynamic (via /web/fragments/) and static (via
+	Diligence supports two ways of generating site map resources: dynamic (via /web/fragments/) and static (via
 	/web/static/). Dynamic is the default, and should be fine for small web sites. It generates robots.txt
 	and sitemap.xml on demand, using Prudence's standard caching to keep things smooth and fast.
 </p>
@@ -103,7 +103,7 @@ at http://threecrickets.com/
 	The task makes sure to split URL sets into "pages" of 50,000 URLs max, and to gzip compress
 	them. It even makes sure to generate them in a separate spool directory, and then swap
 	them all at once, so that search engines hitting your site exactly during site map generation
-	don't see a partial, inconsistent picture. And it all happens asynchronously, using Savory tasks,
+	don't see a partial, inconsistent picture. And it all happens asynchronously, using Diligence tasks,
 	so that multiple URL sets can be generated simultaneously. And, of course, since they are plain
 	old files, you can also host them outside of Prudence.
 </p>
@@ -126,7 +126,7 @@ at http://threecrickets.com/
 </p>	
 <pre>
 predefinedGlobals = Sincerity.Objects.flatten({
-	savory: {
+	diligence: {
 		feature: {
 			seo: {
 				domains: [{
@@ -138,8 +138,8 @@ predefinedGlobals = Sincerity.Objects.flatten({
 					name: 'the-real-thing',
 					domains: ['http://localhost:8080', 'http://threecrickets.com'],
 					locations: ['/happy/', '/this/', '/is/', '/working/'],
-					exclusions: ['/savory/media/', '/savory/style/', '/savory/script/'],
-					inclusions: ['/savory/media/name/'],
+					exclusions: ['/diligence/media/', '/diligence/style/', '/diligence/script/'],
+					inclusions: ['/diligence/media/name/'],
 					factory: 'Explicit'
 				}, {
 					name: 'test',
@@ -167,14 +167,14 @@ predefinedGlobals = Sincerity.Objects.flatten({
 	You then route the SEO resources for the application in its routing.js:
 </p>
 <pre>
-document.executeOnce('/savory/feature/seo/')
-Savory.SEO.routing()
+document.executeOnce('/diligence/feature/seo/')
+Diligence.SEO.routing()
 </pre>
 
 
 <h3>Locations</h3>
 <p>
-	Locations are configured using Savory's plug-in library, which uses the factory pattern to generate
+	Locations are configured using Diligence's plug-in library, which uses the factory pattern to generate
 	plug-ins. In our first locations config, we used the "Explicit" factory, which is built-in to the
 	SEO feature. This lets use explicitly list our locations as arrays within the config. Obviously,
 	this is useful only for very small sites with a known list of URLs. 
@@ -191,7 +191,7 @@ Savory.SEO.routing()
 	factories. 
 </p>
 <p>
-	The key to factory success is understanding the <a href="../../foundation/iterators/">Savory iterators library</a>: as long as you keep
+	The key to factory success is understanding the <a href="../../foundation/iterators/">Diligence iterators library</a>: as long as you keep
 	your iterator properly fed, you should be able to scale to site maps of scary sizes. 
 </p>
 <p>
@@ -207,7 +207,7 @@ Savory.SEO.routing()
 </p>
 <pre>
 predefinedGlobals = Sincerity.Objects.flatten({
-	savory: {
+	diligence: {
 		feature: {
 			seo: {
 				domains: [{
@@ -260,14 +260,14 @@ predefinedGlobals = Sincerity.Objects.flatten({
 	day at 4:00AM:
 </p>
 <pre>
-0 4 * * * /savory/eval/ document.executeOnce('/savory/feature/seo/'); SEO.getDomain('http://localhost:8080').generateStatic();	
+0 4 * * * /diligence/eval/ document.executeOnce('/diligence/feature/seo/'); SEO.getDomain('http://localhost:8080').generateStatic();	
 </pre>
 <p>
 	You then route the SEO resources for the root application in its routing.js:
 </p>
 <pre>
-document.executeOnce('/savory/feature/seo/')
-Savory.SEO.routing(true)
+document.executeOnce('/diligence/feature/seo/')
+Diligence.SEO.routing(true)
 </pre>
 <p>
 	Well, one tiny little convenience here: though you do need to install the routes in your
@@ -284,8 +284,8 @@ Savory.SEO.routing(true)
 	Do this in the application's default.js:
 </p>
 <pre>
-document.executeOnce('/savory/feature/seo/')
-Savory.SEO.registerExtensions()	
+document.executeOnce('/diligence/feature/seo/')
+Diligence.SEO.registerExtensions()	
 </pre>
 <p>
 	And that's pretty much it!

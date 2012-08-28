@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -12,12 +12,12 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%& '/site/header/' %>
-<h1>Savory's Backup Service</h1>
+<h1>Diligence's Backup Service</h1>
 <p class="note">
 	Still working on documenting this feature, though it's otherwise pretty complete!
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Backup">Savory.Backup API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Backup">Diligence.Backup API documentation</a>
 	for more details.
 </p>
 
@@ -38,7 +38,7 @@ at http://threecrickets.com/
 	From our experience, the admin tools that come with MongoDB are overly simplistic and unreliable.
 </p>
 <p>
-	Otherwise, Savory's backup service offers the following advantages: 
+	Otherwise, Diligence's backup service offers the following advantages: 
 </p>
 <ul>
 	<li>
@@ -48,7 +48,7 @@ at http://threecrickets.com/
 	</li>
 	<li>
 		True JSON: The mongoexport tool does not export a real JSON array, instead it exports each document as a JSON dict,
-		separating each document with a newline. Savory exports a standard JSON array, readable from any standard JSON
+		separating each document with a newline. Diligence exports a standard JSON array, readable from any standard JSON
 		parser.
 	</li>
 	<li>
@@ -58,10 +58,10 @@ at http://threecrickets.com/
 	</li>
 	<li>
 		Fully integrated: You don't have to create bash scripts to backup your DB. Instead, you can stay in JavaScript
-		and Savory and your regular application code.
+		and Diligence and your regular application code.
 	</li>
 	<li>
-		Iterators: The backup service uses Savory <a href="../../foundation/iterators/">iterators</a>, so you can transform
+		Iterators: The backup service uses Diligence <a href="../../foundation/iterators/">iterators</a>, so you can transform
 		your data in various ways while backing up, or even include non-MongoDB data.
 	</li>
 </ul>

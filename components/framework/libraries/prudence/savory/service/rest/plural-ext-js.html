@@ -1,21 +1,21 @@
 <%
-document.executeOnce('/savory/integration/frontend/sencha/')
-document.executeOnce('/savory/service/html/')
+document.executeOnce('/diligence/integration/frontend/sencha/')
+document.executeOnce('/diligence/service/html/')
 %>
 <html>
 <head>
-	<%= Savory.HTML.build({_content: 'Savory REST Service - ' + data.resource.plural, _tag: 'title'}) %>
-	<%= Savory.Sencha.extJsHead(conversation, {pathToBase: data.pathToBase}) %>
+	<%= Diligence.HTML.build({_content: 'Diligence REST Service - ' + data.resource.plural, _tag: 'title'}) %>
+	<%= Diligence.Sencha.extJsHead(conversation, {pathToBase: data.pathToBase}) %>
 </head>
 <body>
-<%= Savory.HTML.build({_content: 'Resource: ' + data.resource.plural, _tag: 'h3'}) %>
+<%= Diligence.HTML.build({_content: 'Resource: ' + data.resource.plural, _tag: 'h3'}) %>
 <div id="grid"></div>
 </body>
 <script type="text/javascript">
 Ext.onReady(function() {
 	var pageSize = 20;
 
-	var store = Ext.create('Savory.data.Store', {
+	var store = Ext.create('Diligence.data.Store', {
 		proxy: {
 			url: '.',
 			extraParams: {

@@ -10,14 +10,14 @@ if (!data) {
 if (data.resource.extJs) {
 	var query = Prudence.Resources.fromAttributeMap(data.query, null, {extjs: 'bool'})
 	if (query.extjs === false) {
-		document.include('/savory/service/rest/plural-plain/')
+		document.include('/diligence/service/rest/plural-plain/')
 	}
 	else {
-		document.include('/savory/service/rest/plural-ext-js/')
+		document.include('/diligence/service/rest/plural-ext-js/')
 	}
 }
 else {
-	document.include('/savory/service/rest/plural-plain/')
+	document.include('/diligence/service/rest/plural-plain/')
 }
 
 %>

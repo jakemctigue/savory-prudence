@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -17,11 +17,11 @@ conversation.locals.put('extJs', true)
 document.executeOnce('/prudence/blocks/')
 %>
 <%{{ 'page.main' %>
-<h1>Savory's Sencha Integration Library</h1>
+<h1>Diligence's Sencha Integration Library</h1>
 <h2>Ext JS Grids</h2>
 
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Sencha">Savory.Sencha API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Sencha">Diligence.Sencha API documentation</a>
 	for more details.
 </p>
 
@@ -54,7 +54,7 @@ And the impressive result, with paging, editing:
 Ext.onReady(function() {
 	var pageSize = 20;
 	
-	var store = Ext.create('Savory.data.Store', {
+	var store = Ext.create('Diligence.data.Store', {
 		proxy: {
 			url: 'mongo-db/'
 		},
@@ -102,7 +102,7 @@ of your data.
 
 <h3>Arbitrary REST Grids</h3>
 <p>
-Direct MongoDB support is cool, but Savory also lets you wrap any existing RESTful resource,
+Direct MongoDB support is cool, but Diligence also lets you wrap any existing RESTful resource,
 whether internal to your application or external to it. From REST to grid in a few lines of code!
 </p>
 <p>
@@ -114,7 +114,7 @@ for it, and let the wrapper do the Ext JS specifics.
 </p>
 <p>
 Second, your Prudence application likely already has a carefully thought-out RESTful URI space to
-access your data. (Perhaps you're using Savory's Mapping Module to create parts of it.)
+access your data. (Perhaps you're using Diligence's Mapping Module to create parts of it.)
 It makes sense to throw these resources directly into an Ext JS grid, instead of creating
 special connections for it. This allows you to reuse code and keep data access code in a single
 location.
@@ -144,7 +144,7 @@ Try it:
 Ext.onReady(function() {
 	var pageSize = 20;
 	
-	var store = Ext.create('Savory.data.Store', {
+	var store = Ext.create('Diligence.data.Store', {
 		proxy: {
 			//url: '<%= conversation.pathToBase %>/data/users/'
 			url: 'resource/'
@@ -225,7 +225,7 @@ Try it:
 Ext.onReady(function() {
 	var pageSize = 20;
 	
-	var store = Ext.create('Savory.data.Store', {
+	var store = Ext.create('Diligence.data.Store', {
 		storeId: 'self-contained',
 		proxy: {
 			url: 'self-contained/'
@@ -268,7 +268,7 @@ Ext.onReady(function() {
 <h3>Data Views</h3>
 <p>
 Grids are awesome, but Ext JS data views are also very useful, as they allow you to present data
-as needed using Ext JS's powerful templating. Luckily, data views can use the same Savory stores we
+as needed using Ext JS's powerful templating. Luckily, data views can use the same Diligence stores we
 set up for our grids. Here's one that uses the <i>exact</i> same store as the previous grid, effectively
 linking the two widgets. So, if you page one, it will page the other, too. The template we're using:
 </p> 
@@ -302,7 +302,7 @@ Ext.onReady(function() {
 	
 	/*new Ext.Panel({
 		items: 	new Ext.DataView({
-			store: Savory.store,
+			store: Diligence.store,
 			tpl: tpl,
 			multiSelect: true,
 			simpleSelect: true,
@@ -313,7 +313,7 @@ Ext.onReady(function() {
 		bbar: {
 			xtype: 'pagingtoolbar',
 			pageSize: pageSize,
-			store: Savory.store
+			store: Diligence.store
 		},
 		renderTo: 'dataview',
 		style: {margin: 'auto'},

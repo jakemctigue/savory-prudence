@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,13 +11,13 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/rpc/')
+document.executeOnce('/diligence/service/rpc/')
 document.executeOnce('/sincerity/rhino/')
 document.executeOnce('/sincerity/json/')
 document.executeOnce('/prudence/resources/')
 
 // Makes sure that lazy modules are reset at the same time as this document is reset
-Savory.RPC.resetLazyModules()
+Diligence.RPC.resetLazyModules()
 
 /** @ignore */
 function handleInit(conversation) {
@@ -33,8 +33,8 @@ function handleGet(conversation) {
 		human: 'bool'
 	})
 
-	Savory.RPC.getLazyModules()
-	var module = Savory.RPC.getExportedModule(query.namespace, true)
+	Diligence.RPC.getLazyModules()
+	var module = Diligence.RPC.getExportedModule(query.namespace, true)
 	if (!module) {
 		return Prudence.Resources.Status.ClientError.NotFound
 	}
@@ -107,7 +107,7 @@ function handlePost(conversation) {
 
 	var results = []
 
-	var module = Savory.RPC.getExportedModule(query.namespace)
+	var module = Diligence.RPC.getExportedModule(query.namespace)
 	if (!module) {
 		return Prudence.Resources.Status.ClientError.NotFound
 	}
@@ -138,7 +138,7 @@ function handlePost(conversation) {
 							}
 						}
 						else {
-							var fn = Savory.RPC.getFunction(method)
+							var fn = Diligence.RPC.getFunction(method)
 							if (fn) {
 								try {
 									var context = {

@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,8 +11,8 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/rest/')
-document.executeOnce('/savory/service/serials/')
+document.executeOnce('/diligence/service/rest/')
+document.executeOnce('/diligence/service/serials/')
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/cryptography/')
 document.executeOnce('/sincerity/xml/')
@@ -42,8 +42,8 @@ document.executeOnce('/prudence/logging/')
  * @see Visit the <a href="http://www.xmlrpc.com/spec">XML-RPC</a> spec;
  * @see Visit the <a href="http://groups.google.com/group/json-rpc/web/json-rpc-2-0">JSON-RPC</a> spec
  */
-Savory.RPC = Savory.RPC || function() {
-	/** @exports Public as Savory.RPC */
+Diligence.RPC = Diligence.RPC || function() {
+	/** @exports Public as Diligence.RPC */
     var Public = {}
     
 	/**
@@ -88,19 +88,19 @@ Savory.RPC = Savory.RPC || function() {
 	 * Can only be called from Prudence configuration scripts!
 	 */
 	Public.settings = function(uri) {
-		resourcesPassThrough.push('/savory/service/rpc/resource/')
+		resourcesPassThrough.push('/diligence/service/rpc/resource/')
 	}
 
 	/**
-	 * Installs the library's captures according the 'savory.service.rpc.routes'
+	 * Installs the library's captures according the 'diligence.service.rpc.routes'
 	 * predefined global.
 	 * <p>
 	 * Can only be called from Prudence configuration scripts!
 	 */
 	Public.routing = function(uri) {
-		var routes = predefinedGlobals['savory.service.rpc.routes'] || {}
+		var routes = predefinedGlobals['diligence.service.rpc.routes'] || {}
 		
-		var capture = new com.threecrickets.prudence.util.CapturingRedirector(router.context, 'riap://application/savory/service/rpc/resource/?{rq}', false)
+		var capture = new com.threecrickets.prudence.util.CapturingRedirector(router.context, 'riap://application/diligence/service/rpc/resource/?{rq}', false)
 		for (var uri in routes) {
 			var route = routes[uri]
 			if (typeof route == 'string') {
@@ -115,23 +115,23 @@ Savory.RPC = Savory.RPC || function() {
 			router.attach(uri, injector)
 		}
 
-		router.hide('/savory/service/rpc/resource/')
+		router.hide('/diligence/service/rpc/resource/')
 	}
 	
 	Public.getLazyModules = function() {
-		return Savory.Lazy.getGlobalList('savory.service.rpc.modules', Public.logger, function(constructor) {
+		return Diligence.Lazy.getGlobalList('diligence.service.rpc.modules', Public.logger, function(constructor) {
 			return eval(constructor)()
 		})
 	}
 	
 	Public.resetLazyModules = function() {
-		Savory.Lazy.getGlobalList('savory.service.rpc.modules', Public.logger).reset()
+		Diligence.Lazy.getGlobalList('diligence.service.rpc.modules', Public.logger).reset()
 	}
 	
 	Public.buildLazyModule = function(config) {
 		var fn = 'function(){\n'
-		fn += 'document.executeOnce(\'/savory/service/rpc/\');\n'
-		fn += 'Savory.RPC.exportMethods('
+		fn += 'document.executeOnce(\'/diligence/service/rpc/\');\n'
+		fn += 'Diligence.RPC.exportMethods('
 		fn += Sincerity.JSON.to(config, true);
 		fn += ');\n'
 		fn += 'return null;\n}'
@@ -158,7 +158,7 @@ Savory.RPC = Savory.RPC || function() {
 	 * @param {String} [params.module] Uses the global module if not provided
 	 * @param {String|String[]} [params.dependencies]
 	 * @param {Boolean} [params.reset=false] True to reset parent namespace
-	 * @param {Savory.RPC.Store} [params.store=Savory.RPC.getStore()]
+	 * @param {Diligence.RPC.Store} [params.store=Diligence.RPC.getStore()]
 	 */
 	Public.exportMethods = function(params) {
 		//java.lang.System.out.println(params.namespace)
@@ -213,7 +213,7 @@ Savory.RPC = Savory.RPC || function() {
 	
 	/**
 	 * @param {String} [module] Uses the global module if not provided
-	 * @param {Savory.RPC.Store} [store=Savory.RPC.getStore()]
+	 * @param {Diligence.RPC.Store} [store=Diligence.RPC.getStore()]
 	 */
 	Public.getExportedModule = function(module, store) {
 		store = store || Public.getStore()
@@ -426,20 +426,20 @@ Savory.RPC = Savory.RPC || function() {
 	}
 	
 	/**
-	 * @returns {Savory.RPC.Store}
+	 * @returns {Diligence.RPC.Store}
 	 */
 	Public.getStore = function() {
-		return Savory.Lazy.getGlobalEntry('savory.service.rpc.store', Public.logger, function(constructor) {
+		return Diligence.Lazy.getGlobalEntry('diligence.service.rpc.store', Public.logger, function(constructor) {
 			return eval(constructor)()
 		})
 	}
 
 	/**
 	 * @class
-	 * @name Savory.RPC.Store
+	 * @name Diligence.RPC.Store
 	 */
 	Public.Store = Sincerity.Classes.define(function() {
-		/** @exports Public as Savory.RPC.Store */
+		/** @exports Public as Diligence.RPC.Store */
 		var Public = {}
 
 		Public.reset = function(module) {}
@@ -451,11 +451,11 @@ Savory.RPC = Savory.RPC || function() {
 	
 	/**
 	 * @class
-	 * @name Savory.RPC.InThreadStore
-	 * @augments Savory.RPC.Store
+	 * @name Diligence.RPC.InThreadStore
+	 * @augments Diligence.RPC.Store
 	 */
 	Public.InThreadStore = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.RPC.InThreadStore */
+		/** @exports Public as Diligence.RPC.InThreadStore */
 		var Public = {}
 
 		/** @ignore */
@@ -506,14 +506,14 @@ Savory.RPC = Savory.RPC || function() {
 	 * This implementation expects its map to always to exist in memory,
 	 * so it can work with application.globals and application.sharedGlobals, but
 	 * <b>not</b> use this with application.distributedGlobals or other serialized maps.
-	 * For a distributed store, see {@link Savory.RPC.DistributedStore}.
+	 * For a distributed store, see {@link Diligence.RPC.DistributedStore}.
 	 * 
 	 * @class
-	 * @name Savory.RPC.MapStore
-	 * @augments Savory.RPC.Store
+	 * @name Diligence.RPC.MapStore
+	 * @augments Diligence.RPC.Store
 	 */
 	Public.MapStore = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.RPC.MapStore */
+		/** @exports Public as Diligence.RPC.MapStore */
 		var Public = {}
 
 		/** @ignore */
@@ -522,7 +522,7 @@ Savory.RPC = Savory.RPC || function() {
 		/** @ignore */
 		Public._construct = function(map, prefix) {
 			this.map = map
-			this.prefix = prefix ||'savory.service.rpc.mapStore.'
+			this.prefix = prefix ||'diligence.service.rpc.mapStore.'
 		}
 		
 		Public.reset = function(module) {
@@ -583,11 +583,11 @@ Savory.RPC = Savory.RPC || function() {
 
 	/**
 	 * @class
-	 * @name Savory.RPC.DistributedStore
-	 * @augments Savory.RPC.Store
+	 * @name Diligence.RPC.DistributedStore
+	 * @augments Diligence.RPC.Store
 	 */
 	Public.DistributedStore = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.RPC.DistributedStore */
+		/** @exports Public as Diligence.RPC.DistributedStore */
 		var Public = {}
 	
 		/** @ignore */
@@ -595,7 +595,7 @@ Savory.RPC = Savory.RPC || function() {
 		
 	    /** @ignore */
 	    Public._construct = function(name) {
-	    	name = name || 'savory.service.rpc.distributedStore'
+	    	name = name || 'diligence.service.rpc.distributedStore'
 			this.dependencies = com.hazelcast.core.Hazelcast.getMultiMap(name + '.dependencies')
 			this.namespaces = com.hazelcast.core.Hazelcast.getMultiMap(name + '.namespaces')
 			this.methods = com.hazelcast.core.Hazelcast.getMultiMap(name + '.methods')
@@ -664,11 +664,11 @@ Savory.RPC = Savory.RPC || function() {
 
 	/**
 	 * @class
-	 * @name Savory.RPC.MongoDbStore
-	 * @augments Savory.RPC.Store
+	 * @name Diligence.RPC.MongoDbStore
+	 * @augments Diligence.RPC.Store
 	 */
 	Public.MongoDbStore = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.RPC.MongoDbStore */
+		/** @exports Public as Diligence.RPC.MongoDbStore */
 		var Public = {}
 
 		/** @ignore */
@@ -714,14 +714,14 @@ Savory.RPC = Savory.RPC || function() {
 	 * TODO: batch support
 	 * 
 	 * @class
-	 * @name Savory.RPC.Client
+	 * @name Diligence.RPC.Client
 	 * @param {Object|String} config
 	 * @param {String} config.uri
 	 * @param {String} [config.type='json']
 	 * @param {String} [config.version='2.0']
 	 */
 	Public.Client = Sincerity.Classes.define(function(Module) {
-		/** @exports Public as Savory.RPC.Client */
+		/** @exports Public as Diligence.RPC.Client */
 		var Public = {}
 		
 		/** @ignore */
@@ -782,7 +782,7 @@ Savory.RPC = Savory.RPC || function() {
 				//Module.logger.info(Sincerity.XML.to(payload))
 			}
 			else {
-				id = Savory.Serials.next('savory.service.rpc.client')
+				id = Diligence.Serials.next('diligence.service.rpc.client')
 				payload = {
 					method: params.method,
 					params: params.arguments,

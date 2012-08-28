@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -15,7 +15,7 @@ at http://threecrickets.com/
 conversation.locals.put('extJs', true)
 %>
 <%{{ 'page.main' %>
-<h1>Savory's Sencha Integration Library</h1>
+<h1>Diligence's Sencha Integration Library</h1>
 <h2>Ext Direct</h2>
 
 <p>
@@ -25,7 +25,7 @@ conversation.locals.put('extJs', true)
 	for maximum efficiency, and errors are handled as elegantly as can be.
 </p>
 <p>
-	With Savory, you get a seamless flow from client to server and back again, because you're
+	With Diligence, you get a seamless flow from client to server and back again, because you're
 	always in JavaScript: the client call and the server function definition match exactly.
 	If you close your eyes, you can even imagine that the client is calling the server function
 	directly.
@@ -40,7 +40,7 @@ conversation.locals.put('extJs', true)
 	cache override disabled: "disableCaching: false") may scale better.
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Sencha">Savory.Sencha API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Sencha">Diligence.Sencha API documentation</a>
 	for more details.
 </p>
 
@@ -82,7 +82,7 @@ var ShoppingCart = function() {
 	
 	Sencha.exportMethods({
 		methods: Public,
-		clientParentNamespace: 'Savory',
+		clientParentNamespace: 'Diligence',
 		clientNamespace: 'ShoppingCart',
 		dependencies: '/about/integration/sencha/shopping-cart/'
 	})
@@ -94,7 +94,7 @@ var ShoppingCart = function() {
 </pre>
 <p>
 	Note the use of Sencha.exportMethods(): we simply give it an object with our methods, and it handles the Ext Direct wiring.
-	The exports are registered into a simple MongoDB collection. The 'dependencies' field is important, because it tells Savory
+	The exports are registered into a simple MongoDB collection. The 'dependencies' field is important, because it tells Diligence
 	how to find our methods when the client wants to call them: they are document.executed. And, of course, these functions are
 	entirely normal and can be called on the server as is, with the same namespaces. A single API for servers <i>and</i>
 	clients. Hooray for Ext Direct!
@@ -107,7 +107,7 @@ var ShoppingCart = function() {
 </p>
 <pre>
 function refresh() {
-	Savory.ShoppingCart.getItems(function(provider, response) {
+	Diligence.ShoppingCart.getItems(function(provider, response) {
 		if (response.type == 'exception') {
 			Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
 		}
@@ -127,7 +127,7 @@ function init() {
 			Ext.Msg.alert('Shopping Cart', 'Enter an item first!');
 			return;
 		}
-		Savory.ShoppingCart.addItem(item, Ext.bind(function(provider, response) {
+		Diligence.ShoppingCart.addItem(item, Ext.bind(function(provider, response) {
 			if (response.type == 'exception') {
 				Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
 			}
@@ -146,13 +146,13 @@ function init() {
 	Ext.fly('get-items')set({disabled: null}, false).on('click', refresh);
 }
 
-Savory.loadRemoteProvider({
-	namespace: 'Savory',
+Diligence.loadRemoteProvider({
+	namespace: 'Diligence',
 	success: init
 });
 </pre>
 <p>
-	Note that we use Savory.loadRemoteProvider() to dynamically initialize our client-side namespace, although we
+	Note that we use Diligence.loadRemoteProvider() to dynamically initialize our client-side namespace, although we
 	could also hard-code the description into our client file. Because we're loading it dyamically, we're
 	being careful to not actually use the namespace until we have it initialized, which will call our init().
 	Even the buttons that use this API will be disabled until the API is loaded.
@@ -168,7 +168,7 @@ Savory.loadRemoteProvider({
 <script>
 Ext.onReady(function() {
 	function refresh() {
-		Savory.ShoppingCart.getItems(function(provider, response) {
+		Diligence.ShoppingCart.getItems(function(provider, response) {
 			if (response.type == 'exception') {
 				Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
 			}
@@ -188,7 +188,7 @@ Ext.onReady(function() {
 				Ext.Msg.alert('Shopping Cart', 'Enter an item first!');
 				return;
 			}
-			Savory.ShoppingCart.addItem(item, Ext.bind(function(provider, response) {
+			Diligence.ShoppingCart.addItem(item, Ext.bind(function(provider, response) {
 				if (response.type == 'exception') {
 					Ext.Msg.alert('Shopping Cart', 'Exception: ' + response.message);
 				}
@@ -207,8 +207,8 @@ Ext.onReady(function() {
 		Ext.fly('get-items').set({disabled: null}, false).on('click', refresh);
 	}
 	
-	Savory.addDirectProvider({
-		namespace: 'Savory',
+	Diligence.addDirectProvider({
+		namespace: 'Diligence',
 		baseUrl: '<%= conversation.pathToBase %>',
 		success: init
 	});

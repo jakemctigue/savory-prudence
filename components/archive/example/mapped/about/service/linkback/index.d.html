@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -13,10 +13,10 @@ at http://threecrickets.com/
 
 %><%
 document.executeOnce('/sincerity/jvm/')
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/diligence/foundation/html/')
 document.executeOnce('/prudence/blocks/')
 document.executeOnce('/prudence/resources/')
-document.executeOnce('/savory/service/linkback/')
+document.executeOnce('/diligence/service/linkback/')
 
 var links = application.getGlobal('about.linkback.links', Sincerity.JVM.newSet(true))
 var message = ''
@@ -36,7 +36,7 @@ if (String(conversation.request.method) == 'POST') {
 		links.add(form.addPageUri)
 	}
 	else if (form.pageUri && !form.trackbackUri && !form.pingbackUri) {
-		var discover = Savory.Linkback.discover(form.pageUri)
+		var discover = Diligence.Linkback.discover(form.pageUri)
 		if (discover) {
 			if (discover.type == 'trackback') {
 				form.trackbackUri = discover.uri
@@ -54,10 +54,10 @@ if (String(conversation.request.method) == 'POST') {
 	
 	if (form.trackbackUri) {
 		try {
-			Savory.Linkback.track({
+			Diligence.Linkback.track({
 				trackbackUri: form.trackbackUri,
 				uri: conversation.reference,
-				blogName: 'The Savory Framework - Demo Application',
+				blogName: 'Diligence - Demo Application',
 				title: 'Linkback Demo',
 				excerpt: 'Just testing...'
 			})
@@ -69,7 +69,7 @@ if (String(conversation.request.method) == 'POST') {
 	}
 	else if (form.pingbackUri && form.pageUri) {
 		try {
-			Savory.Linkback.ping({
+			Diligence.Linkback.ping({
 				pingbackUri: form.pingbackUri,
 				uri: conversation.reference,
 				targetUri: form.pageUri
@@ -84,14 +84,14 @@ if (String(conversation.request.method) == 'POST') {
 %>
 <%{{ 'page.head' %>
 	<!-- Pingback -->
-	<%= Savory.Linkback.pingbackHead(conversation) %>
+	<%= Diligence.Linkback.pingbackHead(conversation) %>
 	
 	<!-- Trackback
-<%= Savory.Linkback.trackbackHead({uri: conversation.reference, title: 'Savory Demo Application', indent: '\t'}) %>
+<%= Diligence.Linkback.trackbackHead({uri: conversation.reference, title: 'Diligence Demo Application', indent: '\t'}) %>
 	-->
 <%}}%>
 <%{{ 'page.main' %>
-<h1>Savory's Linkback Service</h1>
+<h1>Diligence's Linkback Service</h1>
 <p>
 	"Linkbacks" are a way to add crossreferening to hyperlinks: if I link to another page on another site, I can let that other site
 	know that I am linking to it, and then that other site can choose to display a link back to my site. This can be useful for users,
@@ -103,30 +103,30 @@ if (String(conversation.request.method) == 'POST') {
 	other (sometimes antagonistically!) to create more hits, and thus generate more revenue. 
 </p>
 <p>
-	Unfortunately, there's no single standard for linbacking, and all of them are rather cumbersome. Luckily, Savory does most of the work for
+	Unfortunately, there's no single standard for linbacking, and all of them are rather cumbersome. Luckily, Diligence does most of the work for
 	you: it features clients and servers for both the <a href="http://www.sixapart.com/pronet/docs/trackback_spec">Trackback</a> and
 	<a href="http://www.hixie.ch/specs/pingback/pingback">Pingback</a> specs. As a server, it lets you accept these linkbacks from other sites,
 	respond properly to the remote clients, and register the linkback in a MongoDB collection. As a client, it lets you auto-discover trackback
 	and pingback URLs on remote pages, and do the necessary handshaking.
 </p>
 <p>
-	Pingback is by far the more complicated spec: it requires XML-RPC (we are using Savory's RPC service for it), and also suggests that you
+	Pingback is by far the more complicated spec: it requires XML-RPC (we are using Diligence's RPC service for it), and also suggests that you
 	make sure that the other site is indeed linking to you before registering. Trackback is more lightweight, but allows telling the target
 	site more information about how you are linking them.
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Linkback">Savory.Linkback API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Linkback">Diligence.Linkback API documentation</a>
 	for more details.
 </p>
 
 
 <h2>Integarting Linkbacks into Your Product</h2>
 <p>
-	Savory does a lot for you, but the burden is still on your to understand these non-trivial technologies well enough to integrate them properly
+	Diligence does a lot for you, but the burden is still on your to understand these non-trivial technologies well enough to integrate them properly
 	into your application. On this page, we're featuring a rather elaborate example of how linkbacks work on this page for the purpose of demonstation.
 	Much of this can be automated for your application: for example, in a blogging application, you might want to go over every new blog post
-	and try out all the links on the page with Savory.Linkback.discover to see if they support linkbacks, and then to do the linkback automatically
-	without any user interaction. Or, you might prefer to have users explicitly click on a "linkback" feature. Savory gives you the tools, making it
+	and try out all the links on the page with Diligence.Linkback.discover to see if they support linkbacks, and then to do the linkback automatically
+	without any user interaction. Or, you might prefer to have users explicitly click on a "linkback" feature. Diligence gives you the tools, making it
 	as easy as possible for you to do the rest.
 </p>
 
@@ -139,16 +139,16 @@ if (String(conversation.request.method) == 'POST') {
 </p>
 <form id="add" method="POST">
 	<p>
-		<%= Savory.HTML.input({name: 'addPageUri', size: 70}, {_content: 'Page URL:'}) %>
+		<%= Diligence.HTML.input({name: 'addPageUri', size: 70}, {_content: 'Page URL:'}) %>
 	</p>
 	<p>
-		<%= Savory.HTML.submit({value: 'Add Link'}) %>
+		<%= Diligence.HTML.submit({value: 'Add Link'}) %>
 	</p>
 </form>
 <form id="clear" method="POST">
 	<input type="hidden" name="clearPageUris" value="true" />
 	<p>
-		<%= Savory.HTML.submit({value: 'Clear Link List'}) %>
+		<%= Diligence.HTML.submit({value: 'Clear Link List'}) %>
 	</p>
 </form>
 <p>
@@ -165,23 +165,23 @@ if (String(conversation.request.method) == 'POST') {
 </p>
 <form id="linkback" method="POST">
 	<p>
-		<%= Savory.HTML.input({name: 'pageUri', size: 70}, {_content: 'Page URL:'}) %>
+		<%= Diligence.HTML.input({name: 'pageUri', size: 70}, {_content: 'Page URL:'}) %>
 	</p>
 <h3>3. Or Use Explicit Linkback URLs</h3>
 	<p>
 		In case that doesn't work, you might also have to enter an explicit trackback or pingback URL posted on that page:
 	</p>
 	<p>
-		<%= Savory.HTML.input({name: 'trackbackUri', size: 70}, {_content: 'Trackback URL:'}) %>
+		<%= Diligence.HTML.input({name: 'trackbackUri', size: 70}, {_content: 'Trackback URL:'}) %>
 	</p>
 	<p>
 		(Note that you do <i>not</i> need to enter the page URL with trackback, but you <i>do</i> need it it with pingback)
 	</p>
 	<p>
-		<%= Savory.HTML.input({name: 'pingbackUri', size: 70}, {_content: 'Pingback URL:'}) %>
+		<%= Diligence.HTML.input({name: 'pingbackUri', size: 70}, {_content: 'Pingback URL:'}) %>
 	</p>
 	<p>
-		<%= Savory.HTML.submit({value: 'Linkback'}) %>
+		<%= Diligence.HTML.submit({value: 'Linkback'}) %>
 	</p>
 </form>
 <% if (message) { %>
@@ -196,15 +196,15 @@ if (String(conversation.request.method) == 'POST') {
 	In case your software doesn't support auto-discovery of these, and you need to enter them explicitly, they are:
 </p>
 <p>
-	<%= Savory.HTML.input({value: Savory.Linkback.getTrackbackUri(conversation.reference), readonly: 'readonly', size: 70}, {_content: 'Trackback URL:'}) %>
+	<%= Diligence.HTML.input({value: Diligence.Linkback.getTrackbackUri(conversation.reference), readonly: 'readonly', size: 70}, {_content: 'Trackback URL:'}) %>
 </p>
 <p>
-	<%= Savory.HTML.input({value: Savory.Linkback.getPingbackUri(), readonly: 'readonly', size: 70}, {_content: 'Pingback URL:'}) %>
+	<%= Diligence.HTML.input({value: Diligence.Linkback.getPingbackUri(), readonly: 'readonly', size: 70}, {_content: 'Pingback URL:'}) %>
 </p>
 
 
 <%
-var linkbacks = Savory.Linkback.getLinkbacks(conversation.reference)
+var linkbacks = Diligence.Linkback.getLinkbacks(conversation.reference)
 %>
 <h2>Links to This Page (<%= linkbacks ? linkbacks.length : 0 %>)</h3>
 <p>

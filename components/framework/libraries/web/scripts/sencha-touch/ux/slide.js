@@ -20,7 +20,7 @@ Ext.ux.slideIn = function(container, card, anim, slideOutOnSwipe, destroyOnSlide
 		card.on('render', function() {
 			this.card.getEl().on('swipe', function(event) {
 				if (event.direction == 'right') {
-					Savory.slideOut(this.container, this.card, this.destroyOnSlideOut)
+					Diligence.slideOut(this.container, this.card, this.destroyOnSlideOut)
 				}
 			}, this, {single: true});
 		}, {

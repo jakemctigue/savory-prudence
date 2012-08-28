@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -51,7 +51,7 @@ try {
 	i = documents.find()
 	i = new Sincerity.Iterators.Transformer(i, function(entry) {
 		return {
-			text: Savory.HTML.strip(entry.activeDraft ? entry.activeDraft.rendered : '')
+			text: Diligence.HTML.strip(entry.activeDraft ? entry.activeDraft.rendered : '')
 		}
 	})
 	directory.index(i)

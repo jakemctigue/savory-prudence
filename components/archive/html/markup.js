@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -14,16 +14,16 @@
 document.executeOnce('/sincerity/classes/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/sincerity/jvm/')
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/diligence/foundation/html/')
 
-var Savory = Savory || {}
+var Diligence = Diligence || {}
 
 /**
  * Rendering of HTML via Textile, Confluence, MediaWiki, Trac,
  * TWiki and Markdown markup languages, including support for extending the parsers
  * via JavaScript closures.
  *  
- * @name Savory.HTML.Markup
+ * @name Diligence.HTML.Markup
  * @namespace
  * @requires For Textile: org.eclipse.mylyn.wikitext.textile.jar, org.eclipse.mylyn.wikitext.core.jar;
  * @requires For Confluence: org.eclipse.mylyn.wikitext.confluence.jar, org.eclipse.mylyn.wikitext.core.jar;
@@ -37,8 +37,8 @@ var Savory = Savory || {}
  * @author Tal Liron
  * @version 1.1
  */
-Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
-	/** @exports Public as Savory.HTML */
+Diligence.HTML = Sincerity.Objects.merge(Diligence.HTML, function() {
+	/** @exports Public as Diligence.HTML */
     var Public = {}
 
 	/**
@@ -47,7 +47,7 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	 * Can only be called from Prudence configuration scripts!
 	 */
 	Public.routing = function() {
-		scriptletPlugins.put('markup', '/savory/foundation/html/markup/scriptlet-plugin/')
+		scriptletPlugins.put('markup', '/diligence/foundation/html/markup/scriptlet-plugin/')
 	}
 
     /**
@@ -55,8 +55,8 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	 * 
 	 * @param {String} name Supported renderers: 'confluence', 'mediaWiki',
 	 *        'twiki', 'trac', 'textile', 'bugzillaTextile' and 'markdown'
-	 * @param [configuration] See {@link Savory.HTML.Renderer#configure}
-	 * @returns {Savory.HTML#Renderer} Null if not supported
+	 * @param [configuration] See {@link Diligence.HTML.Renderer#configure}
+	 * @returns {Diligence.HTML#Renderer} Null if not supported
 	 */
 	Public.getRenderer = function(name, configuration) {
 		name = String(name)
@@ -83,15 +83,15 @@ Savory.HTML = Sincerity.Objects.merge(Savory.HTML, function() {
 	 * A renderer converts a markup language to HTML.
 	 * 
 	 * @class
-	 * @name Savory.HTML.Renderer
+	 * @name Diligence.HTML.Renderer
 	 * 
 	 * @param {String} name The markup language name
 	 * @param {org.eclipse.mylyn.wikitext.core.parser.markup.MarkupLanguage} [language] The Mylyn language parser implementation
 	 * 
-	 * @see Savory.HTML#getRenderer
+	 * @see Diligence.HTML#getRenderer
 	 */
 	Public.Renderer = Sincerity.Classes.define(function() {
-		/** @exports Public as Savory.HTML.Renderer */
+		/** @exports Public as Diligence.HTML.Renderer */
 	    var Public = {}
 	    
 	    /** @ignore */

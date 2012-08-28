@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -13,8 +13,8 @@ at http://threecrickets.com/
 
 %><%& '/site/header/' %>
 <%
-document.executeOnce('/savory/integration/backend/gravatar/')
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/diligence/integration/backend/gravatar/')
+document.executeOnce('/diligence/foundation/html/')
 
 var email = 'tal.liron@threecrickets.com'
 switch (String(conversation.request.method)) {
@@ -23,12 +23,12 @@ switch (String(conversation.request.method)) {
 		break
 }
 
-var gravatar = new Savory.Gravatar(email)
+var gravatar = new Diligence.Gravatar(email)
 var profile = gravatar.getProfile()
 var displayName = (profile && profile.entry && profile.entry.length > 0) ? profile.entry[0].displayName : email
 %>
 
-<h1>Savory's Gravatar Integration Library</h1>
+<h1>Diligence's Gravatar Integration Library</h1>
 <p>
 	<a href="http://en.gravatar.com/">Gravatar</a> is a popular service for managing user avatars
 	and simple profile pages by associating them with email addresses.
@@ -51,20 +51,20 @@ var displayName = (profile && profile.entry && profile.entry.length > 0) ? profi
 	Provide users with a way to manage avatars on your site directly, and only default to Gravatar.
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Gravatar">Savory.Gravatar API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Gravatar">Diligence.Gravatar API documentation</a>
 	for more details.
 </p>
 
 
 <h2>Let's Do It</h2>
 <p>
-	Just enter an email address, and let the Savory magic happen.
+	Just enter an email address, and let the Diligence magic happen.
 </p>
 	
 <form method="POST">
-	<p><%= Savory.HTML.input({name: 'email', value: email}, {_content: 'Email address:'}) %></p>
-	<p><%= Savory.HTML.input({name: 'size'}, {_content: 'Avatar size (1-512, defaults to 80):'}) %></p>
-	<p><%= Savory.HTML.submit({value: 'Fetch'}) %></p>
+	<p><%= Diligence.HTML.input({name: 'email', value: email}, {_content: 'Email address:'}) %></p>
+	<p><%= Diligence.HTML.input({name: 'size'}, {_content: 'Avatar size (1-512, defaults to 80):'}) %></p>
+	<p><%= Diligence.HTML.submit({value: 'Fetch'}) %></p>
 </form>
 
 <h3>Display Name: <%= displayName %></h3>

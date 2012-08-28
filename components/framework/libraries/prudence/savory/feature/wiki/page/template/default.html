@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -13,9 +13,9 @@ at http://threecrickets.com/
 
 %><%
 
-var permissions = conversation.locals.get('savory.service.authorization.permissions')
-var textPack = conversation.locals.get('savory.service.internationalization.text')
-var page = conversation.locals.get('savory.feature.wiki.page') || Savory.Wiki.getPage(pageName, conversation.query.get('revision'))
+var permissions = conversation.locals.get('diligence.service.authorization.permissions')
+var textPack = conversation.locals.get('diligence.service.internationalization.text')
+var page = conversation.locals.get('diligence.feature.wiki.page') || Diligence.Wiki.getPage(pageName, conversation.query.get('revision'))
 
 function renderPart(part) {
 	var rendered = page.render(part)
@@ -24,7 +24,7 @@ function renderPart(part) {
 <div class="page-<%= part %>">
 	<%= rendered %>
 <%
-		if (permissions && permissions.get('savory.feature.pages.edit')) {
+		if (permissions && permissions.get('diligence.feature.pages.edit')) {
 %>
 	<p align="right">
 		<a href="?mode=edit&part=<%= part %>">Edit the <%= part %> part</a>

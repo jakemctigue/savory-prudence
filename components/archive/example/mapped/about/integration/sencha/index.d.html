@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -17,10 +17,10 @@ conversation.locals.put('extJs', true)
 document.executeOnce('/prudence/blocks/')
 %>
 <%{{ 'page.main' %>
-<h1>Savory's Sencha Integration Library</h1>
+<h1>Diligence's Sencha Integration Library</h1>
 <p>
 	We love, love, love Ext JS, which is by far the best client-side JavaScript framework, and its mobile cousin
-	Sencha Touch, and wanted Savory to do them justice. We're happy with the result! This is a <i>big</i> library, with
+	Sencha Touch, and wanted Diligence to do them justice. We're happy with the result! This is a <i>big</i> library, with
 	lots of examples and explanations, so get yourself a cup of coffee, tea or yerbamatte, and get comfy.
 </p>
 <p>
@@ -36,7 +36,7 @@ document.executeOnce('/prudence/blocks/')
 	<li><a href="touch/">Sencha Touch</a>: Easily create data-driven mobile apps</li>
 </ul>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Sencha">Savory.Sencha API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Sencha">Diligence.Sencha API documentation</a>
 	for more details.
 </p>
 
@@ -57,7 +57,7 @@ document.executeOnce('/prudence/blocks/')
 	By default, Ext JS and almost all other client-side JavaScript frameworks and widgets enable an
 	annoying form of client cache overriding in their communication with the server. You'll see in all our
 	examples here that we're explicitly turning off Ext JS's cache overriding. Why? Because in
-	Savory this is unnecessary: Prudence lets us do the right thing and actually use client-side caching
+	Diligence this is unnecessary: Prudence lets us do the right thing and actually use client-side caching
 	to our benefit. 
 </p>
 <p>
@@ -91,8 +91,8 @@ document.executeOnce('/prudence/blocks/')
 	resources on an optimization that is devilishly bypassed.)
 </p>
 <p>
-	Savory does the right thing: data from the server is returned with a timestamp, which is then compared
-	to the client's cached version. Moreover, Savory uses <a href="http://threecrickets.com/prudence/manual/resources/#toc-Subsubsection-83">Prudence's handleGetInfo()</a>
+	Diligence does the right thing: data from the server is returned with a timestamp, which is then compared
+	to the client's cached version. Moreover, Diligence uses <a href="http://threecrickets.com/prudence/manual/resources/#toc-Subsubsection-83">Prudence's handleGetInfo()</a>
 	to fetch <i>only</i> the timestamp <i>before</i> fetching all the data, so that HTTP can be truly conditional. Thus, only if the client has an
 	outdated version is handleGet called and the data generated. Lots of MongoDB requests can be entirely
 	avoided!

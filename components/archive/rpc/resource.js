@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/rpc/')
+document.executeOnce('/diligence/service/rpc/')
 document.executeOnce('/sincerity/objects/')
 document.executeOnce('/sincerity/json/')
 document.executeOnce('/sincerity/xml/')
@@ -19,7 +19,7 @@ document.executeOnce('/sincerity/rhino/')
 document.executeOnce('/prudence/resources/')
 
 // Makes sure that lazy modules are reset at the same time as this document is reset
-Savory.RPC.resetLazyModules()
+Diligence.RPC.resetLazyModules()
 
 /** @ignore */
 function handleInit(conversation) {
@@ -60,8 +60,8 @@ function getMethod(module, methodName) {
 /** @ignore */
 function handlePost(conversation) {
 	var module = String(conversation.locals.get('module'))
-	Savory.RPC.getLazyModules()
-	module = Savory.RPC.getExportedModule(module)
+	Diligence.RPC.getLazyModules()
+	module = Diligence.RPC.getExportedModule(module)
 	if (!module) {
 		return Prudence.Resources.Status.ClientError.NotFound
 	}
@@ -82,7 +82,7 @@ function handlePost(conversation) {
 			doc = Sincerity.XML.from(entity)
 		}
 		catch (x) {
-			faultCode = Savory.RPC.Fault.ParseError
+			faultCode = Diligence.RPC.Fault.ParseError
 			value = 'Malformed XML'
 		}
 		if (doc) {
@@ -103,7 +103,7 @@ function handlePost(conversation) {
 							var values = param.getElements('value')
 							if (values.length) {
 								var value = values[0]
-								call.params.push(Savory.RPC.fromXmlValue(value))
+								call.params.push(Diligence.RPC.fromXmlValue(value))
 							}
 						}
 					}
@@ -122,7 +122,7 @@ function handlePost(conversation) {
 			}
 		}
 		catch (x) {
-			faultCode = Savory.RPC.Fault.ParseError
+			faultCode = Diligence.RPC.Fault.ParseError
 			value = 'Malformed JSON'
 		}
 	}
@@ -142,7 +142,7 @@ function handlePost(conversation) {
 		var call = calls[c]
 
 		if (!call.method) {
-			faultCode = Savory.RPC.Fault.InvalidRequest
+			faultCode = Diligence.RPC.Fault.InvalidRequest
 			value = 'Method name not provided'
 		}
 		
@@ -153,7 +153,7 @@ function handlePost(conversation) {
 		if (!faultCode) {
 			if (call.method == 'system.getCapabilities') {
 				if (call.params.length) {
-					faultCode = Savory.RPC.Fault.InvalidParams
+					faultCode = Diligence.RPC.Fault.InvalidParams
 					value = 'Too many params'
 				}
 				else {
@@ -167,7 +167,7 @@ function handlePost(conversation) {
 			}
 			else if (call.method == 'system.listMethods') {
 				if (call.params.length) {
-					faultCode = Savory.RPC.Fault.InvalidParams
+					faultCode = Diligence.RPC.Fault.InvalidParams
 					value = 'Too many params'
 				}
 				else {
@@ -182,7 +182,7 @@ function handlePost(conversation) {
 			}
 			else if (call.method == 'system.methodSignature') {
 				if (call.params.length > 1) {
-					faultCode = Savory.RPC.Fault.InvalidParams
+					faultCode = Diligence.RPC.Fault.InvalidParams
 					value = 'Too many params'
 				}
 				else {
@@ -197,7 +197,7 @@ function handlePost(conversation) {
 						}
 					}
 					else {
-						faultCode = Savory.RPC.Fault.ServerError
+						faultCode = Diligence.RPC.Fault.ServerError
 						if (call.params.length) {
 							value = 'Method not found: ' + call.params[0]
 						}
@@ -209,7 +209,7 @@ function handlePost(conversation) {
 			}
 			else if (call.method == 'system.methodHelp') {
 				if (call.params.length > 1) {
-					faultCode = Savory.RPC.Fault.InvalidParams
+					faultCode = Diligence.RPC.Fault.InvalidParams
 					value = 'Too many params'
 				}
 				else {
@@ -218,7 +218,7 @@ function handlePost(conversation) {
 						value = ''
 					}
 					else {
-						faultCode = Savory.RPC.Fault.ServerError
+						faultCode = Diligence.RPC.Fault.ServerError
 						if (call.params.length) {
 							value = 'Method not found: ' + call.params[0]
 						}
@@ -241,11 +241,11 @@ function handlePost(conversation) {
 				var method = getMethod(module, call.method)
 				if (method) {
 					if (call.params.length > method.arity) {
-						faultCode = Savory.RPC.Fault.InvalidParams
+						faultCode = Diligence.RPC.Fault.InvalidParams
 						value = 'Too many params'
 					}
 					else {
-						var fn = Savory.RPC.getFunction(method)
+						var fn = Diligence.RPC.getFunction(method)
 						if (fn) {
 							try {
 								var context = {
@@ -267,19 +267,19 @@ function handlePost(conversation) {
 								}
 								else {
 									var details = Sincerity.Rhino.getExceptionDetails(x)
-									faultCode = Savory.RPC.Fault.ServerError
+									faultCode = Diligence.RPC.Fault.ServerError
 									value = details.message
 								}
 							}
 						}
 						else {
-							faultCode = Savory.RPC.Fault.ServerError
+							faultCode = Diligence.RPC.Fault.ServerError
 							value = 'No function for method: ' + call.method
 						}
 					}
 				}
 				else {
-					faultCode = Savory.RPC.Fault.MethodNotFound
+					faultCode = Diligence.RPC.Fault.MethodNotFound
 					value = 'Unknown method: ' + call.method
 				}
 			}
@@ -289,7 +289,7 @@ function handlePost(conversation) {
 			var result
 			if (faultCode) {
 				result = {
-					fault: Savory.RPC.toXmlValue({
+					fault: Diligence.RPC.toXmlValue({
 						faultCode: {_: {'int': faultCode}},
 						faultString: value
 					})
@@ -298,7 +298,7 @@ function handlePost(conversation) {
 			else {
 				result = {
 					params: {
-						param: Savory.RPC.toXmlValue(value)
+						param: Diligence.RPC.toXmlValue(value)
 					}
 				}
 			}

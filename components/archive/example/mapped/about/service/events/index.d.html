@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -13,15 +13,15 @@ at http://threecrickets.com/
 
 %><%& '/site/header/' %>
 <%
-document.executeOnce('/savory/foundation/html/')
+document.executeOnce('/diligence/foundation/html/')
 document.executeOnce('/prudence/logging/')
-document.executeOnce('/savory/service/events/')
+document.executeOnce('/diligence/service/events/')
 
-var inThreadStore = new Savory.Events.InThreadStore()
-var globalsStore = new Savory.Events.MapStore(application.globals, 'myevents.')
-var persistentStore = new Savory.Events.MongoDbCollectionStore()
+var inThreadStore = new Diligence.Events.InThreadStore()
+var globalsStore = new Diligence.Events.MapStore(application.globals, 'myevents.')
+var persistentStore = new Diligence.Events.MongoDbCollectionStore()
 
-Savory.Events.subscribe({
+Diligence.Events.subscribe({
 	name: 'payments.successful',
 	stores: inThreadStore,
 	fn: function(name, context) {
@@ -29,7 +29,7 @@ Savory.Events.subscribe({
 	}
 })
 
-Savory.Events.subscribe({
+Diligence.Events.subscribe({
 	name: 'payments.successful',
 	id: 'sendThankYou',
 	stores: globalsStore,
@@ -38,7 +38,7 @@ Savory.Events.subscribe({
 	}
 })
 
-Savory.Events.subscribe({
+Diligence.Events.subscribe({
 	name: 'payments.successful',
 	id: 'sendThankYou',
 	stores: persistentStore,
@@ -52,7 +52,7 @@ switch (String(conversation.request.method)) {
 		var type = String(conversation.form.get('type'))
 		switch (type) {
 			case 'in-thread':
-				Savory.Events.fire({
+				Diligence.Events.fire({
 					name: 'payments.successful',
 					stores: inThreadStore,
 					context: {username: 'user123', id: '123', amount: '$123.45'}
@@ -60,7 +60,7 @@ switch (String(conversation.request.method)) {
 				break
 
 			case 'async':
-				Savory.Events.fire({
+				Diligence.Events.fire({
 					name: 'payments.successful',
 					stores: inThreadStore,
 					async: true,
@@ -69,7 +69,7 @@ switch (String(conversation.request.method)) {
 				break
 
 			case 'stored':
-				Savory.Events.fire({
+				Diligence.Events.fire({
 					name: 'payments.successful',
 					stores: globalsStore,
 					async: true,
@@ -79,7 +79,7 @@ switch (String(conversation.request.method)) {
 				break
 
 			case 'persistent':
-				Savory.Events.fire({
+				Diligence.Events.fire({
 					name: 'payments.successful',
 					stores: persistentStore,
 					async: true,
@@ -93,7 +93,7 @@ switch (String(conversation.request.method)) {
 
 %>
 
-<h1>Savory's Events Service</h1>
+<h1>Diligence's Events Service</h1>
 <p>
 	Every framework provides some generic way to send, listen to and fire one-way messages
 	called "events". By decoupling event producer code from event consumer code, you can better
@@ -118,7 +118,7 @@ switch (String(conversation.request.method)) {
 	repeated attempts, back-off algorithms, notifications to system administrators, etc.
 </p>
 <p>
-	One size does not fit all. With Savory, we wanted to keep events lightweight:
+	One size does not fit all. With Diligence, we wanted to keep events lightweight:
 	we assume that your consumer and producer components are all running inside a
 	Prudence container: they are /resources/ and /web/dynamic/ documents that run
 	in web request threads, or /tasks/ that run asynchronously. There's thus no need
@@ -130,11 +130,11 @@ switch (String(conversation.request.method)) {
 	On the other hand, the combination of Prudence Hazelcast clusters, MongoDB, and
 	JavaScript's inherent dynamism within the Prudence container allows for some
 	really scalable events! If what you need is asynchronicity and scalable distribution,
-	rather than generic decoupling, then Savory events might be far more useful
+	rather than generic decoupling, then Diligence events might be far more useful
 	and simpler than deploying complex middleware.
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Events">Savory.Events API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Events">Diligence.Events API documentation</a>
 	for more details.
 </p>
 
@@ -144,7 +144,7 @@ switch (String(conversation.request.method)) {
 	First, the basics. Here's our "/libraries/politeness/acknowledgements.js":
 </p>
 <pre>
-Savory.Events.subscribe({
+Diligence.Events.subscribe({
 	name: 'payments.successful',
 	fn: function(name, context) {
 		logger.info('User {0} has paid us {1}!', context.username, context.amount)
@@ -158,7 +158,7 @@ Savory.Events.subscribe({
 <pre>
 document.executeOnce('/libraries/politeness/acknowledgements/')
 	
-Savory.Events.fire({
+Diligence.Events.fire({
 	name: 'payments.successful',
 	context: {username: user.name, id: user.id, amount: payment.amount}
 })
@@ -169,8 +169,8 @@ Savory.Events.fire({
 	trick, like in this example.
 </p>
 <form method="POST">
-	<p><%= Savory.HTML.input({name: 'type', value: 'in-thread', type: 'hidden'}) %></p>
-	<p><%= Savory.HTML.submit({value: 'Click to fire in-thread event'}) %></p>
+	<p><%= Diligence.HTML.input({name: 'type', value: 'in-thread', type: 'hidden'}) %></p>
+	<p><%= Diligence.HTML.submit({value: 'Click to fire in-thread event'}) %></p>
 </form>
 
 
@@ -180,7 +180,7 @@ Savory.Events.fire({
 	anywhere in your Prudence cluster:
 </p>
 <pre>
-Savory.Events.subscribe({
+Diligence.Events.subscribe({
 	name: 'payments.successful',
 	dependencies: '/politeness/acknowledgements/',
 	fn: function(name, context) {
@@ -200,15 +200,15 @@ Savory.Events.subscribe({
 <pre>
 document.executeOnce('/libraries/politeness/acknowledgements/')
 
-Savory.Events.fire({
+Diligence.Events.fire({
 	name: 'payments.successful',
 	async: true,
 	context: {username: user.name, id: user.id, amount: payment.amount}
 })
 </pre>
 <form method="POST">
-	<p><%= Savory.HTML.input({name: 'type', value: 'async', type: 'hidden'}) %></p>
-	<p><%= Savory.HTML.submit({value: 'Click to fire async event'}) %></p>
+	<p><%= Diligence.HTML.input({name: 'type', value: 'async', type: 'hidden'}) %></p>
+	<p><%= Diligence.HTML.submit({value: 'Click to fire async event'}) %></p>
 </form>
 <p>
 	And... that's pretty much it. Every listener will run in its own thread
@@ -218,7 +218,7 @@ Savory.Events.fire({
 <p>
 	How does this magic work? It's JavaScript magic:  
 	<i>the listener function's source code is serialized.</i>
-	The code that fires the event is called via <a href="../tasks/">Savory's tasks library</a>.
+	The code that fires the event is called via <a href="../tasks/">Diligence's tasks library</a>.
 	The task makes sure to run the dependencies and evaluate the JavaScript you stored. Voila. 
 	(Serialization and eval will only occur on async events: otherwise, it's a regular function
 	call.)	
@@ -243,9 +243,9 @@ Savory.Events.fire({
 	that we can fire the event anywhere in the Prudence cluster:
 </p>
 <pre>
-var globalEvents = new Savory.Events.GlobalsStore(application.distributedGlobals, 'myevents.')
+var globalEvents = new Diligence.Events.GlobalsStore(application.distributedGlobals, 'myevents.')
 	
-Savory.Events.subscribe({
+Diligence.Events.subscribe({
 	name: 'payments.successful',
 	stores: globalEvents,
 	id: 'sendThankYou',
@@ -277,7 +277,7 @@ Savory.Events.subscribe({
 	subscribed to our event:
 </p>
 <pre>
-Savory.Events.fire({
+Diligence.Events.fire({
 	name: 'payments.successful',
 	stores: globalEvents,
 	async: true,
@@ -286,8 +286,8 @@ Savory.Events.fire({
 })
 </pre>
 <form method="POST">
-	<p><%= Savory.HTML.input({name: 'type', value: 'stored', type: 'hidden'}) %></p>
-	<p><%= Savory.HTML.submit({value: 'Click to fire stored event'}) %></p>
+	<p><%= Diligence.HTML.input({name: 'type', value: 'stored', type: 'hidden'}) %></p>
+	<p><%= Diligence.HTML.submit({value: 'Click to fire stored event'}) %></p>
 </form>
 <p>
 	The "stores" param can also be an array, so you can fire the event on listeners from
@@ -308,9 +308,9 @@ Savory.Events.fire({
 	collection):
 </p>
 <pre>
-Savory.Events.subscribe({
+Diligence.Events.subscribe({
 	name: 'payments.successful',
-	stores: new Savory.Events.MongoDbCollectionStore(),
+	stores: new Diligence.Events.MongoDbCollectionStore(),
 	id: 'sendThankYou',
 	dependencies: '/politeness/acknowledgements/',
 	fn: function(name, context) {
@@ -323,8 +323,8 @@ Savory.Events.subscribe({
 	Everything is otherwise the same. Neat!
 </p>
 <form method="POST">
-	<p><%= Savory.HTML.input({name: 'type', value: 'persistent', type: 'hidden'}) %></p>
-	<p><%= Savory.HTML.submit({value: 'Click to fire persistent event'}) %></p>
+	<p><%= Diligence.HTML.input({name: 'type', value: 'persistent', type: 'hidden'}) %></p>
+	<p><%= Diligence.HTML.submit({value: 'Click to fire persistent event'}) %></p>
 </form>
 <p>
 	You can also store events inside a specific, arbitrary MongoDB document, using "Events.MongoDbDocumentStore".

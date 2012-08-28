@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework for Prudence
+// This file is part of Diligence for Prudence
 //
 // Copyright 2011 Three Crickets LLC.
 //
@@ -21,30 +21,30 @@ MongoDB = null
 } catch(x) {}
 
 document.executeOnce('/sincerity/objects/')
-document.executeOnce('/savory/foundation/prudence/lazy/')
+document.executeOnce('/diligence/foundation/prudence/lazy/')
 
-applicationName = 'Savory Demonstration'
-applicationDescription = 'Demos for the Savory Framework'
+applicationName = 'Diligence Demonstration'
+applicationDescription = 'Demos for Diligence'
 applicationAuthor = 'Tal Liron'
 applicationOwner = 'Three Crickets'
-applicationHomeURL = 'http://threecrickets.com/savory/'
+applicationHomeURL = 'http://threecrickets.com/diligence/'
 applicationContactEmail = 'info@threecrickets.com'
 
 showDebugOnError = true
 minimumTimeBetweenValidityChecks = 0
 
 var excludeFromFilter = ['/media/', '/style/', '/script/']
-var publicBaseUri = 'https://threecrickets.com/savory'
+var publicBaseUri = 'https://threecrickets.com/diligence'
 	
 predefinedGlobals = Sincerity.Objects.merge(predefinedGlobals, Sincerity.Objects.flatten({
 	mongoDb: {
 		defaultConnection: predefinedSharedGlobals['mongoDb.defaultConnection'],
 		defaultServers: predefinedSharedGlobals['mongoDb.defaultServers'] || '127.0.0.1',
 		defaultSwallow: predefinedSharedGlobals['mongoDb.defaultSwallow'],
-		defaultDb: 'savory'
+		defaultDb: 'diligence'
 	},
 	
-	savory: {
+	diligence: {
 		feature: {
 			console: {
 				theme: 'gray'
@@ -76,19 +76,19 @@ predefinedGlobals = Sincerity.Objects.merge(predefinedGlobals, Sincerity.Objects
 					delaySeconds: 100
 				}],
 				providers: {
-					'.': Savory.Lazy.build({
-						savory: {
+					'.': Diligence.Lazy.build({
+						diligence: {
 							dependencies: '/about/feature/seo/providers/',
-							name: 'SavoryProvider'
+							name: 'DiligenceProvider'
 						},
 						test: {
-							dependencies: '/savory/feature/seo/',
-							name: 'Savory.SEO.ExplicitProvider',
+							dependencies: '/diligence/feature/seo/',
+							name: 'Diligence.SEO.ExplicitProvider',
 							config: {
 								domains: ['http://localhost:8080'],
 								locations: ['/this/', '/is/', '/working/'],
-								exclusions: ['/savory/media/', '/savory/style/', '/savory/script/'],
-								inclusions: ['/savory/media/name/']
+								exclusions: ['/diligence/media/', '/diligence/style/', '/diligence/script/'],
+								inclusions: ['/diligence/media/name/']
 							}
 						},
 						fake: {
@@ -110,40 +110,40 @@ predefinedGlobals = Sincerity.Objects.merge(predefinedGlobals, Sincerity.Objects
 				passwordAlgorithm: 'SHA-256',
 				passwordIterations: 1000,
 				passwordSaltLength: 8,
-				cookiePath: '/savory/',
+				cookiePath: '/diligence/',
 				uri: [publicBaseUri, '/authentication/'],
 				logoutUri: [publicBaseUri, '/authentication/logout/'],
 				providerBaseUri: [publicBaseUri, '/authentication/provider/'],
 				excludeFromFilter: excludeFromFilter,
 				providers: {
-					'.': Savory.Lazy.build({
+					'.': Diligence.Lazy.build({
 						Facebook: {
-							dependencies: '/savory/service/authentication/provider/facebook/',
-							name: 'Savory.Authentication.FacebookProvider'
+							dependencies: '/diligence/service/authentication/provider/facebook/',
+							name: 'Diligence.Authentication.FacebookProvider'
 						},
 						Twitter: {
-							dependencies: '/savory/service/authentication/provider/twitter/',
-							name: 'Savory.Authentication.TwitterProvider'
+							dependencies: '/diligence/service/authentication/provider/twitter/',
+							name: 'Diligence.Authentication.TwitterProvider'
 						},
 						Myspace: {
-							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.OpenIdProvider',
+							dependencies: '/diligence/service/authentication/provider/open-id/',
+							name: 'Diligence.Authentication.OpenIdProvider',
 							config: {
 								slug: 'myspace',
 								xrdsUri: 'https://www.myspace.com/'
 							}
 						},
 						Google: {
-							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.OpenIdProvider',
+							dependencies: '/diligence/service/authentication/provider/open-id/',
+							name: 'Diligence.Authentication.OpenIdProvider',
 							config: {
 								slug: 'google',
 								xrdsUri: 'https://www.google.com/accounts/o8/id'
 							}
 						},
 						'Yahoo!': {
-							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.OpenIdProvider',
+							dependencies: '/diligence/service/authentication/provider/open-id/',
+							name: 'Diligence.Authentication.OpenIdProvider',
 							config: {
 								slug: 'yahoo',
 								uri: 'https://me.yahoo.com',
@@ -151,12 +151,12 @@ predefinedGlobals = Sincerity.Objects.merge(predefinedGlobals, Sincerity.Objects
 							}
 						},
 						'Windows Live': {
-							dependencies: '/savory/service/authentication/provider/windows-live/',
-							name: 'Savory.Authentication.WindowsLiveProvider'
+							dependencies: '/diligence/service/authentication/provider/windows-live/',
+							name: 'Diligence.Authentication.WindowsLiveProvider'
 						},
 						Launchpad: {
-							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.OpenIdProvider',
+							dependencies: '/diligence/service/authentication/provider/open-id/',
+							name: 'Diligence.Authentication.OpenIdProvider',
 							config: {
 								slug: 'launchpad',
 								xrdsUri: 'https://launchpad.net/~{username}',
@@ -164,8 +164,8 @@ predefinedGlobals = Sincerity.Objects.merge(predefinedGlobals, Sincerity.Objects
 							}
 						}/*,
 						LiveJournal: {
-							dependencies: '/savory/service/authentication/provider/open-id/',
-							name: 'Savory.Authentication.OpenIdProvider',
+							dependencies: '/diligence/service/authentication/provider/open-id/',
+							name: 'Diligence.Authentication.OpenIdProvider',
 							config: {
 								slug: 'liveJournal',
 								uri: 'http://{username}.livejournal.com', // causes invalid tag format exception
@@ -179,10 +179,10 @@ predefinedGlobals = Sincerity.Objects.merge(predefinedGlobals, Sincerity.Objects
 			
 			notification: {
 				services: {
-					'.': Savory.Lazy.build({
+					'.': Diligence.Lazy.build({
 						Email: {
-							dependencies: '/savory/service/notification/service/email/',
-							name: 'Savory.Notification.EmailService',
+							dependencies: '/diligence/service/notification/service/email/',
+							name: 'Diligence.Notification.EmailService',
 							config: {
 								from: 'TODO',
 								site: applicationName
@@ -204,23 +204,23 @@ predefinedGlobals = Sincerity.Objects.merge(predefinedGlobals, Sincerity.Objects
 			internationalization: {
 				locale: 'en',
 				cacheDuration: 10000,
-				path: applicationBasePath + '/data/savory/service/internationalization/',
+				path: applicationBasePath + '/data/diligence/service/internationalization/',
 				excludeFromFilter: excludeFromFilter
 			},
 			
 			events: {
 				defaultStores: function() {
-					document.executeOnce('/savory/service/events/')
-					return [new Savory.Events.MongoDbCollectionStore()]
+					document.executeOnce('/diligence/service/events/')
+					return [new Diligence.Events.MongoDbCollectionStore()]
 				}
 			},
 			
 			rpc: {
 				store: function() {
-					document.executeOnce('/savory/service/rpc/')
-					return new Savory.RPC.DistributedStore()
-					//return new Savory.RPC.MapStore(application.globals)
-					//return new Savory.RPC.MongoDbStore()
+					document.executeOnce('/diligence/service/rpc/')
+					return new Diligence.RPC.DistributedStore()
+					//return new Diligence.RPC.MapStore(application.globals)
+					//return new Diligence.RPC.MongoDbStore()
 				}
 			},
 			
@@ -302,50 +302,50 @@ predefinedGlobals = Sincerity.Objects.merge(predefinedGlobals, Sincerity.Objects
 // RPC service
 //
 
-var modules = predefinedGlobals['savory.service.rpc.modules'] = (predefinedGlobals['savory.service.rpc.modules'] || [])
-var routes = predefinedGlobals['savory.service.rpc.routes'] = (predefinedGlobals['savory.service.rpc.routes'] || {})
-document.execute('/applications/savory/rpc/')
+var modules = predefinedGlobals['diligence.service.rpc.modules'] = (predefinedGlobals['diligence.service.rpc.modules'] || [])
+var routes = predefinedGlobals['diligence.service.rpc.routes'] = (predefinedGlobals['diligence.service.rpc.routes'] || {})
+document.execute('/applications/diligence/rpc/')
 
 //
 // Route service
 //
 
-routes = predefinedGlobals['savory.service.rest.routes'] = (predefinedGlobals['savory.service.rest.routes'] || {})
-document.execute('/applications/savory/rest/')
+routes = predefinedGlobals['diligence.service.rest.routes'] = (predefinedGlobals['diligence.service.rest.routes'] || {})
+document.execute('/applications/diligence/rest/')
 
 //
 // Extra settings
 //
 
 try {
-document.execute('/applications/savory/version/')
+document.execute('/applications/diligence/version/')
 } catch(x) {}
 
 try {
-document.execute('/applications/savory/settings-extra/')
+document.execute('/applications/diligence/settings-extra/')
 } catch(x) {}
 
-document.executeOnce('/savory/feature/console/')
-document.executeOnce('/savory/feature/seo/')
-document.executeOnce('/savory/feature/wiki/')
-document.executeOnce('/savory/feature/registration/')
-document.executeOnce('/savory/service/linkback/')
-document.executeOnce('/savory/service/authentication/')
-document.executeOnce('/savory/service/rpc/')
-document.executeOnce('/savory/service/rest/')
-document.executeOnce('/savory/service/progress/')
-document.executeOnce('/savory/service/events/')
-document.executeOnce('/savory/integration/backend/pay-pal/')
-document.executeOnce('/savory/integration/frontend/sencha/')
+document.executeOnce('/diligence/feature/console/')
+document.executeOnce('/diligence/feature/seo/')
+document.executeOnce('/diligence/feature/wiki/')
+document.executeOnce('/diligence/feature/registration/')
+document.executeOnce('/diligence/service/linkback/')
+document.executeOnce('/diligence/service/authentication/')
+document.executeOnce('/diligence/service/rpc/')
+document.executeOnce('/diligence/service/rest/')
+document.executeOnce('/diligence/service/progress/')
+document.executeOnce('/diligence/service/events/')
+document.executeOnce('/diligence/integration/backend/pay-pal/')
+document.executeOnce('/diligence/integration/frontend/sencha/')
 
-Savory.Console.settings()
-Savory.SEO.settings()
-Savory.Wiki.settings()
-Savory.Registration.settings()
-Savory.Authentication.settings()
-Savory.Linkback.settings()
-Savory.RPC.settings()
-Savory.REST.settings()
-Savory.Progress.settings()
-Savory.PayPal.settings()
-Savory.Sencha.settings()
+Diligence.Console.settings()
+Diligence.SEO.settings()
+Diligence.Wiki.settings()
+Diligence.Registration.settings()
+Diligence.Authentication.settings()
+Diligence.Linkback.settings()
+Diligence.RPC.settings()
+Diligence.REST.settings()
+Diligence.Progress.settings()
+Diligence.PayPal.settings()
+Diligence.Sencha.settings()

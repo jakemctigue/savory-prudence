@@ -1,6 +1,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"><%#
 
-This file is part of the Savory Framework for Prudence
+This file is part of Diligence for Prudence
 
 Copyright 2011 Three Crickets LLC.
 
@@ -13,17 +13,17 @@ at http://threecrickets.com/
 
 %><%
 
-document.executeOnce('/savory/feature/seo/')
-document.executeOnce('/savory/foundation/localization/')
-document.executeOnce('/savory/foundation/xml/')
+document.executeOnce('/diligence/feature/seo/')
+document.executeOnce('/diligence/foundation/localization/')
+document.executeOnce('/diligence/foundation/xml/')
 
 var sitemap = conversation.locals.get('sitemap')
 
-var domain = Savory.SEO.getCurrentDomain(conversation)
+var domain = Diligence.SEO.getCurrentDomain(conversation)
 if (domain && domain.isDynamic()) {
 	var locations = domain ? domain.getAllLocations(sitemap) : null
 	if (locations) {
-		var dateFormat = new Savory.Localization.DateTimeFormat('yyyy-MM-dd')
+		var dateFormat = new Diligence.Localization.DateTimeFormat('yyyy-MM-dd')
 		var rootUri = domain.getRootUri()
 
 		for (var l in locations) {

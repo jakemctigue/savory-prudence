@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <%#
 
-This file is part of the Savory Framework for Prudence
+This file is part of Diligence for Prudence
 
 Copyright 2011 Three Crickets LLC.
 
@@ -16,10 +16,10 @@ at http://threecrickets.com/
 
 var sitemap = conversation.locals.get('sitemap')
 if (sitemap) {
-	document.include('/savory/feature/seo/sitemap/urlset/')
+	document.include('/diligence/feature/seo/sitemap/urlset/')
 }
 else {
-	document.include('/savory/feature/seo/sitemap/sitemapindex/')
+	document.include('/diligence/feature/seo/sitemap/sitemapindex/')
 }
 
 %>

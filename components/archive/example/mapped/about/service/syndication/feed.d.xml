@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework for Prudence
+This file is part of Diligence for Prudence
 
 Copyright 2011 Three Crickets LLC.
 
@@ -14,9 +14,9 @@ at http://threecrickets.com/
 %><?xml version="1.0" encoding="utf-8"?>
 <%
 
-document.executeOnce('/savory/service/syndication/')
+document.executeOnce('/diligence/service/syndication/')
 
-var feed = new Savory.Syndication.MongoDbFeed({collection: 'feeds', name: 'news'})
+var feed = new Diligence.Syndication.MongoDbFeed({collection: 'feeds', name: 'news'})
 print(feed.renderAtom(conversation))
 
 %>

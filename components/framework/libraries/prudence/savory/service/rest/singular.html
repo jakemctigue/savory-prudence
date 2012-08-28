@@ -1,6 +1,6 @@
 <%
 
-document.executeOnce('/savory/service/html/')
+document.executeOnce('/diligence/service/html/')
 document.executeOnce('/prudence/resources/')
 document.executeOnce('/sincerity/json/')
 
@@ -12,10 +12,10 @@ if (!data) {
 %>
 <html>
 <head>
-	<%= Savory.HTML.build({_content: 'Savory REST Service - ' + data.resource.name, _tag: 'title'}) %>
+	<%= Diligence.HTML.build({_content: 'Diligence REST Service - ' + data.resource.name, _tag: 'title'}) %>
 </head>
 <body>
-<%= Savory.HTML.build({_content: 'Resource: ' + data.resource.name, _tag: 'h3'}) %>
+<%= Diligence.HTML.build({_content: 'Resource: ' + data.resource.name, _tag: 'h3'}) %>
 <pre>
 <%= Sincerity.JSON.to(data.value, true).escapeElements() %>
 </pre>

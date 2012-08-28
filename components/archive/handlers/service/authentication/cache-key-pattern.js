@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,7 +11,7 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/authentication/')
+document.executeOnce('/diligence/service/authentication/')
 
 function handleCacheKeyPattern(conversation, variables) {
 	var session, user
@@ -22,7 +22,7 @@ function handleCacheKeyPattern(conversation, variables) {
 		
 		switch (String(variable)) {
 			case 'uid':
-				session = session || Savory.Authentication.getCurrentSession(conversation)
+				session = session || Diligence.Authentication.getCurrentSession(conversation)
 				user = user || (session ? session.getUser() : null)
 				if (user) {
 					value = String(user.getId())
@@ -30,7 +30,7 @@ function handleCacheKeyPattern(conversation, variables) {
 				break
 				
 			case 'un':
-				session = session || Savory.Authentication.getCurrentSession(conversation)
+				session = session || Diligence.Authentication.getCurrentSession(conversation)
 				user = user || (session ? session.getUser() : null)
 				if (user) {
 					value = user.getName()
@@ -38,7 +38,7 @@ function handleCacheKeyPattern(conversation, variables) {
 				break
 				
 			case 'au':
-				session = session || Savory.Authentication.getCurrentSession(conversation)
+				session = session || Diligence.Authentication.getCurrentSession(conversation)
 				user = user || (session ? session.getUser() : null)
 				value = user ? 'y' : 'n'
 				break

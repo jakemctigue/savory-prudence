@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -16,7 +16,7 @@ document.executeOnce('/prudence/resources/')
 if (!Prudence.Resources.isMobileClient(conversation)) {
 %>
 <%& '/site/header/' %>
-<h1>Savory's Sencha Integration Library</h1>
+<h1>Diligence's Sencha Integration Library</h1>
 <h2>Sencha Touch</h2>
 
 <p>
@@ -25,7 +25,7 @@ if (!Prudence.Resources.isMobileClient(conversation)) {
 	to see the full Sencha Touch demo on this page. Phone and tablet form factors are both fully supported.
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Sencha">Savory.Sencha API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Sencha">Diligence.Sencha API documentation</a>
 	for more details.
 </p>
 
@@ -40,7 +40,7 @@ if (!Prudence.Resources.isMobileClient(conversation)) {
 	The whole experience is quite similar in concept to <a href="../grids/">Ext JS grids</a> --
 	and <i>very</i> similar in actual code due to similarities between Ext JS and Sencha Touch, especially in
 	the data access API -- but the resulting experience is obviously tailored for a smaller, touch-oriented
-	interface. The bottom line is that you are using the same server-sid Savory code to deliver both desktop
+	interface. The bottom line is that you are using the same server-sid Diligence code to deliver both desktop
 	and mobile application.
 </p>
 <p>
@@ -63,14 +63,14 @@ if (!Prudence.Resources.isMobileClient(conversation)) {
 else {
 %><!DOCTYPE html>
 <%
-document.executeOnce('/savory/integration/frontend/sencha/')
+document.executeOnce('/diligence/integration/frontend/sencha/')
 %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>The Savory Framework Demo</title>
+	<title>Diligence Demo</title>
 	
-	<%= Savory.Sencha.senchaTouchHead(conversation) %>
+	<%= Diligence.Sencha.senchaTouchHead(conversation) %>
 	
     <style>
         body {
@@ -81,7 +81,7 @@ document.executeOnce('/savory/integration/frontend/sencha/')
 <body>
 	<div style="display: none;">
 		<div id="about">
-			<h3>About Savory's Sencha Touch Integration</h3>
+			<h3>About Diligence's Sencha Touch Integration</h3>
 			<p>
 				We connect a standard Sencha store to a MongoDB-backed
 				collection, and let you page through it using a Sencha Touch list, and let edit any item using a
@@ -91,7 +91,7 @@ document.executeOnce('/savory/integration/frontend/sencha/')
 				The whole experience is quite similar in concept to <a href="../grids/">Ext JS grids</a> --
 				and <i>very</i> similar in actual code due to similarities between Ext JS and Sencha Touch, especially in
 				the data access API -- but the resulting experience is obviously tailored for a smaller, touch-oriented
-				interface. The bottom line is that you are using the same server-sid Savory code to deliver both desktop
+				interface. The bottom line is that you are using the same server-sid Diligence code to deliver both desktop
 				and mobile application.
 			</p>
 			<p>
@@ -119,8 +119,8 @@ Ext.setup({
 	onReady: function() {
 		var pageSize = 10;
 		
-		new Savory.data.Store({
-			storeId: 'savory',
+		new Diligence.data.Store({
+			storeId: 'diligence',
 			proxy: {
 				url: '../grids/mongo-db/'
 			},
@@ -142,10 +142,10 @@ Ext.setup({
 				xtype: 'panel',
 				items: {
 					xtype: 'list',
-					store: 'savory',
+					store: 'diligence',
 					itemTpl: '{name}<tpl if="lastSeen"><br /><small>Last seen: {lastSeen:date("m/d/Y")}</small></tpl>',
 					disableSelection: true,
-					plugins: [new Savory.ListPagingPlugin({pagingToolbar: 'paging'})],
+					plugins: [new Diligence.ListPagingPlugin({pagingToolbar: 'paging'})],
 					listeners: {
 						itemtap: function(list, index, item, event) {
 							var record = list.getRecord(item);
@@ -200,14 +200,14 @@ Ext.setup({
 								}
 							});
 							form.load(record);
-							Savory.slideIn('main', form);
+							Diligence.slideIn('main', form);
 						}
 					}
 				},
 				dockedItems: [{
 					dock: 'top',
 					xtype: 'toolbar',
-					title: 'Savory Users',
+					title: 'Diligence Users',
 					layout: {
 						pack: 'right'
 					},
@@ -222,7 +222,7 @@ Ext.setup({
 					dock: 'bottom',
 					xtype: 'paging',
 					id: 'paging',
-					store: 'savory'
+					store: 'diligence'
 				}]
 			}
 		});

@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,15 +11,15 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/internationalization/')
+document.executeOnce('/diligence/service/internationalization/')
 document.executeOnce('/prudence/resources/')
 
 function handleBefore(conversation) {
-	if (Prudence.Resources.hasRelativePrefix(conversation, application.globals.get('savory.service.internationalization.excludeFromFilter'))) {
+	if (Prudence.Resources.hasRelativePrefix(conversation, application.globals.get('diligence.service.internationalization.excludeFromFilter'))) {
 		return 'continue'
 	}
 	
-	Savory.Internationalization.getCurrentPack(conversation)
+	Diligence.Internationalization.getCurrentPack(conversation)
 
 	return 'continue'
 }

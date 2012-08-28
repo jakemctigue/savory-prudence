@@ -1,5 +1,5 @@
 //
-// This file is part of the Savory Framework
+// This file is part of Diligence
 //
 // Copyright 2011-2012 Three Crickets LLC.
 //
@@ -11,19 +11,19 @@
 // at http://threecrickets.com/
 //
 
-document.executeOnce('/savory/service/rpc/')
+document.executeOnce('/diligence/service/rpc/')
 
 //
 // Modules
 //
 
-modules = Sincerity.Objects.pushAll(modules, Savory.RPC.buildLazyModules({
-	module: 'Savory',
+modules = Sincerity.Objects.pushAll(modules, Diligence.RPC.buildLazyModules({
+	module: 'Diligence',
 	object: 'ShoppingCart',
 	dependencies: '/about/integration/sencha/shopping-cart/',
 	reset: true
 }, {
-	module: 'Savory',
+	module: 'Diligence',
 	object: 'Multiplier',
 	methodOverrides: {
 		multiply: {
@@ -39,4 +39,4 @@ modules = Sincerity.Objects.pushAll(modules, Savory.RPC.buildLazyModules({
 // Routes
 //
 
-routes['/rpc/'] = 'Savory'
+routes['/rpc/'] = 'Diligence'

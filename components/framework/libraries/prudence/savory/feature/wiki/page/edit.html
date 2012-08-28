@@ -1,17 +1,17 @@
 <%
 
-document.executeOnce('/savory/feature/wiki/')
-document.executeOnce('/savory/service/html/')
+document.executeOnce('/diligence/feature/wiki/')
+document.executeOnce('/diligence/service/html/')
 
-var permissions = conversation.locals.get('savory.service.authorization.permissions')
-var page = Savory.Wiki.getPage(conversation)
+var permissions = conversation.locals.get('diligence.service.authorization.permissions')
+var page = Diligence.Wiki.getPage(conversation)
 var part = conversation.query.get('part')
 
 if (page && part) {
 %>
 <form method="POST">
 	<div class="page">
-		<%= Savory.HTML.textarea({content: page.getSource(part), name: 'source'}) %>
+		<%= Diligence.HTML.textarea({content: page.getSource(part), name: 'source'}) %>
 	</div>
 	<input type="submit" value="Save" />
 	<a href=".">Cancel</a>

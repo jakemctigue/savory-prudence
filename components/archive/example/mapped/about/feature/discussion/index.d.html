@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -13,7 +13,7 @@ at http://threecrickets.com/
 
 %><%& '/site/header/' %>
 
-<h1>Savory's Discussion Feature</h1>
+<h1>Diligence's Discussion Feature</h1>
 
 <h2>A Demo Discussion</h2>
 <p>
@@ -25,9 +25,9 @@ at http://threecrickets.com/
 
 <%
 
-document.executeOnce('/savory/feature/discussion/')
+document.executeOnce('/diligence/feature/discussion/')
 
-var forum = new Savory.Discussion.Forum('documents', {_id: MongoDB.id('4e0d0b73e799cb4316c2fd73')})
+var forum = new Diligence.Discussion.Forum('documents', {_id: MongoDB.id('4e0d0b73e799cb4316c2fd73')})
 
 if (String(conversation.request.method) == 'POST') {
 	var content = conversation.form.get('content')
@@ -81,14 +81,14 @@ var reply = conversation.query.get('reply')
 </form>
 
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.Discussion">Savory.Discussion API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.Discussion">Diligence.Discussion API documentation</a>
 	for more details.
 </p>
 
 
 <h2>Editable Graph Structures in MongoDB</h2>
 <p>
-If you'll take a look at Savory's Ext JS tree integration, you'll see it's pretty neat. But it was literally neat because the trees for Ext-JS are immutable, and easily stored in a MongoDB document, which can hold a structure of arbitrary depth. However, if you want your tree to change, though, by multiple users and threads -- document databases such as MongoDB begin to show some of their limitations. (Graph databases, such as neo4j, are of course perfect for this use case.)
+If you'll take a look at Diligence's Ext JS tree integration, you'll see it's pretty neat. But it was literally neat because the trees for Ext-JS are immutable, and easily stored in a MongoDB document, which can hold a structure of arbitrary depth. However, if you want your tree to change, though, by multiple users and threads -- document databases such as MongoDB begin to show some of their limitations. (Graph databases, such as neo4j, are of course perfect for this use case.)
 </p>
 <p>
 Nevertheless, it's not impossible, and can get excellent all-around performance.

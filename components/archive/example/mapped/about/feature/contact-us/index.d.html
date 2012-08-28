@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -12,8 +12,8 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%
-document.executeOnce('/savory/feature/contact-us/')
-var form = new Savory.ContactUs.Form({conversation: conversation})
+document.executeOnce('/diligence/feature/contact-us/')
+var form = new Diligence.ContactUs.Form({conversation: conversation})
 
 if (conversation.query.get('mode') == 'json') {
 	form.handle({conversation: conversation})
@@ -24,7 +24,7 @@ conversation.locals.put('reCaptcha', true)
 conversation.locals.put('extJs', true)
 %>
 <%{{ 'page.main' %>
-<h1>Savory's "Contact Us" Feature</h1>
+<h1>Diligence's "Contact Us" Feature</h1>
 <p>
 	This simple feature contains a /web/fragment/ that displays
 	an HTML form with a CAPTCHA that allows users to send a message on a specific
@@ -40,7 +40,7 @@ conversation.locals.put('extJs', true)
 	The originating IP address is included in the email. 
 </p>
 <p>
-	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Savory.ContactUs">Savory.ContactUs API documentation</a>
+	Refer to the <a href="<%= conversation.pathToBase %>/api/?namespace=Diligence.ContactUs">Diligence.ContactUs API documentation</a>
 	for more details.
 </p>
 <%
@@ -49,7 +49,7 @@ form.handle({conversation: conversation, mode: 'include'})
 <p>
 	And here is an <a href="../../integration/sencha/forms/">Ext JS</a> version of it:
 </p>
-<%& '/savory/feature/contact-us/sencha/' %>
+<%& '/diligence/feature/contact-us/sencha/' %>
 <%}}%>
 <%& '/site/page-template/' %>
 <% } %>

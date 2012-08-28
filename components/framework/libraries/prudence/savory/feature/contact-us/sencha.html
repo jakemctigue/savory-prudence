@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -12,24 +12,24 @@ limitations, transferable or non-transferable, directly from Three Crickets
 at http://threecrickets.com/
 
 %><%
-document.executeOnce('/savory/feature/contact-us/')
-document.executeOnce('/savory/service/internationalization/')
-document.executeOnce('/savory/integration/frontend/sencha/')
+document.executeOnce('/diligence/feature/contact-us/')
+document.executeOnce('/diligence/service/internationalization/')
+document.executeOnce('/diligence/integration/frontend/sencha/')
 
-var textPack = Savory.Internationalization.getCurrentPack(conversation)
-var form = form || new Savory.ContactUs.Form({conversation: conversation})
+var textPack = Diligence.Internationalization.getCurrentPack(conversation)
+var form = form || new Diligence.ContactUs.Form({conversation: conversation})
 %>
 <p>
 	<button id="extjs-form">Contact Us</button>
 </p>
 <%{{ 'page.scripts' %>
 <script>
-var fields = <%= Savory.JSON.to(Savory.Sencha.getFormFields(conversation, form), true, true) %>;
+var fields = <%= Diligence.JSON.to(Diligence.Sencha.getFormFields(conversation, form), true, true) %>;
 
 Ext.onReady(function() {
 	Ext.fly('extjs-form').on('click', function() {
 		Ext.create('Ext.window.Window', {
-			title: '<%= textPack.get("savory.feature.contactUs.form.title") %>',
+			title: '<%= textPack.get("diligence.feature.contactUs.form.title") %>',
 			items: {
 				xtype: 'form',
 				url: '?mode=json',
@@ -53,7 +53,7 @@ Ext.onReady(function() {
 							form.submit({
 								success: function(form, action) {
 									this.up('window').destroy();
-									Ext.Msg.alert('Success', '<%= textPack.get("savory.feature.contactUs.form.success") %>');
+									Ext.Msg.alert('Success', '<%= textPack.get("diligence.feature.contactUs.form.success") %>');
 								},
 								failure: function(form, action) {
 									Ext.Msg.alert('Failure', 'Could not send your message.');

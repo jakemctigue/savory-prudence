@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="The Savory Framework" default="build">
+<project name="Diligence" default="build">
 
 	<property file="custom.properties" />
 	

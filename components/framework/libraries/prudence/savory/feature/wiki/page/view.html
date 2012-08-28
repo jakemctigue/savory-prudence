@@ -1,6 +1,6 @@
 <%#
 
-This file is part of the Savory Framework
+This file is part of Diligence
 
 Copyright 2011-2012 Three Crickets LLC.
 
@@ -13,16 +13,16 @@ at http://threecrickets.com/
 
 %><%
 
-document.executeOnce('/savory/feature/wiki/')
+document.executeOnce('/diligence/feature/wiki/')
 
-var page = Savory.Wiki.getPage(conversation)
+var page = Diligence.Wiki.getPage(conversation)
 
 if (page) {
 	var template = page.getTemplate() || 'default'
 %>
 <div class="page page-<%= template %>">
 <% try { %>
-	<%& '/savory/feature/wiki/page/template/' + template + '/' %>
+	<%& '/diligence/feature/wiki/page/template/' + template + '/' %>
 <% } catch(x) {} %>
 </div>
 <%
